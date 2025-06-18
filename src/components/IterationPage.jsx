@@ -6,7 +6,6 @@ import { useGameProgress } from '../contexts/GameProgressContext';
 import FloatingCharacter from './FloatingCharacter';
 import './IterationPage.css';
 
-
 const IterationPage = () => {
   const blocklyDiv = useRef(null);
   const workspaceRef = useRef(null);
@@ -67,145 +66,130 @@ const IterationPage = () => {
     };
   }, [isDragging]);
 
-  // Challenge generators for different levels
-  const challengeGenerators = [
-    // Level 1-3: Basic iterations
-    () => {
-      const count = Math.floor(Math.random() * 5) + 3;
-      const action = Math.random() > 0.5 ? 'print' : 'sum';
-      
-      if (action === 'print') {
-        const word = ['Hello', 'Hi', 'Loop', 'Code', 'Block'][Math.floor(Math.random() * 5)];
-        return {
-          description: `Print "${word}" ${count} times`,
-          verify: (output) => {
-            const expected = `${word}\n`.repeat(count);
-            return output === expected;
+// Updated challenge generators for grades 4-6
+const challengeGenerators = [
+  // Level 1-3: Very basic iterations
+  () => {
+    const count = Math.floor(Math.random() * 3) + 2; // 2-4 repetitions
+    const action = Math.random() > 0.5 ? 'print' : 'count';
+    
+    if (action === 'print') {
+      const word = ['Hello', 'Star', 'Cat', 'Dog', 'Fun'][Math.floor(Math.random() * 5)];
+      return {
+        description: `Print "${word}" ${count} times`,
+        verify: (output) => {
+          const expected = Array(count).fill(word).join('\n');
+          return output.trim() === expected;
+        },
+        solution: `for (let i = 0; i < ${count}; i++) {\n  console.log("${word}");\n}`
+      };
+    } else {
+      return {
+        description: `Count from 1 to ${count}`,
+        verify: (output) => {
+          let expected = '';
+          for (let i = 1; i <= count; i++) {
+            expected += `${i}\n`;
           }
-        };
-      } else {
-        return {
-          description: `Sum numbers from 1 to ${count}`,
-          verify: (_, result) => result === (count * (count + 1)) / 2
-        };
-      }
-    },
-    // Level 4-6: More complex iterations
-    () => {
-      const type = Math.floor(Math.random() * 4);
-      const base = Math.floor(Math.random() * 5) + 1;
-      
-      switch(type) {
-        case 0: // Reverse count
-          return {
-            description: `Print numbers from ${base * 5} down to ${base}`,
-            verify: (output) => {
-              let expected = '';
-              for (let i = base * 5; i >= base; i--) {
-                expected += `${i}\n`;
-              }
-              return output === expected;
-            }
-          };
-        case 1: // Multiples
-          return {
-            description: `Sum multiples of ${base} up to ${base * 10}`,
-            verify: (_, result) => {
-              let sum = 0;
-              for (let i = base; i <= base * 10; i += base) {
-                sum += i;
-              }
-              return result === sum;
-            }
-          };
-        case 2: // Factorial
-          return {
-            description: `Calculate factorial of ${base + 3}`,
-            verify: (_, result) => {
-              let fact = 1;
-              for (let i = 2; i <= base + 3; i++) {
-                fact *= i;
-              }
-              return result === fact;
-            }
-          };
-        case 3: // Pattern printing
-          const patternChar = ['*', '#', '$', '@'][Math.floor(Math.random() * 4)];
-          return {
-            description: `Print a triangle with ${base + 2} rows using '${patternChar}'`,
-            verify: (output) => {
-              let expected = '';
-              for (let i = 1; i <= base + 2; i++) {
-                expected += `${patternChar.repeat(i)}\n`;
-              }
-              return output === expected;
-            }
-          };
-        default:
-          return {
-            description: `Print numbers from 1 to ${base}`,
-            verify: (output) => {
-              let expected = '';
-              for (let i = 1; i <= base; i++) {
-                expected += `${i}\n`;
-              }
-              return output === expected;
-            }
-          };
-      }
-    },
-    // Level 7+: Advanced challenges
-    () => {
-      const type = Math.floor(Math.random() * 3);
-      const base = Math.floor(Math.random() * 5) + 2;
-      
-      switch(type) {
-        case 0: // Fibonacci
-          return {
-            description: `Calculate the ${base + 5}th Fibonacci number`,
-            verify: (_, result) => {
-              let a = 0, b = 1;
-              for (let i = 2; i <= base + 5; i++) {
-                [a, b] = [b, a + b];
-              }
-              return result === b;
-            }
-          };
-        case 1: // Prime check
-          const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
-          const num = primes[Math.floor(Math.random() * primes.length)];
-          return {
-            description: `Check if ${num} is prime (return 1 if true, 0 if false)`,
-            verify: (_, result) => result === 1
-          };
-        case 2: // Complex pattern
-          const chars = ['A', 'B', 'C', 'D'];
-          return {
-            description: `Print a pyramid with ${base + 1} levels alternating between ${chars[0]} and ${chars[1]}`,
-            verify: (output) => {
-              let expected = '';
-              for (let i = 1; i <= base + 1; i++) {
-                const char = i % 2 === 0 ? chars[1] : chars[0];
-                const spaces = ' '.repeat(base + 1 - i);
-                expected += `${spaces}${char.repeat(2 * i - 1)}\n`;
-              }
-              return output === expected;
-            }
-          };
-        default:
-          return {
-            description: `Print numbers from 1 to ${base}`,
-            verify: (output) => {
-              let expected = '';
-              for (let i = 1; i <= base; i++) {
-                expected += `${i}\n`;
-              }
-              return output === expected;
-            }
-          };
-      }
+          return output.trim() === expected.trim();
+        },
+        solution: `for (let i = 1; i <= ${count}; i++) {\n  console.log(i);\n}`
+      };
     }
-  ];
+  },
+  // Level 4-6: Slightly more complex
+  () => {
+    const type = Math.floor(Math.random() * 3);
+    const base = Math.floor(Math.random() * 3) + 2; // 2-4
+    
+    switch(type) {
+      case 0: // Simple count
+        return {
+          description: `Print numbers from ${base} to ${base * 3}`,
+          verify: (output) => {
+            let expected = '';
+            for (let i = base; i <= base * 3; i++) {
+              expected += `${i}\n`;
+            }
+            return output.trim() === expected.trim();
+          },
+          solution: `for (let i = ${base}; i <= ${base * 3}; i++) {\n  console.log(i);\n}`
+        };
+      case 1: // Simple sum
+        return {
+          description: `Add numbers from 1 to ${base + 2}`,
+          verify: (output) => {
+            let sum = 0;
+            for (let i = 1; i <= base + 2; i++) {
+              sum += i;
+            }
+            return Number(output.trim()) === sum;
+          },
+          solution: `let sum = 0;\nfor (let i = 1; i <= ${base + 2}; i++) {\n  sum += i;\n}\nconsole.log(sum);`
+        };
+      case 2: // Simple pattern
+        const patternChar = ['*', '#', 'X', 'O'][Math.floor(Math.random() * 4)];
+        return {
+          description: `Print ${base} lines of '${patternChar}' (first line 1, second line 2, etc)`,
+          verify: (output) => {
+            let expected = '';
+            for (let i = 1; i <= base; i++) {
+              expected += `${patternChar.repeat(i)}\n`;
+            }
+            return output.trim() === expected.trim();
+          },
+          solution: `for (let i = 1; i <= ${base}; i++) {\n  console.log("${patternChar}".repeat(i));\n}`
+        };
+    }
+  },
+  // Level 7-9: More challenging but still simple
+  () => {
+    const type = Math.floor(Math.random() * 3);
+    const base = Math.floor(Math.random() * 3) + 3; // 3-5
+    
+    switch(type) {
+      case 0: // Count by 2s
+        return {
+          description: `Count from 2 to ${base * 2} by 2s`,
+          verify: (output) => {
+            let expected = '';
+            for (let i = 2; i <= base * 2; i += 2) {
+              expected += `${i}\n`;
+            }
+            return output.trim() === expected.trim();
+          },
+          solution: `for (let i = 2; i <= ${base * 2}; i += 2) {\n  console.log(i);\n}`
+        };
+      case 1: // Simple multiplication
+        return {
+          description: `Print the ${base} times table up to ${base * 5}`,
+          verify: (output) => {
+            let expected = '';
+            for (let i = 1; i <= 5; i++) {
+              expected += `${base * i}\n`;
+            }
+            return output.trim() === expected.trim();
+          },
+          solution: `for (let i = 1; i <= 5; i++) {\n  console.log(${base} * i);\n}`
+        };
+      case 2: // Simple pyramid
+        const patternChar = ['A', 'B', 'C', 'D'][Math.floor(Math.random() * 4)];
+        return {
+          description: `Print a small pyramid with ${base} levels using '${patternChar}'`,
+          verify: (output) => {
+            let expected = '';
+            for (let i = 1; i <= base; i++) {
+              expected += `${patternChar.repeat(i)}\n`;
+            }
+            return output.trim() === expected.trim();
+          },
+          solution: `for (let i = 1; i <= ${base}; i++) {\n  console.log("${patternChar}".repeat(i));\n}`
+        };
+    }
+  }
+];
+
+// Keep all other parts of the component exactly the same
 
   const generateChallenge = () => {
     let generatorIndex = Math.min(Math.floor(level / 3), challengeGenerators.length - 1);
@@ -216,45 +200,79 @@ const IterationPage = () => {
     return challenge;
   };
 
-  const captureConsoleLog = (msg) => {
-    setConsoleOutput((prev) => prev + msg + '\n');
-  };
-
   const runCode = () => {
-    if (!workspaceRef.current || !currentChallenge) {
-      setMessage('⚠️ Workspace not ready. Please try again.');
-      return;
-    }
+  if (!workspaceRef.current || !currentChallenge) {
+    setConsoleOutput('⚠️ Workspace not ready. Please try again.\n');
+    return;
+  }
 
-    const code = javascriptGenerator.workspaceToCode(workspaceRef.current);
-    setConsoleOutput('');
-    setMessage('');
+  // Clear console before each run
+  setConsoleOutput('Running your code...\n\n');
+  setMessage('');
 
-    try {
-      const originalConsoleLog = console.log;
-      console.log = captureConsoleLog;
-      
-      const func = new Function('console', 'let result;\n' + code + '\nreturn result;');
-      const userResult = func({ log: captureConsoleLog });
+  const code = javascriptGenerator.workspaceToCode(workspaceRef.current);
+  let capturedOutput = '';
 
-      if (currentChallenge.verify(consoleOutput, userResult)) {
-        const newMessage = `🎉 Great job! You solved Level ${level}.`;
-        setMessage(newMessage);
-        
-        if (level >= progress.iteration.level) {
-          const newLevel = level === progress.iteration.level ? progress.iteration.level + 1 : progress.iteration.level;
-          updateProgress('iteration', newLevel, 100);
-        }
-      } else {
-        setMessage('❌ Try again! Your solution is not correct.');
+  try {
+    // Override console.log to capture output
+    const originalConsoleLog = console.log;
+    const originalAlert = window.alert;
+    
+    console.log = (...args) => {
+      const message = args.join(' ');
+      capturedOutput += message + '\n';
+      setConsoleOutput(prev => prev + message + '\n');
+      originalConsoleLog(...args);
+    };
+
+    // Override alert to capture in console output instead
+    window.alert = (msg) => {
+      capturedOutput += 'ALERT: ' + msg + '\n';
+      setConsoleOutput(prev => prev + 'ALERT: ' + msg + '\n');
+    };
+
+    // Execute the code
+    const func = new Function(`
+      let result;
+      try {
+        ${code}
+      } catch (e) {
+        console.error(e.message);
       }
+      return result;
+    `);
+    const capturedResult = func();
+
+    // Restore original functions
+    console.log = originalConsoleLog;
+    window.alert = originalAlert;
+
+    // Verify the solution
+    const isCorrect = currentChallenge.verify(capturedOutput, capturedResult);
+    
+    if (isCorrect) {
+      const newMessage = `🎉 Great job! You solved Level ${level}!`;
+      setMessage(newMessage);
+      setConsoleOutput(prev => prev + '\n✅ Correct solution!\n\n' + newMessage + '\n');
       
-      console.log = originalConsoleLog;
-    } catch (error) {
-      setMessage(`⚠️ Error running code: ${error.message}`);
-      console.error('Code execution error:', error);
+      if (level >= progress.iteration.level) {
+        updateProgress('iteration', level + 1, 100);
+      }
+    } else {
+      setMessage('❌ Try again! Check your solution.');
+      setConsoleOutput(prev => prev + 
+        '\n❌ Incorrect solution. Try again!\n' +
+        `Challenge: ${currentChallenge.description}\n` +
+        `Your output:\n${capturedOutput}\n` +
+        (currentChallenge.solution ? `Need help? Try this:\n${currentChallenge.solution}\n` : ''));
     }
-  };
+
+  } catch (error) {
+    setMessage(`⚠️ Error: ${error.message}`);
+    setConsoleOutput(prev => prev + `\n⚠️ Runtime Error: ${error.message}\n`);
+    console.error('Execution error:', error);
+  }
+};
 
   const nextLevel = () => {
     if (level < challengeGenerators.length * 3) {
@@ -280,6 +298,10 @@ const IterationPage = () => {
   const clearBlocks = () => {
     if (workspaceRef.current) {
       try {
+        // Ensure result variable exists
+        if (!workspaceRef.current.getVariable('result')) {
+          workspaceRef.current.createVariable('result');
+        }
         workspaceRef.current.clear();
         setConsoleOutput('');
         setMessage('');
@@ -291,15 +313,11 @@ const IterationPage = () => {
   };
 
   const initializeWorkspace = () => {
-    if (workspaceRef.current) {
-      try {
-        workspaceRef.current.dispose();
-      } catch (error) {
-        console.warn('Error disposing old workspace:', error);
-      }
-    }
-
     try {
+      if (workspaceRef.current) {
+        workspaceRef.current.dispose();
+      }
+
       workspaceRef.current = Blockly.inject(blocklyDiv.current, {
         toolbox: {
           kind: 'categoryToolbox',
@@ -353,7 +371,16 @@ const IterationPage = () => {
               kind: 'category',
               name: 'Variables',
               colour: '%{BKY_VARIABLES_HUE}',
-              custom: 'VARIABLE'
+              custom: 'VARIABLE',
+              contents: [
+                {
+                  kind: 'block',
+                  type: 'variables_set',
+                  fields: {
+                    'VAR': { name: 'result', type: 'result' }
+                  }
+                }
+              ]
             },
             {
               kind: 'category',
@@ -379,10 +406,17 @@ const IterationPage = () => {
         },
         trashcan: true,
       });
+
+      // Create the result variable if it doesn't exist
+      if (!workspaceRef.current.getVariable('result')) {
+        workspaceRef.current.createVariable('result');
+      }
+
       setWorkspaceInitialized(true);
     } catch (error) {
       console.error('Workspace initialization failed:', error);
       setMessage('⚠️ Failed to initialize workspace. Please refresh the page.');
+      setConsoleOutput('Error initializing Blockly. Please try again.');
     }
   };
 
@@ -409,7 +443,6 @@ const IterationPage = () => {
 
   return (
     <div className="iteration-page">
-      {/* Horizontal Progress Bar */}
       <FloatingCharacter/>
       <div className="maze-area">
         <h2>Iteration Challenge - Level {level}</h2>
@@ -446,6 +479,12 @@ const IterationPage = () => {
         <div className="blockly-controls">
           <button onClick={runCode} className="btn run-btn">Run</button>
           <button onClick={clearBlocks} className="btn clear-btn">Clear</button>
+          <button onClick={() => {
+            const code = javascriptGenerator.workspaceToCode(workspaceRef.current);
+            setConsoleOutput('Generated JavaScript:\n\n' + code);
+          }} className="btn code-btn">
+            Show Code
+          </button>
         </div>
         <div className="blockly-area" ref={blocklyDiv} />
         <pre className="console-output">
