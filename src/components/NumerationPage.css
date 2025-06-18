@@ -1,0 +1,218 @@
+/* NumerationPage.css */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+.numeration-page {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #f0f4f8;
+}
+
+.challenge-area {
+  flex: 1;
+  background: #fff;
+  padding: 2rem;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+.challenge-area h2 {
+  margin: 0 0 1rem 0;
+  font-weight: 700;
+  color: #333;
+  user-select: none;
+}
+
+.challenge-box {
+  flex-grow: 1;
+  max-width: 600px;
+  width: 100%;
+  background: #e0f7fa;
+  border-radius: 12px;
+  box-shadow: inset 0 0 10px #80deea;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  font-size: 1.25rem;
+  color: #00796b;
+  text-align: center;
+  user-select: none;
+  overflow-wrap: break-word;
+}
+
+.blockly-area {
+  flex: 1;
+  height: 100vh;
+  min-width: 0;
+  box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.blockly-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-width: 0;
+  box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+  background: #fff;
+}
+
+.blockly-controls {
+  padding: 0.5rem 1rem;
+  background: #fafafa;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  gap: 1rem;
+}
+
+.btn {
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  user-select: none;
+}
+
+.run-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.run-btn:hover {
+  background-color: #45a049;
+}
+
+.clear-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.clear-btn:hover {
+  background-color: #d32f2f;
+}
+
+.console-output {
+  background: #222;
+  color: #0f0;
+  font-family: monospace;
+  padding: 1rem;
+  margin-top: 1rem;
+  height: 150px;
+  overflow-y: auto;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  user-select: text;
+}
+
+.level-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  align-items: center;
+}
+
+.level-btn {
+  padding: 8px 15px;
+  background-color: #4a6fa5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.level-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.completion-message {
+  font-weight: bold;
+  color: #2e7d32;
+  padding: 8px 15px;
+}
+
+.next-level-btn {
+  background-color: #2196F3;
+  color: white;
+}
+
+/* Responsive: stack vertically on small screens */
+@media (max-width: 720px) {
+  .numeration-page {
+    flex-direction: column;
+  }
+
+  .challenge-area, .blockly-area {
+    width: 100%;
+    height: 50vh;
+  }
+
+  .challenge-box {
+    max-width: 100%;
+  }
+}
+
+/* Floating Character Positioning */
+.numeration-page {
+  position: relative;
+}
+
+/* Ensure Blockly workspace doesn't get covered */
+.blockly-area {
+  z-index: 1;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .numeration-page {
+    background-color: #1a202c;
+  }
+
+  .challenge-area {
+    background-color: #2d3748;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.3);
+  }
+
+  .challenge-box {
+    background-color: #2d3748;
+    border: 1px solid #4a5568;
+    color: #e2e8f0;
+    box-shadow: inset 0 0 10px #4a5568;
+  }
+
+  .challenge-area h2 {
+    color: #e2e8f0;
+  }
+
+  .blockly-wrapper {
+    background-color: #1a202c;
+  }
+
+  .blockly-controls {
+    background-color: #2d3748;
+    border-bottom-color: #4a5568;
+  }
+}

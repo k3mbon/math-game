@@ -1,27 +1,167 @@
 /* App.css */
-body, html, #root {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: sans-serif;
-  background-color: #f0f4f8;
+:root {
+  /* Primary color palette */
+  --primary-500: #4F46E5;  /* Indigo */
+  --primary-600: #4338CA;
+  --primary-700: #3730A3;
+  
+  /* Secondary color palette */
+  --secondary-500: #10B981; /* Emerald */
+  --secondary-600: #0D9488;
+  
+  /* Neutral colors */
+  --neutral-50: #F8FAFC;
+  --neutral-100: #F1F5F9;
+  --neutral-200: #E2E8F0;
+  --neutral-700: #334155;
+  --neutral-800: #1E293B;
+  --neutral-900: #0F172A;
+  
+  /* Supporting colors */
+  --accent-500: #F59E0B; /* Amber */
+  --error-500: #EF4444;  /* Red */
+  --success-500: #10B981; /* Emerald */
 }
 
-.app-container {
+body, html, .app-container {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--neutral-50);
+  color: var(--neutral-800);
   display: flex;
   flex-direction: column;
-  height: 100%;
+  line-height: 1.6;
 }
 
 .header {
-  background-color: #2d89ef;
-  color: white;
-  padding: 1rem;
   text-align: center;
+  padding: 2rem;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.header h1 {
+  color: var(--primary-700);
+  margin: 0;
+  font-weight: 700;
 }
 
 .main-content {
   flex: 1;
-  padding: 1rem;
-  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background: var(--neutral-100);
+}
+
+.landing-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.landing-button {
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  padding: 1.25rem 2.5rem;
+  color: white;
+  border: none;
+  font-size: 1.25rem;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.landing-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(79, 70, 229, 0.25);
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+}
+
+.landing-button:active {
+  transform: translateY(1px);
+}
+
+.landing-button.secondary {
+  background: linear-gradient(135deg, var(--secondary-500), var(--secondary-600));
+  box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+}
+
+.landing-button.secondary:hover {
+  box-shadow: 0 6px 12px rgba(16, 185, 129, 0.25);
+  background: linear-gradient(135deg, var(--secondary-600), #0D9488);
+}
+
+/* Status colors for messages */
+.message-success {
+  color: var(--success-500);
+  background-color: rgba(16, 185, 129, 0.1);
+  padding: 0.75rem;
+  border-radius: 6px;
+  border-left: 4px solid var(--success-500);
+}
+
+.message-error {
+  color: var(--error-500);
+  background-color: rgba(239, 68, 68, 0.1);
+  padding: 0.75rem;
+  border-radius: 6px;
+  border-left: 4px solid var(--error-500);
+}
+
+/* Responsive design */
+@media (min-width: 600px) {
+  .landing-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .landing-button {
+    font-size: 1.1rem;
+    padding: 1.1rem 2rem;
+  }
+}
+
+@media (min-width: 900px) {
+  .landing-button {
+    font-size: 1.25rem;
+    padding: 1.25rem 2.5rem;
+  }
+}
+
+/* Focus states for accessibility */
+.landing-button:focus {
+  outline: 3px solid var(--accent-500);
+  outline-offset: 2px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  body, .app-container {
+    background: var(--neutral-900);
+    color: var(--neutral-100);
+  }
+  
+  .header {
+    background: var(--neutral-800);
+    border-bottom-color: var(--neutral-700);
+  }
+  
+  .main-content {
+    background: var(--neutral-800);
+  }
 }

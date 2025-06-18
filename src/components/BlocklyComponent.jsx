@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as Blockly from 'blockly';
 import * as BlocklyJS from 'blockly/javascript';
-/*import './BlocklyComponent.css'*/
+import './BlocklyComponent.css'; // You can create this file for styles
 
 export default function BlocklyMazeGame() {
   const blocklyDiv = useRef(null);
@@ -55,7 +55,6 @@ export default function BlocklyMazeGame() {
 
   useEffect(() => {
     localStorage.setItem('mazeLevel', level.toString());
-
     const newMaze = generateSolvableMaze(mazeSize, mazeSize);
     setMaze(newMaze);
 
@@ -73,9 +72,7 @@ export default function BlocklyMazeGame() {
       {
         kind: 'category',
         name: 'Loops',
-        contents: [
-          { kind: 'block', type: 'controls_repeat_ext' },
-        ],
+        contents: [{ kind: 'block', type: 'controls_repeat_ext' }],
       },
       {
         kind: 'category',
@@ -95,7 +92,6 @@ export default function BlocklyMazeGame() {
         ],
       },
     ];
-
     setToolbox(toolboxContents);
     setPlayer(startPos);
   }, [level]);
@@ -143,7 +139,7 @@ export default function BlocklyMazeGame() {
     const queue = [[sx, sy]];
     const visited = new Set();
     visited.add(`${sx},${sy}`);
-    const directions = [ [0, 1], [1, 0], [-1, 0], [0, -1] ];
+    const directions = [[0, 1], [1, 0], [-1, 0], [0, -1]];
 
     while (queue.length) {
       const [x, y] = queue.shift();
@@ -151,7 +147,14 @@ export default function BlocklyMazeGame() {
       for (let [dx, dy] of directions) {
         const nx = x + dx;
         const ny = y + dy;
-        if (nx >= 0 && ny >= 0 && nx < maze[0].length && ny < maze.length && maze[ny][nx] !== 1 && !visited.has(`${nx},${ny}`)) {
+        if (
+          nx >= 0 &&
+          ny >= 0 &&
+          nx < maze[0].length &&
+          ny < maze.length &&
+          maze[ny][nx] !== 1 &&
+          !visited.has(`${nx},${ny}`)
+        ) {
           visited.add(`${nx},${ny}`);
           queue.push([nx, ny]);
         }
@@ -222,7 +225,8 @@ export default function BlocklyMazeGame() {
       if (action === 'move') {
         const dx = dir === 'right' ? 1 : dir === 'left' ? -1 : 0;
         const dy = dir === 'down' ? 1 : dir === 'up' ? -1 : 0;
-        const nx = x + dx, ny = y + dy;
+        const nx = x + dx,
+          ny = y + dy;
         if (maze[ny] && maze[ny][nx] !== 1 && maze[ny][nx] !== undefined) {
           x = nx;
           y = ny;
@@ -251,25 +255,29 @@ export default function BlocklyMazeGame() {
   };
 
   return (
-    <div style={{ maxWidth: 700, margin: 'auto' }}>
-      <h2>Blockly Maze Game</h2>
-      <p>Level {level}: Move from green start to yellow goal!</p>
+    <div className="maze-container">
+      <div className="maze-header">
+        <h2>Blockly Maze Game</h2>
+        <p>Level {level}: Move from green start to yellow goal!</p>
+      </div>
+
       <canvas
         ref={canvasRef}
         width={canvasWidth}
         height={canvasHeight}
-        style={{ border: '1px solid black', marginBottom: '1rem' }}
+        className="maze-canvas"
       />
-      <div
-        ref={blocklyDiv}
-        style={{ height: 340, width: '100%', border: '1px solid #ccc', marginBottom: 10 }}
-      />
-      <button onClick={runCode} style={{ padding: '0.5rem 1rem', marginRight: 10 }}>
-        Run Code
-      </button>
-      <button onClick={() => setPlayer(startPos)} style={{ padding: '0.5rem 1rem' }}>
-        Reset
-      </button>
+
+      <div ref={blocklyDiv} className="maze-blockly" />
+
+      <div className="maze-controls">
+        <button onClick={runCode} className="maze-button run">
+          ▶ Run Code
+        </button>
+        <button onClick={() => setPlayer(startPos)} className="maze-button reset">
+          ⟳ Reset
+        </button>
+      </div>
     </div>
   );
 }
