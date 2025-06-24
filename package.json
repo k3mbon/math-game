@@ -11,9 +11,15 @@
   },
   "dependencies": {
     "blockly": "^9.0.0",
+    "firebase": "^11.9.1",
+    "framer-motion": "^12.19.1",
+    "i18next": "^25.2.1",
+    "i18next-browser-languagedetector": "^8.2.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^7.6.2"
+    "react-i18next": "^15.5.3",
+    "react-router-dom": "^7.6.2",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

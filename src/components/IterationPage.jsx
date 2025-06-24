@@ -7,6 +7,9 @@ import FloatingCharacter from './FloatingCharacter';
 import './IterationPage.css';
 
 const IterationPage = () => {
+  useEffect(() => {
+        document.title = 'Iterasi | BrainQuests';
+      }, []);
   const blocklyDiv = useRef(null);
   const workspaceRef = useRef(null);
   const [consoleOutput, setConsoleOutput] = useState('');

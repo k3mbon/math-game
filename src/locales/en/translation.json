@@ -1,0 +1,8 @@
+{
+  "login": "Login",
+  "email": "Email",
+  "password": "Password",
+  "submit": "Login",
+  "guest": "Continue as Guest",
+  "error": "An error occurred"
+}

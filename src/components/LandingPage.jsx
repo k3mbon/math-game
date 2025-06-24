@@ -1,5 +1,6 @@
 // components/LandingPage.jsx
 import React from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCharacter } from '../contexts/CharacterContext';
 import './LandingPage.css';
@@ -7,12 +8,15 @@ import './LandingPage.css';
 const LandingPage = () => {
   const { characters, selectedCharacter, setSelectedCharacter } = useCharacter();
 
-  
+
+  useEffect(() => {
+    document.title = 'Dashboard | BrainQuests';
+  }, []);
 
   return (
     <div className="landing-container">
       <div className="landing-header">
-        <h1>Math Adventure 🚀</h1>
+        <h1>BrainQuests 🚀</h1>
         <p className="subtitle">Learn coding through fun math challenges!</p>
       </div>
       

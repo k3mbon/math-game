@@ -8,6 +8,10 @@ import { useGameProgress } from '../contexts/GameProgressContext';
 import problemBank from '../data/NumerationProblem.json';
 
 const NumerationPage = () => {
+  useEffect(() => {
+      document.title = 'Numerasi | BrainQuests';
+    }, []);
+
   const { selectedCharacter } = useCharacter();
   const { progress, updateProgress } = useGameProgress();
   const blocklyDiv = useRef(null);

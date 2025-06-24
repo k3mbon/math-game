@@ -1,0 +1,131 @@
+:root {
+  --bg: #ffffff;
+  --bg-dark: #1e1e1e;
+  --text: #222;
+  --text-dark: #eee;
+}
+
+/* Light/Dark Theme Support */
+body[data-theme="dark"] {
+  --bg: var(--bg-dark);
+  --text: var(--text-dark);
+}
+
+.login-page {
+  max-width: 400px;
+  margin: 4rem auto;
+  padding: 2rem;
+  background: var(--bg);
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  font-family: 'Segoe UI', sans-serif;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.login-toggle button {
+  background: none;
+  border: 2px solid #ccc;
+  padding: 0.5rem 1rem;
+  margin: 0 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+.login-toggle button.active {
+  background-color: #5E81F4;
+  color: white;
+  border-color: #5E81F4;
+}
+
+
+/* Responsive padding for small devices */
+@media (max-width: 500px) {
+  .login-page {
+    margin: 2rem 1rem;
+    padding: 1.5rem;
+  }
+
+  .login-page h2 {
+    font-size: 1.5rem;
+  }
+}
+
+.login-page h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.login-page input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.login-page button {
+  padding: 0.8rem;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  background: #4caf50;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.login-page button:hover {
+  background: #388e3c;
+}
+
+.guest-btn {
+  margin-top: 1rem;
+  background: #2196f3;
+}
+
+.guest-btn:hover {
+  background: #1976d2;
+}
+
+.error-msg {
+  margin-top: 1rem;
+  color: #e53935;
+  font-weight: bold;
+  text-align: center;
+}
+
+.lang-switcher {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.lang-switcher button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
