@@ -1,0 +1,248 @@
+[
+  {
+    "level": 1,
+    "type": "sequence",
+    "story": "🐢 Tomi si Kura-kura mulai menaiki tangga dari anak tangga ke-{start}. Ia menaiki satu per satu hingga mencapai anak tangga ke-{end}. Cetak setiap nomor tangga yang ia lewati.",
+    "start": 3,
+    "endOffset": 5,
+    "verify": "sequence",
+    "answer": "3\n4\n5\n6\n7\n8\n"
+  },
+  {
+    "level": 1,
+    "type": "evenOdd",
+    "story": "🐱 Luna si Kucing menemukan angka {num} di halaman rumah. Apakah itu angka {type}? Kembalikan 1 jika ya, 0 jika tidak.",
+    "num": 9,
+    "verify": "evenOdd",
+    "answer": 0
+  },
+  {
+    "level": 1,
+    "type": "evenOdd",
+    "story": "🐱 Luna menemukan angka misterius {num} di dekat tempat sampah. Apakah itu angka {type}? Kembalikan 1 jika ya, 0 jika tidak.",
+    "num": 8,
+    "verify": "evenOdd",
+    "answer": 1
+  },
+  {
+    "level": 2,
+    "type": "digitCount",
+    "story": "🐘 Eli si Gajah melihat angka {num} tertulis besar di badan truk pengangkut buah. Hitung berapa digit angka tersebut dan kembalikan hasilnya.",
+    "num": 456,
+    "verify": "digitCount",
+    "answer": 3
+  },
+  {
+    "level": 2,
+    "type": "digitCount",
+    "story": "🦁 Leo menemukan angka {num} terukir di batang pohon saat bermain di hutan kota. Hitung ada berapa digit dari angka tersebut.",
+    "num": 1024,
+    "verify": "digitCount",
+    "answer": 4
+  },
+  {
+    "level": 2,
+    "type": "sumDigits",
+    "story": "🧸 Beni si Beruang melihat angka {num} pada bungkus permen. Berapa jumlah semua digit dari angka tersebut?",
+    "num": 23,
+    "verify": "sumDigits",
+    "answer": 5
+  },
+  {
+    "level": 3,
+    "type": "reverseDigits",
+    "story": "🦊 Felis si Rubah menulis angka {num} secara terbalik di papan tulis kelas. Balikkan lagi ke angka yang benar dan kembalikan hasilnya.",
+    "num": 31,
+    "verify": "reverse",
+    "answer": 13
+  },
+  {
+    "level": 3,
+    "type": "multiples",
+    "story": "🐍 Sami si Ular merayap di ubin yang bernomor kelipatan dari {base}. Cetak semua kelipatan {base} sampai {limit}.",
+    "base": 4,
+    "limit": 20,
+    "verify": "multiples",
+    "answer": "4\n8\n12\n16\n20\n"
+  },
+  {
+    "level": 4,
+    "type": "fibonacci",
+    "story": "🐦 Ciko si Burung menghitung pohon di taman dengan cara aneh. Temukan bilangan ke-{n} dalam deret Fibonacci.",
+    "n": 7,
+    "verify": "fibonacci",
+    "answer": 13
+  },
+  {
+    "level": 4,
+    "type": "isPrime",
+    "story": "🐬 Dani si Lumba-lumba melihat angka {num} di pasir pantai. Apakah angka tersebut merupakan bilangan prima? Kembalikan 1 jika ya, 0 jika tidak.",
+    "num": 11,
+    "verify": "isPrime",
+    "answer": 1
+  },
+  {
+    "level": 4,
+    "type": "isPrime",
+    "story": "🦀 Karli si Kepiting melihat angka {num} pada kerang. Apakah angka tersebut bilangan prima? Kembalikan 1 jika ya, 0 jika tidak.",
+    "num": 12,
+    "verify": "isPrime",
+    "answer": 0
+  },
+  {
+    "level": 5,
+    "type": "factorCount",
+    "story": "🦓 Zaki si Zebra melihat angka {num} di plat nomor sepeda motor. Ada berapa faktor positif dari angka tersebut?",
+    "num": 12,
+    "verify": "factorCount",
+    "answer": 6
+  },
+  {
+    "level": 5,
+    "type": "perfectNumber",
+    "story": "🦢 Anggi si Angsa memeriksa apakah angka {num} adalah bilangan sempurna. Kembalikan 1 jika benar, 0 jika tidak.",
+    "num": 28,
+    "verify": "perfectNumber",
+    "answer": 1
+  },
+  {
+    "level": 5,
+    "type": "perfectNumber",
+    "story": "🐧 Pipa si Penguin penasaran apakah angka {num} termasuk bilangan sempurna. Kembalikan 1 jika iya, 0 jika tidak.",
+    "num": 10,
+    "verify": "perfectNumber",
+    "answer": 0
+  },
+  {
+    "level": 6,
+    "type": "printPrimes",
+    "story": "🧙‍♂️ Pak Merlin, guru matematika, meminta semua siswa menuliskan bilangan prima sampai {limit}. Cetak satu per satu di baris baru.",
+    "limit": 10,
+    "verify": "printPrimes",
+    "answer": "2\n3\n5\n7\n"
+  },
+
+{
+    "level": 6,
+    "type": "sumOfSquares",
+    "story": "🐻 Bobo si Beruang ingin menghitung jumlah kuadrat dari angka {num}. Hitung hasilnya dan kembalikan.",
+    "num": 4,
+    "verify": "sumOfSquares",
+    "answer": 30
+  },
+  {
+    "level": 6,
+    "type": "sumOfSquares",
+    "story": "🐼 Pandi si Panda ingin tahu berapa jumlah kuadrat dari angka {num}. Hitung dan kembalikan hasilnya.",
+    "num": 5,
+    "verify": "sumOfSquares",
+    "answer": 55
+  },
+{
+    "level": 7,
+    "type": "palindrome",
+    "story": "🦋 Lili si Kupu-kupu menemukan angka {num} di taman. Apakah angka tersebut palindrom? Kembalikan 1 jika ya, 0 jika tidak.",
+    "num": 121,
+    "verify": "palindrome",
+    "answer": 1
+  },
+  {
+    "level": 7,
+    "type": "palindrome",
+    "story": "🐢 Tino si Kura-kura melihat angka {num} di batu. Apakah itu palindrom? Kembalikan 1 jika ya, 0 jika tidak.",
+    "num": 123,
+    "verify": "palindrome",
+    "answer": 0
+  },
+  {
+    "level": 7,
+    "type": "armstrong",
+    "story": "🐘 Eko si Gajah menemukan angka {num} di pohon. Apakah itu bilangan Armstrong? Kembalikan 1 jika ya, 0 jika tidak.",
+    "num": 153,
+    "verify": "armstrong",
+    "answer": 1
+  },
+  {
+    "level": 7,
+    "type": "armstrong",
+    "story": "🐍 Siti si Ular melihat angka {num} di pasir. Apakah itu bilangan Armstrong? Kembalikan 1 jika ya, 0 jika tidak.",
+    "num": 123,
+    "verify": "armstrong",
+    "answer": 0
+  },
+  {
+    "level": 8,
+    "type": "lcm",
+    "story": "🐅 Tora si Harimau ingin tahu kelipatan persekutuan terkecil dari {a} dan {b}. Hitung dan kembalikan hasilnya.",
+    "a": 4,
+    "b": 6,
+    "verify": "lcm",
+    "answer": 12
+  },
+  {
+    "level": 8,
+    "type": "gcd",
+    "story": "🐘 Eko si Gajah ingin tahu faktor persekutuan terbesar dari {a} dan {b}. Hitung dan kembalikan hasilnya.",
+    "a": 18,
+    "b": 24,
+    "verify": "gcd",
+    "answer": 6
+  },
+  {
+    "level": 8,
+    "type": "gcd",
+    "story": "🐍 Siti si Ular ingin tahu faktor persekutuan terbesar dari {a} dan {b}. Hitung dan kembalikan hasilnya.",
+    "a": 20,
+    "b": 30,
+    "verify": "gcd",
+    "answer": 10
+  },
+  {
+    "level": 9,
+    "type": "powerOfTwo",
+    "story": "🐻 Bobo si Beruang ingin tahu apakah angka {num} adalah pangkat dua. Kembalikan 1 jika ya, 0 jika tidak.",
+    "num": 16,
+    "verify": "powerOfTwo",
+    "answer": 1
+  },
+  {
+    "level": 9,
+    "type": "powerOfTwo",
+    "story": "🐼 Pandi si Panda penasaran apakah angka {num} adalah pangkat dua. Kembalikan 1 jika iya, 0 jika tidak.",
+    "num": 18,
+    "verify": "powerOfTwo",
+    "answer": 0
+  },
+  {
+    "level": 9,
+    "type": "sumOfDigits",
+    "story": "🦁 Leo si Singa ingin tahu jumlah dari semua digit angka {num}. Hitung dan kembalikan hasilnya.",
+    "num": 987,
+    "verify": "sumOfDigits",
+    "answer": 24
+  },
+  {
+    "level": 9,
+    "type": "sumOfDigits",
+    "story": "🐢 Tino si Kura-kura penasaran dengan jumlah digit dari angka {num}. Hitung dan kembalikan hasilnya.",
+    "num": 4567,
+    "verify": "sumOfDigits",
+    "answer": 22
+  },
+  {
+    "level": 10,
+    "type": "binaryConversion",
+    "story": "🐱 Luna si Kucing ingin mengubah angka {num} ke dalam bentuk biner. Kembalikan hasilnya.",
+    "num": 10,
+    "verify": "binaryConversion",
+    "answer": "1010"
+  },
+  {
+    "level": 10,
+    "type": "binaryConversion",
+    "story": "🐶 Dodo si Anjing penasaran dengan representasi biner dari angka {num}. Kembalikan hasilnya.",
+    "num": 15,
+    "verify": "binaryConversion",
+    "answer": "1111"
+  }
+]
