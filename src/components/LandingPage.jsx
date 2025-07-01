@@ -17,7 +17,7 @@ const LandingPage = () => {
     <div className="landing-container">
       <div className="landing-header">
         <h1>BrainQuests 🚀</h1>
-        <p className="subtitle">Learn coding through fun math challenges!</p>
+        <p className="subtitle">Belajar Coding Dengan Matematika!</p>
       </div>
       
       <div className="game-options">
@@ -33,7 +33,7 @@ const LandingPage = () => {
             </svg>
           </div>
           <h3>Loop Land</h3>
-          <p>Master repeating patterns with loops</p>
+          <p>Kuasai Pola Yang Ada Dengan <i>Looping</i></p>
           <div className="card-footer">
             {selectedCharacter ? "Start Playing →" : "Select Character First"}
           </div>
@@ -51,7 +51,7 @@ const LandingPage = () => {
             </svg>
           </div>
           <h3>Number World</h3>
-          <p>Explore the magic of numbers</p>
+          <p>Jelajahi Misteri Angka Dengan Logika Pemrograman</p>
           <div className="card-footer">
             {selectedCharacter ? "Start Playing →" : "Select Character First"}
           </div>

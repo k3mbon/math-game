@@ -16,7 +16,7 @@ import './TeacherDashboard.css';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../firebase';
 
-const problemsCollection = collection(db, 'problems');
+const problemsCollection = collection(db, 'Problem'); // Capital 'P'
 const studentsCollection = collection(db, 'students');
 
 const defaultProblem = {
@@ -26,6 +26,8 @@ const defaultProblem = {
   story: '',
   verify: 'evenOdd',
   num: 0,
+  a: 0,
+  b: 0,
   answer: ''
 };
 
@@ -40,7 +42,7 @@ const defaultStudent = {
 const problemTypes = [
   'sequence', 'evenOdd', 'digitCount', 'sumDigits',
   'reverse', 'multiples', 'fibonacci', 'isPrime',
-  'factorCount', 'perfectNumber', 'printPrimes'
+  'factorCount', 'perfectNumber', 'printPrimes', 'gcd'
 ];
 
 const TeacherDashboard = () => {
@@ -77,13 +79,22 @@ const TeacherDashboard = () => {
 
   const handleProblemSubmit = async (e) => {
     e.preventDefault();
-    const newProblem = { ...editingProblem };
+    let newProblem = { ...editingProblem };
+
+    // Remove unused fields
+    if (newProblem.type !== 'gcd') {
+      delete newProblem.a;
+      delete newProblem.b;
+    }
+    if (!['evenOdd', 'sumDigits', 'digitCount', 'reverse', 'fibonacci'].includes(newProblem.type)) {
+      delete newProblem.num;
+    }
 
     if (!newProblem.id) {
       const docRef = await addDoc(problemsCollection, newProblem);
       newProblem.id = docRef.id;
     } else {
-      const docRef = doc(db, 'problems', newProblem.id);
+      const docRef = doc(db, 'Problem', newProblem.id);
       await updateDoc(docRef, newProblem);
     }
 
@@ -120,12 +131,12 @@ const TeacherDashboard = () => {
   };
 
   const handleEditProblem = (problem) => {
-    setEditingProblem(problem);
+    setEditingProblem({ ...defaultProblem, ...problem }); // Merge with default for missing fields
     setIsEditing(true);
   };
 
   const handleDeleteProblem = async (id) => {
-    const docRef = doc(db, 'problems', id);
+    const docRef = doc(db, 'Problem', id);
     await deleteDoc(docRef);
     fetchProblems();
   };
@@ -158,11 +169,48 @@ const TeacherDashboard = () => {
 
       <h3>➕ Add Problem</h3>
       <form className="problem-form" onSubmit={handleProblemSubmit}>
-        <label>Level:<input type="number" value={editingProblem.level} onChange={(e) => setEditingProblem({ ...editingProblem, level: parseInt(e.target.value) })} required /></label>
-        <label>Type:<select value={editingProblem.type} onChange={(e) => setEditingProblem({ ...editingProblem, type: e.target.value, verify: e.target.value })}>{problemTypes.map(type => <option key={type} value={type}>{type}</option>)}</select></label>
-        <label>Story:<textarea value={editingProblem.story} onChange={(e) => setEditingProblem({ ...editingProblem, story: e.target.value })} required /></label>
-        <label>Value:<input type="number" value={editingProblem.num} onChange={(e) => setEditingProblem({ ...editingProblem, num: parseInt(e.target.value) })} /></label>
-        <label>Answer:<input type="text" value={editingProblem.answer} onChange={(e) => setEditingProblem({ ...editingProblem, answer: e.target.value })} /></label>
+        <label>
+          Level:
+          <input type="number" value={editingProblem.level} onChange={(e) => setEditingProblem({ ...editingProblem, level: parseInt(e.target.value) })} required />
+        </label>
+        <label>
+          Type:
+          <select value={editingProblem.type} onChange={(e) => setEditingProblem({ ...editingProblem, type: e.target.value, verify: e.target.value })}>
+            {problemTypes.map(type => <option key={type} value={type}>{type}</option>)}
+          </select>
+        </label>
+        <label>
+          Story:
+          <textarea value={editingProblem.story} onChange={(e) => setEditingProblem({ ...editingProblem, story: e.target.value })} required />
+        </label>
+
+        {/* Show a & b if type is gcd */}
+        {editingProblem.type === 'gcd' && (
+          <>
+            <label>
+              a:
+              <input type="number" value={editingProblem.a} onChange={(e) => setEditingProblem({ ...editingProblem, a: parseInt(e.target.value) })} />
+            </label>
+            <label>
+              b:
+              <input type="number" value={editingProblem.b} onChange={(e) => setEditingProblem({ ...editingProblem, b: parseInt(e.target.value) })} />
+            </label>
+          </>
+        )}
+
+        {/* Show num for relevant types */}
+        {['evenOdd', 'sumDigits', 'digitCount', 'reverse', 'fibonacci'].includes(editingProblem.type) && (
+          <label>
+            Num:
+            <input type="number" value={editingProblem.num} onChange={(e) => setEditingProblem({ ...editingProblem, num: parseInt(e.target.value) })} />
+          </label>
+        )}
+
+        <label>
+          Answer:
+          <input type="text" value={editingProblem.answer} onChange={(e) => setEditingProblem({ ...editingProblem, answer: e.target.value })} />
+        </label>
+
         <div className="form-buttons">
           <button type="submit">{isEditing ? 'Update Problem' : 'Add Problem'}</button>
           {isEditing && <button onClick={resetForm} type="button">Cancel</button>}
@@ -175,6 +223,9 @@ const TeacherDashboard = () => {
             <p><strong>Level:</strong> {problem.level}</p>
             <p><strong>Type:</strong> {problem.type}</p>
             <p><strong>Story:</strong> {problem.story}</p>
+            {problem.a !== undefined && <p><strong>a:</strong> {problem.a}</p>}
+            {problem.b !== undefined && <p><strong>b:</strong> {problem.b}</p>}
+            {problem.num !== undefined && <p><strong>Num:</strong> {problem.num}</p>}
             <p><strong>Answer:</strong> {problem.answer}</p>
             <div className="card-buttons">
               <button onClick={() => handleEditProblem(problem)}>✏️ Edit</button>
