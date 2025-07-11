@@ -1,0 +1,6 @@
+/* src/components/ArcadeMode.css */
+.mode-container { text-align:center; margin:2rem; color: var(--text); }
+.stats { font-size:1.2rem; margin-bottom:1rem; }
+.arcade-problem { font-size:1.4rem; margin:1rem 0; }
+.arcade-form input { padding:0.5rem; width:120px; }
+.arcade-form button { padding:0.5rem 1rem; margin-left:0.5rem; }

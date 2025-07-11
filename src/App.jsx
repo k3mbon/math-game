@@ -15,8 +15,11 @@ import { CharacterProvider } from './contexts/CharacterContext';
 import { GameProgressProvider } from './contexts/GameProgressContext';
 import DashboardRedirect from './components/DashboardRedirect';
 import DashboardPage from './components/DashboardPage';
+import NotFound from './components/NotFound'; // Adjust path if needed
+import ArcadeMode from './components/Arcade';
 
 import { auth, db } from './firebase';
+import Game1 from './components/Game1';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -51,6 +54,8 @@ function App() {
 
   if (loading) return <div className="loading-screen">Loading...</div>;
 
+  // Import Game1 component
+
   return (
     <CharacterProvider>
       <GameProgressProvider>
@@ -63,6 +68,10 @@ function App() {
               <Route path="/register-teacher" element={<TeacherRegisterPage />} />
               <Route path="/dashboard" element={<DashboardRedirect />} />
               <Route path="/dashboard-home" element={<DashboardPage />} />
+              <Route path="/arcade" element={<ArcadeMode />} />
+
+              {/* Add route for Game1 */}
+              <Route path="/game1" element={<Game1 />} />
 
               {/* Role-based access */}
               {role === 'teacher' && (
@@ -71,9 +80,14 @@ function App() {
               {(role === 'student' || role === 'guest') && (
                 <>
                   <Route path="/iteration" element={<IterationPage />} />
-                  <Route path="/numeration" element={<NumerationPage />} />
+                  <Route path="/numeration">
+                    <Route index element={<NumerationPage />} />
+                  </Route>
                 </>
               )}
+
+              {/* 404 fallback — should be the LAST route */}
+              <Route path="*" element={<NotFound />} />
 
               {/* Fallback route */}
               <Route path="*" element={<Navigate to="/login" />} />

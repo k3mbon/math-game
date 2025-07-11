@@ -1,0 +1,184 @@
+.bnl-container {
+  width: 100vw;
+  min-height: 100vh;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.bnl-title {
+  margin-top: 24px;
+  font-size: clamp(22px, 5vw, 38px);
+  color: #1976d2;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(25,118,210,0.08);
+  user-select: none;
+}
+
+.bnl-desc {
+  margin: 8px 0 16px 0;
+  color: #444;
+  font-size: 1.1em;
+  text-align: center;
+}
+
+.bnl-block {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 1em;
+  margin: 0 2px;
+}
+
+.bnl-main {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  width: 100%;
+  max-width: 1100px;
+  justify-content: center;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.bnl-visual {
+  flex: 1 1 350px;
+  min-width: 350px;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.bnl-number-line {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: center;
+  margin-top: 24px;
+  gap: 0;
+}
+
+.bnl-number {
+  position: relative;
+  width: 40px;
+  height: 70px;
+  margin: 0 2px;
+  background: #fff;
+  border: 1.5px solid #bbdefb;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 1.2em;
+  font-weight: 600;
+  color: #1976d2;
+  transition: background 0.2s;
+}
+
+.bnl-number.bnl-target {
+  background: #fffde7;
+  border-color: #ffd54f;
+}
+
+.bnl-number.bnl-robot {
+  background: #e3f2fd;
+  border-color: #1976d2;
+}
+
+.bnl-robot-icon {
+  position: absolute;
+  top: -38px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.bnl-target-flag {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5em;
+}
+
+.bnl-blockly {
+  flex: 1 1 400px;
+  min-width: 320px;
+  max-width: 480px;
+  min-height: 350px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  border: 1.5px solid #e0e0e0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.bnl-blockly-area {
+  width: 100%;
+  height: 350px;
+  min-height: 350px;
+}
+
+.bnl-controls {
+  margin: 16px 0 0 0;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.bnl-btn {
+  padding: 10px 28px;
+  font-size: 1.1em;
+  border-radius: 8px;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(25,118,210,0.08);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.bnl-btn:hover {
+  background: #1565c0;
+}
+
+.bnl-message {
+  margin-top: 18px;
+  font-size: 1.2em;
+  color: #388e3c;
+  font-weight: 600;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .bnl-main {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .bnl-blockly {
+    width: 95vw;
+    min-width: 0;
+    max-width: 100vw;
+  }
+  .bnl-visual {
+    width: 95vw;
+    min-width: 0;
+    max-width: 100vw;
+  }
+}

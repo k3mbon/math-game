@@ -66,6 +66,9 @@ body {
   gap: 2rem;
   margin-bottom: 3rem;
   width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .game-card {
@@ -146,6 +149,18 @@ body {
   fill: white;
 }
 
+.tower-defense-card {
+  border-color: var(--accent);
+}
+
+.tower-defense-card .card-icon {
+  background: linear-gradient(135deg, var(--accent), #FFD54F);
+}
+
+.tower-defense-card .card-icon svg {
+  fill: white;
+}
+
 /* Character selection */
 .character-selection {
   margin-top: auto;
@@ -160,6 +175,52 @@ body {
   border: 1px solid rgba(var(--primary), 0.1);
   transition: all 0.3s ease;
 }
+
+.login-options {
+  text-align: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+.login-options h3 {
+  font-size: 1.5rem;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+
+.login-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.login-btn {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.login-btn.teacher {
+  background-color: #5e81f4;
+  color: white;
+}
+
+.login-btn.student {
+  background-color: #ff7ac6;
+  color: white;
+}
+
+.login-btn:hover {
+  transform: scale(1.05);
+}
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -277,6 +338,21 @@ body {
     grid-template-columns: 1fr;
     max-width: 500px;
     margin: 0 auto 2rem;
+    gap: 1.5rem;
+  }
+  
+  .game-card {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .game-card h3 {
+    font-size: 1.4rem;
+    margin: 1rem 0 0.5rem;
+  }
+
+  .game-card p {
+    font-size: 1rem;
   }
   
   .character-options {
@@ -295,6 +371,24 @@ body {
   }
   
   .game-card {
-    padding: 1.5rem;
+    padding: 1.2rem;
+  }
+
+  .game-card h3 {
+    font-size: 1.2rem;
+  }
+
+  .game-card p {
+    font-size: 0.9rem;
+  }
+
+  .card-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .card-icon svg {
+    width: 40px;
+    height: 40px;
   }
 }

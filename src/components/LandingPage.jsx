@@ -1,13 +1,12 @@
 // components/LandingPage.jsx
-import React from 'react';
-import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCharacter } from '../contexts/CharacterContext';
 import './LandingPage.css';
 
 const LandingPage = () => {
   const { characters, selectedCharacter, setSelectedCharacter } = useCharacter();
-
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.title = 'Dashboard | BrainQuests';
@@ -22,9 +21,9 @@ const LandingPage = () => {
       
       <div className="game-options">
         <Link 
-          to="/iteration" 
+          to={selectedCharacter ? "/iteration" : "#"}
           className="game-card iteration-card"
-          onClick={() => !selectedCharacter && alert("Please select a character first!")}
+          onClick={(e) => !selectedCharacter && (e.preventDefault(), alert("Please select a character first!"))}
         >
           <div className="card-icon">
             <svg viewBox="0 0 24 24">
@@ -40,9 +39,9 @@ const LandingPage = () => {
         </Link>
 
         <Link 
-          to="/numeration" 
+          to={selectedCharacter ? "/numeration" : "#"}
           className="game-card numeration-card"
-          onClick={() => !selectedCharacter && alert("Please select a character first!")}
+          onClick={(e) => !selectedCharacter && (e.preventDefault(), alert("Please select a character first!"))}
         >
           <div className="card-icon">
             <svg viewBox="0 0 24 24">
@@ -56,6 +55,31 @@ const LandingPage = () => {
             {selectedCharacter ? "Start Playing →" : "Select Character First"}
           </div>
         </Link>
+
+        {/* Game 1 Card using Game1 component */}
+        <div className="game-card game1-card">
+          {/* Import and use your Game1 component here */}
+          {/* Example: <Game1 selectedCharacter={selectedCharacter} /> */}
+          {/* If you want to link to a route: */}
+          <Link
+            to={selectedCharacter ? "/game1" : "#"}
+            onClick={(e) => !selectedCharacter && (e.preventDefault(), alert("Please select a character first!"))}
+            className="game1-link"
+          >
+            <div className="card-icon">
+              {/* You can use a custom icon for Game 1 */}
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" fill="#4caf50"/>
+                <text x="12" y="16" textAnchor="middle" fontSize="10" fill="#fff">G1</text>
+              </svg>
+            </div>
+            <h3>Game 1</h3>
+            <p>Mainkan Game 1 dengan karakter pilihanmu!</p>
+            <div className="card-footer">
+              {selectedCharacter ? "Start Playing →" : "Select Character First"}
+            </div>
+          </Link>
+        </div>
       </div>
 
       <div className="character-selection">
@@ -71,6 +95,18 @@ const LandingPage = () => {
               <span className="character-name">{character.name}</span>
             </div>
           ))}
+        </div>
+      </div>
+
+      <div className="login-options">
+        <h3>Login As:</h3>
+        <div className="login-buttons">
+          <button className="login-btn teacher" onClick={() => navigate('/login?role=teacher')}>
+            👩‍🏫 Teacher
+          </button>
+          <button className="login-btn student" onClick={() => navigate('/login?role=student')}>
+            👩‍🎓 Student
+          </button>
         </div>
       </div>
     </div>
