@@ -1,0 +1,337 @@
+.treasure-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.treasure-modal {
+  background: linear-gradient(135deg, #2C1810 0%, #4A2C17 100%);
+  border: 3px solid #FFD700;
+  border-radius: 15px;
+  width: 95vw;
+  height: 90vh;
+  max-width: 1400px;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.treasure-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 165, 0, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.modal-header {
+  background: linear-gradient(90deg, #B8860B 0%, #FFD700 50%, #B8860B 100%);
+  color: #2C1810;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #DAA520;
+  position: relative;
+  z-index: 1;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.close-btn {
+  background: #8B4513;
+  color: #FFD700;
+  border: 2px solid #FFD700;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: #A0522D;
+  transform: scale(1.1);
+}
+
+.modal-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.question-section {
+  flex: 1;
+  padding: 20px;
+  background: rgba(139, 69, 19, 0.1);
+  border-right: 2px solid #8B4513;
+  overflow-y: auto;
+  color: #FFD700;
+}
+
+.blockly-section {
+  flex: 1;
+  padding: 20px;
+  background: rgba(75, 44, 23, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.story-section {
+  background: rgba(255, 215, 0, 0.1);
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #DAA520;
+}
+
+.story-section h3 {
+  color: #FFD700;
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
+}
+
+.story-section p {
+  color: #F5DEB3;
+  line-height: 1.6;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.problem-details {
+  background: rgba(218, 165, 32, 0.1);
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #B8860B;
+}
+
+.problem-details > div {
+  margin-bottom: 8px;
+  color: #F5DEB3;
+}
+
+.difficulty-mudah { color: #90EE90; }
+.difficulty-sedang { color: #FFD700; }
+.difficulty-sulit { color: #FF6B6B; }
+
+.expected-output {
+  background: rgba(139, 69, 19, 0.2);
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #8B4513;
+}
+
+.expected-output h4 {
+  color: #FFD700;
+  margin: 0 0 10px 0;
+}
+
+.expected-output pre {
+  background: #2C1810;
+  color: #90EE90;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #4A2C17;
+  font-family: 'Courier New', monospace;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.result {
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  animation: slideIn 0.3s ease;
+}
+
+.result.correct {
+  background: rgba(144, 238, 144, 0.2);
+  border: 2px solid #90EE90;
+  color: #90EE90;
+}
+
+.result.incorrect {
+  background: rgba(255, 107, 107, 0.2);
+  border: 2px solid #FF6B6B;
+  color: #FF6B6B;
+}
+
+.result h4 {
+  margin: 0 0 10px 0;
+}
+
+.result code {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+}
+
+.blockly-section h3 {
+  color: #FFD700;
+  margin: 0 0 15px 0;
+  font-size: 1.2rem;
+}
+
+.blockly-container {
+  flex: 1;
+  border: 2px solid #8B4513;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+  margin-bottom: 15px;
+}
+
+.blockly-workspace {
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+}
+
+.code-section {
+  margin-bottom: 15px;
+}
+
+.code-section h4 {
+  color: #FFD700;
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+}
+
+.generated-code {
+  background: #2C1810;
+  color: #90EE90;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #4A2C17;
+  font-family: 'Courier New', monospace;
+  white-space: pre-wrap;
+  max-height: 100px;
+  overflow-y: auto;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.run-btn, .reset-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.run-btn {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  flex: 1;
+}
+
+.run-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+.run-btn:disabled {
+  background: #666;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.reset-btn {
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+  color: white;
+  flex: 0.5;
+}
+
+.reset-btn:hover {
+  background: linear-gradient(135deg, #F57C00 0%, #E65100 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .modal-content {
+    flex-direction: column;
+  }
+  
+  .question-section {
+    border-right: none;
+    border-bottom: 2px solid #8B4513;
+    max-height: 40vh;
+  }
+  
+  .blockly-section {
+    flex: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .treasure-modal {
+    width: 98vw;
+    height: 95vh;
+  }
+  
+  .modal-header h2 {
+    font-size: 1.2rem;
+  }
+  
+  .question-section,
+  .blockly-section {
+    padding: 15px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .reset-btn {
+    flex: 1;
+  }
+}

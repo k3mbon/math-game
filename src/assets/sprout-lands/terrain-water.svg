@@ -1,0 +1,31 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Water terrain tile -->
+  <!-- Base water -->
+  <rect x="0" y="0" width="32" height="32" fill="#42A5F5"/>
+  <!-- Water depth variations -->
+  <rect x="0" y="8" width="32" height="8" fill="#2196F3"/>
+  <rect x="0" y="20" width="32" height="12" fill="#1976D2"/>
+  <!-- Wave patterns -->
+  <path d="M 0 6 Q 4 4 8 6 T 16 6 T 24 6 T 32 6" stroke="#64B5F6" stroke-width="2" fill="none">
+    <animate attributeName="d" values="M 0 6 Q 4 4 8 6 T 16 6 T 24 6 T 32 6;M 0 6 Q 4 8 8 6 T 16 6 T 24 6 T 32 6;M 0 6 Q 4 4 8 6 T 16 6 T 24 6 T 32 6" dur="3s" repeatCount="indefinite"/>
+  </path>
+  <path d="M 0 12 Q 4 10 8 12 T 16 12 T 24 12 T 32 12" stroke="#90CAF9" stroke-width="1" fill="none">
+    <animate attributeName="d" values="M 0 12 Q 4 10 8 12 T 16 12 T 24 12 T 32 12;M 0 12 Q 4 14 8 12 T 16 12 T 24 12 T 32 12;M 0 12 Q 4 10 8 12 T 16 12 T 24 12 T 32 12" dur="2.5s" repeatCount="indefinite"/>
+  </path>
+  <path d="M 0 18 Q 4 16 8 18 T 16 18 T 24 18 T 32 18" stroke="#BBDEFB" stroke-width="1" fill="none">
+    <animate attributeName="d" values="M 0 18 Q 4 16 8 18 T 16 18 T 24 18 T 32 18;M 0 18 Q 4 20 8 18 T 16 18 T 24 18 T 32 18;M 0 18 Q 4 16 8 18 T 16 18 T 24 18 T 32 18" dur="3.5s" repeatCount="indefinite"/>
+  </path>
+  <!-- Bubbles -->
+  <circle cx="6" cy="24" r="1" fill="#E3F2FD" opacity="0.7">
+    <animate attributeName="cy" values="24;20;24" dur="4s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.7;0.3;0.7" dur="4s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="14" cy="28" r="0.5" fill="#E3F2FD" opacity="0.5">
+    <animate attributeName="cy" values="28;24;28" dur="3s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.5;0.2;0.5" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="22" cy="26" r="1.5" fill="#E3F2FD" opacity="0.6">
+    <animate attributeName="cy" values="26;22;26" dur="5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.6;0.2;0.6" dur="5s" repeatCount="indefinite"/>
+  </circle>
+</svg>

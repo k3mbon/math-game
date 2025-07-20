@@ -1,0 +1,47 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cute house building -->
+  <!-- House shadow -->
+  <ellipse cx="34" cy="60" rx="20" ry="4" fill="#000" opacity="0.2"/>
+  <!-- House base -->
+  <rect x="16" y="32" width="32" height="28" fill="#FFCC02" stroke="#FF8F00" stroke-width="2"/>
+  <!-- Roof -->
+  <polygon points="32,8 12,32 52,32" fill="#D32F2F" stroke="#B71C1C" stroke-width="2"/>
+  <!-- Roof tiles -->
+  <rect x="14" y="30" width="36" height="2" fill="#F44336"/>
+  <rect x="16" y="26" width="32" height="2" fill="#F44336"/>
+  <rect x="18" y="22" width="28" height="2" fill="#F44336"/>
+  <rect x="20" y="18" width="24" height="2" fill="#F44336"/>
+  <rect x="22" y="14" width="20" height="2" fill="#F44336"/>
+  <rect x="24" y="10" width="16" height="2" fill="#F44336"/>
+  <!-- Door -->
+  <rect x="26" y="44" width="12" height="16" fill="#8D6E63" stroke="#5D4037" stroke-width="1"/>
+  <!-- Door handle -->
+  <circle cx="35" cy="52" r="1" fill="#FFD54F"/>
+  <!-- Door panels -->
+  <rect x="28" y="46" width="8" height="6" fill="#A1887F"/>
+  <rect x="28" y="54" width="8" height="4" fill="#A1887F"/>
+  <!-- Windows -->
+  <rect x="18" y="38" width="6" height="6" fill="#81D4FA" stroke="#0277BD" stroke-width="1"/>
+  <rect x="40" y="38" width="6" height="6" fill="#81D4FA" stroke="#0277BD" stroke-width="1"/>
+  <!-- Window frames -->
+  <line x1="21" y1="38" x2="21" y2="44" stroke="#0277BD" stroke-width="1"/>
+  <line x1="18" y1="41" x2="24" y2="41" stroke="#0277BD" stroke-width="1"/>
+  <line x1="43" y1="38" x2="43" y2="44" stroke="#0277BD" stroke-width="1"/>
+  <line x1="40" y1="41" x2="46" y2="41" stroke="#0277BD" stroke-width="1"/>
+  <!-- Window curtains -->
+  <rect x="19" y="39" width="2" height="4" fill="#FFCDD2" opacity="0.7"/>
+  <rect x="41" y="39" width="2" height="4" fill="#FFCDD2" opacity="0.7"/>
+  <!-- Chimney -->
+  <rect x="40" y="12" width="6" height="12" fill="#8D6E63" stroke="#5D4037" stroke-width="1"/>
+  <!-- Chimney top -->
+  <rect x="38" y="10" width="10" height="4" fill="#A1887F" stroke="#8D6E63" stroke-width="1"/>
+  <!-- Smoke -->
+  <circle cx="43" cy="8" r="1" fill="#E0E0E0" opacity="0.7">
+    <animate attributeName="cy" values="8;4;8" dur="3s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.7;0.2;0.7" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="41" cy="6" r="0.8" fill="#E0E0E0" opacity="0.5">
+    <animate attributeName="cy" values="6;2;6" dur="2.5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.5;0.1;0.5" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+</svg>

@@ -1,0 +1,17 @@
+<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+  <!-- Collectible coin -->
+  <!-- Coin shadow -->
+  <ellipse cx="8.5" cy="9" rx="6" ry="5" fill="#B8860B" opacity="0.3"/>
+  <!-- Coin base -->
+  <circle cx="8" cy="8" r="6" fill="#FFD700" stroke="#FFA000" stroke-width="1"/>
+  <!-- Coin inner ring -->
+  <circle cx="8" cy="8" r="4" fill="#FFEB3B" stroke="#FF8F00" stroke-width="1"/>
+  <!-- Coin center -->
+  <circle cx="8" cy="8" r="2" fill="#FFF59D"/>
+  <!-- Sparkle effect -->
+  <polygon points="8,3 8.5,5 10,5 9,6 9.5,8 8,7 6.5,8 7,6 6,5 7.5,5" fill="#FFF" opacity="0.8">
+    <animateTransform attributeName="transform" type="rotate" values="0 8 8;360 8 8" dur="3s" repeatCount="indefinite"/>
+  </polygon>
+  <!-- Highlight -->
+  <ellipse cx="6" cy="6" rx="2" ry="1" fill="#FFF" opacity="0.6"/>
+</svg>

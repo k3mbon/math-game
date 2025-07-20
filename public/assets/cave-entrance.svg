@@ -1,0 +1,28 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cave entrance rock formation -->
+  <path d="M 2 30 Q 2 25 5 20 Q 8 15 12 12 Q 16 8 20 12 Q 24 15 27 20 Q 30 25 30 30 Z" fill="#4A4A4A"/>
+  
+  <!-- Cave opening (dark entrance) -->
+  <ellipse cx="16" cy="22" rx="8" ry="6" fill="#000000"/>
+  
+  <!-- Inner cave depth -->
+  <ellipse cx="16" cy="21" rx="6" ry="4" fill="#1A1A1A"/>
+  
+  <!-- Rock texture around entrance -->
+  <path d="M 8 18 Q 12 15 16 18 Q 20 15 24 18 Q 22 20 20 22 Q 16 20 12 22 Q 10 20 8 18 Z" fill="#696969"/>
+  
+  <!-- Stalactites at entrance -->
+  <polygon points="12,16 13,20 11,20" fill="#5A5A5A"/>
+  <polygon points="20,16 21,19 19,19" fill="#5A5A5A"/>
+  <polygon points="16,15 17,18 15,18" fill="#5A5A5A"/>
+  
+  <!-- Moss and vegetation -->
+  <ellipse cx="8" cy="25" rx="2" ry="1" fill="#228B22" opacity="0.7"/>
+  <ellipse cx="24" cy="26" rx="1.5" ry="0.8" fill="#228B22" opacity="0.6"/>
+  
+  <!-- Mysterious glow from inside -->
+  <ellipse cx="16" cy="22" rx="4" ry="2" fill="#4169E1" opacity="0.3"/>
+  
+  <!-- Cave entrance border highlight -->
+  <path d="M 8 18 Q 12 15 16 18 Q 20 15 24 18" stroke="#808080" stroke-width="1" fill="none"/>
+</svg>

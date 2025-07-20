@@ -102,3 +102,101 @@
 .floating-character:hover .progress-ring-circle {
   stroke-width: 6;
 }
+
+/* Responsive Design for FloatingCharacter */
+
+/* Tablets and smaller desktops */
+@media (max-width: 768px) {
+  .floating-character {
+    width: 55px;
+    height: 55px;
+  }
+  
+  .character-emoji {
+    font-size: 2.2rem;
+  }
+  
+  .progress-percentage {
+    font-size: 0.8rem;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 480px) {
+  .floating-character {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .character-emoji {
+    font-size: 2rem;
+  }
+  
+  .progress-percentage {
+    font-size: 0.75rem;
+  }
+  
+  .progress-ring-circle {
+    stroke-width: 3;
+  }
+  
+  .floating-character:hover .progress-ring-circle {
+    stroke-width: 5;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 360px) {
+  .floating-character {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .character-emoji {
+    font-size: 1.8rem;
+  }
+  
+  .progress-percentage {
+    font-size: 0.7rem;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 280px) {
+  .floating-character {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .character-emoji {
+    font-size: 1.6rem;
+  }
+  
+  .progress-percentage {
+    font-size: 0.65rem;
+  }
+  
+  .progress-ring-circle {
+    stroke-width: 2.5;
+  }
+  
+  .floating-character:hover .progress-ring-circle {
+    stroke-width: 4;
+  }
+}
+
+/* Ultra small screens */
+@media (max-width: 240px) {
+  .floating-character {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .character-emoji {
+    font-size: 1.4rem;
+  }
+  
+  .progress-percentage {
+    font-size: 0.6rem;
+  }
+}

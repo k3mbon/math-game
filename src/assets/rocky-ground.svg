@@ -1,0 +1,68 @@
+<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+  <!-- Base rocky ground -->
+  <rect x="0" y="0" width="40" height="40" fill="#9a8a7a"/>
+  
+  <!-- Rock patches -->
+  <rect x="2" y="2" width="8" height="6" fill="#8a7a6a"/>
+  <rect x="12" y="4" width="6" height="8" fill="#8a7a6a"/>
+  <rect x="22" y="1" width="10" height="5" fill="#8a7a6a"/>
+  <rect x="34" y="3" width="5" height="7" fill="#8a7a6a"/>
+  
+  <rect x="1" y="12" width="7" height="6" fill="#8a7a6a"/>
+  <rect x="10" y="14" width="9" height="4" fill="#8a7a6a"/>
+  <rect x="21" y="11" width="6" height="9" fill="#8a7a6a"/>
+  <rect x="29" y="13" width="8" height="6" fill="#8a7a6a"/>
+  
+  <rect x="3" y="22" width="6" height="8" fill="#8a7a6a"/>
+  <rect x="11" y="24" width="8" height="5" fill="#8a7a6a"/>
+  <rect x="21" y="23" width="5" height="7" fill="#8a7a6a"/>
+  <rect x="28" y="25" width="9" height="6" fill="#8a7a6a"/>
+  
+  <rect x="2" y="32" width="9" height="6" fill="#8a7a6a"/>
+  <rect x="13" y="34" width="6" height="5" fill="#8a7a6a"/>
+  <rect x="21" y="33" width="8" height="6" fill="#8a7a6a"/>
+  <rect x="31" y="35" width="7" height="4" fill="#8a7a6a"/>
+  
+  <!-- Darker rock crevices -->
+  <rect x="6" y="6" width="2" height="2" fill="#6a5a4a"/>
+  <rect x="16" y="8" width="2" height="2" fill="#6a5a4a"/>
+  <rect x="26" y="3" width="2" height="2" fill="#6a5a4a"/>
+  <rect x="36" y="6" width="2" height="2" fill="#6a5a4a"/>
+  
+  <rect x="4" y="16" width="2" height="2" fill="#6a5a4a"/>
+  <rect x="14" y="17" width="2" height="2" fill="#6a5a4a"/>
+  <rect x="24" y="15" width="2" height="2" fill="#6a5a4a"/>
+  <rect x="33" y="17" width="2" height="2" fill="#6a5a4a"/>
+  
+  <rect x="7" y="26" width="2" height="2" fill="#6a5a4a"/>
+  <rect x="17" y="27" width="2" height="2" fill="#6a5a4a"/>
+  <rect x="24" y="26" width="2" height="2" fill="#6a5a4a"/>
+  <rect x="32" y="28" width="2" height="2" fill="#6a5a4a"/>
+  
+  <rect x="6" y="36" width="2" height="2" fill="#6a5a4a"/>
+  <rect x="17" y="37" width="2" height="2" fill="#6a5a4a"/>
+  <rect x="25" y="36" width="2" height="2" fill="#6a5a4a"/>
+  <rect x="35" y="37" width="2" height="2" fill="#6a5a4a"/>
+  
+  <!-- Light rock highlights -->
+  <rect x="4" y="4" width="2" height="1" fill="#aaa99a"/>
+  <rect x="14" y="6" width="2" height="1" fill="#aaa99a"/>
+  <rect x="24" y="2" width="2" height="1" fill="#aaa99a"/>
+  <rect x="35" y="4" width="2" height="1" fill="#aaa99a"/>
+  
+  <rect x="3" y="14" width="2" height="1" fill="#aaa99a"/>
+  <rect x="12" y="15" width="2" height="1" fill="#aaa99a"/>
+  <rect x="23" y="13" width="2" height="1" fill="#aaa99a"/>
+  <rect x="31" y="15" width="2" height="1" fill="#aaa99a"/>
+  
+  <!-- Small pebbles -->
+  <rect x="9" y="10" width="1" height="1" fill="#7a6a5a"/>
+  <rect x="19" y="9" width="1" height="1" fill="#7a6a5a"/>
+  <rect x="29" y="11" width="1" height="1" fill="#7a6a5a"/>
+  <rect x="8" y="20" width="1" height="1" fill="#7a6a5a"/>
+  <rect x="18" y="21" width="1" height="1" fill="#7a6a5a"/>
+  <rect x="27" y="22" width="1" height="1" fill="#7a6a5a"/>
+  <rect x="10" y="31" width="1" height="1" fill="#7a6a5a"/>
+  <rect x="20" y="30" width="1" height="1" fill="#7a6a5a"/>
+  <rect x="30" y="32" width="1" height="1" fill="#7a6a5a"/>
+</svg>

@@ -1,0 +1,25 @@
+<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cute cat companion -->
+  <!-- Body -->
+  <ellipse cx="12" cy="16" rx="6" ry="4" fill="#FFA726" stroke="#FF8F00" stroke-width="1"/>
+  <!-- Head -->
+  <circle cx="12" cy="10" r="5" fill="#FFA726" stroke="#FF8F00" stroke-width="1"/>
+  <!-- Ears -->
+  <polygon points="8,7 10,3 12,7" fill="#FFA726" stroke="#FF8F00" stroke-width="1"/>
+  <polygon points="12,7 14,3 16,7" fill="#FFA726" stroke="#FF8F00" stroke-width="1"/>
+  <!-- Inner ears -->
+  <polygon points="9,6 10,4 11,6" fill="#FFB74D"/>
+  <polygon points="13,6 14,4 15,6" fill="#FFB74D"/>
+  <!-- Eyes -->
+  <circle cx="10" cy="9" r="1" fill="#000"/>
+  <circle cx="14" cy="9" r="1" fill="#000"/>
+  <!-- Nose -->
+  <polygon points="12,11 11,12 13,12" fill="#E91E63"/>
+  <!-- Mouth -->
+  <path d="M 11 13 Q 12 14 13 13" stroke="#000" stroke-width="1" fill="none"/>
+  <!-- Tail -->
+  <path d="M 18 16 Q 20 12 18 8" stroke="#FFA726" stroke-width="3" fill="none"/>
+  <!-- Paws -->
+  <circle cx="8" cy="19" r="1.5" fill="#FFA726" stroke="#FF8F00" stroke-width="1"/>
+  <circle cx="16" cy="19" r="1.5" fill="#FFA726" stroke="#FF8F00" stroke-width="1"/>
+</svg>

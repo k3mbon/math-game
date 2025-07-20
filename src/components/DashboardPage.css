@@ -2,9 +2,9 @@
   max-width: 600px;
   margin: 4rem auto;
   padding: 2rem;
-  background: var(--bg, #fff);
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(94, 114, 235, 0.05), rgba(123, 92, 250, 0.1));
+  border-radius: 16px;
+
   font-family: 'Segoe UI', sans-serif;
   text-align: center;
 }

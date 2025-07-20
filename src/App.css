@@ -1,45 +1,78 @@
 /* App.css */
 :root {
   /* Primary color palette */
-  --primary-500: #4F46E5;  /* Indigo */
-  --primary-600: #4338CA;
-  --primary-700: #3730A3;
+  --primary-500: #7B5CFA;  /* Vibrant Purple */
+  --primary-600: #6C4FF0;
+  --primary-700: #5E45E0;
   
   /* Secondary color palette */
-  --secondary-500: #10B981; /* Emerald */
-  --secondary-600: #0D9488;
+  --secondary-500: #5E72EB; /* Bright Blue */
+  --secondary-600: #4A64E0;
+  --secondary-700: #3A56D4;
   
-  /* Neutral colors */
-  --neutral-50: #F8FAFC;
-  --neutral-100: #F1F5F9;
-  --neutral-200: #E2E8F0;
-  --neutral-700: #334155;
-  --neutral-800: #1E293B;
-  --neutral-900: #0F172A;
+  /* Accent colors */
+  --accent-pink: #FF6B9A;   /* Pink */
+  --accent-yellow: #FFD166; /* Yellow */
+  --accent-green: #06D6A0;  /* Green */
+  --accent-orange: #FF9F76; /* Orange */
   
-  /* Supporting colors */
-  --accent-500: #F59E0B; /* Amber */
-  --error-500: #EF4444;  /* Red */
-  --success-500: #10B981; /* Emerald */
+  /* Background colors */
+  --bg-main: #6C63FF;      /* Main background */
+  --bg-light: #F0EEFF;     /* Light background */
+  --bg-card: #FFFFFF;      /* Card background */
+  
+  /* Text colors */
+  --text-primary: #2D2B55;   /* Primary text */
+  --text-secondary: #6E6A8F; /* Secondary text */
+  --text-light: #FFFFFF;     /* Light text */
+  
+  /* Status colors */
+  --error: #FF5C8D;      /* Red */
+  --success: #06D6A0;    /* Green */
+  --warning: #FFD166;    /* Yellow */
+  --info: #5E72EB;       /* Blue */
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--primary-500) 0%, var(--secondary-500) 100%);
+  --gradient-secondary: linear-gradient(135deg, var(--accent-pink) 0%, var(--accent-orange) 100%);
+  --gradient-hero: linear-gradient(135deg, var(--primary-500) 0%, var(--secondary-500) 50%, var(--accent-pink) 100%);
+  
+  /* Shadows */
+  --shadow-sm: 0 4px 6px rgba(109, 99, 255, 0.1);
+  --shadow-md: 0 6px 15px rgba(109, 99, 255, 0.15);
+  --shadow-lg: 0 10px 25px rgba(109, 99, 255, 0.2);
+  --shadow-xl: 0 15px 35px rgba(109, 99, 255, 0.25);
+  
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body, html, .app-container {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: var(--neutral-50);
-  color: var(--neutral-800);
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--primary-500);
+  color: var(--neutral-50);
   display: flex;
   flex-direction: column;
   line-height: 1.6;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .header {
   text-align: center;
   padding: 2rem;
   background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+
   border-bottom: 1px solid var(--neutral-200);
 }
 
@@ -68,17 +101,16 @@ body, html, .app-container {
 }
 
 .landing-button {
-  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  background: rgba(54, 153, 255, 0.1);
   padding: 1.25rem 2.5rem;
-  color: white;
-  border: none;
+  color: var(--secondary-500);
+  border: 1px solid rgba(54, 153, 255, 0.2);
   font-size: 1.25rem;
   font-weight: 600;
   border-radius: 10px;
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+  transition: var(--transition-normal);
   width: 100%;
   max-width: 300px;
   text-align: center;
@@ -87,7 +119,7 @@ body, html, .app-container {
 
 .landing-button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(79, 70, 229, 0.25);
+
   background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
 }
 
@@ -96,13 +128,14 @@ body, html, .app-container {
 }
 
 .landing-button.secondary {
-  background: linear-gradient(135deg, var(--secondary-500), var(--secondary-600));
-  box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+  background: rgba(137, 80, 252, 0.1);
+  color: var(--accent-500);
+  border: 1px solid rgba(137, 80, 252, 0.2);
 }
 
-.landing-button.secondary:hover {
-  box-shadow: 0 6px 12px rgba(16, 185, 129, 0.25);
-  background: linear-gradient(135deg, var(--secondary-600), #0D9488);
+.landing-button:hover, .landing-button.secondary:hover {
+  background: rgba(54, 153, 255, 0.15);
+  transform: translateY(-2px);
 }
 
 /* Status colors for messages */
@@ -149,19 +182,42 @@ body, html, .app-container {
   outline-offset: 2px;
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  body, .app-container {
-    background: var(--neutral-900);
-    color: var(--neutral-100);
+/* App Container Styles */
+.app-container {
+  background: var(--bg-main);
+  color: var(--text-light);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-top: 0; /* Remove padding since navbar is fixed */
+}
+
+/* Responsive padding adjustments for navbar height changes */
+@media (max-width: 575px) and (min-width: 480px) {
+  .app-container {
+    padding-top: 0;
   }
-  
-  .header {
-    background: var(--neutral-800);
-    border-bottom-color: var(--neutral-700);
+}
+
+@media (max-width: 479px) {
+  .app-container {
+    padding-top: 60px;
   }
+}
+
+@media (max-width: 359px) {
+  .app-container {
+    padding-top: 55px;
+  }
+}
+
+.header {
+  background: rgba(255, 255, 255, 0.1);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1rem 0;
+}
   
   .main-content {
     background: var(--neutral-800);
   }
-}

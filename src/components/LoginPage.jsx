@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { signInWithEmailAndPassword, signInAnonymously } from 'firebase/auth';
 import { getDoc, doc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
+import Navbar from './Navbar';
 import './LoginPage.css';
 
 const LoginPage = () => {
@@ -52,44 +53,51 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="login-page">
-      <div className="login-toggle">
-        <button
-          className={!isTeacher ? 'active' : ''}
-          onClick={() => setIsTeacher(false)}
-        >
-          👦 Student
-        </button>
-        <button
-          className={isTeacher ? 'active' : ''}
-          onClick={() => setIsTeacher(true)}
-        >
-          👩‍🏫 Teacher
-        </button>
+    <>
+      <Navbar />
+      <div className="login-page">
+        <form onSubmit={handleLogin} className="login-form">
+          <div className="login-toggle">
+            <button
+              type="button"
+              className={!isTeacher ? 'active' : ''}
+              onClick={() => setIsTeacher(false)}
+            >
+              👦 Student
+            </button>
+            <button
+              type="button"
+              className={isTeacher ? 'active' : ''}
+              onClick={() => setIsTeacher(true)}
+            >
+              👩‍🏫 Teacher
+            </button>
+          </div>
+
+          <h2>{isTeacher ? 'Teacher Login' : 'Student Login'}</h2>
+          
+          {error && <p className="error-msg">⚠️ {error}</p>}
+          
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
+          />
+          <button type="submit">Login</button>
+          
+          <button type="button" onClick={handleGuest} className="guest-btn">Continue as Guest</button>
+        </form>
       </div>
-
-      <h2>{isTeacher ? 'Teacher Login' : 'Student Login'}</h2>
-      <form onSubmit={handleLogin} className="login-form">
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Login</button>
-      </form>
-
-      <button onClick={handleGuest} className="guest-btn">Continue as Guest</button>
-      {error && <p className="error-msg">⚠️ {error}</p>}
-    </div>
+    </>
   );
 };
 

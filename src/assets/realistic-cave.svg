@@ -1,0 +1,37 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cave entrance opening -->
+  <path d="M10 55 Q8 45 12 35 Q18 25 25 20 Q32 15 39 20 Q46 25 52 35 Q56 45 54 55 Q50 60 32 60 Q14 60 10 55 Z" fill="#000000"/>
+  
+  <!-- Cave mouth rock formation -->
+  <path d="M5 60 Q8 50 15 45 Q22 40 30 42 Q38 40 45 45 Q52 50 55 60 L64 60 L64 64 L0 64 L0 60 Z" fill="#696969" stroke="#2F4F4F" stroke-width="1"/>
+  
+  <!-- Upper rock overhang -->
+  <path d="M8 45 Q12 35 20 30 Q28 25 36 30 Q44 35 48 45 Q50 50 45 55 Q35 58 25 55 Q15 50 8 45 Z" fill="#808080" stroke="#2F4F4F" stroke-width="1"/>
+  
+  <!-- Rock texture and cracks -->
+  <path d="M12 48 Q18 46 22 50 Q20 52 16 51" fill="none" stroke="#2F4F4F" stroke-width="1.5"/>
+  <path d="M35 45 Q40 43 44 47 Q42 49 38 48" fill="none" stroke="#2F4F4F" stroke-width="1.5"/>
+  <path d="M25 52 Q30 50 35 54 Q33 56 28 55" fill="none" stroke="#2F4F4F" stroke-width="1.5"/>
+  
+  <!-- Stalactites -->
+  <path d="M20 30 L18 40 L22 40 Z" fill="#A9A9A9" stroke="#696969" stroke-width="0.5"/>
+  <path d="M32 25 L30 35 L34 35 Z" fill="#A9A9A9" stroke="#696969" stroke-width="0.5"/>
+  <path d="M42 32 L40 42 L44 42 Z" fill="#A9A9A9" stroke="#696969" stroke-width="0.5"/>
+  
+  <!-- Cave depth gradient -->
+  <ellipse cx="32" cy="45" rx="15" ry="8" fill="#1C1C1C" opacity="0.8"/>
+  <ellipse cx="32" cy="50" rx="10" ry="5" fill="#0A0A0A" opacity="0.9"/>
+  
+  <!-- Moss and vegetation -->
+  <ellipse cx="15" cy="55" rx="3" ry="2" fill="#556B2F" opacity="0.7"/>
+  <ellipse cx="48" cy="58" rx="2" ry="1.5" fill="#556B2F" opacity="0.7"/>
+  <circle cx="12" cy="52" r="1" fill="#228B22" opacity="0.6"/>
+  <circle cx="50" cy="54" r="0.8" fill="#228B22" opacity="0.6"/>
+  
+  <!-- Rock highlights -->
+  <ellipse cx="25" cy="42" rx="2" ry="1" fill="#C0C0C0" opacity="0.6"/>
+  <ellipse cx="40" cy="48" rx="1.5" ry="0.8" fill="#C0C0C0" opacity="0.6"/>
+  
+  <!-- Shadow at entrance -->
+  <ellipse cx="32" cy="62" rx="20" ry="2" fill="#000000" opacity="0.4"/>
+</svg>

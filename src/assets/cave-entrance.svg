@@ -1,0 +1,44 @@
+<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+  <!-- Base rocky ground around cave -->
+  <rect x="0" y="0" width="40" height="40" fill="#8B7355"/>
+  
+  <!-- Cave opening (dark center) -->
+  <ellipse cx="20" cy="20" rx="14" ry="10" fill="#1a1a1a"/>
+  
+  <!-- Cave mouth shading -->
+  <ellipse cx="20" cy="20" rx="16" ry="12" fill="#2a2a2a" opacity="0.8"/>
+  <ellipse cx="20" cy="20" rx="14" ry="10" fill="#1a1a1a"/>
+  
+  <!-- Rock formations around entrance -->
+  <rect x="2" y="8" width="6" height="8" fill="#7A6B4F"/>
+  <rect x="32" y="6" width="6" height="10" fill="#7A6B4F"/>
+  <rect x="6" y="26" width="8" height="6" fill="#7A6B4F"/>
+  <rect x="26" y="28" width="8" height="6" fill="#7A6B4F"/>
+  
+  <!-- Cave entrance arch -->
+  <path d="M 8 20 Q 20 8 32 20 Q 20 32 8 20" fill="#2a2a2a" opacity="0.6"/>
+  
+  <!-- Inner cave darkness -->
+  <ellipse cx="20" cy="20" rx="10" ry="7" fill="#0a0a0a"/>
+  
+  <!-- Rock texture details -->
+  <rect x="4" y="10" width="2" height="4" fill="#6B5D42"/>
+  <rect x="34" y="8" width="2" height="6" fill="#6B5D42"/>
+  <rect x="8" y="28" width="4" height="2" fill="#6B5D42"/>
+  <rect x="28" y="30" width="4" height="2" fill="#6B5D42"/>
+  
+  <!-- Cave entrance highlights -->
+  <ellipse cx="20" cy="18" rx="12" ry="2" fill="#3a3a3a" opacity="0.5"/>
+  
+  <!-- Small rocks and debris -->
+  <rect x="12" y="32" width="2" height="2" fill="#5A4D38"/>
+  <rect x="16" y="34" width="2" height="2" fill="#5A4D38"/>
+  <rect x="22" y="33" width="2" height="2" fill="#5A4D38"/>
+  <rect x="26" y="35" width="2" height="2" fill="#5A4D38"/>
+  
+  <!-- Moss or vegetation near entrance -->
+  <rect x="10" y="6" width="1" height="3" fill="#2a5a2a"/>
+  <rect x="12" y="5" width="1" height="4" fill="#2a5a2a"/>
+  <rect x="28" y="7" width="1" height="3" fill="#2a5a2a"/>
+  <rect x="30" y="6" width="1" height="4" fill="#2a5a2a"/>
+</svg>

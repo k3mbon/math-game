@@ -1,0 +1,122 @@
+<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+  <!-- Base layers with gradient transition -->
+  <rect x="0" y="0" width="40" height="40" fill="url(#verticalShorelineGradient)"/>
+  
+  <!-- Seamless grass texture overlay -->
+  <rect x="0" y="0" width="22" height="40" fill="url(#seamlessGrassPattern)" opacity="0.9"/>
+  
+  <!-- Water texture overlay -->
+  <rect x="18" y="0" width="22" height="40" fill="url(#waterPattern)" opacity="0.8"/>
+  
+  <!-- Natural shoreline edge with soft transition -->
+  <path d="M19,0 Q17.5,8 19,16 Q20.5,24 19,32 Q18.5,36 19,40 L21,40 Q21.5,36 21,32 Q19.5,24 21,16 Q22.5,8 21,0 Z" 
+        fill="url(#shoreTransition)" opacity="0.7"/>
+  
+  <!-- Wet sand/mud with natural variation -->
+  <path d="M19.5,0 Q18,8 19.5,16 Q21,24 19.5,32 Q19,36 19.5,40 L20.5,40 Q21,36 20.5,32 Q20,24 20.5,16 Q21,8 20.5,0 Z" 
+        fill="url(#wetSandGradient)" opacity="0.6"/>
+  
+  <!-- Subtle water ripples -->
+  <g opacity="0.3">
+    <ellipse cx="28" cy="10" rx="1.2" ry="8" fill="url(#rippleGradient)" opacity="0.4"/>
+    <ellipse cx="32" cy="25" rx="1.5" ry="10" fill="url(#rippleGradient)" opacity="0.3"/>
+    <ellipse cx="26" cy="35" rx="1" ry="6" fill="url(#rippleGradient)" opacity="0.4"/>
+  </g>
+  
+  <!-- Natural foam/bubbles along shoreline -->
+  <g opacity="0.4">
+    <circle cx="20" cy="6" r="0.6" fill="url(#foamGradient)"/>
+    <circle cx="19.5" cy="14" r="0.4" fill="url(#foamGradient)"/>
+    <circle cx="20.5" cy="22" r="0.5" fill="url(#foamGradient)"/>
+    <circle cx="19" cy="30" r="0.3" fill="url(#foamGradient)"/>
+    <circle cx="20" cy="38" r="0.4" fill="url(#foamGradient)"/>
+  </g>
+  
+  <!-- Scattered pebbles with natural placement -->
+  <g opacity="0.25">
+    <ellipse cx="19.5" cy="8" rx="0.2" ry="0.3" fill="#7a6b5d"/>
+    <ellipse cx="20.2" cy="18" rx="0.15" ry="0.2" fill="#8b7d6f"/>
+    <ellipse cx="19.8" cy="28" rx="0.25" ry="0.4" fill="#7a6b5d"/>
+    <ellipse cx="20.5" cy="35" rx="0.2" ry="0.25" fill="#8b7d6f"/>
+  </g>
+  
+  <!-- Grass blades extending naturally into shore -->
+  <g opacity="0.5">
+    <path d="M18.5,4 Q16,4.5 18.5,5" stroke="#5a8c69" stroke-width="0.3" fill="none"/>
+    <path d="M19,12 Q16.5,12.5 19,13" stroke="#5a8c69" stroke-width="0.3" fill="none"/>
+    <path d="M18,20 Q15.5,20.5 18,21" stroke="#5a8c69" stroke-width="0.3" fill="none"/>
+    <path d="M19.5,28 Q17,28.5 19.5,29" stroke="#5a8c69" stroke-width="0.3" fill="none"/>
+    <path d="M18.5,36 Q16,36.5 18.5,37" stroke="#5a8c69" stroke-width="0.3" fill="none"/>
+  </g>
+  
+  <!-- Soft water reflections -->
+  <g opacity="0.15">
+    <ellipse cx="25" cy="15" rx="0.8" ry="12" fill="url(#reflectionGradient)"/>
+    <ellipse cx="30" cy="25" rx="0.6" ry="10" fill="url(#reflectionGradient)"/>
+    <ellipse cx="35" cy="30" rx="0.5" ry="8" fill="url(#reflectionGradient)"/>
+  </g>
+  
+  <defs>
+    <!-- Main vertical shoreline gradient from grass to water -->
+    <linearGradient id="verticalShorelineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4a7c59;stop-opacity:1"/>
+      <stop offset="45%" style="stop-color:#4a7c59;stop-opacity:1"/>
+      <stop offset="50%" style="stop-color:#6b8e5a;stop-opacity:1"/>
+      <stop offset="55%" style="stop-color:#5a8bc7;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#4a90e2;stop-opacity:1"/>
+    </linearGradient>
+    
+    <!-- Shore transition gradient -->
+    <linearGradient id="shoreTransition" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6b8e5a;stop-opacity:0.8"/>
+      <stop offset="50%" style="stop-color:#7a9d69;stop-opacity:0.6"/>
+      <stop offset="100%" style="stop-color:#89ac78;stop-opacity:0.4"/>
+    </linearGradient>
+    
+    <!-- Wet sand gradient -->
+    <linearGradient id="wetSandGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#8db373;stop-opacity:0.7"/>
+      <stop offset="100%" style="stop-color:#9cc382;stop-opacity:0.3"/>
+    </linearGradient>
+    
+    <!-- Seamless grass pattern -->
+    <pattern id="seamlessGrassPattern" patternUnits="userSpaceOnUse" width="6" height="6">
+      <rect width="6" height="6" fill="#4a7c59"/>
+      <rect x="0" y="0" width="3" height="3" fill="#5a8c69" opacity="0.15"/>
+      <rect x="3" y="3" width="3" height="3" fill="#5a8c69" opacity="0.15"/>
+      <rect x="1" y="1" width="2" height="2" fill="#6a9c79" opacity="0.1"/>
+      <rect x="4" y="4" width="2" height="2" fill="#6a9c79" opacity="0.1"/>
+    </pattern>
+    
+    <!-- Water pattern -->
+    <pattern id="waterPattern" patternUnits="userSpaceOnUse" width="8" height="8">
+      <rect width="8" height="8" fill="#4a90e2"/>
+      <circle cx="2" cy="2" r="1" fill="#5a9ff2" opacity="0.2"/>
+      <circle cx="6" cy="6" r="1" fill="#5a9ff2" opacity="0.2"/>
+      <circle cx="2" cy="6" r="0.8" fill="#6aafff" opacity="0.15"/>
+      <circle cx="6" cy="2" r="0.8" fill="#6aafff" opacity="0.15"/>
+    </pattern>
+    
+    <!-- Ripple gradient -->
+    <radialGradient id="rippleGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.3"/>
+      <stop offset="70%" style="stop-color:#ffffff;stop-opacity:0.1"/>
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0"/>
+    </radialGradient>
+    
+    <!-- Foam gradient -->
+    <radialGradient id="foamGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.8"/>
+      <stop offset="60%" style="stop-color:#ffffff;stop-opacity:0.4"/>
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0"/>
+    </radialGradient>
+    
+    <!-- Reflection gradient -->
+    <linearGradient id="reflectionGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0"/>
+      <stop offset="30%" style="stop-color:#ffffff;stop-opacity:0.2"/>
+      <stop offset="70%" style="stop-color:#ffffff;stop-opacity:0.2"/>
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0"/>
+    </linearGradient>
+  </defs>
+</svg>

@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto GIF Generator for King Human</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .auto-section {
+            background: rgba(46, 204, 113, 0.2);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 2px solid #2ecc71;
+        }
+        .manual-section {
+            background: rgba(52, 152, 219, 0.2);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 2px solid #3498db;
+        }
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+        }
+        .btn-secondary {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+            color: white;
+        }
+        .btn-warning {
+            background: linear-gradient(45deg, #ff9800, #f57c00);
+            color: white;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .upload-area {
+            border: 3px dashed rgba(255, 255, 255, 0.5);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .upload-area:hover {
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .upload-area.dragover {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.2);
+        }
+        .preview-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .gif-preview {
+            max-width: 100%;
+            border: 3px solid #fff;
+            border-radius: 10px;
+            background: #f0f0f0;
+        }
+        .log {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .progress {
+            width: 100%;
+            height: 25px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            transition: width 0.3s ease;
+            border-radius: 15px;
+        }
+        .code-block {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Automated King Human GIF Generator</h1>
+        <p>This tool will automatically load your King Human Idle sprite and generate the animated GIF!</p>
+        
+        <div class="auto-section">
+            <h2>🎯 Option 1: Auto-Load from Assets (Recommended)</h2>
+            <p>This will automatically load the Idle.png from your assets folder and generate the GIF.</p>
+            <button id="autoLoadBtn" class="btn-primary">🤖 Auto-Generate GIF from Assets</button>
+            <div id="autoStatus" style="margin-top: 15px; font-weight: bold;"></div>
+        </div>
+        
+        <div class="manual-section">
+            <h2>📁 Option 2: Manual Upload</h2>
+            <p>If auto-load doesn't work, you can manually upload your Idle.png sprite sheet here.</p>
+            
+            <div class="upload-area" id="uploadArea">
+                <h3>📁 Upload Your Idle.png Sprite Sheet</h3>
+                <p>Click here or drag and drop your Idle.png file</p>
+                <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            </div>
+            
+            <button id="manualGenerateBtn" class="btn-secondary" disabled>🎬 Generate GIF from Upload</button>
+            <button id="retryBtn" class="btn-warning" style="display: none;">🔄 Retry GIF Generation</button>
+            <button id="forceSimpleBtn" class="btn-warning" style="display: none;">⚡ Force Simple GIF</button>
+        </div>
+        
+        <div class="progress" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div id="gifPreview" style="display: none;">
+            <h3>🎬 Generated Animated GIF</h3>
+            <div class="preview-container">
+                <img id="gifImage" class="gif-preview" alt="Generated GIF">
+                <br><br>
+                <button id="downloadGifBtn" class="btn-primary">💾 Download GIF</button>
+                <button id="copyCodeBtn" class="btn-secondary">📋 Copy React Code</button>
+                <button id="saveToAssetsBtn" class="btn-warning">💾 Save to Assets Folder</button>
+            </div>
+        </div>
+        
+        <div id="implementationGuide" style="display: none;">
+            <h3>📋 Implementation Guide</h3>
+            <div class="code-block" id="reactCode"></div>
+            <p><strong>Steps to implement:</strong></p>
+            <ol>
+                <li>Download the generated GIF using the button above</li>
+                <li>Place it in your <code>/public/assets/characters/</code> folder</li>
+                <li>Replace the placeholder in CharacterAnimationGIF.jsx with the code above</li>
+                <li>Enjoy your smooth animated character! 🎉</li>
+            </ol>
+        </div>
+        
+        <div class="log" id="log"></div>
+    </div>
+
+    <!-- Include GIF.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
+    
+    <script>
+        let loadedImage = null;
+        let extractedFrames = [];
+        let generatedGifBlob = null;
+        
+        // Configuration for King Human Idle animation
+        const CONFIG = {
+            frameWidth: 78,
+            frameHeight: 58,
+            frameCount: 11,
+            frameDelay: 200,
+            quality: 10, // Better quality for more reliable processing
+            workers: 1   // Reduced workers to prevent hanging
+        };
+        
+        // DOM elements
+        const autoLoadBtn = document.getElementById('autoLoadBtn');
+        const manualGenerateBtn = document.getElementById('manualGenerateBtn');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const downloadGifBtn = document.getElementById('downloadGifBtn');
+        const copyCodeBtn = document.getElementById('copyCodeBtn');
+        const saveToAssetsBtn = document.getElementById('saveToAssetsBtn');
+        const retryBtn = document.getElementById('retryBtn');
+        const forceSimpleBtn = document.getElementById('forceSimpleBtn');
+        const gifPreview = document.getElementById('gifPreview');
+        const gifImage = document.getElementById('gifImage');
+        const log = document.getElementById('log');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const autoStatus = document.getElementById('autoStatus');
+        const implementationGuide = document.getElementById('implementationGuide');
+        const reactCode = document.getElementById('reactCode');
+        
+        // Logging function
+        function addLog(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            log.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        // Auto-load from assets
+        autoLoadBtn.addEventListener('click', async () => {
+            addLog('🤖 Attempting to auto-load Idle.png from assets...');
+            autoStatus.textContent = '🔍 Searching for Idle.png...';
+            autoStatus.style.color = '#f1c40f';
+            
+            // Try multiple possible paths
+            const possiblePaths = [
+                '/assets/characters/Idle.png',
+                '/public/assets/characters/Idle.png',
+                '/assets/downloaded-assets/Idle.png',
+                '/public/assets/downloaded-assets/Idle.png',
+                './assets/characters/Idle.png',
+                './public/assets/characters/Idle.png'
+            ];
+            
+            let imageLoaded = false;
+            
+            for (const path of possiblePaths) {
+                try {
+                    addLog(`🔍 Trying path: ${path}`);
+                    const img = new Image();
+                    
+                    await new Promise((resolve, reject) => {
+                        img.onload = () => {
+                            loadedImage = img;
+                            imageLoaded = true;
+                            addLog(`✅ Successfully loaded from: ${path}`);
+                            addLog(`📐 Image dimensions: ${img.width}x${img.height}px`);
+                            autoStatus.textContent = `✅ Loaded from ${path}`;
+                            autoStatus.style.color = '#2ecc71';
+                            resolve();
+                        };
+                        img.onerror = () => reject();
+                        img.src = path;
+                    });
+                    
+                    if (imageLoaded) break;
+                } catch (e) {
+                    addLog(`❌ Failed to load from: ${path}`);
+                }
+            }
+            
+            if (imageLoaded) {
+                addLog('🎯 Auto-load successful! Starting GIF generation...');
+                await generateGIF();
+            } else {
+                addLog('❌ Auto-load failed. Please use manual upload.');
+                autoStatus.textContent = '❌ Auto-load failed - use manual upload';
+                autoStatus.style.color = '#e74c3c';
+            }
+        });
+        
+        // Manual upload handling
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        // Handle manual file upload
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                addLog('❌ Please select a valid image file.');
+                return;
+            }
+            
+            addLog(`📁 Loading uploaded file: ${file.name}`);
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    loadedImage = img;
+                    addLog(`✅ Image loaded: ${img.width}x${img.height}px`);
+                    manualGenerateBtn.disabled = false;
+                    uploadArea.innerHTML = `<h3>✅ Image Loaded</h3><p>${file.name} (${img.width}x${img.height}px)</p>`;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Manual generate button
+        manualGenerateBtn.addEventListener('click', generateGIF);
+        
+        // Generate GIF function
+        async function generateGIF() {
+            if (!loadedImage) return;
+            
+            addLog('🎬 Starting GIF generation...');
+            addLog(`📐 Frame configuration: ${CONFIG.frameWidth}x${CONFIG.frameHeight}px, ${CONFIG.frameCount} frames`);
+            
+            progressContainer.style.display = 'block';
+            extractedFrames = [];
+            
+            // Extract frames
+            const framesPerRow = Math.floor(loadedImage.width / CONFIG.frameWidth);
+            addLog(`📊 Frames per row: ${framesPerRow}`);
+            
+            for (let i = 0; i < CONFIG.frameCount; i++) {
+                const col = i % framesPerRow;
+                const row = Math.floor(i / framesPerRow);
+                const sourceX = col * CONFIG.frameWidth;
+                const sourceY = row * CONFIG.frameHeight;
+                
+                const canvas = document.createElement('canvas');
+                canvas.width = CONFIG.frameWidth;
+                canvas.height = CONFIG.frameHeight;
+                const ctx = canvas.getContext('2d');
+                
+                ctx.drawImage(
+                    loadedImage,
+                    sourceX, sourceY, CONFIG.frameWidth, CONFIG.frameHeight,
+                    0, 0, CONFIG.frameWidth, CONFIG.frameHeight
+                );
+                
+                extractedFrames.push(canvas);
+                
+                const progress = ((i + 1) / CONFIG.frameCount) * 50; // 50% for extraction
+                progressBar.style.width = progress + '%';
+                addLog(`✅ Extracted frame ${i + 1}/${CONFIG.frameCount}`);
+                
+                await new Promise(resolve => setTimeout(resolve, 10));
+            }
+            
+            // Create GIF with improved error handling
+            addLog('🎬 Creating animated GIF...');
+            
+            try {
+                const gif = new GIF({
+                    workers: 1, // Reduced workers to avoid CORS issues
+                    quality: CONFIG.quality,
+                    repeat: 0, // Infinite loop
+                    workerScript: null, // Disable external worker to avoid CORS
+                    debug: false
+                });
+                
+                // Add timeout protection
+                let timeoutId = setTimeout(() => {
+                    addLog('⚠️ GIF generation taking too long, trying ultra-simple approach...');
+                    gif.abort();
+                    createUltraSimpleGIF();
+                }, 10000); // 10 second timeout
+                
+                extractedFrames.forEach((canvas, index) => {
+                    gif.addFrame(canvas, { delay: CONFIG.frameDelay });
+                    addLog(`➕ Added frame ${index + 1} to GIF`);
+                });
+                
+                gif.on('progress', (p) => {
+                    const progress = 50 + Math.round(p * 50); // 50-100% for GIF creation
+                    progressBar.style.width = progress + '%';
+                    addLog(`🔄 GIF generation progress: ${progress}%`);
+                    
+                    // Clear timeout only if we reach significant progress
+                    if (p > 0.8) {
+                        clearTimeout(timeoutId);
+                    }
+                });
+                
+                gif.on('finished', (blob) => {
+                    clearTimeout(timeoutId);
+                    generatedGifBlob = blob;
+                    const url = URL.createObjectURL(blob);
+                    gifImage.src = url;
+                    gifPreview.style.display = 'block';
+                    implementationGuide.style.display = 'block';
+                    
+                    // Generate React code
+                    const code = `<img 
+  src="/assets/characters/king_human_idle_animation.gif"
+  alt="King Human Idle Animation"
+  style={{
+    border: '3px solid #3498db',
+    borderRadius: '8px',
+    backgroundColor: '#ecf0f1',
+    imageRendering: 'pixelated',
+    width: '390px', // 78px * 5 scale
+    height: '290px', // 58px * 5 scale
+    objectFit: 'contain'
+  }}
+/>`;
+                    
+                    reactCode.textContent = code;
+                    
+                    addLog(`🎉 GIF created successfully! Size: ${(blob.size / 1024).toFixed(2)} KB`);
+                    progressContainer.style.display = 'none';
+                });
+                
+                gif.on('abort', () => {
+                    clearTimeout(timeoutId);
+                    addLog('❌ GIF generation was aborted. Showing retry options...');
+                    showRetryOptions();
+                });
+                
+                addLog('🚀 Starting GIF rendering...');
+                gif.render();
+                
+            } catch (error) {
+                addLog(`❌ Error during GIF creation: ${error.message}`);
+                addLog('🔄 Showing retry options...');
+                showRetryOptions();
+            }
+        }
+        
+        // Alternative GIF creation method (fallback)
+        async function createSimpleGIF() {
+            addLog('🔄 Using alternative GIF creation method...');
+            
+            try {
+                // Create a simpler GIF with reduced settings
+                const gif = new GIF({
+                    workers: 1,
+                    quality: 30, // Lower quality for faster processing
+                    repeat: 0,
+                    width: CONFIG.frameWidth,
+                    height: CONFIG.frameHeight,
+                    debug: false,
+                    workerScript: null // Disable external worker to avoid CORS
+                });
+                
+                // Add frames with longer delays to reduce processing load
+                for (let i = 0; i < Math.min(extractedFrames.length, 8); i++) { // Limit to 8 frames
+                    gif.addFrame(extractedFrames[i], { delay: CONFIG.frameDelay + 50 });
+                    addLog(`➕ Added simplified frame ${i + 1}`);
+                    
+                    // Update progress
+                    const progress = 60 + Math.round((i / 8) * 30);
+                    progressBar.style.width = progress + '%';
+                    
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                
+                gif.on('finished', (blob) => {
+                    generatedGifBlob = blob;
+                    const url = URL.createObjectURL(blob);
+                    gifImage.src = url;
+                    gifPreview.style.display = 'block';
+                    implementationGuide.style.display = 'block';
+                    
+                    // Generate React code
+                    const code = `<img 
+  src="/assets/characters/king_human_idle_animation.gif"
+  alt="King Human Idle Animation"
+  style={{
+    border: '3px solid #3498db',
+    borderRadius: '8px',
+    backgroundColor: '#ecf0f1',
+    imageRendering: 'pixelated',
+    width: '390px', // 78px * 5 scale
+    height: '290px', // 58px * 5 scale
+    objectFit: 'contain'
+  }}
+/>`;
+                    
+                    reactCode.textContent = code;
+                    
+                    addLog(`🎉 Alternative GIF created successfully! Size: ${(blob.size / 1024).toFixed(2)} KB`);
+                    addLog('💡 Note: Used simplified version with fewer frames for compatibility');
+                    progressContainer.style.display = 'none';
+                    progressBar.style.width = '100%';
+                });
+                
+                gif.on('progress', (p) => {
+                    const progress = 60 + Math.round(p * 40);
+                    progressBar.style.width = progress + '%';
+                    addLog(`🔄 Alternative GIF progress: ${progress}%`);
+                });
+                
+                addLog('🚀 Starting alternative GIF rendering...');
+                gif.render();
+                
+            } catch (error) {
+                addLog(`❌ Alternative GIF creation also failed: ${error.message}`);
+                addLog('💡 Please try refreshing the page and using manual upload with a smaller image');
+                progressContainer.style.display = 'none';
+            }
+        }
+        
+        // Show retry options when GIF generation fails
+        function showRetryOptions() {
+            progressContainer.style.display = 'none';
+            retryBtn.style.display = 'inline-block';
+            forceSimpleBtn.style.display = 'inline-block';
+            addLog('🔧 Retry options available - try different approaches');
+        }
+        
+        // Hide retry options
+        function hideRetryOptions() {
+            retryBtn.style.display = 'none';
+            forceSimpleBtn.style.display = 'none';
+        }
+        
+        // Retry button event listener
+        retryBtn.addEventListener('click', () => {
+            addLog('🔄 Retrying GIF generation with optimized settings...');
+            hideRetryOptions();
+            
+            // Reset progress
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '50%';
+            
+            // Retry with even more conservative settings
+            setTimeout(() => {
+                generateOptimizedGIF();
+            }, 500);
+        });
+        
+        // Force simple GIF button event listener
+        forceSimpleBtn.addEventListener('click', () => {
+            addLog('⚡ Forcing simple GIF creation...');
+            hideRetryOptions();
+            
+            // Reset progress
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '60%';
+            
+            setTimeout(() => {
+                createSimpleGIF();
+            }, 500);
+        });
+        
+        // Ultra-simple GIF creation (emergency fallback)
+        async function createUltraSimpleGIF() {
+            addLog('🚡 Creating ultra-simple GIF with minimal frames...');
+            
+            try {
+                const gif = new GIF({
+                    workers: 1,
+                    quality: 50, // Fastest quality
+                    repeat: 0,
+                    width: CONFIG.frameWidth,
+                    height: CONFIG.frameHeight,
+                    debug: false,
+                    workerScript: null // Disable external worker to avoid CORS
+                });
+                
+                // Use only every 3rd frame to reduce processing
+                const reducedFrames = extractedFrames.filter((_, index) => index % 3 === 0).slice(0, 4);
+                
+                for (let i = 0; i < reducedFrames.length; i++) {
+                    gif.addFrame(reducedFrames[i], { delay: 300 }); // Slower animation
+                    addLog(`➕ Added ultra-simple frame ${i + 1}/${reducedFrames.length}`);
+                    
+                    const progress = 80 + Math.round((i / reducedFrames.length) * 15);
+                    progressBar.style.width = progress + '%';
+                }
+                
+                gif.on('finished', (blob) => {
+                    generatedGifBlob = blob;
+                    const url = URL.createObjectURL(blob);
+                    gifImage.src = url;
+                    gifPreview.style.display = 'block';
+                    implementationGuide.style.display = 'block';
+                    
+                    const code = `<img 
+  src="/assets/characters/king_human_idle_animation.gif"
+  alt="King Human Idle Animation"
+  style={{
+    border: '3px solid #3498db',
+    borderRadius: '8px',
+    backgroundColor: '#ecf0f1',
+    imageRendering: 'pixelated',
+    width: '390px',
+    height: '290px',
+    objectFit: 'contain'
+  }}
+/>`;
+                    
+                    reactCode.textContent = code;
+                    
+                    addLog(`🎉 Ultra-simple GIF created! Size: ${(blob.size / 1024).toFixed(2)} KB`);
+                    addLog('💡 Used minimal frames for maximum compatibility');
+                    progressContainer.style.display = 'none';
+                    progressBar.style.width = '100%';
+                });
+                
+                gif.on('progress', (p) => {
+                    const progress = 95 + Math.round(p * 5);
+                    progressBar.style.width = progress + '%';
+                });
+                
+                addLog('🚀 Starting ultra-simple GIF rendering...');
+                gif.render();
+                
+            } catch (error) {
+                addLog(`❌ Even ultra-simple GIF failed: ${error.message}`);
+                showRetryOptions();
+            }
+        }
+        
+        // Optimized GIF generation (more conservative settings)
+        async function generateOptimizedGIF() {
+            addLog('🎯 Using optimized GIF settings...');
+            
+            try {
+                // Set shorter timeout for optimized version
+                const timeoutId = setTimeout(() => {
+                    addLog('⚠️ Optimized GIF taking too long, trying ultra-simple...');
+                    createUltraSimpleGIF();
+                }, 8000);
+                
+                const gif = new GIF({
+                    workers: 1,
+                    quality: 20, // Faster quality
+                    repeat: 0,
+                    width: CONFIG.frameWidth,
+                    height: CONFIG.frameHeight,
+                    debug: false,
+                    workerScript: null // Disable external worker to avoid CORS
+                });
+                
+                // Use fewer frames for faster processing
+                const limitedFrames = extractedFrames.slice(0, 8);
+                
+                for (let i = 0; i < limitedFrames.length; i++) {
+                     gif.addFrame(limitedFrames[i], { delay: CONFIG.frameDelay });
+                     addLog(`➕ Added optimized frame ${i + 1}/${limitedFrames.length}`);
+                     
+                     const progress = 50 + Math.round((i / limitedFrames.length) * 25);
+                     progressBar.style.width = progress + '%';
+                     
+                     await new Promise(resolve => setTimeout(resolve, 50));
+                 }
+                 
+                 gif.on('finished', (blob) => {
+                     clearTimeout(timeoutId);
+                     generatedGifBlob = blob;
+                     const url = URL.createObjectURL(blob);
+                     gifImage.src = url;
+                     gifPreview.style.display = 'block';
+                     implementationGuide.style.display = 'block';
+                     
+                     const code = `<img 
+  src="/assets/characters/king_human_idle_animation.gif"
+  alt="King Human Idle Animation"
+  style={{
+    border: '3px solid #3498db',
+    borderRadius: '8px',
+    backgroundColor: '#ecf0f1',
+    imageRendering: 'pixelated',
+    width: '390px',
+    height: '290px',
+    objectFit: 'contain'
+  }}
+/>`;
+                     
+                     reactCode.textContent = code;
+                     
+                     addLog(`🎉 Optimized GIF created successfully! Size: ${(blob.size / 1024).toFixed(2)} KB`);
+                     progressContainer.style.display = 'none';
+                 });
+                 
+                 gif.on('progress', (p) => {
+                     const progress = 75 + Math.round(p * 25);
+                     progressBar.style.width = progress + '%';
+                     addLog(`🔄 Optimized GIF progress: ${progress}%`);
+                     
+                     // Clear timeout if we reach significant progress
+                     if (p > 0.8) {
+                         clearTimeout(timeoutId);
+                     }
+                 });
+                 
+                 addLog('🚀 Starting optimized GIF rendering...');
+                 gif.render();
+                 
+             } catch (error) {
+                 addLog(`❌ Optimized GIF creation failed: ${error.message}`);
+                 addLog('⚡ Falling back to ultra-simple GIF...');
+                 createUltraSimpleGIF();
+             }
+         }
+        
+        // Download GIF
+        downloadGifBtn.addEventListener('click', () => {
+            if (!generatedGifBlob) return;
+            
+            const url = URL.createObjectURL(generatedGifBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'king_human_idle_animation.gif';
+            a.click();
+            URL.revokeObjectURL(url);
+            addLog('💾 GIF downloaded: king_human_idle_animation.gif');
+        });
+        
+        // Copy React code
+        copyCodeBtn.addEventListener('click', () => {
+            const code = reactCode.textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                addLog('📋 React code copied to clipboard!');
+                copyCodeBtn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    copyCodeBtn.textContent = '📋 Copy React Code';
+                }, 2000);
+            }).catch(() => {
+                addLog('❌ Failed to copy to clipboard');
+            });
+        });
+        
+        // Save to assets (simulated)
+        saveToAssetsBtn.addEventListener('click', () => {
+            addLog('💡 Note: This is a browser tool - please manually save the downloaded GIF to your /public/assets/characters/ folder');
+            // Trigger download as well
+            downloadGifBtn.click();
+        });
+        
+        // Initialize
+        addLog('🚀 Auto GIF Generator ready!');
+        addLog('💡 Try the auto-load feature first - it will attempt to find your Idle.png automatically!');
+    </script>
+</body>
+</html>

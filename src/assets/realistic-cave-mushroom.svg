@@ -1,0 +1,70 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="mushroomCap" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#8b4513"/>
+      <stop offset="40%" stop-color="#a0522d"/>
+      <stop offset="80%" stop-color="#654321"/>
+      <stop offset="100%" stop-color="#3e2723"/>
+    </radialGradient>
+    <linearGradient id="mushroomStem" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5f5dc"/>
+      <stop offset="50%" stop-color="#e6e6d4"/>
+      <stop offset="100%" stop-color="#d3d3c7"/>
+    </linearGradient>
+    <radialGradient id="bioluminescence" cx="50%" cy="50%" r="80%">
+      <stop offset="0%" stop-color="#00ffff" stop-opacity="0.6"/>
+      <stop offset="50%" stop-color="#40e0d0" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Cave floor base -->
+  <rect width="32" height="32" fill="#2a2a2a"/>
+  
+  <!-- Large mushroom -->
+  <!-- Stem -->
+  <ellipse cx="16" cy="24" rx="3" ry="8" fill="url(#mushroomStem)"/>
+  
+  <!-- Cap -->
+  <ellipse cx="16" cy="12" rx="10" ry="6" fill="url(#mushroomCap)"/>
+  
+  <!-- Cap underside -->
+  <ellipse cx="16" cy="14" rx="8" ry="4" fill="#f5f5dc" opacity="0.8"/>
+  
+  <!-- Gills -->
+  <path d="M8,14 Q16,16 24,14" stroke="#d3d3c7" stroke-width="0.5" fill="none"/>
+  <path d="M10,15 Q16,17 22,15" stroke="#e6e6d4" stroke-width="0.5" fill="none"/>
+  <path d="M12,16 Q16,18 20,16" stroke="#d3d3c7" stroke-width="0.5" fill="none"/>
+  
+  <!-- Small mushrooms -->
+  <ellipse cx="6" cy="28" rx="2" ry="3" fill="url(#mushroomStem)"/>
+  <ellipse cx="6" cy="24" rx="3" ry="2" fill="url(#mushroomCap)"/>
+  
+  <ellipse cx="26" cy="26" rx="1.5" ry="2" fill="url(#mushroomStem)"/>
+  <ellipse cx="26" cy="23" rx="2" ry="1.5" fill="url(#mushroomCap)"/>
+  
+  <!-- Bioluminescent spots -->
+  <circle cx="12" cy="10" r="1" fill="#00ffff" opacity="0.7" filter="url(#glow)"/>
+  <circle cx="20" cy="12" r="0.8" fill="#40e0d0" opacity="0.6" filter="url(#glow)"/>
+  <circle cx="16" cy="8" r="0.6" fill="#00ffff" opacity="0.8" filter="url(#glow)"/>
+  
+  <!-- Bioluminescent glow around mushrooms -->
+  <ellipse cx="16" cy="12" rx="12" ry="8" fill="url(#bioluminescence)" filter="url(#glow)"/>
+  
+  <!-- Moss and small details -->
+  <circle cx="4" cy="30" r="1" fill="#228b22" opacity="0.6"/>
+  <circle cx="28" cy="29" r="0.8" fill="#32cd32" opacity="0.5"/>
+  <circle cx="10" cy="30" r="0.6" fill="#228b22" opacity="0.7"/>
+  
+  <!-- Spores floating -->
+  <circle cx="8" cy="8" r="0.3" fill="#00ffff" opacity="0.4"/>
+  <circle cx="24" cy="6" r="0.2" fill="#40e0d0" opacity="0.5"/>
+  <circle cx="18" cy="4" r="0.25" fill="#00ffff" opacity="0.3"/>
+</svg>

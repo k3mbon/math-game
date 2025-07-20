@@ -1,148 +1,509 @@
 :root {
-  --primary: #5E81F4;
-  --secondary: #FF7AC6;
-  --accent: #FFB800;
-  --background: #F6F9FF;
-  --text: #1A237E;
+  --primary: #2D3FDE;
+  --secondary: #7C3AED;
+  --accent: #06B6D4;
+  --background: #F8FAFC;
+  --text: #0F172A;
   --card-bg: #FFFFFF;
   --character-bg: #FFFFFF;
+  --gradient-primary: linear-gradient(135deg, #2D3FDE 0%, #7C3AED 100%);
+  --gradient-secondary: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%);
+  --gradient-hero: linear-gradient(135deg, #2D3FDE 0%, #7C3AED 50%, #06B6D4 100%);
+  --shadow-light: 0 4px 20px rgba(15, 23, 42, 0.08);
+  --shadow-medium: 0 8px 30px rgba(15, 23, 42, 0.12);
+  --shadow-heavy: 0 15px 40px rgba(15, 23, 42, 0.15);
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  transition: background-color 0.3s, color 0.3s;
 }
 
 body {
-  font-family: 'Comic Neue', 'Segoe UI', sans-serif;
-  color: var(--text);
+  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgba(255, 255, 255, 0.87);
   min-height: 100vh;
   margin: 0;
-  display: flex;
-  flex-direction: column;
+  background: #1E1E2D !important;
+  overflow-x: hidden;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 25% 25%, rgba(45, 63, 222, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .landing-container {
-  flex: 1;
+  min-height: 100vh;
+  padding-top: 70px;
+  position: relative;
+}
+
+/* Hero Section */
+.hero-section {
+  background: transparent;
+  padding: 4rem 2rem 6rem;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 4rem;
+}
+
+.hero-section .h1{
+  color: white;
+}
+
+
+.hero-content {
+  max-width: 800px;
   margin: 0 auto;
-  padding: 2rem 1rem;
   text-align: center;
-  display: flex;
-  flex-direction: column;
+  position: relative;
+  z-index: 2;
 }
 
-.landing-header {
-  margin-bottom: 2rem;
-  animation: fadeIn 0.8s ease-out;
+.hero-title {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  color: white !important;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+  text-align: center;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: white !important;
+  background-clip: unset !important;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.landing-header h1 {
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  margin: 0;
-  color: var(--primary);
-  text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
-  letter-spacing: -0.5px;
+.gradient-text {
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-size: clamp(2.8rem, 7vw, 4.5rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 30%, var(--accent) 70%, var(--primary) 100%);
+  background-size: 300% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+
+  animation: colorShift 8s linear infinite;
+  position: relative;
+  z-index: 2;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: all 0.3s ease;
 }
 
-.landing-header p {
-  margin: 0;
-  color: var(--background);
-  text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
-  letter-spacing: -0.5px;
+.gradient-text:hover {
+  letter-spacing: 2px;
+
+  transform: scale(1.05);
+  animation: colorShift 4s linear infinite, pulse 1.5s ease-in-out infinite;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 30%, var(--primary) 70%, var(--accent) 100%);
+  background-size: 300% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
 }
 
-.subtitle {
-  font-size: clamp(1rem, 3vw, 1.5rem);
-  color: var(--text);
-  margin-top: 0.5rem;
-  opacity: 0.8;
-}
-
-.game-options {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
+.hero-subtitle {
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-size: clamp(1.1rem, 3vw, 1.4rem);
   margin-bottom: 3rem;
-  width: 100%;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
+  font-weight: 600;
+  line-height: 1.6;
+
+  letter-spacing: 0.5px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  display: inline-block;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+}
+
+.hero-subtitle span {
+  color: white;
+
+}
+
+.hero-features {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.8rem 1.6rem;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
+
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.feature-item span:not(.feature-icon) {
+  background: linear-gradient(135deg, #FFFFFF 0%, var(--secondary) 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  animation: colorShift 12s linear infinite;
+}
+
+.feature-item:hover {
+  transform: translateY(-5px);
+  background: rgba(124, 58, 237, 0.25);
+
+  border-color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.8px;
+}
+
+.feature-item:hover span:not(.feature-icon) {
+  background: linear-gradient(135deg, var(--accent) 0%, #FFFFFF 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: colorShift 8s linear infinite;
+}
+
+.feature-icon {
+  font-size: 1.2rem;
+}
+
+/* Game Options Section */
+.game-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  margin: 0 auto 4rem;
+  padding: 0 2rem;
+  max-width: 1400px;
 }
 
 .game-card {
-  background: var(--card-bg);
-  border-radius: 20px;
-  padding: 2rem;
+  border-radius: 24px;
+  padding: 2rem 1.5rem 1.5rem;
   text-decoration: none;
-  transition: transform 0.3s, box-shadow 0.3s;
-  border: 3px solid transparent;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+
+  text-align: center;
+  color: white;
+  width: 350px;
+  height: 400px;
+  min-width: 350px;
+  min-height: 400px;
+  max-width: 350px;
+  max-height: 400px;
+  flex: none;
+}
+
+/* Loop Land Card - Green Theme */
+.game1-card {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(139, 195, 74, 0.1));
+  border: 2px solid rgba(76, 175, 80, 0.3);
+}
+
+.game1-card:hover {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.25), rgba(139, 195, 74, 0.2));
+  border-color: rgba(76, 175, 80, 0.5);
+  box-shadow: 0 20px 40px rgba(76, 175, 80, 0.2);
+}
+
+/* Number World Card - Purple Theme */
+.numeration-card {
+  background: linear-gradient(135deg, rgba(156, 39, 176, 0.15), rgba(103, 58, 183, 0.1));
+  border: 2px solid rgba(156, 39, 176, 0.3);
+}
+
+.numeration-card:hover {
+  background: linear-gradient(135deg, rgba(156, 39, 176, 0.25), rgba(103, 58, 183, 0.2));
+  border-color: rgba(156, 39, 176, 0.5);
+  box-shadow: 0 20px 40px rgba(156, 39, 176, 0.2);
+}
+
+/* Adventure World Card - Orange Theme */
+.open-world-card {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.15), rgba(255, 193, 7, 0.1));
+  border: 2px solid rgba(255, 152, 0, 0.3);
+}
+
+.open-world-card:hover {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.25), rgba(255, 193, 7, 0.2));
+  border-color: rgba(255, 152, 0, 0.5);
+  box-shadow: 0 20px 40px rgba(255, 152, 0, 0.2);
+}
+
+/* Default Game Card - Keep existing blue theme */
+.game-card:not(.game1-card):not(.numeration-card):not(.open-world-card) {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.game-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.6s ease;
+}
+
+.game-card:hover::before {
+  left: 100%;
 }
 
 .game-card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-15px) scale(1.03);
+
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.game-card:hover .card-icon {
+  transform: scale(1.1) translateY(-5px);
+  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.3));
+}
+
+.game-card:hover h3 {
+  transform: translateY(-3px);
+  color: #FFFFFF;
+
+}
+
+.game-card:hover .card-footer {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-3px);
+
 }
 
 .game-card h3 {
-  font-size: clamp(1.2rem, 3vw, 1.8rem);
-  margin: 1.5rem 0 0.5rem;
-  color: var(--text);
+  font-size: 1.8rem;
+  margin: 1.5rem 0 0.8rem;
+  font-weight: 800;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  font-family: 'Poppins', 'Quicksand', 'Nunito', sans-serif;
+  transition: all 0.3s ease;
+
+  background: linear-gradient(135deg, #FFFFFF 0%, var(--secondary) 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  animation: colorShift 10s linear infinite;
 }
 
 .game-card p {
-  color: var(--text);
-  opacity: 0.8;
-  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-size: 1.1rem;
   margin-bottom: 1.5rem;
+  text-align: center;
+  line-height: 1.6;
+  position: relative;
+  z-index: 2;
+  font-weight: 500;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  animation: colorShift 15s linear infinite;
+  flex-grow: 1;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .card-icon {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   margin: 0 auto;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2.5rem;
+  position: relative;
+  z-index: 2;
+  aspect-ratio: 1 / 1;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+  min-width: 100px;
+  min-height: 100px;
+  max-width: 100px;
+  max-height: 100px;
+}
+
+/* Default Card Icon - Blue */
+.game-card:not(.game1-card):not(.numeration-card):not(.open-world-card):not(.iteration-card):not(.tower-defense-card) .card-icon {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  box-shadow: 0 8px 25px rgba(94, 129, 244, 0.3);
+}
+
+.card-icon::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.game-card:hover .card-icon {
+  transform: scale(1.1) rotate(5deg);
+
+}
+
+.game-card:hover .card-icon::before {
+  opacity: 1;
 }
 
 .card-icon svg {
-  width: 60px;
-  height: 60px;
+  width: 65px;
+  height: 65px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  fill: #FFFFFF;
+  transition: all 0.3s ease;
 }
 
 .card-footer {
-  font-weight: bold;
-  color: var(--primary);
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-weight: 700;
   margin-top: auto;
-  padding-top: 1rem;
-  border-top: 2px dashed rgba(0,0,0,0.1);
+  padding: 0.8rem 1.2rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+
+  width: 100%;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  animation: colorShift 8s linear infinite;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.game-card:hover .card-footer {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-2px);
+  color: rgba(255, 255, 255, 0.9);
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.9);
+  text-fill-color: rgba(255, 255, 255, 0.9);
+  font-weight: 800;
 }
 
 /* Card specific styles */
 .iteration-card {
-  border-color: var(--primary);
+  background: linear-gradient(135deg, rgba(94, 114, 235, 0.15) 0%, rgba(123, 92, 250, 0.15) 100%);
+  border-color: rgba(94, 114, 235, 0.25);
 }
 
 .iteration-card .card-icon {
   background: linear-gradient(135deg, var(--primary), #8EA7FF);
+  border-color: rgba(94, 114, 235, 0.4);
+  border-radius: 50% !important;
+  box-shadow: 0 8px 25px rgba(94, 114, 235, 0.4);
 }
 
 .iteration-card .card-icon svg {
   fill: white;
 }
 
+.game1-card {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.15) 0%, rgba(139, 195, 74, 0.15) 100%);
+  border-color: rgba(76, 175, 80, 0.25);
+}
+
+.game1-card .card-icon {
+  background: linear-gradient(135deg, #4CAF50, #8BC34A);
+  border-color: rgba(76, 175, 80, 0.4);
+  border-radius: 50% !important;
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+}
+
+.game1-card .card-icon svg {
+  fill: white;
+}
+
+.game1-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
 .numeration-card {
-  border-color: var(--secondary);
+  background: linear-gradient(135deg, rgba(255, 107, 154, 0.15) 0%, rgba(255, 159, 118, 0.15) 100%);
+  border-color: rgba(255, 107, 154, 0.25);
 }
 
 .numeration-card .card-icon {
-  background: linear-gradient(135deg, var(--secondary), #FFA3D7);
+  background: linear-gradient(135deg, #9C27B0, #673AB7);
+  border-color: rgba(156, 39, 176, 0.4);
+  border-radius: 50% !important;
+  box-shadow: 0 8px 25px rgba(156, 39, 176, 0.4);
 }
 
 .numeration-card .card-icon svg {
@@ -150,89 +511,402 @@ body {
 }
 
 .tower-defense-card {
-  border-color: var(--accent);
+  background: linear-gradient(135deg, rgba(6, 214, 160, 0.15) 0%, rgba(255, 209, 102, 0.15) 100%);
+  border-color: rgba(6, 214, 160, 0.25);
 }
 
 .tower-defense-card .card-icon {
   background: linear-gradient(135deg, var(--accent), #FFD54F);
+  border-color: rgba(6, 214, 160, 0.4);
+  border-radius: 50% !important;
+  box-shadow: 0 8px 25px rgba(6, 214, 160, 0.4);
 }
 
 .tower-defense-card .card-icon svg {
   fill: white;
 }
 
-/* Character selection */
+/* Add colorful glow effects to cards */
+.iteration-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(94, 114, 235, 0.3) 0%, transparent 70%);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  border-radius: 24px;
+}
+
+.numeration-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 107, 154, 0.3) 0%, transparent 70%);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  border-radius: 24px;
+}
+
+.tower-defense-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(6, 214, 160, 0.3) 0%, transparent 70%);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  border-radius: 24px;
+}
+
+.game1-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(76, 175, 80, 0.3) 0%, transparent 70%);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  border-radius: 24px;
+}
+
+.game-card:hover::before {
+  opacity: 1;
+}
+
+.open-world-card {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.15) 0%, rgba(255, 183, 77, 0.15) 100%);
+  border-color: rgba(255, 152, 0, 0.25);
+}
+
+.open-world-card .card-icon {
+  background: linear-gradient(135deg, #FF9800, #FFC107);
+  border-color: rgba(255, 152, 0, 0.4);
+  border-radius: 50% !important;
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4);
+}
+
+.open-world-card .card-icon svg {
+  fill: white;
+}
+
+/* Remove special height overrides for Adventure World card - now uses standard height */
+
+.open-world-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 152, 0, 0.3) 0%, transparent 70%);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  border-radius: 24px;
+}
+
+/* Character Selection Section */
 .character-selection {
-  margin-top: auto;
-  padding: clamp(1rem, 3vw, 1.5rem);
-  background: rgba(var(--primary), 0.05);
-  border-radius: clamp(15px, 3vw, 20px);
-  width: 100%;
-  max-width: min(95vw, 900px);
-  margin-left: auto;
-  margin-right: auto;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(var(--primary), 0.1);
+  margin: 4rem auto;
+  padding: 4rem 2rem;
+  background: rgba(255, 255, 255, 0.15);
+
+  border-radius: 35px;
+  max-width: 800px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+
   transition: all 0.3s ease;
-}
-
-.login-options {
+  position: relative;
+  overflow: hidden;
   text-align: center;
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 1px dashed rgba(0, 0, 0, 0.1);
 }
 
-.login-options h3 {
-  font-size: 1.5rem;
+.character-selection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-primary);
+}
+
+.character-selection h3 {
+  font-size: clamp(1.4rem, 3vw, 2rem);
   color: var(--text);
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 700;
+  position: relative;
 }
 
-.login-buttons {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.login-btn {
-  padding: 0.8rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.login-btn.teacher {
-  background-color: #5e81f4;
-  color: white;
-}
-
-.login-btn.student {
-  background-color: #ff7ac6;
-  color: white;
-}
-
-.login-btn:hover {
-  transform: scale(1.05);
+.character-selection h3::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: var(--gradient-secondary);
+  border-radius: 2px;
 }
 
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
+
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .landing-container {
+    padding: 1rem;
+  }
+  
+  .hero-section {
+    padding: 4rem 2rem;
+  }
+  
+  .game-options {
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+  
+  .game-card {
+    width: 320px;
+    height: 380px;
+    min-width: 320px;
+    min-height: 380px;
+    max-width: 320px;
+    max-height: 380px;
+  }
+  
   .character-selection {
-    padding: 1.2rem;
-    border-radius: 15px;
-    margin: 2rem 1rem 0;
-    width: calc(100% - 2rem);
+    margin: 3rem auto;
+    padding: 3rem 1.5rem;
+    max-width: 700px;
   }
 }
 
+/* Tablet responsive adjustments */
+@media (max-width: 992px) {
+  .game-options {
+    gap: 1.2rem;
+    padding: 0 1rem;
+  }
+  
+  .game-card {
+    width: 300px;
+    height: 360px;
+    min-width: 300px;
+    min-height: 360px;
+    max-width: 300px;
+    max-height: 360px;
+    padding: 1.8rem 1.3rem 1.3rem;
+  }
+  
+  .game-card h3 {
+    font-size: 1.6rem;
+    margin: 1.2rem 0 0.6rem;
+  }
+  
+  .game-card p {
+    font-size: 1rem;
+    margin-bottom: 1.2rem;
+  }
+  
+  .card-icon {
+    width: 90px;
+    height: 90px;
+    min-width: 90px;
+    min-height: 90px;
+    max-width: 90px;
+    max-height: 90px;
+    font-size: 2.2rem;
+  }
+  
+  .card-icon svg {
+    width: 55px;
+    height: 55px;
+  }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 3rem 1rem;
+  }
+  
+  .feature-item {
+    font-size: 0.9rem;
+  }
+  
+  .game-options {
+    gap: 1rem;
+    padding: 0 0.5rem;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .game-card {
+    width: min(280px, calc(100vw - 2rem));
+    height: 320px;
+    min-width: 280px;
+    min-height: 320px;
+    max-width: calc(100vw - 2rem);
+    max-height: 320px;
+    padding: 1.5rem 1rem 1rem;
+  }
+  
+  .game-card h3 {
+    font-size: 1.4rem;
+    margin: 1rem 0 0.5rem;
+  }
+  
+  .game-card p {
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+  
+  .card-icon {
+    width: 80px;
+    height: 80px;
+    min-width: 80px;
+    min-height: 80px;
+    max-width: 80px;
+    max-height: 80px;
+    font-size: 2rem;
+  }
+  
+  .card-icon svg {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .card-footer {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .character-options {
+    grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+    gap: 1rem;
+    padding: 1rem 0.5rem;
+    max-width: 100%;
+  }
+  
+  .character {
+    width: 85px;
+    height: 180px; /* Adjusted height for consistent card size */
+    min-width: 85px;
+    min-height: 85px;
+    max-width: 85px;
+    max-height: 180px; /* Adjusted height for consistent card size */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+  }
+  
+  .character-emoji {
+    font-size: 2.2rem;
+  }
+  
+  .character-selection {
+    margin: 2rem auto 1rem;
+    padding: 1.5rem 1rem;
+    max-width: 95%;
+    width: calc(100% - 2rem);
+  }
+  
+  .character-selection h3 {
+    font-size: clamp(1.3rem, 4vw, 1.8rem);
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* Small mobile responsive adjustments */
 @media (max-width: 480px) {
+  .game-options {
+    padding: 0 0.25rem;
+  }
+  
+  .game-card {
+    width: min(260px, calc(100vw - 1rem));
+    height: 320px;
+    min-width: 260px;
+    min-height: 320px;
+    max-width: calc(100vw - 1rem);
+    max-height: 320px;
+    padding: 1.2rem 0.8rem 0.8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  /* Remove special height for Adventure World card - now uses standard height */
+  
+  .game-card h3 {
+    font-size: 1.3rem;
+    margin: 0.8rem 0 0.4rem;
+    flex-shrink: 0;
+  }
+  
+  .game-card p {
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+    line-height: 1.4;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    text-align: center;
+  }
+  
+  /* Remove special text styling for Adventure World card - now uses standard styling */
+  
+  .card-icon {
+    width: 70px;
+    height: 70px;
+    min-width: 70px;
+    min-height: 70px;
+    max-width: 70px;
+    max-height: 70px;
+    font-size: 1.8rem;
+    flex-shrink: 0;
+  }
+  
+  .card-icon svg {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .card-footer {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    margin-top: auto;
+  }
+  
+  /* Remove special footer styling for Adventure World card - now uses standard styling */
+  
   .character-selection {
     padding: 1rem;
     border-radius: 12px;
@@ -248,6 +922,64 @@ body {
 
 /* For very small screens */
 @media (max-width: 360px) {
+  .game-card {
+    width: min(240px, calc(100vw - 0.5rem));
+    height: 300px;
+    min-width: 240px;
+    min-height: 300px;
+    max-width: calc(100vw - 0.5rem);
+    max-height: 300px;
+    padding: 1rem 0.6rem 0.6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  /* Remove special height for Adventure World card - now uses standard height */
+  
+  .game-card h3 {
+    font-size: 1.2rem;
+    margin: 0.6rem 0 0.3rem;
+    flex-shrink: 0;
+  }
+  
+  .game-card p {
+    font-size: 0.85rem;
+    margin-bottom: 0.6rem;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    line-height: 1.3;
+  }
+  
+  /* Remove special text styling for Adventure World card - now uses standard styling */
+  
+  .card-icon {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    min-height: 60px;
+    max-width: 60px;
+    max-height: 60px;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+  }
+  
+  .card-icon svg {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .card-footer {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    margin-top: auto;
+  }
+  
+  /* Remove special footer styling for Adventure World card - now uses standard styling */
+  
   .character-selection {
     padding: 0.8rem;
     border-radius: 10px;
@@ -261,12 +993,13 @@ body {
 
 .character-options {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 1.5rem;
-  padding: 1rem;
-  width: 100%;
-  max-width: 800px;
+  padding: 1rem 0;
+  max-width: 700px;
   margin: 0 auto;
+  justify-content: center;
+  justify-items: center;
 }
 
 .character {
@@ -275,120 +1008,834 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s ease;
-  padding: 0.5rem;
-  border-radius: 12px;
-  background: var(--character-bg);
-  aspect-ratio: 1/1;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  padding: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+  width: 100px;
+  height: 100px;
+  min-width: 100px;
+  min-height: 100px;
+  max-width: 100px;
+  max-height: 100px;
+  aspect-ratio: 1 / 1;
+}
+
+.character::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(94, 129, 244, 0.1), rgba(255, 122, 198, 0.1));
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .character:hover {
-  transform: translateY(-5px) scale(1.1);
+  transform: translateY(-8px) scale(1.05);
+
+  border-color: rgba(94, 129, 244, 0.3);
+}
+
+.character:hover::before {
+  opacity: 1;
 }
 
 .character.selected {
-  background: rgba(var(--primary), 0.1);
-  box-shadow: 0 0 0 3px var(--primary), 0 5px 15px rgba(0,0,0,0.1);
+  background: linear-gradient(135deg, rgba(94, 129, 244, 0.1), rgba(255, 122, 198, 0.1));
+  border: 3px solid var(--primary);
+
+  transform: scale(1.05);
 }
 
 .character-emoji {
-  font-size: clamp(1.8rem, 4vw, 2.2rem);
-  display: block;
+  font-size: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s ease;
+  line-height: 1;
+  margin: 0;
+}
+
+.character:hover .character-emoji {
+  transform: scale(1.1);
+}
+
+.character-name {
+  display: none;
 }
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(50px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes colorShift {
+  0% { background-position: 0% 50%; }
+  25% { background-position: 100% 50%; }
+  50% { background-position: 200% 50%; }
+  75% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 @keyframes bounce {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-15px); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Apply animations */
+.hero-content {
+  animation: fadeIn 1s ease-out;
+}
+
+.game-options {
+  animation: slideInUp 0.8s ease-out 0.2s both;
+}
+
+.character-selection {
+  animation: slideInUp 0.8s ease-out 0.4s both;
+}
+
+.login-options {
+  animation: slideInUp 0.8s ease-out 0.6s both;
 }
 
 .character {
-  animation: bounce 2s infinite ease-in-out;
+  animation: bounce 3s infinite ease-in-out;
 }
 
-/* Dark mode toggle button */
-.theme-toggle {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  background: var(--card-bg);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 100;
+.character:nth-child(even) {
+  animation-delay: 0.5s;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
+.feature-item {
+  animation: float 4s infinite ease-in-out;
+}
+
+.feature-item:nth-child(2) {
+  animation-delay: 1s;
+}
+
+.feature-item:nth-child(3) {
+  animation-delay: 2s;
+}
+
+/* Theme toggle button removed */
+
+/* Modern Responsive Design with Standardized Breakpoints */
+
+/* Extra Large Screens (1440px+) */
+@media (min-width: 1440px) {
   .landing-container {
-    padding: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  
+  .game-options {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 1200px;
+  }
+}
+
+/* Large Desktops (1200px - 1439px) */
+@media (max-width: 1439px) and (min-width: 1200px) {
+  .game-options {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1000px;
+  }
+}
+
+/* Medium Desktops (992px - 1199px) */
+@media (max-width: 1199px) and (min-width: 992px) {
+  .hero-section {
+    padding: 4rem 2rem 6rem;
+  }
+  
+  .game-options {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 800px;
+    gap: 2rem;
+  }
+}
+
+/* Small Desktops & Large Tablets (768px - 991px) */
+@media (max-width: 991px) and (min-width: 768px) {
+  .hero-section {
+    padding: 3rem 1.5rem 5rem;
+  }
+  
+  .hero-title {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+  }
+  
+  .game-options {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 700px;
+    gap: 1.5rem;
+    padding: 0 1.5rem;
+  }
+  
+  .character-selection {
+    margin: 0 1.5rem;
+    padding: 2.5rem 2rem;
+  }
+  
+  .character-options {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1.2rem;
+  }
+  
+  .character {
+    width: 100px;
+    height: 100px;
+    min-width: 100px;
+    min-height: 100px;
+    max-width: 100px;
+    max-height: 100px;
+  }
+}
+
+/* Tablets (576px - 767px) */
+@media (max-width: 767px) and (min-width: 576px) {
+  .landing-container {
+    padding-top: 70px;
+  }
+  
+  .hero-section {
+    padding: 2.5rem 1rem 4rem;
+    margin-bottom: 3rem;
+  }
+  
+  .hero-title {
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+  
+  .hero-features {
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .feature-item {
+    padding: 0.8rem 1.2rem;
+    font-size: 0.9rem;
+    min-width: 140px;
   }
   
   .game-options {
     grid-template-columns: 1fr;
     max-width: 500px;
-    margin: 0 auto 2rem;
+    margin: 0 auto 3rem;
     gap: 1.5rem;
+    padding: 0 1rem;
   }
   
   .game-card {
-    max-width: 100%;
-    margin: 0 auto;
+    padding: 2.5rem 2rem;
+    width: 300px;
+    height: 300px;
+    min-width: 300px;
+    min-height: 300px;
+    max-width: 300px;
+    max-height: 300px;
   }
-
-  .game-card h3 {
-    font-size: 1.4rem;
-    margin: 1rem 0 0.5rem;
-  }
-
-  .game-card p {
-    font-size: 1rem;
+  
+  .character-selection {
+    margin: 0 1rem;
+    padding: 2rem 1.5rem;
   }
   
   .character-options {
-    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: 1rem;
+  }
+  
+  .character {
+    width: 100px;
+    height: 100px;
+    min-width: 100px;
+    min-height: 100px;
+    max-width: 100px;
+    max-height: 100px;
   }
 }
 
-@media (max-width: 480px) {
-  .landing-container {
-    padding: 1rem;
+/* Mobile Landscape & Small Tablets (480px - 575px) */
+@media (max-width: 575px) and (min-width: 480px) {
+  .hero-section {
+    padding: 2rem 1rem 3rem;
   }
   
-  .character-options {
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  .hero-title {
+    font-size: clamp(1.8rem, 7vw, 2.5rem);
+  }
+  
+  .hero-features {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  
+  .feature-item {
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+    width: 100%;
+    max-width: 200px;
+  }
+  
+  .game-options {
+    padding: 0 1rem;
+    gap: 1.2rem;
   }
   
   .game-card {
-    padding: 1.2rem;
+    padding: 2rem 1.5rem;
+    width: 280px;
+    height: 280px;
+    min-width: 280px;
+    min-height: 280px;
+    max-width: 280px;
+    max-height: 280px;
   }
-
-  .game-card h3 {
-    font-size: 1.2rem;
-  }
-
-  .game-card p {
-    font-size: 0.9rem;
-  }
-
+  
   .card-icon {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .card-icon svg {
     width: 60px;
     height: 60px;
   }
+  
+  .card-footer {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Remove special footer styling for Adventure World card - now uses standard styling */
+  
+  .character-selection {
+    margin: 0 1rem;
+    padding: 2rem 1rem;
+  }
+  
+  .character-options {
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 0.8rem;
+  }
+  
+  .character {
+    width: 90px;
+    height: 90px;
+    min-width: 90px;
+    min-height: 90px;
+    max-width: 90px;
+    max-height: 90px;
+  }
+}
 
+/* Mobile Portrait (320px - 479px) */
+@media (max-width: 479px) {
+  .hero-section {
+    padding: 1.5rem 0.5rem 2.5rem;
+  }
+  
+  .hero-title {
+    font-size: clamp(1.5rem, 8vw, 2rem);
+    line-height: 1.2;
+  }
+  
+  .hero-subtitle {
+    font-size: clamp(0.9rem, 4vw, 1.1rem);
+  }
+  
+  .hero-features {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  
+  .feature-item {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.8rem;
+    width: 100%;
+    max-width: 180px;
+  }
+  
+  .game-options {
+    padding: 0 0.5rem;
+    gap: 1rem;
+  }
+  
+  .game-card {
+    padding: 1.5rem 1rem;
+    width: 260px;
+    height: 260px;
+    min-width: 260px;
+    min-height: 260px;
+    max-width: 260px;
+    max-height: 260px;
+  }
+  
+  .game-card h3 {
+    font-size: 1.3rem;
+  }
+  
+  .game-card p {
+    font-size: 0.9rem;
+  }
+  
+  .card-icon {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .card-icon svg {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .card-footer {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+  }
+  
+  /* Remove special footer styling for Adventure World card - now uses standard styling */
+  
+  .character-selection {
+    margin: 1.5rem auto 1rem;
+    padding: 1.5rem 0.8rem;
+    max-width: calc(100% - 1rem);
+    border-radius: 16px;
+  }
+  
+  .character-selection h3 {
+    font-size: clamp(1.2rem, 5vw, 1.6rem);
+    margin-bottom: 1.2rem;
+    text-align: center;
+  }
+  
+  .character-options {
+    grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+    gap: 0.8rem;
+    padding: 0.8rem 0.2rem;
+    justify-content: center;
+    max-width: 100%;
+  }
+  
+  .character {
+    width: 80px;
+    height: 80px;
+    min-width: 80px;
+    min-height: 80px;
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 12px;
+  }
+  
+  .character-emoji {
+    font-size: 2.2rem;
+  }
+}
+
+/* Very Small Screens (below 360px) */
+@media (max-width: 359px) {
+  .hero-title {
+    font-size: 1.4rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.85rem;
+  }
+  
+  .feature-item {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.6rem;
+  }
+  
+  .game-card {
+    padding: 1.2rem 0.8rem;
+    width: 240px;
+    height: 240px;
+    min-width: 240px;
+    min-height: 240px;
+    max-width: 240px;
+    max-height: 240px;
+  }
+  
+  .game-card h3 {
+    font-size: 1.1rem;
+  }
+  
+  .game-card p {
+    font-size: 0.8rem;
+  }
+  
+  .card-footer {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+  }
+  
+  /* Specific fix for adventure card footer */
+  .open-world-card .card-footer {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .character-options {
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  }
+  
+  .character {
+    width: 70px;
+    height: 70px;
+    min-width: 70px;
+    min-height: 70px;
+    max-width: 70px;
+    max-height: 70px;
+    padding: 0;
+  }
+  
+  .character-emoji {
+    font-size: 1.8rem;
+  }
+}
+
+/* Ultra Small Screens (280px - 359px) */
+@media (max-width: 359px) and (min-width: 280px) {
+  .hero-section {
+    padding: 1.5rem 0.5rem;
+  }
+  
+  .hero-content h1 {
+    font-size: clamp(1.8rem, 9vw, 2.2rem);
+    margin-bottom: 0.8rem;
+  }
+  
+  .hero-content p {
+    font-size: clamp(0.9rem, 4.5vw, 1rem);
+    margin-bottom: 1.5rem;
+  }
+  
+  .game-options {
+    gap: 0.6rem;
+    padding: 0 0.2rem;
+  }
+  
+  .game-card {
+    width: min(240px, calc(100vw - 1rem));
+    height: 280px;
+    min-width: 240px;
+    min-height: 280px;
+    max-width: calc(100vw - 1rem);
+    max-height: 280px;
+    padding: 1rem 0.6rem 0.6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .game-card h3 {
+    font-size: 1.2rem;
+    margin: 0.6rem 0 0.3rem;
+    flex-shrink: 0;
+  }
+  
+  .game-card p {
+    font-size: 0.85rem;
+    margin-bottom: 0.6rem;
+    line-height: 1.3;
+    flex-grow: 1;
+  }
+  
+  .card-icon {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    min-height: 60px;
+    max-width: 60px;
+    max-height: 60px;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+  }
+  
   .card-icon svg {
     width: 40px;
     height: 40px;
+  }
+  
+  .card-footer {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+  }
+  
+  /* Remove special footer styling for Adventure World card - now uses standard styling */
+  
+  .character-selection {
+    margin: 1rem auto 0.5rem;
+    padding: 1rem 0.5rem;
+    max-width: calc(100% - 1rem);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+  }
+  
+  .character-selection h3 {
+    font-size: clamp(1.1rem, 5.5vw, 1.4rem);
+    margin-bottom: 1rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.95);
+  }
+  
+  .character-options {
+    grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
+    gap: 0.6rem;
+    padding: 0.6rem 0.2rem;
+    justify-content: center;
+    max-width: 100%;
+    justify-items: center;
+  }
+  
+  .character {
+    width: 70px;
+    height: 70px;
+    min-width: 70px;
+    min-height: 70px;
+    max-width: 70px;
+    max-height: 70px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+  
+  .character:hover {
+    transform: translateY(-4px) scale(1.02);
+  }
+  
+  .character-emoji {
+    font-size: 1.8rem;
+  }
+}
+
+/* Extra Ultra Small Screens (below 280px) */
+@media (max-width: 279px) {
+  .game-card {
+    width: min(200px, calc(100vw - 0.3rem));
+    height: 260px;
+    min-width: 200px;
+    min-height: 260px;
+    max-width: calc(100vw - 0.3rem);
+    max-height: 260px;
+    padding: 0.6rem 0.4rem 0.4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .game-card h3 {
+    font-size: 1rem;
+    margin: 0.4rem 0 0.2rem;
+    flex-shrink: 0;
+  }
+  
+  .game-card p {
+    font-size: 0.75rem;
+    margin-bottom: 0.4rem;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    line-height: 1.1;
+  }
+  
+  .card-icon {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    min-height: 45px;
+    max-width: 45px;
+    max-height: 45px;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  
+  .card-icon svg {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .card-footer {
+    padding: 0.25rem 0.4rem;
+    font-size: 0.65rem;
+    flex-shrink: 0;
+    margin-top: auto;
+  }
+  
+  /* Remove special footer styling for Adventure World card - now uses standard styling */
+  
+  .character-selection {
+    padding: 0.5rem;
+    border-radius: 6px;
+  }
+  
+  .character-options {
+    gap: 0.5rem;
+    padding: 0.2rem;
+  }
+}
+
+/* Extra Ultra Small Screens (below 240px) */
+@media (max-width: 239px) {
+  .hero-section {
+    padding: 1rem 0.3rem;
+  }
+  
+  .hero-content h1 {
+    font-size: clamp(1.5rem, 10vw, 1.8rem);
+    margin-bottom: 0.6rem;
+  }
+  
+  .hero-content p {
+    font-size: clamp(0.8rem, 5vw, 0.9rem);
+    margin-bottom: 1rem;
+  }
+  
+  .game-options {
+    gap: 0.4rem;
+    padding: 0 0.1rem;
+  }
+  
+  .game-card {
+    width: min(200px, calc(100vw - 0.6rem));
+    height: 260px;
+    min-width: 200px;
+    min-height: 260px;
+    max-width: calc(100vw - 0.6rem);
+    max-height: 260px;
+    padding: 0.6rem 0.4rem 0.4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .game-card h3 {
+    font-size: 1rem;
+    margin: 0.4rem 0 0.2rem;
+    flex-shrink: 0;
+  }
+  
+  .game-card p {
+    font-size: 0.75rem;
+    margin-bottom: 0.4rem;
+    line-height: 1.2;
+    flex-grow: 1;
+  }
+  
+  .card-icon {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    min-height: 45px;
+    max-width: 45px;
+    max-height: 45px;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  
+  .card-icon svg {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .card-footer {
+    padding: 0.3rem 0.4rem;
+    font-size: 0.65rem;
+    flex-shrink: 0;
+  }
+  
+  /* Remove special footer styling for Adventure World card - now uses standard styling */
+  
+  .character-selection {
+    margin: 0.8rem auto 0.4rem;
+    padding: 0.8rem 0.4rem;
+    max-width: calc(100% - 0.8rem);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(8px);
+  }
+  
+  .character-selection h3 {
+    font-size: clamp(1rem, 6vw, 1.2rem);
+    margin-bottom: 0.8rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .character-options {
+    grid-template-columns: repeat(auto-fit, minmax(55px, 1fr));
+    gap: 0.4rem;
+    padding: 0.4rem 0.1rem;
+    justify-content: center;
+    max-width: 100%;
+    justify-items: center;
+  }
+  
+  .character {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    min-height: 60px;
+    max-width: 60px;
+    max-height: 60px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+  
+  .character:hover {
+    transform: translateY(-2px) scale(1.01);
+  }
+  
+  .character-emoji {
+    font-size: 1.6rem;
   }
 }

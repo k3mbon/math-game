@@ -1,0 +1,37 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Player facing left (side view) -->
+  <!-- Head -->
+  <ellipse cx="16" cy="10" rx="5" ry="6" fill="#FDBCB4" stroke="#E09F94" stroke-width="0.5"/>
+  
+  <!-- Hair (side view) -->
+  <path d="M11 6 Q16 3 20 6 Q21 8 20 10 Q18 12 16 11 Q12 10 11 6" fill="#8B4513"/>
+  
+  <!-- Eye -->
+  <circle cx="14" cy="9" r="1" fill="#000"/>
+  <circle cx="14.3" cy="8.7" r="0.3" fill="#FFF"/>
+  
+  <!-- Nose -->
+  <path d="M12 10 Q11 11 12 12" stroke="#E09F94" stroke-width="0.5" fill="none"/>
+  
+  <!-- Mouth -->
+  <path d="M13 12.5 Q12 13 13 13.5" stroke="#000" stroke-width="0.5" fill="none"/>
+  
+  <!-- Body -->
+  <rect x="12" y="16" width="8" height="10" rx="2" fill="#4A90E2"/>
+  
+  <!-- Arms -->
+  <rect x="8" y="17" width="4" height="6" rx="2" fill="#FDBCB4"/>
+  <rect x="18" y="17" width="4" height="6" rx="2" fill="#FDBCB4"/>
+  
+  <!-- Hands -->
+  <circle cx="10" cy="24" r="1.5" fill="#FDBCB4"/>
+  <circle cx="20" cy="24" r="1.5" fill="#FDBCB4"/>
+  
+  <!-- Legs -->
+  <rect x="13" y="26" width="2.5" height="5" rx="1" fill="#654321"/>
+  <rect x="16.5" y="26" width="2.5" height="5" rx="1" fill="#654321"/>
+  
+  <!-- Feet -->
+  <ellipse cx="14.25" cy="31.5" rx="1.5" ry="1" fill="#000"/>
+  <ellipse cx="17.75" cy="31.5" rx="1.5" ry="1" fill="#000"/>
+</svg>

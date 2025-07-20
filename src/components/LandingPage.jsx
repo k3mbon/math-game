@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCharacter } from '../contexts/CharacterContext';
+import Navbar from './Navbar';
 import './LandingPage.css';
 
 const LandingPage = () => {
@@ -13,22 +14,46 @@ const LandingPage = () => {
   }, []);
 
   return (
-    <div className="landing-container">
-      <div className="landing-header">
-        <h1>BrainQuests 🚀</h1>
-        <p className="subtitle">Belajar Coding Dengan Matematika!</p>
-      </div>
+    <>
+      {/* Removed duplicate Navbar as it's already rendered in App.jsx */}
+      <div className="landing-container">
+        <div className="hero-section">
+          <div className="hero-content">
+            <h1 className="hero-title">
+              Welcome to <span className="gradient-text">BrainQuests</span>
+            </h1>
+            <p className="hero-subtitle">
+              <span>Belajar Coding Dengan Matematika yang Menyenangkan!</span>
+            </p>
+            <div className="hero-features">
+              <div className="feature-item">
+                <span className="feature-icon">🎮</span>
+                <span>Interactive Games</span>
+              </div>
+              <div className="feature-item">
+                <span className="feature-icon">🧠</span>
+                <span>Logic Building</span>
+              </div>
+              <div className="feature-item">
+                <span className="feature-icon">🏆</span>
+                <span>Achievement System</span>
+              </div>
+            </div>
+          </div>
+        </div>
       
       <div className="game-options">
         <Link 
           to={selectedCharacter ? "/iteration" : "#"}
-          className="game-card iteration-card"
+          className="game-card game1-card"
           onClick={(e) => !selectedCharacter && (e.preventDefault(), alert("Please select a character first!"))}
         >
           <div className="card-icon">
             <svg viewBox="0 0 24 24">
-              <path d="M4 19V5h2v14H4zm4 0V5h2v14H8zm4 0V5h2v14h-2zm4 0V5h2v14h-2z"/>
-              <path d="M4 7h2v2H4zm4 3h2v2H8zm4-3h2v2h-2zm4 3h2v2h-2z" fill="#fff"/>
+              <path d="M12 4l1.41 1.41L11.83 7H16c2.76 0 5 2.24 5 5s-2.24 5-5 5h-4v-2h4c1.65 0 3-1.35 3-3s-1.35-3-3-3h-4.17l1.58 1.59L12 12l-4-4 4-4z" fill="#fff"/>
+              <circle cx="7" cy="17" r="1.5" fill="#fff"/>
+              <circle cx="12" cy="17" r="1.5" fill="#fff"/>
+              <circle cx="17" cy="17" r="1.5" fill="#fff"/>
             </svg>
           </div>
           <h3>Loop Land</h3>
@@ -56,31 +81,45 @@ const LandingPage = () => {
           </div>
         </Link>
 
-        {/* Game 1 Card using Game1 component */}
-        <div className="game-card game1-card">
-          {/* Import and use your Game1 component here */}
-          {/* Example: <Game1 selectedCharacter={selectedCharacter} /> */}
-          {/* If you want to link to a route: */}
-          <Link
-            to={selectedCharacter ? "/game1" : "#"}
-            onClick={(e) => !selectedCharacter && (e.preventDefault(), alert("Please select a character first!"))}
-            className="game1-link"
-          >
-            <div className="card-icon">
-              {/* You can use a custom icon for Game 1 */}
-              <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" fill="#4caf50"/>
-                <text x="12" y="16" textAnchor="middle" fontSize="10" fill="#fff">G1</text>
-              </svg>
-            </div>
-            <h3>Game 1</h3>
-            <p>Mainkan Game 1 dengan karakter pilihanmu!</p>
-            <div className="card-footer">
-              {selectedCharacter ? "Start Playing →" : "Select Character First"}
-            </div>
-          </Link>
-        </div>
+        <Link 
+          to={selectedCharacter ? "/game1" : "#"}
+          className="game-card"
+          onClick={(e) => !selectedCharacter && (e.preventDefault(), alert("Please select a character first!"))}
+        >
+          <div className="card-icon">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" fill="#fff"/>
+              <text x="12" y="16" textAnchor="middle" fontSize="10" fill="#333">G1</text>
+            </svg>
+          </div>
+          <h3>Game</h3>
+          <p>Mainkan Game 1 dengan karakter pilihanmu!</p>
+          <div className="card-footer">
+            {selectedCharacter ? "Start Playing →" : "Select Character First"}
+          </div>
+        </Link>
+
+        {/* Open World Game Card */}
+        <Link 
+          to={selectedCharacter ? "/open-world" : "#"}
+          className="game-card open-world-card"
+          onClick={(e) => !selectedCharacter && (e.preventDefault(), alert("Please select a character first!"))}
+        >
+          <div className="card-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z" fill="#ff9800"/>
+              <path d="M12 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 6h2v2H6v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z" fill="#fff"/>
+            </svg>
+          </div>
+          <h3>Adventure World</h3>
+          <p>Jelajahi Dunia Terbuka Dan Selesaikan Tantangan!</p>
+          <div className="card-footer">
+            {selectedCharacter ? "Start Adventure →" : "Select Character First"}
+          </div>
+        </Link>
       </div>
+
+
 
       <div className="character-selection">
         <h3>Choose Your Coding Companion:</h3>
@@ -98,19 +137,10 @@ const LandingPage = () => {
         </div>
       </div>
 
-      <div className="login-options">
-        <h3>Login As:</h3>
-        <div className="login-buttons">
-          <button className="login-btn teacher" onClick={() => navigate('/login?role=teacher')}>
-            👩‍🏫 Teacher
-          </button>
-          <button className="login-btn student" onClick={() => navigate('/login?role=student')}>
-            👩‍🎓 Student
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+
+       </div>
+     </>
+   );
 };
 
 export default LandingPage;

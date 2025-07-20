@@ -4,7 +4,7 @@
   padding: 1.5rem;
   border-radius: 16px;
   background-color: #ffffff;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+
   animation: fadeIn 0.5s ease-in-out;
   font-family: 'Segoe UI', sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -105,12 +105,12 @@
   padding: 1rem;
   border-left: 5px solid #4caf50;
   border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  transition: box-shadow 0.3s ease;
+
+  transition: transform 0.3s ease;
 }
 
 .problem-card:hover {
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+
 }
 
 .problem-card p {
@@ -162,25 +162,39 @@
   }
 }
 
-/* DARK MODE */
-body[data-theme="dark"] {
-  background-color: #121212;
-  color: #e0e0e0;
+/* Modern Purple-Blue Theme */
+.teacher-manager {
+  background: linear-gradient(135deg, rgba(108, 99, 255, 0.05), rgba(123, 92, 250, 0.1));
+  border-radius: 16px;
+
 }
 
-body[data-theme="dark"] .teacher-manager {
-  background-color: #1e1e1e;
+input,
+select,
+textarea {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #333;
+  border: 1px solid rgba(108, 99, 255, 0.3);
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
-body[data-theme="dark"] input,
-body[data-theme="dark"] select,
-body[data-theme="dark"] textarea {
-  background-color: #2c2c2c;
-  color: #e0e0e0;
-  border-color: #555;
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #7B5CFA;
+
 }
 
-body[data-theme="dark"] .problem-card {
-  background-color: #2c2c2c;
-  border-color: #4caf50;
+.problem-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid rgba(108, 99, 255, 0.2);
+
+  transition: all 0.3s ease;
+}
+
+.problem-card:hover {
+  transform: translateY(-5px);
+
 }

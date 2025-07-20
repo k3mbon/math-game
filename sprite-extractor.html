@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprite Extractor Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .tool-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .button-group {
+            margin-bottom: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 8px;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-warning {
+            background: #ffc107;
+            color: black;
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .preview-container {
+            margin-top: 20px;
+        }
+        .sprite-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .sprite-item {
+            text-align: center;
+            background: white;
+            border-radius: 4px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .sprite-item:hover {
+            transform: scale(1.05);
+            border-color: #007bff;
+        }
+        .sprite-img {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 2px;
+        }
+        .sprite-name {
+            font-size: 10px;
+            margin-top: 4px;
+            word-break: break-all;
+        }
+        .status-message {
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 16px;
+            display: none;
+        }
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .custom-config {
+            display: none;
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+        .config-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .instructions {
+            background: #e9ecef;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .instructions h4 {
+            margin-top: 0;
+        }
+        .instructions ul {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Sprite Extractor Tool</h1>
+            <p>Extract individual sprites from sprite sheets for your game</p>
+        </div>
+
+        <div class="tool-section">
+            <div class="instructions">
+                <h4>📋 Instructions:</h4>
+                <ul>
+                    <li>Enter the path to your sprite sheet relative to <code>src/assets/downloaded-assets/</code></li>
+                    <li>Choose a predefined configuration or use custom settings</li>
+                    <li>Click "Extract Sprites" to process the sprite sheet</li>
+                    <li>Click on individual sprites to download them, or use "Download All"</li>
+                    <li>Use the extracted sprites in your game by placing them in appropriate folders</li>
+                </ul>
+            </div>
+
+            <div class="form-group">
+                <label for="assetPath">Asset Path:</label>
+                <input type="text" id="assetPath" placeholder="e.g., terrain/Characters/Basic Charakter Spritesheet.png">
+            </div>
+
+            <div class="form-group">
+                <label for="configType">Configuration:</label>
+                <select id="configType">
+                    <option value="CHARACTER_BASIC">Character Basic (32x32, 4x4 grid)</option>
+                    <option value="TILESET_32">Tileset 32px (32x32, 8x8 grid)</option>
+                    <option value="TILESET_16">Tileset 16px (16x16, 16x16 grid)</option>
+                    <option value="ITEMS">Items (24x24, 8x8 grid)</option>
+                    <option value="CUSTOM">Custom Configuration</option>
+                </select>
+            </div>
+
+            <div id="customConfig" class="custom-config">
+                <h4>Custom Configuration:</h4>
+                <div class="config-row">
+                    <div class="form-group">
+                        <label for="spriteWidth">Sprite Width (px):</label>
+                        <input type="number" id="spriteWidth" value="32" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="spriteHeight">Sprite Height (px):</label>
+                        <input type="number" id="spriteHeight" value="32" min="1">
+                    </div>
+                </div>
+                <div class="config-row">
+                    <div class="form-group">
+                        <label for="columns">Columns:</label>
+                        <input type="number" id="columns" value="4" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="rows">Rows:</label>
+                        <input type="number" id="rows" value="4" min="1">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="namePrefix">Filename Prefix:</label>
+                    <input type="text" id="namePrefix" value="sprite" placeholder="e.g., character, tile, item">
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button id="extractBtn" class="btn-primary">🔍 Extract Sprites</button>
+                <button id="downloadAllBtn" class="btn-success" disabled>📥 Download All</button>
+                <button id="clearBtn" class="btn-warning">🗑️ Clear</button>
+            </div>
+
+            <div id="statusMessage" class="status-message"></div>
+        </div>
+
+        <div id="previewSection" class="tool-section" style="display: none;">
+            <h3>🖼️ Extracted Sprites Preview</h3>
+            <p>Click on any sprite to download it individually</p>
+            <div id="previewContainer"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Sprite extraction functionality
+        const SPRITE_CONFIGS = {
+            CHARACTER_BASIC: {
+                spriteWidth: 32,
+                spriteHeight: 32,
+                columns: 4,
+                rows: 4,
+                namePrefix: 'character'
+            },
+            TILESET_32: {
+                spriteWidth: 32,
+                spriteHeight: 32,
+                columns: 8,
+                rows: 8,
+                namePrefix: 'tile'
+            },
+            TILESET_16: {
+                spriteWidth: 16,
+                spriteHeight: 16,
+                columns: 16,
+                rows: 16,
+                namePrefix: 'tile_16'
+            },
+            ITEMS: {
+                spriteWidth: 24,
+                spriteHeight: 24,
+                columns: 8,
+                rows: 8,
+                namePrefix: 'item'
+            }
+        };
+
+        async function extractSprites(spriteSheetPath, config) {
+            const {
+                spriteWidth,
+                spriteHeight,
+                columns,
+                rows,
+                namePrefix = 'sprite'
+            } = config;
+
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const extractedSprites = [];
+                    
+                    canvas.width = spriteWidth;
+                    canvas.height = spriteHeight;
+                    
+                    for (let row = 0; row < rows; row++) {
+                        for (let col = 0; col < columns; col++) {
+                            ctx.clearRect(0, 0, spriteWidth, spriteHeight);
+                            
+                            ctx.drawImage(
+                                img,
+                                col * spriteWidth,
+                                row * spriteHeight,
+                                spriteWidth,
+                                spriteHeight,
+                                0,
+                                0,
+                                spriteWidth,
+                                spriteHeight
+                            );
+                            
+                            const dataURL = canvas.toDataURL('image/png');
+                            const spriteIndex = row * columns + col;
+                            
+                            extractedSprites.push({
+                                index: spriteIndex,
+                                row,
+                                col,
+                                dataURL,
+                                filename: `${namePrefix}_${spriteIndex.toString().padStart(3, '0')}.png`
+                            });
+                        }
+                    }
+                    
+                    resolve(extractedSprites);
+                };
+                
+                img.onerror = () => {
+                    reject(new Error(`Failed to load sprite sheet: ${spriteSheetPath}`));
+                };
+                
+                img.src = spriteSheetPath;
+            });
+        }
+
+        function downloadSprite(sprite) {
+            const link = document.createElement('a');
+            link.download = sprite.filename;
+            link.href = sprite.dataURL;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function downloadAllSprites(sprites) {
+            sprites.forEach((sprite, index) => {
+                setTimeout(() => {
+                    downloadSprite(sprite);
+                }, index * 100); // Small delay between downloads
+            });
+        }
+
+        function createSpritePreview(sprites, container) {
+            container.innerHTML = '';
+            
+            const grid = document.createElement('div');
+            grid.className = 'sprite-grid';
+            
+            sprites.forEach(sprite => {
+                const item = document.createElement('div');
+                item.className = 'sprite-item';
+                
+                const img = document.createElement('img');
+                img.src = sprite.dataURL;
+                img.className = 'sprite-img';
+                img.title = `Click to download ${sprite.filename}`;
+                
+                const name = document.createElement('div');
+                name.className = 'sprite-name';
+                name.textContent = sprite.filename;
+                
+                item.appendChild(img);
+                item.appendChild(name);
+                
+                item.onclick = () => {
+                    downloadSprite(sprite);
+                    showStatus(`Downloaded ${sprite.filename}`, 'success');
+                };
+                
+                grid.appendChild(item);
+            });
+            
+            container.appendChild(grid);
+        }
+
+        function showStatus(message, type = 'info') {
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.textContent = message;
+            statusMessage.style.display = 'block';
+            statusMessage.className = `status-message status-${type}`;
+        }
+
+        function hideStatus() {
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.style.display = 'none';
+        }
+
+        // DOM elements
+        const assetPathInput = document.getElementById('assetPath');
+        const configTypeSelect = document.getElementById('configType');
+        const customConfigDiv = document.getElementById('customConfig');
+        const extractBtn = document.getElementById('extractBtn');
+        const downloadAllBtn = document.getElementById('downloadAllBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const previewSection = document.getElementById('previewSection');
+        const previewContainer = document.getElementById('previewContainer');
+
+        let extractedSprites = [];
+
+        // Event listeners
+        configTypeSelect.addEventListener('change', () => {
+            customConfigDiv.style.display = configTypeSelect.value === 'CUSTOM' ? 'block' : 'none';
+        });
+
+        extractBtn.addEventListener('click', async () => {
+            const assetPath = assetPathInput.value.trim();
+            
+            if (!assetPath) {
+                showStatus('Please enter an asset path', 'error');
+                return;
+            }
+
+            let config;
+            if (configTypeSelect.value === 'CUSTOM') {
+                config = {
+                    spriteWidth: parseInt(document.getElementById('spriteWidth').value),
+                    spriteHeight: parseInt(document.getElementById('spriteHeight').value),
+                    columns: parseInt(document.getElementById('columns').value),
+                    rows: parseInt(document.getElementById('rows').value),
+                    namePrefix: document.getElementById('namePrefix').value || 'sprite'
+                };
+            } else {
+                config = SPRITE_CONFIGS[configTypeSelect.value];
+            }
+
+            try {
+                extractBtn.disabled = true;
+                extractBtn.textContent = '🔄 Extracting...';
+                showStatus('Loading and extracting sprites...', 'info');
+                
+                const fullPath = `assets/downloaded-assets/${assetPath}`;
+                extractedSprites = await extractSprites(fullPath, config);
+                
+                createSpritePreview(extractedSprites, previewContainer);
+                
+                previewSection.style.display = 'block';
+                downloadAllBtn.disabled = false;
+                
+                showStatus(`Successfully extracted ${extractedSprites.length} sprites! Click on sprites to download individually.`, 'success');
+                
+            } catch (error) {
+                showStatus(`Error: ${error.message}`, 'error');
+                console.error('Extraction error:', error);
+            } finally {
+                extractBtn.disabled = false;
+                extractBtn.textContent = '🔍 Extract Sprites';
+            }
+        });
+
+        downloadAllBtn.addEventListener('click', () => {
+            if (extractedSprites.length > 0) {
+                downloadAllSprites(extractedSprites);
+                showStatus(`Downloading ${extractedSprites.length} sprite files...`, 'success');
+            }
+        });
+
+        clearBtn.addEventListener('click', () => {
+            extractedSprites = [];
+            previewContainer.innerHTML = '';
+            previewSection.style.display = 'none';
+            downloadAllBtn.disabled = true;
+            hideStatus();
+            assetPathInput.value = '';
+        });
+
+        // Set default example path
+        assetPathInput.value = 'terrain/Characters/Basic Charakter Spritesheet.png';
+    </script>
+</body>
+</html>

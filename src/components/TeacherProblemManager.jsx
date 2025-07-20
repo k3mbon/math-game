@@ -23,11 +23,7 @@ const problemTypes = [
   'factorCount', 'perfectNumber', 'printPrimes'
 ];
 
-const toggleTheme = () => {
-  const current = document.body.getAttribute('data-theme') || 'light';
-  const next = current === 'light' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', next);
-};
+// Theme toggle removed as we now use a single vibrant theme
 
 const TeacherProblemManager = () => {
   const [problems, setProblems] = useState([]);
@@ -90,9 +86,7 @@ const TeacherProblemManager = () => {
 
   return (
     <div className="teacher-manager">
-      <button onClick={toggleTheme} className="btn toggle-theme">
-        🌙 Toggle Dark Mode
-      </button>
+      {/* Theme toggle removed as we now use a single vibrant theme */}
 
       <motion.h2 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
         🧠 Problem Manager

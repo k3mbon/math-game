@@ -1,0 +1,129 @@
+<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+  <!-- Diagonal shoreline from top-right to bottom-left -->
+  <!-- Base layers with diagonal gradient transition -->
+  <defs>
+    <!-- Diagonal gradient from grass (top-right) to water (bottom-left) -->
+    <linearGradient id="diagonalShorelineGradient" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a7c59;stop-opacity:1"/>
+      <stop offset="35%" style="stop-color:#4a7c59;stop-opacity:1"/>
+      <stop offset="50%" style="stop-color:#6b8e5a;stop-opacity:1"/>
+      <stop offset="65%" style="stop-color:#5a8bc7;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#4a90e2;stop-opacity:1"/>
+    </linearGradient>
+    
+    <!-- Shore transition gradient -->
+    <linearGradient id="diagonalShoreTransition" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#6b8e5a;stop-opacity:0.8"/>
+      <stop offset="50%" style="stop-color:#7a9d69;stop-opacity:0.6"/>
+      <stop offset="100%" style="stop-color:#89ac78;stop-opacity:0.4"/>
+    </linearGradient>
+    
+    <!-- Wet sand gradient -->
+    <linearGradient id="diagonalWetSandGradient" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#8db373;stop-opacity:0.7"/>
+      <stop offset="100%" style="stop-color:#9cc382;stop-opacity:0.3"/>
+    </linearGradient>
+    
+    <!-- Seamless grass pattern -->
+    <pattern id="seamlessGrassPattern" patternUnits="userSpaceOnUse" width="6" height="6">
+      <rect width="6" height="6" fill="#4a7c59"/>
+      <rect x="0" y="0" width="3" height="3" fill="#5a8c69" opacity="0.15"/>
+      <rect x="3" y="3" width="3" height="3" fill="#5a8c69" opacity="0.15"/>
+      <rect x="1" y="1" width="2" height="2" fill="#6a9c79" opacity="0.1"/>
+      <rect x="4" y="4" width="2" height="2" fill="#6a9c79" opacity="0.1"/>
+    </pattern>
+    
+    <!-- Water pattern -->
+    <pattern id="waterPattern" patternUnits="userSpaceOnUse" width="8" height="8">
+      <rect width="8" height="8" fill="#4a90e2"/>
+      <circle cx="2" cy="2" r="1" fill="#5a9ff2" opacity="0.2"/>
+      <circle cx="6" cy="6" r="1" fill="#5a9ff2" opacity="0.2"/>
+      <circle cx="2" cy="6" r="0.8" fill="#6aafff" opacity="0.15"/>
+      <circle cx="6" cy="2" r="0.8" fill="#6aafff" opacity="0.15"/>
+    </pattern>
+    
+    <!-- Ripple gradient -->
+    <radialGradient id="rippleGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.3"/>
+      <stop offset="70%" style="stop-color:#ffffff;stop-opacity:0.1"/>
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0"/>
+    </radialGradient>
+    
+    <!-- Foam gradient -->
+    <radialGradient id="foamGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.8"/>
+      <stop offset="60%" style="stop-color:#ffffff;stop-opacity:0.4"/>
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0"/>
+    </radialGradient>
+    
+    <!-- Reflection gradient -->
+    <linearGradient id="reflectionGradient" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0"/>
+      <stop offset="30%" style="stop-color:#ffffff;stop-opacity:0.2"/>
+      <stop offset="70%" style="stop-color:#ffffff;stop-opacity:0.2"/>
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Base diagonal gradient -->
+  <rect x="0" y="0" width="40" height="40" fill="url(#diagonalShorelineGradient)"/>
+  
+  <!-- Grass texture overlay in top-right triangle -->
+  <path d="M15,0 L40,0 L40,25 Z" fill="url(#seamlessGrassPattern)" opacity="0.9"/>
+  
+  <!-- Water texture overlay in bottom-left triangle -->
+  <path d="M0,15 L25,40 L0,40 Z" fill="url(#waterPattern)" opacity="0.8"/>
+  
+  <!-- Natural diagonal shoreline edge with soft transition -->
+  <path d="M18,0 Q22,10 20,20 Q18,30 22,40 L20,40 Q16,30 18,20 Q20,10 16,0 Z" 
+        fill="url(#diagonalShoreTransition)" opacity="0.7"/>
+  
+  <!-- Wet sand/mud with natural diagonal variation -->
+  <path d="M20,2 Q24,12 22,22 Q20,32 24,38 L22,38 Q18,32 20,22 Q22,12 18,2 Z" 
+        fill="url(#diagonalWetSandGradient)" opacity="0.6"/>
+  
+  <!-- Subtle water ripples in water area -->
+  <g opacity="0.3">
+    <ellipse cx="15" cy="25" rx="8" ry="1.2" fill="url(#rippleGradient)" opacity="0.4" transform="rotate(-45 15 25)"/>
+    <ellipse cx="10" cy="30" rx="6" ry="1" fill="url(#rippleGradient)" opacity="0.3" transform="rotate(-45 10 30)"/>
+    <ellipse cx="5" cy="35" rx="4" ry="0.8" fill="url(#rippleGradient)" opacity="0.4" transform="rotate(-45 5 35)"/>
+  </g>
+  
+  <!-- Natural foam/bubbles along diagonal shoreline -->
+  <g opacity="0.4">
+    <circle cx="32" cy="18" r="0.6" fill="url(#foamGradient)"/>
+    <circle cx="25" cy="20" r="0.4" fill="url(#foamGradient)"/>
+    <circle cx="18" cy="22" r="0.5" fill="url(#foamGradient)"/>
+    <circle cx="12" cy="28" r="0.3" fill="url(#foamGradient)"/>
+    <circle cx="5" cy="35" r="0.4" fill="url(#foamGradient)"/>
+  </g>
+  
+  <!-- Scattered pebbles with natural placement along diagonal -->
+  <g opacity="0.25">
+    <ellipse cx="30" cy="19" rx="0.3" ry="0.2" fill="#7a6b5d" transform="rotate(-45 30 19)"/>
+    <ellipse cx="22" cy="21" rx="0.2" ry="0.15" fill="#8b7d6f" transform="rotate(-45 22 21)"/>
+    <ellipse cx="14" cy="26" rx="0.4" ry="0.25" fill="#7a6b5d" transform="rotate(-45 14 26)"/>
+    <ellipse cx="7" cy="33" rx="0.25" ry="0.2" fill="#8b7d6f" transform="rotate(-45 7 33)"/>
+  </g>
+  
+  <!-- Grass blades extending naturally toward diagonal shore -->
+  <g opacity="0.5">
+    <path d="M34,15 Q34.5,12.5 35,15" stroke="#5a8c69" stroke-width="0.3" fill="none"/>
+    <path d="M28,12 Q28.5,9.5 29,12" stroke="#5a8c69" stroke-width="0.3" fill="none"/>
+    <path d="M22,16 Q22.5,13.5 23,16" stroke="#5a8c69" stroke-width="0.3" fill="none"/>
+    <path d="M36,20 Q36.5,17.5 37,20" stroke="#5a8c69" stroke-width="0.3" fill="none"/>
+    <path d="M26,18 Q26.5,15.5 27,18" stroke="#5a8c69" stroke-width="0.3" fill="none"/>
+  </g>
+  
+  <!-- Soft water reflections in water area -->
+  <g opacity="0.15">
+    <ellipse cx="15" cy="25" rx="8" ry="0.8" fill="url(#reflectionGradient)" transform="rotate(-45 15 25)"/>
+    <ellipse cx="10" cy="30" rx="6" ry="0.6" fill="url(#reflectionGradient)" transform="rotate(-45 10 30)"/>
+    <ellipse cx="5" cy="35" rx="4" ry="0.5" fill="url(#reflectionGradient)" transform="rotate(-45 5 35)"/>
+  </g>
+  
+  <!-- Subtle flower details in grass area -->
+  <circle cx="32" cy="8" r="0.4" fill="#ffeb3b" opacity="0.4"/>
+  <circle cx="25" cy="5" r="0.3" fill="#ff9800" opacity="0.3"/>
+  <circle cx="35" cy="15" r="0.3" fill="#e91e63" opacity="0.3"/>
+</svg>

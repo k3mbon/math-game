@@ -2,247 +2,337 @@
   {
     "level": 1,
     "type": "sequence",
-    "story": "🐢 Tomi si Kura-kura mulai menaiki tangga dari anak tangga ke-{start}. Ia menaiki satu per satu hingga mencapai anak tangga ke-{end}. Cetak setiap nomor tangga yang ia lewati.",
+    "title": "🐢 Tangga Tomi",
+    "story": "🐢 Tomi si Kura-kura mulai menaiki tangga dari anak tangga ke-3. Ia menaiki satu per satu hingga mencapai anak tangga ke-8. Cetak setiap nomor tangga yang ia lewati.",
     "start": 3,
     "endOffset": 5,
     "verify": "sequence",
-    "answer": "3\n4\n5\n6\n7\n8\n"
+    "answer": "3\n4\n5\n6\n7\n8\n",
+    "difficulty": "Mudah",
+    "hint": "Gunakan loop untuk mencetak angka berurutan dari 3 sampai 8"
   },
   {
     "level": 1,
     "type": "evenOdd",
-    "story": "🐱 Luna si Kucing menemukan angka {num} di halaman rumah. Apakah itu angka {type}? Kembalikan 1 jika ya, 0 jika tidak.",
+    "title": "🐱 Angka Luna",
+    "story": "🐱 Luna si Kucing menemukan angka 9 di halaman rumah. Apakah itu angka ganjil? Kembalikan 1 jika ya, 0 jika tidak.",
     "num": 9,
     "verify": "evenOdd",
-    "answer": 0
+    "answer": 0,
+    "difficulty": "Mudah",
+    "hint": "Angka ganjil tidak habis dibagi 2"
   },
   {
     "level": 1,
     "type": "evenOdd",
-    "story": "🐱 Luna menemukan angka misterius {num} di dekat tempat sampah. Apakah itu angka {type}? Kembalikan 1 jika ya, 0 jika tidak.",
+    "title": "🐱 Angka Misterius Luna",
+    "story": "🐱 Luna menemukan angka misterius 8 di dekat tempat sampah. Apakah itu angka genap? Kembalikan 1 jika ya, 0 jika tidak.",
     "num": 8,
     "verify": "evenOdd",
-    "answer": 1
+    "answer": 1,
+    "difficulty": "Mudah",
+    "hint": "Angka genap habis dibagi 2"
   },
   {
     "level": 2,
     "type": "digitCount",
-    "story": "🐘 Eli si Gajah melihat angka {num} tertulis besar di badan truk pengangkut buah. Hitung berapa digit angka tersebut dan kembalikan hasilnya.",
+    "title": "🐘 Truk Eli",
+    "story": "🐘 Eli si Gajah melihat angka 456 tertulis besar di badan truk pengangkut buah. Hitung berapa digit angka tersebut dan kembalikan hasilnya.",
     "num": 456,
     "verify": "digitCount",
-    "answer": 3
+    "answer": 3,
+    "difficulty": "Sedang",
+    "hint": "Hitung berapa banyak angka dalam 456"
   },
   {
     "level": 2,
     "type": "digitCount",
-    "story": "🦁 Leo menemukan angka {num} terukir di batang pohon saat bermain di hutan kota. Hitung ada berapa digit dari angka tersebut.",
+    "title": "🦁 Pohon Leo",
+    "story": "🦁 Leo menemukan angka 1024 terukir di batang pohon saat bermain di hutan kota. Hitung ada berapa digit dari angka tersebut.",
     "num": 1024,
     "verify": "digitCount",
-    "answer": 4
+    "answer": 4,
+    "difficulty": "Sedang",
+    "hint": "Hitung berapa banyak angka dalam 1024"
   },
   {
     "level": 2,
     "type": "sumDigits",
-    "story": "🧸 Beni si Beruang melihat angka {num} pada bungkus permen. Berapa jumlah semua digit dari angka tersebut?",
+    "title": "🧸 Permen Beni",
+    "story": "🧸 Beni si Beruang melihat angka 23 pada bungkus permen. Berapa jumlah semua digit dari angka tersebut?",
     "num": 23,
     "verify": "sumDigits",
-    "answer": 5
+    "answer": 5,
+    "difficulty": "Sedang",
+    "hint": "Jumlahkan setiap digit: 2 + 3 = ?"
   },
   {
     "level": 3,
     "type": "reverseDigits",
-    "story": "🦊 Felis si Rubah menulis angka {num} secara terbalik di papan tulis kelas. Balikkan lagi ke angka yang benar dan kembalikan hasilnya.",
+    "title": "🦊 Papan Tulis Felis",
+    "story": "🦊 Felis si Rubah menulis angka 31 secara terbalik di papan tulis kelas. Balikkan lagi ke angka yang benar dan kembalikan hasilnya.",
     "num": 31,
     "verify": "reverse",
-    "answer": 13
+    "answer": 13,
+    "difficulty": "Sedang",
+    "hint": "Balikkan urutan digit: 31 menjadi 13"
   },
   {
     "level": 3,
     "type": "multiples",
-    "story": "🐍 Sami si Ular merayap di ubin yang bernomor kelipatan dari {base}. Cetak semua kelipatan {base} sampai {limit}.",
+    "title": "🐍 Ubin Sami",
+    "story": "🐍 Sami si Ular merayap di ubin yang bernomor kelipatan dari 4. Cetak semua kelipatan 4 sampai 20.",
     "base": 4,
     "limit": 20,
     "verify": "multiples",
-    "answer": "4\n8\n12\n16\n20\n"
+    "answer": "4\n8\n12\n16\n20\n",
+    "difficulty": "Sedang",
+    "hint": "Kelipatan 4: 4×1, 4×2, 4×3, dst."
   },
   {
     "level": 4,
     "type": "fibonacci",
-    "story": "🐦 Ciko si Burung menghitung pohon di taman dengan cara aneh. Temukan bilangan ke-{n} dalam deret Fibonacci.",
+    "title": "🐦 Pohon Fibonacci Ciko",
+    "story": "🐦 Ciko si Burung menghitung pohon di taman dengan cara aneh. Temukan bilangan ke-7 dalam deret Fibonacci.",
     "n": 7,
     "verify": "fibonacci",
-    "answer": 13
+    "answer": 13,
+    "difficulty": "Sulit",
+    "hint": "Fibonacci: 1, 1, 2, 3, 5, 8, 13, ..."
   },
   {
     "level": 4,
     "type": "isPrime",
-    "story": "🐬 Dani si Lumba-lumba melihat angka {num} di pasir pantai. Apakah angka tersebut merupakan bilangan prima? Kembalikan 1 jika ya, 0 jika tidak.",
+    "title": "🐬 Pasir Pantai Dani",
+    "story": "🐬 Dani si Lumba-lumba melihat angka 11 di pasir pantai. Apakah angka tersebut merupakan bilangan prima? Kembalikan 1 jika ya, 0 jika tidak.",
     "num": 11,
     "verify": "isPrime",
-    "answer": 1
+    "answer": 1,
+    "difficulty": "Sulit",
+    "hint": "Bilangan prima hanya bisa dibagi 1 dan dirinya sendiri"
   },
   {
     "level": 4,
     "type": "isPrime",
-    "story": "🦀 Karli si Kepiting melihat angka {num} pada kerang. Apakah angka tersebut bilangan prima? Kembalikan 1 jika ya, 0 jika tidak.",
+    "title": "🦀 Kerang Karli",
+    "story": "🦀 Karli si Kepiting melihat angka 12 pada kerang. Apakah angka tersebut bilangan prima? Kembalikan 1 jika ya, 0 jika tidak.",
     "num": 12,
     "verify": "isPrime",
-    "answer": 0
+    "answer": 0,
+    "difficulty": "Sulit",
+    "hint": "12 bisa dibagi 2, 3, 4, 6 jadi bukan prima"
   },
   {
     "level": 5,
     "type": "factorCount",
-    "story": "🦓 Zaki si Zebra melihat angka {num} di plat nomor sepeda motor. Ada berapa faktor positif dari angka tersebut?",
+    "title": "🦓 Plat Motor Zaki",
+    "story": "🦓 Zaki si Zebra melihat angka 12 di plat nomor sepeda motor. Ada berapa faktor positif dari angka tersebut?",
     "num": 12,
     "verify": "factorCount",
-    "answer": 6
+    "answer": 6,
+    "difficulty": "Sulit",
+    "hint": "Faktor 12: 1, 2, 3, 4, 6, 12"
   },
   {
     "level": 5,
     "type": "perfectNumber",
-    "story": "🦢 Anggi si Angsa memeriksa apakah angka {num} adalah bilangan sempurna. Kembalikan 1 jika benar, 0 jika tidak.",
+    "title": "🦢 Bilangan Sempurna Anggi",
+    "story": "🦢 Anggi si Angsa memeriksa apakah angka 28 adalah bilangan sempurna. Kembalikan 1 jika benar, 0 jika tidak.",
     "num": 28,
     "verify": "perfectNumber",
-    "answer": 1
+    "answer": 1,
+    "difficulty": "Sulit",
+    "hint": "Bilangan sempurna = jumlah faktor pembaginya (kecuali dirinya)"
   },
   {
     "level": 5,
     "type": "perfectNumber",
-    "story": "🐧 Pipa si Penguin penasaran apakah angka {num} termasuk bilangan sempurna. Kembalikan 1 jika iya, 0 jika tidak.",
+    "title": "🐧 Penasaran Pipa",
+    "story": "🐧 Pipa si Penguin penasaran apakah angka 10 termasuk bilangan sempurna. Kembalikan 1 jika iya, 0 jika tidak.",
     "num": 10,
     "verify": "perfectNumber",
-    "answer": 0
+    "answer": 0,
+    "difficulty": "Sulit",
+    "hint": "Faktor 10: 1+2+5 = 8, tidak sama dengan 10"
   },
   {
     "level": 6,
     "type": "printPrimes",
-    "story": "🧙‍♂️ Pak Merlin, guru matematika, meminta semua siswa menuliskan bilangan prima sampai {limit}. Cetak satu per satu di baris baru.",
+    "title": "🧙‍♂️ Tugas Pak Merlin",
+    "story": "🧙‍♂️ Pak Merlin, guru matematika, meminta semua siswa menuliskan bilangan prima sampai 10. Cetak satu per satu di baris baru.",
     "limit": 10,
     "verify": "printPrimes",
-    "answer": "2\n3\n5\n7\n"
+    "answer": "2\n3\n5\n7\n",
+    "difficulty": "Sulit",
+    "hint": "Prima sampai 10: 2, 3, 5, 7"
   },
 
 {
     "level": 6,
     "type": "sumOfSquares",
-    "story": "🐻 Bobo si Beruang ingin menghitung jumlah kuadrat dari angka {num}. Hitung hasilnya dan kembalikan.",
+    "title": "🐻 Kuadrat Bobo",
+    "story": "🐻 Bobo si Beruang ingin menghitung jumlah kuadrat dari angka 4. Hitung hasilnya dan kembalikan.",
     "num": 4,
     "verify": "sumOfSquares",
-    "answer": 30
+    "answer": 30,
+    "difficulty": "Sulit",
+    "hint": "Jumlah kuadrat 1²+2²+3²+4² = 1+4+9+16"
   },
   {
     "level": 6,
     "type": "sumOfSquares",
-    "story": "🐼 Pandi si Panda ingin tahu berapa jumlah kuadrat dari angka {num}. Hitung dan kembalikan hasilnya.",
+    "title": "🐼 Kuadrat Pandi",
+    "story": "🐼 Pandi si Panda ingin tahu berapa jumlah kuadrat dari angka 5. Hitung dan kembalikan hasilnya.",
     "num": 5,
     "verify": "sumOfSquares",
-    "answer": 55
+    "answer": 55,
+    "difficulty": "Sulit",
+    "hint": "Jumlah kuadrat 1²+2²+3²+4²+5² = 1+4+9+16+25"
   },
 {
     "level": 7,
     "type": "palindrome",
-    "story": "🦋 Lili si Kupu-kupu menemukan angka {num} di taman. Apakah angka tersebut palindrom? Kembalikan 1 jika ya, 0 jika tidak.",
+    "title": "🦋 Taman Lili",
+    "story": "🦋 Lili si Kupu-kupu menemukan angka 121 di taman. Apakah angka tersebut palindrom? Kembalikan 1 jika ya, 0 jika tidak.",
     "num": 121,
     "verify": "palindrome",
-    "answer": 1
+    "answer": 1,
+    "difficulty": "Sulit",
+    "hint": "Palindrom dibaca sama dari depan dan belakang"
   },
   {
     "level": 7,
     "type": "palindrome",
-    "story": "🐢 Tino si Kura-kura melihat angka {num} di batu. Apakah itu palindrom? Kembalikan 1 jika ya, 0 jika tidak.",
+    "title": "🐢 Batu Tino",
+    "story": "🐢 Tino si Kura-kura melihat angka 123 di batu. Apakah itu palindrom? Kembalikan 1 jika ya, 0 jika tidak.",
     "num": 123,
     "verify": "palindrome",
-    "answer": 0
+    "answer": 0,
+    "difficulty": "Sulit",
+    "hint": "123 terbalik jadi 321, tidak sama"
   },
   {
     "level": 7,
     "type": "armstrong",
-    "story": "🐘 Eko si Gajah menemukan angka {num} di pohon. Apakah itu bilangan Armstrong? Kembalikan 1 jika ya, 0 jika tidak.",
+    "title": "🐘 Pohon Eko",
+    "story": "🐘 Eko si Gajah menemukan angka 153 di pohon. Apakah itu bilangan Armstrong? Kembalikan 1 jika ya, 0 jika tidak.",
     "num": 153,
     "verify": "armstrong",
-    "answer": 1
+    "answer": 1,
+    "difficulty": "Sangat Sulit",
+    "hint": "Armstrong: 1³+5³+3³ = 1+125+27 = 153"
   },
   {
     "level": 7,
     "type": "armstrong",
-    "story": "🐍 Siti si Ular melihat angka {num} di pasir. Apakah itu bilangan Armstrong? Kembalikan 1 jika ya, 0 jika tidak.",
+    "title": "🐍 Pasir Siti",
+    "story": "🐍 Siti si Ular melihat angka 123 di pasir. Apakah itu bilangan Armstrong? Kembalikan 1 jika ya, 0 jika tidak.",
     "num": 123,
     "verify": "armstrong",
-    "answer": 0
+    "answer": 0,
+    "difficulty": "Sangat Sulit",
+    "hint": "Armstrong: 1³+2³+3³ = 1+8+27 = 36 ≠ 123"
   },
   {
     "level": 8,
     "type": "lcm",
-    "story": "🐅 Tora si Harimau ingin tahu kelipatan persekutuan terkecil dari {a} dan {b}. Hitung dan kembalikan hasilnya.",
+    "title": "🐅 KPK Tora",
+    "story": "🐅 Tora si Harimau ingin tahu kelipatan persekutuan terkecil dari 4 dan 6. Hitung dan kembalikan hasilnya.",
     "a": 4,
     "b": 6,
     "verify": "lcm",
-    "answer": 12
+    "answer": 12,
+    "difficulty": "Sangat Sulit",
+    "hint": "KPK dari 4 dan 6: kelipatan 4 (4,8,12...) dan 6 (6,12...)"
   },
   {
     "level": 8,
     "type": "gcd",
-    "story": "🐘 Eko si Gajah ingin tahu faktor persekutuan terbesar dari {a} dan {b}. Hitung dan kembalikan hasilnya.",
+    "title": "🐘 FPB Eko",
+    "story": "🐘 Eko si Gajah ingin tahu faktor persekutuan terbesar dari 18 dan 24. Hitung dan kembalikan hasilnya.",
     "a": 18,
     "b": 24,
     "verify": "gcd",
-    "answer": 6
+    "answer": 6,
+    "difficulty": "Sangat Sulit",
+    "hint": "FPB dari 18 dan 24: faktor 18 (1,2,3,6,9,18) dan 24 (1,2,3,4,6,8,12,24)"
   },
   {
     "level": 8,
     "type": "gcd",
-    "story": "🐍 Siti si Ular ingin tahu faktor persekutuan terbesar dari {a} dan {b}. Hitung dan kembalikan hasilnya.",
+    "title": "🐍 FPB Siti",
+    "story": "🐍 Siti si Ular ingin tahu faktor persekutuan terbesar dari 20 dan 30. Hitung dan kembalikan hasilnya.",
     "a": 20,
     "b": 30,
     "verify": "gcd",
-    "answer": 10
+    "answer": 10,
+    "difficulty": "Sangat Sulit",
+    "hint": "FPB dari 20 dan 30: pembagi bersama terbesar"
   },
   {
     "level": 9,
     "type": "powerOfTwo",
-    "story": "🐻 Bobo si Beruang ingin tahu apakah angka {num} adalah pangkat dua. Kembalikan 1 jika ya, 0 jika tidak.",
+    "title": "🐻 Pangkat Dua Bobo",
+    "story": "🐻 Bobo si Beruang ingin tahu apakah angka 16 adalah pangkat dua. Kembalikan 1 jika ya, 0 jika tidak.",
     "num": 16,
     "verify": "powerOfTwo",
-    "answer": 1
+    "answer": 1,
+    "difficulty": "Sangat Sulit",
+    "hint": "Pangkat 2: 1, 2, 4, 8, 16, 32, 64..."
   },
   {
     "level": 9,
     "type": "powerOfTwo",
-    "story": "🐼 Pandi si Panda penasaran apakah angka {num} adalah pangkat dua. Kembalikan 1 jika iya, 0 jika tidak.",
+    "title": "🐼 Pangkat Dua Pandi",
+    "story": "🐼 Pandi si Panda penasaran apakah angka 18 adalah pangkat dua. Kembalikan 1 jika iya, 0 jika tidak.",
     "num": 18,
     "verify": "powerOfTwo",
-    "answer": 0
+    "answer": 0,
+    "difficulty": "Sangat Sulit",
+    "hint": "18 bukan pangkat 2 karena 16 < 18 < 32"
   },
   {
     "level": 9,
     "type": "sumOfDigits",
-    "story": "🦁 Leo si Singa ingin tahu jumlah dari semua digit angka {num}. Hitung dan kembalikan hasilnya.",
+    "title": "🦁 Digit Leo",
+    "story": "🦁 Leo si Singa ingin tahu jumlah dari semua digit angka 987. Hitung dan kembalikan hasilnya.",
     "num": 987,
     "verify": "sumOfDigits",
-    "answer": 24
+    "answer": 24,
+    "difficulty": "Sangat Sulit",
+    "hint": "Jumlahkan digit: 9 + 8 + 7 = 24"
   },
   {
     "level": 9,
     "type": "sumOfDigits",
-    "story": "🐢 Tino si Kura-kura penasaran dengan jumlah digit dari angka {num}. Hitung dan kembalikan hasilnya.",
+    "title": "🐢 Digit Tino",
+    "story": "🐢 Tino si Kura-kura penasaran dengan jumlah digit dari angka 4567. Hitung dan kembalikan hasilnya.",
     "num": 4567,
     "verify": "sumOfDigits",
-    "answer": 22
+    "answer": 22,
+    "difficulty": "Sangat Sulit",
+    "hint": "Jumlahkan digit: 4 + 5 + 6 + 7 = 22"
   },
   {
     "level": 10,
     "type": "binaryConversion",
-    "story": "🐱 Luna si Kucing ingin mengubah angka {num} ke dalam bentuk biner. Kembalikan hasilnya.",
+    "title": "🐱 Biner Luna",
+    "story": "🐱 Luna si Kucing ingin mengubah angka 10 ke dalam bentuk biner. Kembalikan hasilnya.",
     "num": 10,
     "verify": "binaryConversion",
-    "answer": "1010"
+    "answer": "1010",
+    "difficulty": "Sangat Sulit",
+    "hint": "Konversi 10 ke biner: 10 = 8+2 = 1010₂"
   },
   {
     "level": 10,
     "type": "binaryConversion",
-    "story": "🐶 Dodo si Anjing penasaran dengan representasi biner dari angka {num}. Kembalikan hasilnya.",
+    "title": "🐶 Biner Dodo",
+    "story": "🐶 Dodo si Anjing penasaran dengan representasi biner dari angka 15. Kembalikan hasilnya.",
     "num": 15,
     "verify": "binaryConversion",
-    "answer": "1111"
+    "answer": "1111",
+    "difficulty": "Sangat Sulit",
+    "hint": "Konversi 15 ke biner: 15 = 8+4+2+1 = 1111₂"
   }
 ]

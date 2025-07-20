@@ -1,0 +1,24 @@
+<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+  <!-- Collectible gem -->
+  <!-- Gem shadow -->
+  <polygon points="8.5,10 5.5,14 11.5,14" fill="#4A148C" opacity="0.3"/>
+  <!-- Gem base -->
+  <polygon points="8,2 5,6 8,14 11,6" fill="#9C27B0" stroke="#7B1FA2" stroke-width="1"/>
+  <!-- Gem facets -->
+  <polygon points="8,2 6,5 8,6" fill="#E1BEE7"/>
+  <polygon points="8,2 10,5 8,6" fill="#CE93D8"/>
+  <polygon points="6,5 5,6 8,6" fill="#BA68C8"/>
+  <polygon points="10,5 11,6 8,6" fill="#AB47BC"/>
+  <polygon points="8,6 5,6 8,14" fill="#8E24AA"/>
+  <polygon points="8,6 11,6 8,14" fill="#7B1FA2"/>
+  <!-- Sparkle effects -->
+  <circle cx="7" cy="4" r="0.5" fill="#FFF" opacity="0.9">
+    <animate attributeName="opacity" values="0.9;0.3;0.9" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="9" cy="8" r="0.5" fill="#FFF" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;0.2;0.7" dur="1.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="6" cy="10" r="0.5" fill="#FFF" opacity="0.8">
+    <animate attributeName="opacity" values="0.8;0.1;0.8" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+</svg>

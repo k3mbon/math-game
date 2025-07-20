@@ -1,0 +1,71 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="stalagmiteGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3a3a3a"/>
+      <stop offset="30%" stop-color="#5a5a5a"/>
+      <stop offset="70%" stop-color="#7a7a7a"/>
+      <stop offset="100%" stop-color="#8e8e8e"/>
+    </linearGradient>
+    <linearGradient id="mineralStaining" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8b4513"/>
+      <stop offset="50%" stop-color="#a0522d"/>
+      <stop offset="100%" stop-color="#d2691e"/>
+    </linearGradient>
+    <radialGradient id="stalagmiteHighlight" cx="30%" cy="70%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="rockTexture">
+      <feTurbulence baseFrequency="0.7" numOctaves="4" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2"/>
+    </filter>
+  </defs>
+  
+  <!-- Cave floor -->
+  <rect width="32" height="8" y="24" fill="#2a2a2a"/>
+  
+  <!-- Main stalagmite -->
+  <path d="M12,32 L20,32 L18,24 L16,16 L14,24 Z" fill="url(#stalagmiteGradient)" filter="url(#rockTexture)"/>
+  
+  <!-- Secondary stalagmites -->
+  <path d="M6,32 L10,32 L9,26 L8,20 L7,26 Z" fill="url(#stalagmiteGradient)" filter="url(#rockTexture)"/>
+  <path d="M22,32 L26,32 L25,27 L24,22 L23,27 Z" fill="url(#stalagmiteGradient)" filter="url(#rockTexture)"/>
+  
+  <!-- Small formations -->
+  <path d="M2,32 L4,32 L3,29 L2.5,26 Z" fill="#5a5a5a"/>
+  <path d="M28,32 L30,32 L29,28 L28.5,25 Z" fill="#5a5a5a"/>
+  
+  <!-- Mineral deposits and iron staining -->
+  <ellipse cx="15" cy="28" rx="2" ry="1" fill="url(#mineralStaining)" opacity="0.7"/>
+  <ellipse cx="17" cy="24" rx="1.5" ry="0.8" fill="#8b4513" opacity="0.5"/>
+  <ellipse cx="8" cy="29" rx="1" ry="0.5" fill="url(#mineralStaining)" opacity="0.6"/>
+  <ellipse cx="24" cy="29" rx="1.2" ry="0.6" fill="#a0522d" opacity="0.4"/>
+  
+  <!-- Calcite formations -->
+  <circle cx="14" cy="20" r="0.8" fill="#f5f5dc" opacity="0.8"/>
+  <circle cx="18" cy="22" r="0.6" fill="#fffacd" opacity="0.7"/>
+  <circle cx="9" cy="24" r="0.5" fill="#f5f5dc" opacity="0.6"/>
+  
+  <!-- Highlights and reflections -->
+  <ellipse cx="14" cy="26" rx="3" ry="8" fill="url(#stalagmiteHighlight)"/>
+  <ellipse cx="8" cy="28" rx="1.5" ry="4" fill="url(#stalagmiteHighlight)"/>
+  
+  <!-- Texture ridges -->
+  <path d="M13,30 Q15,26 14,22 Q16,18 15,16" stroke="#4a4a4a" stroke-width="0.5" fill="none"/>
+  <path d="M17,30 Q16,26 17,22 Q15,18 16,16" stroke="#4a4a4a" stroke-width="0.5" fill="none"/>
+  <path d="M7,31 Q8,28 7.5,24 Q8.5,22 8,20" stroke="#4a4a4a" stroke-width="0.3" fill="none"/>
+  <path d="M25,31 Q24,28 24.5,24 Q23.5,22 24,22" stroke="#4a4a4a" stroke-width="0.3" fill="none"/>
+  
+  <!-- Water pooling at base -->
+  <ellipse cx="16" cy="31" rx="4" ry="1" fill="#1e3a5f" opacity="0.6"/>
+  <ellipse cx="8" cy="31" rx="2" ry="0.5" fill="#1e3a5f" opacity="0.5"/>
+  
+  <!-- Small debris and pebbles -->
+  <circle cx="11" cy="31" r="0.3" fill="#6a6a6a"/>
+  <circle cx="21" cy="31" r="0.4" fill="#5a5a5a"/>
+  <circle cx="5" cy="31" r="0.2" fill="#7a7a7a"/>
+  
+  <!-- Moss growth -->
+  <circle cx="13" cy="18" r="0.4" fill="#228b22" opacity="0.7"/>
+  <circle cx="19" cy="20" r="0.3" fill="#32cd32" opacity="0.6"/>
+</svg>

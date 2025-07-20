@@ -26,7 +26,7 @@ html, body {
   flex: 1;
   background: #fff;
   padding: 2rem;
-  box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -48,7 +48,7 @@ html, body {
   width: 100%;
   background: #e0f7fa;
   border-radius: 12px;
-  box-shadow: inset 0 0 10px #80deea;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,7 +64,7 @@ html, body {
   flex: 1;
   height: 100vh;
   min-width: 0;
-  box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+
   overflow: hidden;
 }
 
@@ -159,19 +159,199 @@ html, body {
   color: white;
 }
 
-/* Responsive: stack vertically on small screens */
-@media (max-width: 720px) {
+/* Responsive Design with Standardized Breakpoints */
+
+/* Large Tablets and Small Desktops (768px - 991px) */
+@media (max-width: 991px) and (min-width: 768px) {
+  .numeration-page {
+    gap: 1rem;
+  }
+  
+  .challenge-area {
+    min-width: 45%;
+  }
+  
+  .blockly-area {
+    min-width: 45%;
+  }
+  
+  .controls {
+    padding: 1rem 1.5rem;
+    gap: 1rem;
+  }
+  
+  .control-btn {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Tablets (576px - 767px) */
+@media (max-width: 767px) and (min-width: 576px) {
   .numeration-page {
     flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    gap: 0.5rem;
   }
 
-  .challenge-area, .blockly-area {
+  .challenge-area {
     width: 100%;
-    height: 50vh;
+    height: 45vh;
+    min-height: 280px;
+  }
+
+  .blockly-area {
+    width: 100%;
+    height: 45vh;
+    min-height: 280px;
   }
 
   .challenge-box {
     max-width: 100%;
+  }
+
+  .controls {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(20, 20, 35, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(108, 99, 255, 0.3);
+    z-index: 1000;
+    padding: 1rem;
+    gap: 0.8rem;
+    justify-content: center;
+  }
+
+  .control-btn {
+    padding: 0.8rem 1.2rem;
+    font-size: 0.9rem;
+    min-width: 100px;
+  }
+}
+
+/* Mobile Landscape & Small Tablets (480px - 575px) */
+@media (max-width: 575px) and (min-width: 480px) {
+  .numeration-page {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    gap: 0.3rem;
+  }
+
+  .challenge-area {
+    width: 100%;
+    height: 42vh;
+    min-height: 250px;
+  }
+
+  .blockly-area {
+    width: 100%;
+    height: 42vh;
+    min-height: 250px;
+  }
+
+  .challenge-box {
+    max-width: 100%;
+  }
+
+  .controls {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(20, 20, 35, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(108, 99, 255, 0.3);
+    z-index: 1000;
+    padding: 0.8rem;
+    gap: 0.6rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .control-btn {
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+    min-width: 90px;
+    flex: 1;
+    max-width: 120px;
+  }
+}
+
+/* Mobile Portrait (320px - 479px) */
+@media (max-width: 479px) {
+  .numeration-page {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    gap: 0.2rem;
+  }
+
+  .challenge-area {
+    width: 100%;
+    height: 40vh;
+    min-height: 220px;
+  }
+
+  .blockly-area {
+    width: 100%;
+    height: 40vh;
+    min-height: 220px;
+  }
+
+  .challenge-box {
+    max-width: 100%;
+  }
+
+  .controls {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(20, 20, 35, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(108, 99, 255, 0.3);
+    z-index: 1000;
+    padding: 0.6rem 0.5rem;
+    gap: 0.4rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .control-btn {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.8rem;
+    min-width: 80px;
+    flex: 1;
+    max-width: 100px;
+  }
+}
+
+/* Very Small Screens (below 360px) */
+@media (max-width: 359px) {
+  .challenge-area {
+    height: 35vh;
+    min-height: 200px;
+  }
+
+  .blockly-area {
+    height: 35vh;
+    min-height: 200px;
+  }
+  
+  .controls {
+    padding: 0.5rem 0.3rem;
+    gap: 0.3rem;
+  }
+  
+  .control-btn {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.75rem;
+    min-width: 70px;
+    max-width: 85px;
   }
 }
 
@@ -185,34 +365,60 @@ html, body {
   z-index: 1;
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .numeration-page {
-    background-color: #1a202c;
-  }
+/* Modern Purple-Blue Theme */
+.numeration-container {
+  background: linear-gradient(135deg, rgba(108, 99, 255, 0.8), rgba(123, 92, 250, 0.8));
+}
 
-  .challenge-area {
-    background-color: #2d3748;
-    box-shadow: 2px 0 8px rgba(0,0,0,0.3);
-  }
+.numeration-header {
+  background-color: rgba(108, 99, 255, 0.8);
 
-  .challenge-box {
-    background-color: #2d3748;
-    border: 1px solid #4a5568;
-    color: #e2e8f0;
-    box-shadow: inset 0 0 10px #4a5568;
-  }
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
-  .challenge-area h2 {
-    color: #e2e8f0;
-  }
+}
 
-  .blockly-wrapper {
-    background-color: #1a202c;
-  }
+.numeration-content {
+  background-color: rgba(255, 255, 255, 0.1);
 
-  .blockly-controls {
-    background-color: #2d3748;
-    border-bottom-color: #4a5568;
-  }
+  border-radius: 16px;
+
+}
+
+.number-display {
+  background: linear-gradient(135deg, rgba(108, 99, 255, 0.8), rgba(123, 92, 250, 0.8));
+  color: white;
+  border-radius: 12px;
+
+}
+
+.number-input {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #333;
+  border: 2px solid rgba(108, 99, 255, 0.3);
+  border-radius: 8px;
+
+}
+
+.number-input:focus {
+  border-color: #7B5CFA;
+
+}
+
+.numeration-button {
+  background: linear-gradient(135deg, #7B5CFA, #6C63FF);
+  color: white;
+  border-radius: 8px;
+
+  transition: all 0.3s ease;
+}
+
+.numeration-button:hover {
+  background: linear-gradient(135deg, #8A6AFB, #7B5CFA);
+  transform: translateY(-2px);
+
+}
+
+.numeration-button:active {
+  transform: translateY(0);
+
 }

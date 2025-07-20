@@ -1,5 +1,13 @@
 /* src/components/ArcadeMode.css */
-.mode-container { text-align:center; margin:2rem; color: var(--text); }
+.mode-container { 
+  text-align: center; 
+  margin: 2rem; 
+  color: var(--text-primary); 
+  background: linear-gradient(135deg, rgba(94, 114, 235, 0.05), rgba(123, 92, 250, 0.1));
+  padding: 2rem;
+  border-radius: 16px;
+
+}
 .stats { font-size:1.2rem; margin-bottom:1rem; }
 .arcade-problem { font-size:1.4rem; margin:1rem 0; }
 .arcade-form input { padding:0.5rem; width:120px; }

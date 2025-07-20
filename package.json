@@ -7,10 +7,17 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "extract-sprites": "node extract-sprites.js",
+    "deploy": "npm run build && firebase deploy",
+    "deploy:hosting": "npm run build && firebase deploy --only hosting"
   },
   "dependencies": {
-    "blockly": "^9.0.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.2.0",
+    "@mui/material": "^7.2.0",
+    "blockly": "^9.3.3",
     "firebase": "^11.9.1",
     "framer-motion": "^12.19.1",
     "i18next": "^25.2.1",

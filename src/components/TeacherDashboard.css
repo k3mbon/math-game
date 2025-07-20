@@ -6,7 +6,7 @@
   padding: 2rem;
   background: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+
   font-family: 'Segoe UI', sans-serif;
   color: #333;
   display: flex;
@@ -113,7 +113,7 @@
   border: 1px solid #c8e6c9;
   padding: 1rem;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
 }
 
 .problem-card p {
@@ -184,7 +184,7 @@
   padding: 1rem;
   border-radius: 10px;
   border: 1px solid #dcedc8;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
 }
 
 .student-icon {

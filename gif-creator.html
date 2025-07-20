@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprite to GIF Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .upload-area {
+            border: 3px dashed rgba(255, 255, 255, 0.5);
+            border-radius: 15px;
+            padding: 50px;
+            text-align: center;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .upload-area:hover {
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        .upload-area.dragover {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.2);
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .control-group {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+        }
+        .btn-secondary {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+            color: white;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .preview-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .preview-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            backdrop-filter: blur(5px);
+        }
+        .gif-preview {
+            max-width: 100%;
+            border: 3px solid #fff;
+            border-radius: 10px;
+            background: #f0f0f0;
+        }
+        .progress {
+            width: 100%;
+            height: 25px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            transition: width 0.3s ease;
+            border-radius: 15px;
+        }
+        .log {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .frames-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .frame-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .frame-canvas {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Sprite Sheet to Animated GIF Converter</h1>
+        <p>Convert your character sprite sheets into smooth animated GIFs for easy integration!</p>
+        
+        <div class="upload-area" id="uploadArea">
+            <h2>📁 Upload Your Sprite Sheet</h2>
+            <p>Click here or drag and drop your sprite sheet image</p>
+            <input type="file" id="fileInput" accept="image/*" style="display: none;">
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="frameWidth">Frame Width (px)</label>
+                <input type="number" id="frameWidth" value="78" min="1">
+            </div>
+            <div class="control-group">
+                <label for="frameHeight">Frame Height (px)</label>
+                <input type="number" id="frameHeight" value="58" min="1">
+            </div>
+            <div class="control-group">
+                <label for="frameCount">Total Frames</label>
+                <input type="number" id="frameCount" value="11" min="1">
+            </div>
+            <div class="control-group">
+                <label for="frameDelay">Frame Delay (ms)</label>
+                <input type="number" id="frameDelay" value="200" min="50" max="2000">
+            </div>
+            <div class="control-group">
+                <label for="gifQuality">GIF Quality</label>
+                <select id="gifQuality">
+                    <option value="10">High Quality (Larger file)</option>
+                    <option value="20" selected>Medium Quality</option>
+                    <option value="30">Low Quality (Smaller file)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="loopCount">Loop Count</label>
+                <select id="loopCount">
+                    <option value="0" selected>Infinite Loop</option>
+                    <option value="1">Play Once</option>
+                    <option value="3">3 Times</option>
+                    <option value="5">5 Times</option>
+                </select>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <button id="extractBtn" class="btn-primary" disabled>🎯 Extract Frames</button>
+            <button id="createGifBtn" class="btn-secondary" disabled>🎬 Create Animated GIF</button>
+        </div>
+        
+        <div class="progress" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="preview-section">
+            <div id="framesPreview" style="display: none;">
+                <h3>📋 Extracted Frames Preview</h3>
+                <div class="frames-preview" id="framesGrid"></div>
+            </div>
+            
+            <div id="gifPreview" style="display: none;">
+                <h3>🎬 Generated Animated GIF</h3>
+                <div class="preview-container">
+                    <img id="gifImage" class="gif-preview" alt="Generated GIF">
+                    <br><br>
+                    <button id="downloadGifBtn" class="btn-primary">💾 Download GIF</button>
+                    <button id="copyCodeBtn" class="btn-secondary">📋 Copy React Code</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="log" id="log"></div>
+    </div>
+
+    <!-- Include GIF.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
+    
+    <script>
+        let loadedImage = null;
+        let extractedFrames = [];
+        let generatedGifBlob = null;
+        
+        // DOM elements
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const extractBtn = document.getElementById('extractBtn');
+        const createGifBtn = document.getElementById('createGifBtn');
+        const downloadGifBtn = document.getElementById('downloadGifBtn');
+        const copyCodeBtn = document.getElementById('copyCodeBtn');
+        const framesGrid = document.getElementById('framesGrid');
+        const framesPreview = document.getElementById('framesPreview');
+        const gifPreview = document.getElementById('gifPreview');
+        const gifImage = document.getElementById('gifImage');
+        const log = document.getElementById('log');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        
+        // Logging function
+        function addLog(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            log.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        // File upload handling
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        // Handle file loading
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                addLog('❌ Please select a valid image file.');
+                return;
+            }
+            
+            addLog(`📁 Loading image: ${file.name}`);
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    loadedImage = img;
+                    addLog(`✅ Image loaded: ${img.width}x${img.height}px`);
+                    extractBtn.disabled = false;
+                    uploadArea.innerHTML = `<h2>✅ Image Loaded</h2><p>${file.name} (${img.width}x${img.height}px)</p>`;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Extract frames
+        extractBtn.addEventListener('click', async () => {
+            if (!loadedImage) return;
+            
+            const frameWidth = parseInt(document.getElementById('frameWidth').value);
+            const frameHeight = parseInt(document.getElementById('frameHeight').value);
+            const frameCount = parseInt(document.getElementById('frameCount').value);
+            
+            addLog(`🎯 Starting frame extraction...`);
+            addLog(`📐 Frame size: ${frameWidth}x${frameHeight}px`);
+            addLog(`🎬 Total frames: ${frameCount}`);
+            
+            progressContainer.style.display = 'block';
+            framesGrid.innerHTML = '';
+            extractedFrames = [];
+            
+            const framesPerRow = Math.floor(loadedImage.width / frameWidth);
+            addLog(`📊 Frames per row: ${framesPerRow}`);
+            
+            for (let i = 0; i < frameCount; i++) {
+                // Calculate source position
+                const col = i % framesPerRow;
+                const row = Math.floor(i / framesPerRow);
+                const sourceX = col * frameWidth;
+                const sourceY = row * frameHeight;
+                
+                // Create canvas for this frame
+                const canvas = document.createElement('canvas');
+                canvas.width = frameWidth;
+                canvas.height = frameHeight;
+                canvas.className = 'frame-canvas';
+                const ctx = canvas.getContext('2d');
+                
+                // Draw the frame
+                ctx.drawImage(
+                    loadedImage,
+                    sourceX, sourceY, frameWidth, frameHeight,
+                    0, 0, frameWidth, frameHeight
+                );
+                
+                // Create frame container
+                const frameItem = document.createElement('div');
+                frameItem.className = 'frame-item';
+                
+                const frameLabel = document.createElement('div');
+                frameLabel.textContent = `Frame ${i + 1}`;
+                frameLabel.style.fontWeight = 'bold';
+                frameLabel.style.marginBottom = '5px';
+                
+                frameItem.appendChild(frameLabel);
+                frameItem.appendChild(canvas);
+                framesGrid.appendChild(frameItem);
+                
+                // Store frame data
+                extractedFrames.push(canvas);
+                
+                // Update progress
+                const progress = ((i + 1) / frameCount) * 100;
+                progressBar.style.width = progress + '%';
+                
+                addLog(`✅ Extracted frame ${i + 1}/${frameCount}`);
+                
+                // Allow UI to update
+                await new Promise(resolve => setTimeout(resolve, 10));
+            }
+            
+            addLog(`🎉 Frame extraction completed! ${frameCount} frames extracted.`);
+            framesPreview.style.display = 'block';
+            createGifBtn.disabled = false;
+        });
+        
+        // Create GIF
+        createGifBtn.addEventListener('click', () => {
+            if (extractedFrames.length === 0) return;
+            
+            const frameDelay = parseInt(document.getElementById('frameDelay').value);
+            const quality = parseInt(document.getElementById('gifQuality').value);
+            const repeat = parseInt(document.getElementById('loopCount').value);
+            
+            addLog(`🎬 Creating animated GIF...`);
+            addLog(`⏱️ Frame delay: ${frameDelay}ms`);
+            addLog(`🎨 Quality: ${quality}`);
+            addLog(`🔄 Loop count: ${repeat === 0 ? 'Infinite' : repeat}`);
+            
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+            
+            const gif = new GIF({
+                workers: 2,
+                quality: quality,
+                repeat: repeat
+            });
+            
+            // Add frames to GIF
+            extractedFrames.forEach((canvas, index) => {
+                gif.addFrame(canvas, { delay: frameDelay });
+                addLog(`➕ Added frame ${index + 1} to GIF`);
+            });
+            
+            gif.on('progress', (p) => {
+                const progress = Math.round(p * 100);
+                progressBar.style.width = progress + '%';
+                addLog(`🔄 GIF generation progress: ${progress}%`);
+            });
+            
+            gif.on('finished', (blob) => {
+                generatedGifBlob = blob;
+                const url = URL.createObjectURL(blob);
+                gifImage.src = url;
+                gifPreview.style.display = 'block';
+                
+                addLog(`🎉 GIF created successfully! Size: ${(blob.size / 1024).toFixed(2)} KB`);
+                progressContainer.style.display = 'none';
+            });
+            
+            gif.render();
+        });
+        
+        // Download GIF
+        downloadGifBtn.addEventListener('click', () => {
+            if (!generatedGifBlob) return;
+            
+            const url = URL.createObjectURL(generatedGifBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'king_human_idle_animation.gif';
+            a.click();
+            URL.revokeObjectURL(url);
+            addLog(`💾 GIF downloaded: king_human_idle_animation.gif`);
+        });
+        
+        // Copy React code
+        copyCodeBtn.addEventListener('click', () => {
+            const reactCode = `// Simple GIF-based Character Animation Component
+import React from 'react';
+
+const CharacterAnimation = () => {
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '100vh',
+      backgroundColor: '#2c3e50',
+      fontFamily: 'Arial, sans-serif',
+      padding: '20px'
+    }}>
+      <h1 style={{ color: 'white', marginBottom: '20px' }}>
+        🤴 King Human Idle Animation (GIF)
+      </h1>
+      
+      <div style={{
+        padding: '30px',
+        backgroundColor: '#34495e',
+        borderRadius: '15px',
+        boxShadow: '0 8px 16px rgba(0,0,0,0.3)',
+        margin: '20px 0'
+      }}>
+        <img 
+          src="/assets/characters/king_human_idle_animation.gif"
+          alt="King Human Idle Animation"
+          style={{
+            border: '3px solid #3498db',
+            borderRadius: '8px',
+            backgroundColor: '#ecf0f1',
+            imageRendering: 'pixelated',
+            width: 'auto',
+            height: 'auto',
+            maxWidth: '100%'
+          }}
+        />
+      </div>
+      
+      <div style={{
+        marginTop: '20px',
+        color: 'white',
+        textAlign: 'center'
+      }}>
+        <p style={{ fontSize: '18px', fontWeight: 'bold' }}>Animated GIF Implementation</p>
+        <p style={{ color: '#3498db' }}>Much simpler than manual frame cycling!</p>
+      </div>
+    </div>
+  );
+};
+
+export default CharacterAnimation;`;
+            
+            navigator.clipboard.writeText(reactCode).then(() => {
+                addLog(`📋 React code copied to clipboard!`);
+                copyCodeBtn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    copyCodeBtn.textContent = '📋 Copy React Code';
+                }, 2000);
+            }).catch(() => {
+                addLog(`❌ Failed to copy to clipboard`);
+            });
+        });
+        
+        // Initialize
+        addLog('🚀 Sprite to GIF Converter ready!');
+        addLog('📋 Default settings loaded for King Human Idle animation');
+        addLog('💡 Tip: Lower quality = smaller file size, higher quality = better visuals');
+    </script>
+</body>
+</html>

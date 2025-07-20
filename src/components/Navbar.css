@@ -1,0 +1,987 @@
+/* Custom styles for brand text gradient - matching the landing page */
+.navbar-brand-text {
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 30%, var(--accent) 70%, var(--primary) 100%);
+  background-size: 300% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  animation: colorShift 8s linear infinite;
+  position: relative;
+  z-index: 2;
+}
+
+/* Animation for the gradient text */
+@keyframes colorShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Ensure the AppBar is above other content */
+.MuiAppBar-root {
+  z-index: 1100 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+}
+
+/* Override Material-UI container margins */
+.MuiContainer-root {
+  margin-top: 0 !important;
+}
+
+.MuiToolbar-root {
+  margin: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Custom styling for the drawer backdrop */
+.MuiBackdrop-root {
+  background-color: rgba(30, 30, 45, 0.7); /* Match the landing page background */
+  -webkit-backdrop-filter: blur(8px); /* Safari support */
+  backdrop-filter: blur(8px);
+}
+
+/* Glassmorphism effect enhancements */
+.MuiPaper-root.MuiAppBar-root {
+  background: rgba(30, 30, 45, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(45, 63, 222, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Support for backdrop-filter */
+@supports ((-webkit-backdrop-filter: blur(20px)) or (backdrop-filter: blur(20px))) {
+  .MuiPaper-root.MuiAppBar-root {
+    background-color: rgba(30, 30, 45, 0.75);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+  }
+}
+
+/* Floating navbar animation */
+@keyframes floatNavbar {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(0); }
+}
+
+/* Apply floating animation when navbar becomes visible */
+.app-container .MuiAppBar-root {
+  animation: floatNavbar 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Styles for scrolled navbar - enhanced with landing page colors */
+.navbar-scrolled {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(45, 63, 222, 0.15) !important;
+  backdrop-filter: blur(25px) !important;
+  -webkit-backdrop-filter: blur(25px) !important;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.2) !important;
+  background: rgba(30, 30, 45, 0.75) !important;
+}
+
+.navbar-scrolled::before {
+  opacity: 1 !important;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.2) 0%, transparent 70%),
+    radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.2) 0%, transparent 70%),
+    radial-gradient(circle at 50% 50%, rgba(45, 63, 222, 0.15) 0%, transparent 70%),
+    linear-gradient(to right, rgba(45, 63, 222, 0.1), rgba(124, 58, 237, 0.08), rgba(6, 182, 212, 0.1)) !important;
+}
+
+/* Add glass effect to the AppBar - matching landing page background */
+.MuiPaper-root.MuiAppBar-root::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.15) 0%, transparent 70%),
+    radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 70%),
+    radial-gradient(circle at 50% 50%, rgba(45, 63, 222, 0.1) 0%, transparent 70%),
+    linear-gradient(to right, rgba(45, 63, 222, 0.08), rgba(124, 58, 237, 0.05), rgba(6, 182, 212, 0.08));
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: -1;
+  animation: subtleGlow 8s infinite alternate;
+}
+
+@keyframes subtleGlow {
+  0% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0.8;
+  }
+}
+
+/* Enhance button hover effects - matching landing page style */
+.MuiButton-root {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* Style primary buttons with gradient */
+.MuiButton-containedPrimary {
+  background: var(--gradient-primary) !important;
+  box-shadow: 0 4px 15px rgba(45, 63, 222, 0.25) !important;
+}
+
+/* Style secondary buttons */
+.MuiButton-outlined {
+  border: 2px solid rgba(124, 58, 237, 0.5) !important;
+  color: white !important;
+}
+
+/* Add subtle animation to the drawer */
+.MuiDrawer-paper {
+  animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Add subtle hover effect to buttons */
+.MuiButton-root::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.MuiButton-root:hover::before {
+  opacity: 1;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #3699FF;
+  transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover {
+  transform: scale(1.05);
+}
+
+.navbar-brand:hover .brand-text {
+  animation: pulse 1.5s infinite alternate;
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 15px rgba(108, 99, 255, 0.8); /* Enhanced purple glow on hover */
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 1;
+    letter-spacing: 1.2px;
+  }
+}
+
+.brand-icon {
+  font-size: 1.8rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+.brand-text {
+  color: #FFFFFF;
+  font-size: 2rem; /* Increased font size */
+  font-weight: 900; /* Bolder font */
+  font-family: 'Poppins', 'Segoe UI', sans-serif; /* Modern, clean font */
+  text-shadow: 
+    0 2px 2px rgba(0, 0, 0, 0.8),
+    0 0 10px rgba(108, 99, 255, 0.6); /* Enhanced purple glow */
+  letter-spacing: 1px; /* Increased letter spacing for better readability */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-transform: uppercase; /* All caps for stronger visual impact */
+  background: linear-gradient(135deg, #FFFFFF, #E0E0FF); /* Subtle gradient */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  position: relative;
+  padding: 0 5px;
+  animation: shimmer 3s infinite alternate;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: left;
+    background: linear-gradient(135deg, #FFFFFF, #E0E0FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+  }
+  100% {
+    background-position: right;
+    background: linear-gradient(135deg, #E0E0FF, #FFFFFF, #C8C8FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+  }
+}
+
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex: 1;
+  justify-content: space-between;
+  margin-left: 2rem;
+}
+
+.navbar-toggle {
+  display: none; /* Hidden by default on larger screens */
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 25px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1001;
+}
+
+.hamburger-line {
+  width: 100%;
+  height: 3px;
+  background: white;
+  border-radius: 10px;
+  transition: all 0.3s linear;
+  position: relative;
+  transform-origin: 1px;
+}
+
+@media (max-width: 768px) {
+  .navbar-menu {
+    flex-direction: column;
+    position: absolute;
+    top: 70px; /* Below the navbar */
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 70px); /* Take full height below navbar */
+    background: rgba(20, 20, 35, 0.98); /* Slightly more opaque background */
+    justify-content: flex-start;
+    padding: 2rem 1rem;
+    transform: translateX(100%); /* Hide menu off-screen */
+    transition: transform 0.3s ease-in-out;
+    z-index: 999;
+    overflow-y: auto;
+    margin-left: 0;
+  }
+
+  .navbar-menu.active {
+    transform: translateX(0); /* Show menu */
+  }
+
+  .navbar-nav {
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .nav-link {
+    width: 100%;
+    text-align: center;
+    padding: 1rem;
+    font-size: 1.2rem;
+  }
+
+  .navbar-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+  }
+
+  .character-display,
+  .auth-buttons,
+  .logout-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem;
+    font-size: 1.1rem;
+  }
+
+  .navbar-toggle {
+    display: flex; /* Show hamburger on small screens */
+  }
+
+  .navbar-toggle.active .hamburger-line:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+
+  .navbar-toggle.active .hamburger-line:nth-child(2) {
+    opacity: 0;
+  }
+
+  .navbar-toggle.active .hamburger-line:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+}
+
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.4rem;
+  text-decoration: none;
+  color: #FFFFFF; /* Pure white for maximum contrast */
+  font-weight: 700; /* Bold but not too heavy */
+  font-family: 'Poppins', 'Segoe UI', sans-serif; /* Matching font with brand */
+  font-size: 1.05rem; /* Slightly larger font */
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  background: rgba(54, 153, 255, 0.4); /* Darker background for better contrast */
+  border: 1px solid rgba(108, 99, 255, 0.7); /* More visible purple border */
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.5px; /* Improved letter spacing */
+
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(94, 129, 244, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.nav-link:hover::before {
+  left: 100%;
+}
+
+.nav-link:hover {
+  background: rgba(94, 129, 244, 0.3);
+  transform: translateY(-2px);
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.7);
+
+}
+
+.nav-link.active {
+  background: linear-gradient(135deg, #5E81F4, #8EA7FF);
+  color: white;
+
+}
+
+.nav-icon {
+  font-size: 1.1rem;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.character-display {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.6rem 1.2rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  margin-right: 1.2rem;
+
+  transition: all 0.3s ease;
+}
+
+.character-display:hover {
+  transform: translateY(-2px);
+
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.character-emoji {
+  font-size: 1.8rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  animation: float 3s ease-in-out infinite;
+}
+
+.character-name {
+  font-weight: 700;
+  color: #FFFFFF;
+  font-size: 1.2rem;
+  font-family: 'Poppins', 'Segoe UI', sans-serif; /* Matching font with brand */
+
+  letter-spacing: 0.5px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  margin-left: 10px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #FF6B9A, #FF9F76);
+  color: white;
+  font-weight: 600;
+
+}
+
+/* Auth buttons styling */
+.auth-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.login-btn, .signup-btn {
+  padding: 0.8rem 1.8rem;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  font-family: 'Poppins', 'Segoe UI', sans-serif; /* Matching font with brand */
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  letter-spacing: 0.6px; /* Improved letter spacing */
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-btn {
+  background: linear-gradient(135deg, #7B5CFA, #6C63FF);
+
+}
+
+.signup-btn {
+  background: linear-gradient(135deg, #FF6B9A, #FF9F76);
+
+}
+
+.teacher-signup-btn {
+  background: linear-gradient(135deg, #06B6D4, #3B82F6);
+  padding: 0.7rem 1.4rem;
+  color: white;
+  text-decoration: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.login-btn:hover, .signup-btn:hover, .teacher-signup-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  letter-spacing: 0.8px; /* Slightly increase letter spacing on hover */
+}
+
+.login-btn::before, .signup-btn::before, .teacher-signup-btn::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: rotate(30deg);
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  opacity: 0;
+}
+
+.login-btn:hover::before, .signup-btn:hover::before, .teacher-signup-btn:hover::before {
+  opacity: 1;
+  transform: rotate(30deg) translate(10%, 10%);
+}
+
+.login-btn:hover {
+  background: linear-gradient(135deg, #8A6AFB, #7B5CFA);
+
+}
+
+.signup-btn:hover {
+  background: linear-gradient(135deg, #FF7BA9, #FFA986);
+
+}
+
+.teacher-signup-btn:hover {
+  background: linear-gradient(135deg, #0891B2, #2563EB);
+}
+
+.logout-btn {
+  padding: 0.7rem 1.4rem;
+  background: linear-gradient(135deg, #FF6B9A, #FF9F76);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+}
+
+.logout-btn:hover {
+  background: linear-gradient(135deg, #FF7BA9, #FFA986);
+  transform: translateY(-3px) scale(1.05);
+
+}
+
+.logout-icon {
+  font-size: 1.1rem;
+}
+
+.navbar-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.navbar-toggle:hover {
+  background: rgba(94, 129, 244, 0.1);
+}
+
+.hamburger-line {
+  width: 25px;
+  height: 3px;
+  background: #5E81F4;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* Responsive Design with Standardized Breakpoints */
+
+/* Large Tablets and Small Desktops (768px - 991px) */
+@media (max-width: 991px) and (min-width: 768px) {
+  .navbar-container {
+    padding: 0 1.5rem;
+    max-width: 100%;
+  }
+  
+  .navbar-brand {
+    font-size: 1.4rem;
+  }
+  
+  .brand-text {
+    font-size: 1.8rem;
+  }
+  
+  .nav-link {
+    font-size: 0.95rem;
+    padding: 0.6rem 1rem;
+    margin: 0 0.2rem;
+  }
+  
+  .character-display {
+    padding: 0.5rem 1rem;
+    width: 45px;
+    height: 45px;
+  }
+  
+  .character-emoji {
+    font-size: 1.8rem;
+  }
+  
+  .auth-buttons {
+    gap: 0.6rem;
+  }
+  
+  .login-btn, .signup-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Tablets (576px - 767px) */
+@media (max-width: 767px) and (min-width: 576px) {
+  .navbar {
+    height: 65px;
+  }
+  
+  .navbar-container {
+    padding: 0 1rem;
+    max-width: 100%;
+    height: 100%;
+  }
+  
+  .navbar-brand {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+
+  .navbar-toggle {
+    display: flex;
+  }
+
+  .navbar-menu {
+    position: fixed;
+    top: 65px;
+    left: 0;
+    right: 0;
+    background: rgba(20, 20, 35, 0.98);
+    backdrop-filter: blur(10px);
+    flex-direction: column;
+    padding: 1.2rem;
+    gap: 0.8rem;
+    transform: translateY(-100vh);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-bottom: 1px solid rgba(108, 99, 255, 0.3);
+    margin-left: 0;
+    z-index: 999;
+    max-height: calc(100vh - 65px);
+    overflow-y: auto;
+  }
+
+  .navbar-menu.active {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .navbar-nav {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.8rem;
+  }
+
+  .nav-link {
+    width: 100%;
+    justify-content: center;
+    padding: 0.8rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 8px;
+  }
+
+  .navbar-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .character-display {
+    justify-content: center;
+    width: 100%;
+    padding: 0.8rem;
+    margin-right: 0;
+  }
+
+  .logout-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.8rem;
+    font-size: 1rem;
+  }
+  
+  .auth-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.6rem;
+    justify-content: center;
+  }
+  
+  .login-btn, .signup-btn, .teacher-signup-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.8rem 1.2rem;
+    font-size: 0.95rem;
+    min-width: 120px;
+  }
+
+  .navbar-menu.active .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+  }
+
+  .navbar-menu.active .hamburger-line:nth-child(2) {
+    opacity: 0;
+  }
+
+  .navbar-menu.active .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+  }
+}
+
+/* Mobile Landscape & Small Tablets (480px - 575px) */
+@media (max-width: 575px) and (min-width: 480px) {
+  .navbar-container {
+    height: 65px;
+    padding: 0 0.8rem;
+  }
+
+  .brand-text {
+    font-size: 1.4rem;
+  }
+
+  .brand-icon {
+    font-size: 1.6rem;
+  }
+
+  .navbar-menu {
+    top: 65px;
+    padding: 1.5rem 0.8rem;
+  }
+  
+  .character-display {
+    padding: 0.8rem;
+  }
+  
+  .character-name {
+    font-size: 0.9rem;
+  }
+}
+
+/* Mobile Portrait (320px - 479px) */
+@media (max-width: 479px) {
+  .navbar-container {
+    height: 60px;
+    padding: 0 0.5rem;
+  }
+
+  .brand-text {
+    font-size: 1.2rem;
+  }
+
+  .brand-icon {
+    font-size: 1.4rem;
+  }
+
+  .navbar-menu {
+    top: 60px;
+    padding: 1.2rem 0.5rem;
+  }
+
+  .character-name {
+    display: none;
+  }
+  
+  .character-display {
+    padding: 0.6rem 0.8rem;
+  }
+  
+  .character-emoji {
+    font-size: 1.6rem;
+  }
+}
+
+/* Very Small Screens (280px - 359px) */
+@media (max-width: 359px) and (min-width: 280px) {
+  .navbar-container {
+    height: 55px;
+    padding: 0 0.3rem;
+  }
+  
+  .brand-text {
+    font-size: 1rem;
+  }
+  
+  .brand-icon {
+    font-size: 1.2rem;
+  }
+  
+  .navbar-menu {
+    top: 55px;
+    padding: 1rem 0.3rem;
+  }
+  
+  .hamburger-line {
+    width: 20px;
+    height: 2px;
+  }
+  
+  .character-display {
+    padding: 0.4rem 0.6rem;
+  }
+  
+  .character-emoji {
+    font-size: 1.4rem;
+  }
+}
+
+/* Extra Small Screens (240px - 279px) */
+@media (max-width: 279px) and (min-width: 240px) {
+  .navbar-container {
+    height: 50px;
+    padding: 0 0.2rem;
+  }
+  
+  .brand-text {
+    font-size: 0.9rem;
+    letter-spacing: 0.3px;
+  }
+  
+  .brand-icon {
+    font-size: 1rem;
+  }
+  
+  .navbar-menu {
+    top: 50px;
+    padding: 0.8rem 0.2rem;
+  }
+  
+  .hamburger-line {
+    width: 18px;
+    height: 2px;
+  }
+  
+  .character-display {
+    padding: 0.3rem 0.5rem;
+  }
+  
+  .character-emoji {
+    font-size: 1.2rem;
+  }
+  
+  .navbar-toggle {
+    padding: 0.3rem;
+  }
+}
+
+/* Ultra Small Screens (below 240px) */
+@media (max-width: 239px) {
+  .navbar-container {
+    height: 45px;
+    padding: 0 0.1rem;
+  }
+  
+  .brand-text {
+    font-size: 0.8rem;
+    letter-spacing: 0.2px;
+  }
+  
+  .brand-icon {
+    font-size: 0.9rem;
+  }
+  
+  .navbar-menu {
+    top: 45px;
+    padding: 0.6rem 0.1rem;
+  }
+  
+  .hamburger-line {
+    width: 16px;
+    height: 1.5px;
+  }
+  
+  .character-display {
+    padding: 0.2rem 0.4rem;
+  }
+  
+  .character-emoji {
+    font-size: 1rem;
+  }
+  
+  .navbar-toggle {
+    padding: 0.2rem;
+  }
+}
+
+/* Modern styling for buttons */
+.logout-btn:active, .login-btn:active, .signup-btn:active, .teacher-signup-btn:active {
+  transform: translateY(0);
+
+}
+
+.logout-icon {
+  margin-right: 8px;
+  font-size: 1.2em;
+}

@@ -1,0 +1,49 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer magical circle -->
+  <circle cx="32" cy="32" r="28" fill="none" stroke="#4169E1" stroke-width="2" opacity="0.6"/>
+  <circle cx="32" cy="32" r="25" fill="none" stroke="#00BFFF" stroke-width="1.5" opacity="0.8"/>
+  
+  <!-- Inner portal ring -->
+  <circle cx="32" cy="32" r="20" fill="#191970" opacity="0.7"/>
+  <circle cx="32" cy="32" r="18" fill="none" stroke="#4169E1" stroke-width="1" opacity="0.9"/>
+  
+  <!-- Portal center -->
+  <circle cx="32" cy="32" r="15" fill="#000080" opacity="0.8"/>
+  <circle cx="32" cy="32" r="12" fill="#4169E1" opacity="0.6"/>
+  <circle cx="32" cy="32" r="8" fill="#00BFFF" opacity="0.4"/>
+  
+  <!-- Magical runes around the circle -->
+  <text x="32" y="8" text-anchor="middle" font-family="serif" font-size="8" fill="#FFD700" opacity="0.8">⚡</text>
+  <text x="56" y="36" text-anchor="middle" font-family="serif" font-size="8" fill="#FFD700" opacity="0.8">✦</text>
+  <text x="32" y="60" text-anchor="middle" font-family="serif" font-size="8" fill="#FFD700" opacity="0.8">⚡</text>
+  <text x="8" y="36" text-anchor="middle" font-family="serif" font-size="8" fill="#FFD700" opacity="0.8">✦</text>
+  
+  <!-- Diagonal runes -->
+  <text x="48" y="18" text-anchor="middle" font-family="serif" font-size="6" fill="#FFD700" opacity="0.7">◊</text>
+  <text x="48" y="50" text-anchor="middle" font-family="serif" font-size="6" fill="#FFD700" opacity="0.7">◊</text>
+  <text x="16" y="18" text-anchor="middle" font-family="serif" font-size="6" fill="#FFD700" opacity="0.7">◊</text>
+  <text x="16" y="50" text-anchor="middle" font-family="serif" font-size="6" fill="#FFD700" opacity="0.7">◊</text>
+  
+  <!-- Energy particles -->
+  <circle cx="25" cy="25" r="1" fill="#00FFFF" opacity="0.8">
+    <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="39" cy="25" r="1.2" fill="#00FFFF" opacity="0.6">
+    <animate attributeName="opacity" values="0.6;0.9;0.6" dur="1.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="25" cy="39" r="0.8" fill="#00FFFF" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;0.2;0.7" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="39" cy="39" r="1" fill="#00FFFF" opacity="0.5">
+    <animate attributeName="opacity" values="0.5;0.8;0.5" dur="1.8s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Central glow -->
+  <circle cx="32" cy="32" r="5" fill="#FFFFFF" opacity="0.3">
+    <animate attributeName="r" values="5;8;5" dur="3s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.3;0.1;0.3" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Ground circle -->
+  <ellipse cx="32" cy="58" rx="25" ry="4" fill="#000000" opacity="0.2"/>
+</svg>
