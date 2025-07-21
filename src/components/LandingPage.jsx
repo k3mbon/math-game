@@ -82,20 +82,23 @@ const LandingPage = () => {
         </Link>
 
         <Link 
-          to={selectedCharacter ? "/game1" : "#"}
-          className="game-card"
+          to={selectedCharacter ? "/kubo" : "#"}
+          className="game-card kubo-card"
           onClick={(e) => !selectedCharacter && (e.preventDefault(), alert("Please select a character first!"))}
         >
           <div className="card-icon">
             <svg viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" fill="#fff"/>
-              <text x="12" y="16" textAnchor="middle" fontSize="10" fill="#333">G1</text>
+              <rect x="6" y="8" width="12" height="8" rx="3" fill="#4CAF50"/>
+              <circle cx="12" cy="6" r="3" fill="#66BB6A"/>
+              <circle cx="10" cy="5" r="0.8" fill="#1B5E20"/>
+              <circle cx="14" cy="5" r="0.8" fill="#1B5E20"/>
+              <path d="M10 7 Q12 8 14 7" stroke="#1B5E20" strokeWidth="0.5" fill="none"/>
             </svg>
           </div>
-          <h3>Game</h3>
-          <p>Mainkan Game 1 dengan karakter pilihanmu!</p>
+          <h3>🤖 KUBO Math Adventure</h3>
+          <p>Program KUBO robot dengan tile digital untuk menyelesaikan tantangan matematika!</p>
           <div className="card-footer">
-            {selectedCharacter ? "Start Playing →" : "Select Character First"}
+            {selectedCharacter ? "Start KUBO Adventure →" : "Select Character First"}
           </div>
         </Link>
 

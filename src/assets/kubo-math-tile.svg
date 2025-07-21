@@ -1,0 +1,75 @@
+<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Colorful Kid-Friendly Math Tile -->
+  <!-- Base tile with math-themed gradient -->
+  <rect width="80" height="80" rx="16" fill="url(#mathGradient)" stroke="#2196F3" stroke-width="4"/>
+  
+  <!-- Inner mathematical pattern -->
+  <rect x="8" y="8" width="64" height="64" rx="12" fill="none" stroke="url(#mathGlow)" stroke-width="2" opacity="0.6"/>
+  
+  <!-- Corner mathematical symbols -->
+  <g opacity="0.7" font-family="Comic Sans MS, Arial, sans-serif" font-weight="bold">
+    <text x="16" y="20" text-anchor="middle" font-size="12" fill="#1976D2">+</text>
+    <text x="64" y="20" text-anchor="middle" font-size="12" fill="#1976D2">-</text>
+    <text x="16" y="68" text-anchor="middle" font-size="12" fill="#1976D2">×</text>
+    <text x="64" y="68" text-anchor="middle" font-size="12" fill="#1976D2">÷</text>
+  </g>
+  
+  <!-- Center circle for main operation -->
+  <circle cx="40" cy="40" r="24" fill="#FFFFFF" stroke="#2196F3" stroke-width="3" opacity="0.95"/>
+  
+  <!-- Mathematical grid pattern -->
+  <g opacity="0.2" stroke="#2196F3" stroke-width="0.5">
+    <line x1="20" y1="20" x2="60" y2="20"/>
+    <line x1="20" y1="30" x2="60" y2="30"/>
+    <line x1="20" y1="50" x2="60" y2="50"/>
+    <line x1="20" y1="60" x2="60" y2="60"/>
+    <line x1="20" y1="20" x2="20" y2="60"/>
+    <line x1="30" y1="20" x2="30" y2="60"/>
+    <line x1="50" y1="20" x2="50" y2="60"/>
+    <line x1="60" y1="20" x2="60" y2="60"/>
+  </g>
+  
+  <!-- Number bubbles -->
+  <g opacity="0.6">
+    <circle cx="25" cy="25" r="3" fill="#64B5F6" opacity="0.8"/>
+    <text x="25" y="28" text-anchor="middle" font-size="8" fill="#FFFFFF" font-weight="bold">1</text>
+    
+    <circle cx="55" cy="25" r="3" fill="#42A5F5" opacity="0.8"/>
+    <text x="55" y="28" text-anchor="middle" font-size="8" fill="#FFFFFF" font-weight="bold">2</text>
+    
+    <circle cx="25" cy="55" r="3" fill="#2196F3" opacity="0.8"/>
+    <text x="25" y="58" text-anchor="middle" font-size="8" fill="#FFFFFF" font-weight="bold">3</text>
+    
+    <circle cx="55" cy="55" r="3" fill="#1976D2" opacity="0.8"/>
+    <text x="55" y="58" text-anchor="middle" font-size="8" fill="#FFFFFF" font-weight="bold">4</text>
+  </g>
+  
+  <!-- Central math symbol (placeholder - will be customized) -->
+  <text x="40" y="48" text-anchor="middle" font-size="32" font-weight="bold" fill="#1976D2" font-family="Comic Sans MS, Arial, sans-serif">+</text>
+  
+  <!-- Calculation sparkles -->
+  <g opacity="0.7">
+    <path d="M32 12 L34 16 L38 16 L35 19 L36 23 L32 21 L28 23 L29 19 L26 16 L30 16 Z" fill="#FFD700"/>
+    <path d="M48 12 L50 16 L54 16 L51 19 L52 23 L48 21 L44 23 L45 19 L42 16 L46 16 Z" fill="#FF69B4"/>
+    <path d="M32 68 L34 64 L38 64 L35 61 L36 57 L32 59 L28 57 L29 61 L26 64 L30 64 Z" fill="#00BCD4"/>
+    <path d="M48 68 L50 64 L54 64 L51 61 L52 57 L48 59 L44 57 L45 61 L42 64 L46 64 Z" fill="#9C27B0"/>
+  </g>
+  
+  <!-- Animated calculation waves -->
+  <circle cx="40" cy="40" r="28" fill="none" stroke="#2196F3" stroke-width="1" opacity="0.3" stroke-dasharray="3,3">
+    <animateTransform attributeName="transform" type="rotate" values="0 40 40;360 40 40" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  
+  <defs>
+    <radialGradient id="mathGradient" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:#E3F2FD;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#BBDEFB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#90CAF9;stop-opacity:1" />
+    </radialGradient>
+    
+    <linearGradient id="mathGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#2196F3;stop-opacity:0.3" />
+    </linearGradient>
+  </defs>
+</svg>

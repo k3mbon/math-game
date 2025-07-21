@@ -1,0 +1,27 @@
+<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- Car body - front view -->
+  <rect x="8" y="12" width="32" height="24" rx="4" ry="4" fill="#2196F3" stroke="#1976D2" stroke-width="2"/>
+  
+  <!-- Windshield -->
+  <rect x="10" y="14" width="28" height="8" rx="2" ry="2" fill="#E3F2FD" stroke="#1976D2" stroke-width="1"/>
+  
+  <!-- Headlights -->
+  <circle cx="14" cy="38" r="3" fill="#FFEB3B" stroke="#F57F17" stroke-width="1"/>
+  <circle cx="34" cy="38" r="3" fill="#FFEB3B" stroke="#F57F17" stroke-width="1"/>
+  
+  <!-- Grille -->
+  <rect x="18" y="36" width="12" height="4" rx="1" ry="1" fill="#424242" stroke="#212121" stroke-width="1"/>
+  
+  <!-- License plate area -->
+  <rect x="20" y="42" width="8" height="3" rx="1" ry="1" fill="#FFFFFF" stroke="#424242" stroke-width="1"/>
+  
+  <!-- Side mirrors -->
+  <ellipse cx="6" cy="20" rx="2" ry="1" fill="#1976D2"/>
+  <ellipse cx="42" cy="20" rx="2" ry="1" fill="#1976D2"/>
+  
+  <!-- Wheels (visible from front) -->
+  <circle cx="12" cy="44" r="4" fill="#424242" stroke="#212121" stroke-width="2"/>
+  <circle cx="36" cy="44" r="4" fill="#424242" stroke="#212121" stroke-width="2"/>
+  <circle cx="12" cy="44" r="2" fill="#616161"/>
+  <circle cx="36" cy="44" r="2" fill="#616161"/>
+</svg>

@@ -1,0 +1,33 @@
+<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- Car body - right side view -->
+  <rect x="6" y="16" width="36" height="16" rx="8" ry="4" fill="#2196F3" stroke="#1976D2" stroke-width="2"/>
+  
+  <!-- Car roof -->
+  <rect x="12" y="12" width="24" height="8" rx="4" ry="4" fill="#1976D2" stroke="#0D47A1" stroke-width="1"/>
+  
+  <!-- Windows -->
+  <rect x="14" y="14" width="8" height="6" rx="2" ry="2" fill="#E3F2FD" stroke="#1976D2" stroke-width="1"/>
+  <rect x="26" y="14" width="8" height="6" rx="2" ry="2" fill="#E3F2FD" stroke="#1976D2" stroke-width="1"/>
+  
+  <!-- Headlight -->
+  <circle cx="6" cy="24" r="3" fill="#FFEB3B" stroke="#F57F17" stroke-width="1"/>
+  
+  <!-- Taillight -->
+  <circle cx="42" cy="24" r="2" fill="#F44336" stroke="#D32F2F" stroke-width="1"/>
+  
+  <!-- Door handle -->
+  <rect x="25" y="22" width="3" height="1" rx="0.5" ry="0.5" fill="#424242"/>
+  
+  <!-- Side mirror -->
+  <ellipse cx="10" cy="18" rx="2" ry="1" fill="#1976D2"/>
+  
+  <!-- Wheels -->
+  <circle cx="12" cy="34" r="5" fill="#424242" stroke="#212121" stroke-width="2"/>
+  <circle cx="36" cy="34" r="5" fill="#424242" stroke="#212121" stroke-width="2"/>
+  <circle cx="12" cy="34" r="3" fill="#616161"/>
+  <circle cx="36" cy="34" r="3" fill="#616161"/>
+  
+  <!-- Wheel rims -->
+  <circle cx="12" cy="34" r="1.5" fill="#9E9E9E"/>
+  <circle cx="36" cy="34" r="1.5" fill="#9E9E9E"/>
+</svg>

@@ -1,0 +1,47 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Colorful Kid-Friendly KUBO Robot -->
+  <!-- Main body - bright and rounded -->
+  <rect x="12" y="24" width="40" height="32" rx="12" fill="#4CAF50" stroke="#2E7D32" stroke-width="3"/>
+  
+  <!-- Head - larger and more expressive -->
+  <circle cx="32" cy="18" r="14" fill="#66BB6A" stroke="#2E7D32" stroke-width="3"/>
+  
+  <!-- Eyes - bigger and more animated -->
+  <circle cx="26" cy="15" r="3" fill="#FFFFFF"/>
+  <circle cx="38" cy="15" r="3" fill="#FFFFFF"/>
+  <circle cx="26" cy="15" r="2" fill="#1B5E20"/>
+  <circle cx="38" cy="15" r="2" fill="#1B5E20"/>
+  <circle cx="27" cy="14" r="0.8" fill="#FFFFFF"/>
+  <circle cx="39" cy="14" r="0.8" fill="#FFFFFF"/>
+  
+  <!-- Happy smile -->
+  <path d="M 22 20 Q 32 26 42 20" stroke="#1B5E20" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- Cheek blush -->
+  <circle cx="18" cy="18" r="2" fill="#FFB3BA" opacity="0.6"/>
+  <circle cx="46" cy="18" r="2" fill="#FFB3BA" opacity="0.6"/>
+  
+  <!-- KUBO connection points - colorful -->
+  <circle cx="16" cy="40" r="4" fill="#81C784" stroke="#2E7D32" stroke-width="2"/>
+  <circle cx="48" cy="40" r="4" fill="#81C784" stroke="#2E7D32" stroke-width="2"/>
+  <circle cx="32" cy="52" r="4" fill="#81C784" stroke="#2E7D32" stroke-width="2"/>
+  
+  <!-- Center display screen -->
+  <rect x="24" y="32" width="16" height="12" rx="4" fill="#E8F5E8" stroke="#2E7D32" stroke-width="2"/>
+  <text x="32" y="40" text-anchor="middle" font-size="8" fill="#1B5E20" font-weight="bold">GO!</text>
+  
+  <!-- Decorative elements -->
+  <rect x="20" y="28" width="3" height="3" rx="1" fill="#FF9800"/>
+  <rect x="41" y="28" width="3" height="3" rx="1" fill="#FF9800"/>
+  
+  <!-- Antenna with sparkle -->
+  <line x1="32" y1="4" x2="32" y2="8" stroke="#2E7D32" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="32" cy="4" r="2" fill="#FF9800"/>
+  <path d="M30 2 L32 4 L34 2 L32 0 Z" fill="#FFD700"/>
+  
+  <!-- Sparkles around robot -->
+  <path d="M8 12 L10 14 L8 16 L6 14 Z" fill="#FFD700" opacity="0.8"/>
+  <path d="M54 8 L56 10 L54 12 L52 10 Z" fill="#FF69B4" opacity="0.8"/>
+  <path d="M10 48 L12 50 L10 52 L8 50 Z" fill="#00BCD4" opacity="0.8"/>
+  <path d="M52 52 L54 54 L52 56 L50 54 Z" fill="#9C27B0" opacity="0.8"/>
+</svg>

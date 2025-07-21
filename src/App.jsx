@@ -96,7 +96,7 @@ function AppContent() {
                   
                   {/* Game routes */}
                   <Route path="/arcade" element={<ArcadeMode />} />
-                  <Route path="/game1" element={<Game1 />} />
+                  <Route path="/kubo" element={<Game1 />} />
                   
                   {/* Role-based routes */}
                   {role === 'teacher' && (

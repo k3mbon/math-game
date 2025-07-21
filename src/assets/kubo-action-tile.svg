@@ -1,0 +1,60 @@
+<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Colorful Kid-Friendly Action Tile -->
+  <!-- Base tile with vibrant gradient -->
+  <rect width="80" height="80" rx="16" fill="url(#actionGradient)" stroke="#4CAF50" stroke-width="4"/>
+  
+  <!-- Inner highlight -->
+  <rect x="8" y="8" width="64" height="64" rx="12" fill="none" stroke="url(#actionGlow)" stroke-width="2" opacity="0.7"/>
+  
+  <!-- Corner stars -->
+  <g opacity="0.8">
+    <path d="M16 12 L18 16 L22 16 L19 19 L20 23 L16 21 L12 23 L13 19 L10 16 L14 16 Z" fill="#FFD700"/>
+    <path d="M64 12 L66 16 L70 16 L67 19 L68 23 L64 21 L60 23 L61 19 L58 16 L62 16 Z" fill="#FF69B4"/>
+    <path d="M16 68 L18 64 L22 64 L19 61 L20 57 L16 59 L12 57 L13 61 L10 64 L14 64 Z" fill="#00BCD4"/>
+    <path d="M64 68 L66 64 L70 64 L67 61 L68 57 L64 59 L60 57 L61 61 L58 64 L62 64 Z" fill="#9C27B0"/>
+  </g>
+  
+  <!-- Center circle for icon -->
+  <circle cx="40" cy="40" r="22" fill="#FFFFFF" stroke="#4CAF50" stroke-width="3" opacity="0.95"/>
+  
+  <!-- Energy rings -->
+  <circle cx="40" cy="40" r="28" fill="none" stroke="#81C784" stroke-width="2" opacity="0.4" stroke-dasharray="4,4"/>
+  <circle cx="40" cy="40" r="32" fill="none" stroke="#A5D6A7" stroke-width="1" opacity="0.3" stroke-dasharray="2,2"/>
+  
+  <!-- Movement arrows pattern (default - will be customized per action) -->
+  <g transform="translate(40,40)">
+    <!-- Forward arrow -->
+    <path d="M-8,-4 L8,-4 L8,-8 L16,0 L8,8 L8,4 L-8,4 Z" fill="#4CAF50" opacity="0.8"/>
+  </g>
+  
+  <!-- Sparkle effects -->
+  <g opacity="0.6">
+    <circle cx="28" cy="28" r="1" fill="#FFD700"/>
+    <circle cx="52" cy="28" r="1" fill="#FF69B4"/>
+    <circle cx="28" cy="52" r="1" fill="#00BCD4"/>
+    <circle cx="52" cy="52" r="1" fill="#9C27B0"/>
+    <circle cx="40" cy="24" r="0.8" fill="#FFD700"/>
+    <circle cx="40" cy="56" r="0.8" fill="#FF69B4"/>
+    <circle cx="24" cy="40" r="0.8" fill="#00BCD4"/>
+    <circle cx="56" cy="40" r="0.8" fill="#9C27B0"/>
+  </g>
+  
+  <!-- Pulse animation ring -->
+  <circle cx="40" cy="40" r="18" fill="none" stroke="#4CAF50" stroke-width="1" opacity="0.3">
+    <animate attributeName="r" values="18;22;18" dur="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.3;0.1;0.3" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  
+  <defs>
+    <radialGradient id="actionGradient" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:#C8E6C9;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#A5D6A7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#81C784;stop-opacity:1" />
+    </radialGradient>
+    
+    <linearGradient id="actionGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#4CAF50;stop-opacity:0.2" />
+    </linearGradient>
+  </defs>
+</svg>
