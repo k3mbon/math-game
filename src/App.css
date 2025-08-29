@@ -1,47 +1,96 @@
-/* App.css */
+/* App.css - Matrix Green Theme */
+/* Matrix Green Theme Override - Force override any purple colors */
 :root {
-  /* Primary color palette */
-  --primary-500: #7B5CFA;  /* Vibrant Purple */
-  --primary-600: #6C4FF0;
-  --primary-700: #5E45E0;
+  /* Override primary colors with matrix green */
+  --primary-500: #00ff41 !important;
+  --primary-600: #00cc33 !important;
+  --primary-700: #00aa2b !important;
+  --accent-pink: #00ff41 !important;
+  --purple: #00ff41 !important;
+  --violet: #00d4ff !important;
   
-  /* Secondary color palette */
-  --secondary-500: #5E72EB; /* Bright Blue */
-  --secondary-600: #4A64E0;
-  --secondary-700: #3A56D4;
+  /* Cyber Blue Secondary Colors */
+  --secondary-400: #00d4ff !important;
+  --secondary-500: #0099cc !important;
+  --secondary-600: #007799 !important;
   
-  /* Accent colors */
-  --accent-pink: #FF6B9A;   /* Pink */
-  --accent-yellow: #FFD166; /* Yellow */
-  --accent-green: #06D6A0;  /* Green */
-  --accent-orange: #FF9F76; /* Orange */
+  /* Dark Tech Backgrounds */
+  --dark-bg: #0a0a0a !important;
+  --dark-surface: #111111 !important;
+  --dark-card: #1a1a1a !important;
   
-  /* Background colors */
-  --bg-main: #6C63FF;      /* Main background */
-  --bg-light: #F0EEFF;     /* Light background */
-  --bg-card: #FFFFFF;      /* Card background */
+  /* Matrix Text Colors */
+  --text-primary: #00ff41 !important;
+  --text-secondary: #00d4ff !important;
+  --text-muted: #39ff14 !important;
   
-  /* Text colors */
-  --text-primary: #2D2B55;   /* Primary text */
-  --text-secondary: #6E6A8F; /* Secondary text */
-  --text-light: #FFFFFF;     /* Light text */
+  /* Tech Status Colors */
+  --success: #00ff41 !important;
+  --warning: #ffff00 !important;
+  --error: #ff0040 !important;
+  --info: #00d4ff !important;
   
-  /* Status colors */
-  --error: #FF5C8D;      /* Red */
-  --success: #06D6A0;    /* Green */
-  --warning: #FFD166;    /* Yellow */
-  --info: #5E72EB;       /* Blue */
+  /* Matrix Gradients */
+  --primary-gradient: linear-gradient(135deg, #00ff41 0%, #39ff14 50%, #7fff00 100%) !important;
+  --secondary-gradient: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #007799 100%) !important;
   
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, var(--primary-500) 0%, var(--secondary-500) 100%);
-  --gradient-secondary: linear-gradient(135deg, var(--accent-pink) 0%, var(--accent-orange) 100%);
-  --gradient-hero: linear-gradient(135deg, var(--primary-500) 0%, var(--secondary-500) 50%, var(--accent-pink) 100%);
+  /* Tech Shadows */
+  --glow-primary: 0 0 20px rgba(0, 255, 65, 0.5) !important;
+  --glow-secondary: 0 0 20px rgba(0, 212, 255, 0.5) !important;
+}
+
+:root {
+  /* Matrix Green Primary Palette - NO PURPLE OVERRIDE */
+  --primary-50: #e8f5e8 !important;
+  --primary-100: #c8e6c9 !important;
+  --primary-200: #a5d6a7 !important;
+  --primary-300: #81c784 !important;
+  --primary-400: #66bb6a !important;
+  --primary-500: #00ff41 !important;  /* Matrix Green */
+  --primary-600: #00cc33 !important;
+  --primary-700: #00aa2b !important;
+  --primary-800: #008822 !important;
+  --primary-900: #006619 !important;
   
-  /* Shadows */
-  --shadow-sm: 0 4px 6px rgba(109, 99, 255, 0.1);
-  --shadow-md: 0 6px 15px rgba(109, 99, 255, 0.15);
-  --shadow-lg: 0 10px 25px rgba(109, 99, 255, 0.2);
-  --shadow-xl: 0 15px 35px rgba(109, 99, 255, 0.25);
+  /* Cyber Blue Secondary Palette */
+  --secondary-500: #00d4ff; /* Cyber Blue */
+  --secondary-600: #00b8e6;
+  --secondary-700: #009ccc;
+  
+  /* Tech Accent Colors - NO PURPLE */
+  --accent-pink: #00ff41 !important;   /* Override pink with matrix green */
+  --accent-yellow: #ffff00; /* Electric Yellow */
+  --accent-green: #39ff14;  /* Bright Green */
+  --accent-orange: #ff8000; /* Neon Orange */
+  --accent-cyan: #00e5ff !important;
+  --accent-lime: #76ff03 !important;
+  
+  /* Dark Tech Backgrounds */
+  --bg-main: #0a0a0f;      /* Dark Main */
+  --bg-light: #001a00;     /* Dark Green Tint */
+  --bg-card: rgba(0, 26, 0, 0.9); /* Semi-transparent Dark Green */
+  
+  /* Matrix Text Colors */
+  --text-primary: #00ff41;   /* Matrix Green */
+  --text-secondary: #00d4ff; /* Cyber Blue */
+  --text-light: #0dff0d;     /* Bright Terminal Green */
+  
+  /* Tech Status Colors */
+  --error: #ff0040;      /* Neon Red */
+  --success: #39ff14;    /* Bright Green */
+  --warning: #ffff00;    /* Electric Yellow */
+  --info: #00d4ff;       /* Cyber Blue */
+  
+  /* Matrix Gradients */
+  --gradient-primary: linear-gradient(135deg, #00ff41 0%, #39ff14 50%, #7fff00 100%);
+  --gradient-secondary: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+  --gradient-hero: linear-gradient(135deg, #00ff41 0%, #00d4ff 50%, #39ff14 100%);
+  
+  /* Matrix Shadows */
+  --shadow-sm: 0 4px 6px rgba(0, 255, 65, 0.1);
+  --shadow-md: 0 6px 15px rgba(0, 255, 65, 0.15);
+  --shadow-lg: 0 10px 25px rgba(0, 255, 65, 0.2);
+  --shadow-xl: 0 15px 35px rgba(0, 255, 65, 0.25);
   
   /* Transitions */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -50,16 +99,54 @@
   --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-body, html, .app-container {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: var(--primary-500);
-  color: var(--neutral-50);
-  display: flex;
-  flex-direction: column;
-  line-height: 1.6;
+/* Global Styles - Override any existing styles with responsive design */
+* {
+  box-sizing: border-box !important;
+}
+
+body,
+html {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
+  background: var(--dark-bg) !important;
+  color: var(--text-primary) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+.app-container {
+  min-height: 100vh !important;
+  width: 100% !important;
+  background: var(--dark-bg) !important;
+  color: var(--text-primary) !important;
+  position: relative !important;
+}
+
+/* Override landing page body specifically */
+body.landing-page-body {
+  background: var(--dark-bg) !important;
+  background-image: 
+    linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 20% 80%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(0, 255, 65, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 60% 60%, rgba(57, 255, 20, 0.05) 0%, transparent 70%) !important;
+  background-size: 50px 50px, 50px 50px, 800px 800px, 600px 600px, 400px 400px, 300px 300px !important;
+}
+
+/* Landing container override */
+.app-container .landing-container {
+  background: var(--dark-bg) !important;
+  background-image: 
+    linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 20% 80%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(0, 255, 65, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 60% 60%, rgba(57, 255, 20, 0.05) 0%, transparent 70%) !important;
+  background-size: 50px 50px, 50px 50px, 800px 800px, 600px 600px, 400px 400px, 300px 300px !important;
 }
 
 @keyframes gradientShift {
@@ -100,27 +187,38 @@ body, html, .app-container {
   margin: 0 auto;
 }
 
-.landing-button {
-  background: rgba(54, 153, 255, 0.1);
-  padding: 1.25rem 2.5rem;
-  color: var(--secondary-500);
-  border: 1px solid rgba(54, 153, 255, 0.2);
-  font-size: 1.25rem;
-  font-weight: 600;
-  border-radius: 10px;
-  cursor: pointer;
-  text-decoration: none;
-  transition: var(--transition-normal);
-  width: 100%;
-  max-width: 300px;
-  text-align: center;
-  letter-spacing: 0.5px;
+/* Landing Page Button Styles - Matrix Theme Only */
+.landing-button,
+.landing-page .btn-primary,
+.landing-page .cta-primary,
+.landing-container .btn-primary,
+.landing-container .cta-primary {
+  background: rgba(0, 255, 65, 0.1) !important;
+  padding: 1.25rem 2.5rem !important;
+  color: var(--primary-500) !important;
+  border: 2px solid var(--primary-500) !important;
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  border-radius: 10px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  transition: var(--transition-normal) !important;
+  width: 100% !important;
+  max-width: 300px !important;
+  text-align: center !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
-.landing-button:hover {
-  transform: translateY(-3px);
-
-  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+.landing-button:hover,
+.landing-page .btn-primary:hover,
+.landing-page .cta-primary:hover,
+.landing-container .btn-primary:hover,
+.landing-container .cta-primary:hover {
+  transform: translateY(-3px) !important;
+  background: var(--gradient-primary) !important;
+  box-shadow: var(--shadow-lg) !important;
+  border-color: var(--primary-400) !important;
 }
 
 .landing-button:active {
@@ -155,7 +253,81 @@ body, html, .app-container {
   border-left: 4px solid var(--error-500);
 }
 
-/* Responsive design */
+/* Global Responsive Design - Apply to ALL pages */
+@media (max-width: 480px) {
+  .app-container {
+    padding: 0.5rem !important;
+  }
+  
+  /* Landing page specific */
+  .landing-buttons {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    width: 100% !important;
+  }
+  
+  .landing-page .btn-primary,
+  .cta-primary,
+  .landing-button {
+    width: 100% !important;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 0.9rem !important;
+  }
+  
+  /* Global button styles for all pages */
+  button, .btn, .button {
+    padding: 0.75rem 1.5rem !important;
+    font-size: 0.9rem !important;
+  }
+  
+  /* Text scaling */
+  h1 { font-size: 1.8rem !important; }
+  h2 { font-size: 1.5rem !important; }
+  h3 { font-size: 1.3rem !important; }
+  p { font-size: 0.9rem !important; }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .app-container {
+    padding: 1rem !important;
+  }
+  
+  .landing-buttons {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+  
+  .landing-page .btn-primary,
+  .cta-primary,
+  .landing-button {
+    width: 100% !important;
+    padding: 1rem 2rem !important;
+    font-size: 1rem !important;
+  }
+  
+  /* Global button styles */
+  button, .btn, .button {
+    padding: 1rem 2rem !important;
+    font-size: 1rem !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .app-container {
+    padding: 1.5rem !important;
+    max-width: 900px !important;
+    margin: 0 auto !important;
+  }
+}
+
+@media (min-width: 1025px) {
+  .app-container {
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+    padding: 2rem !important;
+  }
+}
+
 @media (min-width: 600px) {
   .landing-buttons {
     flex-direction: row;
@@ -185,6 +357,15 @@ body, html, .app-container {
 /* App Container Styles */
 .app-container {
   background: var(--bg-main);
+  background-image: 
+    /* Matrix-like grid pattern */
+    linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+    /* Tech glow effects */
+    radial-gradient(circle at 20% 80%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+  background-size: 50px 50px, 50px 50px, 800px 800px, 600px 600px;
+  background-attachment: fixed;
   color: var(--text-light);
   min-height: 100vh;
   display: flex;

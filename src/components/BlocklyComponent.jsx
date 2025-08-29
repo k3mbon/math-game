@@ -27,30 +27,82 @@ export default function BlocklyMazeGame() {
     Blockly.defineBlocksWithJsonArray([
       {
         type: 'move_forward',
-        message0: 'move forward',
+        message0: '🚗➡️ Move Right',
         previousStatement: null,
         nextStatement: null,
-        colour: 160,
+        colour: '#2196F3',
+        style: 'movement_blocks',
       },
       {
         type: 'turn_left',
-        message0: 'turn left',
+        message0: '⬅️🚗 Move Left',
         previousStatement: null,
         nextStatement: null,
-        colour: 230,
+        colour: '#2196F3',
+        style: 'movement_blocks',
       },
       {
         type: 'turn_right',
-        message0: 'turn right',
+        message0: '🚗⬆️ Move Up',
         previousStatement: null,
         nextStatement: null,
-        colour: 230,
+        colour: '#2196F3',
+        style: 'movement_blocks',
+      },
+      {
+        type: 'move_down',
+        message0: '⬇️🚗 Move Down',
+        previousStatement: null,
+        nextStatement: null,
+        colour: '#2196F3',
+        style: 'movement_blocks',
       },
     ]);
 
-    BlocklyJS.javascriptGenerator.forBlock['move_forward'] = () => 'moveForward();\n';
-    BlocklyJS.javascriptGenerator.forBlock['turn_left'] = () => 'turnLeft();\n';
-    BlocklyJS.javascriptGenerator.forBlock['turn_right'] = () => 'turnRight();\n';
+    // Define custom block styles
+    Blockly.Theme.defineTheme('kubo_theme', {
+      'blockStyles': {
+        'movement_blocks': {
+          'colourPrimary': '#2196F3',
+          'colourSecondary': '#1976D2',
+          'colourTertiary': '#0D47A1'
+        },
+        'logic_blocks': {
+          'colourPrimary': '#9C27B0',
+          'colourSecondary': '#7B1FA2',
+          'colourTertiary': '#4A148C'
+        },
+        'loop_blocks': {
+          'colourPrimary': '#00BCD4',
+          'colourSecondary': '#0097A7',
+          'colourTertiary': '#006064'
+        },
+        'math_blocks': {
+          'colourPrimary': '#FF9800',
+          'colourSecondary': '#F57C00',
+          'colourTertiary': '#E65100'
+        }
+      },
+      'categoryStyles': {
+        'movement_category': {
+          'colour': '#2196F3'
+        },
+        'logic_category': {
+          'colour': '#9C27B0'
+        },
+        'loop_category': {
+          'colour': '#00BCD4'
+        },
+        'math_category': {
+          'colour': '#FF9800'
+        }
+      }
+    });
+
+    BlocklyJS.javascriptGenerator.forBlock['move_forward'] = () => 'moveRight();\n';
+    BlocklyJS.javascriptGenerator.forBlock['turn_left'] = () => 'moveLeft();\n';
+    BlocklyJS.javascriptGenerator.forBlock['turn_right'] = () => 'moveUp();\n';
+    BlocklyJS.javascriptGenerator.forBlock['move_down'] = () => 'moveDown();\n';
   }, []);
 
   useEffect(() => {
@@ -102,9 +154,24 @@ export default function BlocklyMazeGame() {
     }
 
     workspaceRef.current = Blockly.inject(blocklyDiv.current, {
+      theme: Blockly.Theme.Classic,
       toolbox: { kind: 'categoryToolbox', contents: toolbox },
       trashcan: true,
       scrollbars: true,
+      grid: {
+        spacing: 25,
+        length: 3,
+        colour: '#ccc',
+        snap: true,
+      },
+      zoom: {
+        controls: true,
+        wheel: true,
+        startScale: 1.0,
+        maxScale: 3,
+        minScale: 0.3,
+        scaleSpeed: 1.2,
+      },
     });
 
     drawMaze();

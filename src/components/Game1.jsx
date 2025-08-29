@@ -568,18 +568,14 @@ const Game1 = () => {
                     </div>
                   ) : (
                     programSequence.map((tile, index) => (
-                      <div
-                        key={tile.id || index}
-                        className="sequence-tile"
-                        style={{
-                          background: tile.category === 'movement' ? '#2196F3' : 
-                                    tile.category === 'numbers' ? '#FF9800' : '#4CAF50'
-                        }}
-                        onClick={() => removeTileFromSequence(index)}
-                        title="Click to remove"
-                      >
-                        <div className="tile-emoji">{tile.icon}</div>
-                        <div className="tile-name">{tile.name}</div>
+                      <div key={tile.id || index} className="sequence-tile-wrapper">
+                        <KuboTile
+                          {...tile}
+                          data-category={tile.category}
+                          onClick={() => removeTileFromSequence(index)}
+                          title="Click to remove"
+                        />
+                        <div className="tile-index">{index + 1}</div>
                       </div>
                     ))
                   )}

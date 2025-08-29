@@ -1,0 +1,1323 @@
+/* KuboTerrainGame - Dedicated CSS file */
+/* Global overflow prevention */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Main container for Kubo Terrain Game */
+.kubo-theme {
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-image: url('../assets/kubo-game-background.svg');
+  background-size: cover;
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 80px 10px 10px 10px; /* Added 80px top padding for navbar */
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Scratch workspace - main game container */
+.scratch-workspace {
+  width: 100%;
+  max-width: 1400px;
+  height: calc(1200px - 160px); /* Adjusted for navbar space */
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 3px solid #2196F3;
+  display: grid;
+  grid-template-areas: 
+    "info info info"
+    "palette stage stage"
+    "scripts scripts scripts";
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 280px 1fr;
+  gap: 15px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.game-stage {
+  grid-area: stage;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+  overflow: auto;
+  max-height: 70vh;
+}
+
+/* Game info header */
+.kubo-game-info {
+  grid-area: info;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.level-info {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
+  color: white;
+  text-align: center;
+}
+
+.level-info h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.level-description {
+  margin: 5px 0;
+  font-size: 14px;
+  font-style: italic;
+  opacity: 0.9;
+}
+
+.math-requirements {
+  margin-top: 8px;
+  padding: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.math-requirements small {
+  display: block;
+  margin: 2px 0;
+  font-size: 11px;
+  color: #f0f0f0;
+}
+
+.kubo-mission, .kubo-score, .kubo-difficulty {
+  background: white;
+  padding: 8px 15px;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 2px solid #4CAF50;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.mission-label, .score-label {
+  font-weight: bold;
+  color: #2E7D32;
+  margin-right: 8px;
+}
+
+.mission-text {
+  color: #37474f;
+  margin-right: 8px;
+}
+
+.bnl-target-number, .score-value {
+  background: #FF9800;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Blocks palette - left sidebar */
+.scratch-blocks-palette {
+  grid-area: palette;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 3px solid #4CAF50;
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.palette-header {
+  font-size: 16px;
+  font-weight: bold;
+  color: #2E7D32;
+  margin-bottom: 15px;
+  text-align: center;
+  padding: 8px;
+  background: rgba(76, 175, 80, 0.1);
+  border-radius: 8px;
+}
+
+.block-category {
+  margin-bottom: 20px;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  color: #2E7D32;
+  margin-bottom: 10px;
+  padding: 8px;
+  background: rgba(76, 175, 80, 0.05);
+  border-radius: 8px;
+}
+
+.category-icon {
+  font-size: 18px;
+}
+
+.category-name {
+  font-size: 14px;
+}
+
+.category-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Stage area - game canvas container */
+.scratch-stage-area {
+  grid-area: stage;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 3px solid #2196F3;
+  position: relative;
+  overflow: hidden;
+}
+
+.game-canvas-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  /* Removed cursor grab/grabbing styles */
+}
+
+.game-canvas-container:active {
+  cursor: grabbing;
+}
+
+/* Game canvas - fixed width, scales with level */
+.game-canvas {
+  border: 3px solid #4CAF50;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  background: #87CEEB;
+  margin: 10px;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: visible;
+}
+
+/* Removed zoom controls entirely */
+/* .zoom-controls, .zoom-btn, .zoom-level styles removed */
+.zoom-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  z-index: 10;
+}
+
+.zoom-btn {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #2196F3;
+  background: white;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #2196F3;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.zoom-btn:hover {
+  background: #2196F3;
+  color: white;
+  transform: scale(1.05);
+}
+
+.zoom-level {
+  background: white;
+  border: 2px solid #2196F3;
+  border-radius: 8px;
+  padding: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #2196F3;
+  text-align: center;
+  min-width: 40px;
+}
+
+/* Scripts area - bottom programming section */
+.scratch-scripts-area {
+  grid-area: scripts;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 3px solid #FF9800;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.scripts-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  color: #F57C00;
+  font-size: 16px;
+}
+
+.scripts-icon {
+  font-size: 18px;
+}
+
+.scripts-title {
+  font-size: 16px;
+}
+
+.programming-workspace {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  height: 80px;
+  overflow: hidden;
+}
+
+.program-sequence {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 5px;
+  min-height: 70px;
+  background: rgba(255, 152, 0, 0.05);
+  border-radius: 10px;
+  border: 2px dashed #FF9800;
+}
+
+.empty-program-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-style: italic;
+  padding: 10px;
+  width: 100%;
+  justify-content: center;
+}
+
+.empty-icon {
+  font-size: 20px;
+}
+
+.sequence-tiles {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 5px;
+}
+
+.sequence-tile-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.sequence-tile {
+  min-width: 60px;
+  height: 60px;
+}
+
+.remove-tile-btn {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #f44336;
+  color: white;
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.remove-tile-btn:hover {
+  background: #d32f2f;
+  transform: scale(1.1);
+}
+
+.program-controls {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.control-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border: 2px solid;
+  border-radius: 10px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 12px;
+  min-width: 70px;
+}
+
+.run-btn {
+  border-color: #4CAF50;
+  color: #4CAF50;
+}
+
+.run-btn:hover:not(:disabled) {
+  background: #4CAF50;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.reset-btn {
+  border-color: #FF9800;
+  color: #FF9800;
+}
+
+.reset-btn:hover:not(:disabled) {
+  background: #FF9800;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.clear-btn {
+  border-color: #f44336;
+  color: #f44336;
+}
+
+.clear-btn:hover:not(:disabled) {
+  background: #f44336;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.control-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-icon {
+  font-size: 16px;
+}
+
+.btn-text {
+  font-size: 11px;
+  font-weight: bold;
+}
+
+/* Kubo Tiles */
+.kubo-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  position: relative;
+  border-radius: 15px;
+  border: 3px solid #ddd;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+}
+
+.kubo-tile:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+.kubo-tile:active,
+.kubo-tile.clicked {
+  transform: translateY(0) scale(0.95);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Category-specific styling */
+.kubo-tile[data-category="movement"] {
+  background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+  border-color: #388E3C;
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+.kubo-tile[data-category="math"] {
+  background: linear-gradient(135deg, #2196F3 0%, #64B5F6 100%);
+  border-color: #1976D2;
+  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+}
+
+.kubo-tile[data-category="numbers"] {
+  background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+  border-color: #F57C00;
+  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+}
+
+.kubo-tile[data-category="actions"] {
+  background: linear-gradient(135deg, #9C27B0 0%, #BA68C8 100%);
+  border-color: #7B1FA2;
+  box-shadow: 0 6px 20px rgba(156, 39, 176, 0.4);
+}
+
+.kubo-tile[data-category="loops"] {
+  background: linear-gradient(135deg, #00BCD4 0%, #4DD0E1 100%);
+  border-color: #0097A7;
+  box-shadow: 0 6px 20px rgba(0, 188, 212, 0.4);
+}
+
+/* Enhanced tile icons */
+.kubo-tile-icon {
+  font-size: 20px;
+  margin-bottom: 2px;
+  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+}
+
+.kubo-tile-label {
+  font-size: 10px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  line-height: 1.1;
+}
+
+.kubo-tile.dragging {
+  opacity: 0.7;
+  transform: rotate(5deg);
+}
+
+/* Tooltip styling */
+.tile-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: normal;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-bottom: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: tooltipFadeIn 0.2s ease-out;
+}
+
+.tile-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.9);
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Right-click delete hint */
+.sequence-tile-wrapper:hover::after {
+  content: 'Right-click to delete';
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(220, 53, 69, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  white-space: nowrap;
+  z-index: 1000;
+  opacity: 0;
+  animation: hintFadeIn 0.3s ease-out 1s forwards;
+}
+
+@keyframes hintFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Enhanced program sequence styling */
+.sequence-tile-wrapper {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 4px;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.program-sequence .kubo-tile {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+  padding: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.program-sequence .kubo-tile::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.program-sequence .kubo-tile:hover::before {
+  opacity: 1;
+}
+
+.program-sequence .kubo-tile:hover {
+  transform: translateY(-2px) scale(1.05);
+  filter: brightness(1.1);
+}
+
+.program-sequence .tile-icon {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 4px;
+  filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.3));
+}
+
+.program-sequence .tile-name {
+  display: block;
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Add sequence number indicators using tile-index div */
+.tile-index {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #FF5722;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  z-index: 10;
+}
+
+/* Game cells - MISSING STYLES ADDED */
+.game-cell {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.game-cell.car-cell {
+  border: 2px solid #4CAF50;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+}
+
+.game-cell.target-cell {
+  border: 2px solid #FF9800;
+  box-shadow: 0 0 10px rgba(255, 152, 0, 0.3);
+}
+
+.game-cell.start-cell {
+  border: 2px solid #2196F3;
+  box-shadow: 0 0 10px rgba(33, 150, 243, 0.3);
+}
+
+/* Terrain-specific styles */
+.terrain-grass {
+  background-color: #4CAF50;
+}
+
+.terrain-tree {
+  background-color: #2E7D32;
+}
+
+.terrain-rock {
+  background-color: #757575;
+}
+
+.terrain-water {
+  background-color: #2196F3;
+}
+
+.terrain-dirt {
+  background-color: #8D6E63;
+}
+
+/* Fix game stats styling */
+.game-stats {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.game-stats span {
+  background: white;
+  padding: 8px 15px;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 2px solid #4CAF50;
+  font-size: 14px;
+  font-weight: bold;
+  color: #2E7D32;
+  white-space: nowrap;
+}
+
+/* Fix level controls */
+.level-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.level-controls button {
+  padding: 8px 16px;
+  border: 2px solid #2196F3;
+  background: white;
+  color: #2196F3;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.level-controls button:hover:not(:disabled) {
+  background: #2196F3;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.level-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Fix palette category styling */
+.palette-category h3 {
+  font-size: 16px;
+  font-weight: bold;
+  color: #2E7D32;
+  margin-bottom: 10px;
+  padding: 8px;
+  background: rgba(76, 175, 80, 0.1);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.tiles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+/* Fix scripts area styling */
+.scripts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.scripts-header h3 {
+  font-size: 16px;
+  font-weight: bold;
+  color: #F57C00;
+  margin: 0;
+}
+
+.program-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.program-controls button {
+  padding: 8px 16px;
+  border: 2px solid;
+  border-radius: 10px;
+  background: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.program-controls button:first-child {
+  border-color: #4CAF50;
+  color: #4CAF50;
+}
+
+.program-controls button:first-child:hover:not(:disabled) {
+  background: #4CAF50;
+  color: white;
+}
+
+.program-controls button:nth-child(2) {
+  border-color: #FF9800;
+  color: #FF9800;
+}
+
+.program-controls button:nth-child(2):hover:not(:disabled) {
+  background: #FF9800;
+  color: white;
+}
+
+.program-controls button:last-child {
+  border-color: #f44336;
+  color: #f44336;
+}
+
+.program-controls button:last-child:hover:not(:disabled) {
+  background: #f44336;
+  color: white;
+}
+
+.program-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Fix program sequence styling */
+.program-sequence {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  background: rgba(255, 152, 0, 0.05);
+  border: 2px dashed #FF9800;
+  border-radius: 10px;
+  min-height: 80px;
+  overflow-x: auto;
+  flex-wrap: wrap;
+}
+
+.empty-sequence {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  width: 100%;
+  padding: 20px;
+}
+
+.sequence-tile {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.remove-tile {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #f44336;
+  color: white;
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.remove-tile:hover {
+  background: #d32f2f;
+  transform: scale(1.1);
+}
+
+/* Collapsible category headers */
+.category-header.clickable {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  margin-bottom: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.category-header.clickable:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Drag and drop styles */
+.kubo-tile {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kubo-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.kubo-tile.dragging {
+  opacity: 0.7;
+  transform: rotate(5deg) scale(1.1);
+  z-index: 1000;
+}
+
+/* Drop zone styling */
+.scratch-scripts-area {
+  position: relative;
+}
+
+.scratch-scripts-area::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 2px dashed transparent;
+  border-radius: 8px;
+  pointer-events: none;
+  transition: border-color 0.2s ease;
+}
+
+.scratch-scripts-area:hover::before {
+  border-color: rgba(76, 175, 80, 0.5);
+}
+
+/* Empty program message styling */
+.empty-program {
+  text-align: center;
+  padding: 40px 20px;
+  color: rgba(255, 255, 255, 0.7);
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.empty-program p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.empty-program p:first-child {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Mobile responsiveness improvements */
+@media (max-width: 768px) {
+  .scratch-workspace {
+    grid-template-areas:
+      "info info"
+      "stage stage"
+      "palette scripts";
+    grid-template-rows: auto 1fr auto;
+    gap: 8px;
+  }
+  
+  .scratch-blocks-palette {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .tiles-grid {
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    gap: 4px;
+  }
+  
+  .kubo-tile {
+    padding: 8px 4px;
+    min-height: 60px;
+  }
+  
+  .tile-name {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .scratch-workspace {
+    grid-template-areas:
+      "info"
+      "stage"
+      "palette"
+      "scripts";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto 1fr;
+  }
+  
+  .scratch-blocks-palette {
+    max-height: 150px;
+  }
+  
+  .category-header.clickable {
+    font-size: 14px;
+    padding: 6px 8px;
+  }
+}
+
+/* Fix success popup styling */
+.success-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.popup-content h2 {
+  color: #2E7D32;
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+.popup-content p {
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.popup-content button {
+  padding: 12px 24px;
+  border: 2px solid #4CAF50;
+  background: #4CAF50;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  font-size: 16px;
+}
+
+.popup-content button:hover {
+  background: #66BB6A;
+  transform: translateY(-2px);
+}
+
+/* Loop Container Styles */
+.loop-container {
+  border: 3px solid #FF5722;
+  border-radius: 15px;
+  background: rgba(255, 87, 34, 0.05);
+  margin: 8px 4px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(255, 87, 34, 0.2);
+  animation: slideIn 0.3s ease-out;
+}
+
+.loop-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.loop-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.loop-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.loop-count {
+  background: #FF5722;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.loop-end-text {
+  background: #D32F2F;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.loop-arrow {
+  font-size: 16px;
+  color: #FF5722;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.loop-body {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  padding: 8px;
+  margin: 4px 0;
+  border: 2px dashed #FF8A65;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-height: 60px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.sequence-tile-wrapper.in-loop {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.sequence-tile-wrapper.loop-start,
+.sequence-tile-wrapper.loop-end {
+  background: rgba(255, 87, 34, 0.1);
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.sequence-tile-wrapper.error {
+  background: rgba(244, 67, 54, 0.1);
+  border: 2px solid #f44336;
+  border-radius: 8px;
+}
+
+.tile-warning {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #f44336;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-weight: bold;
+  z-index: 10;
+}
+
+.loop-execution-indicator {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #FF5722;
+  color: white;
+  font-size: 9px;
+  padding: 2px 4px;
+  border-radius: 6px;
+  font-weight: bold;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Enhanced sequence tiles styling */
+.sequence-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 8px;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 1200px) {
+  .scratch-workspace {
+    grid-template-areas: 
+      "info info"
+      "palette stage"
+      "scripts scripts";
+    grid-template-columns: 250px 1fr;
+  }
+  
+  .loop-container {
+    margin: 4px 2px;
+    padding: 8px;
+  }
+  
+  .loop-body {
+    padding: 4px;
+  }
+}
+
+@media (max-width: 900px) {
+  .scratch-workspace {
+    grid-template-areas: 
+      "info"
+      "palette"
+      "stage"
+      "scripts";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr auto;
+  }
+  
+  .scratch-blocks-palette {
+    max-height: 200px;
+  }
+  
+  .kubo-game-info {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .loop-container {
+    margin: 2px;
+    padding: 6px;
+  }
+  
+  .loop-header,
+  .loop-footer {
+    gap: 8px;
+  }
+  
+  .sequence-tiles {
+    gap: 4px;
+    padding: 4px;
+  }
+}
+
+.popup-content button:hover {
+  background: #66BB6A;
+  transform: translateY(-2px);
+}

@@ -1,282 +1,751 @@
+/* CSS Variables for techy/math theming - Override any purple colors */
 :root {
-  --primary: #2D3FDE;
-  --secondary: #7C3AED;
-  --accent: #06B6D4;
-  --background: #F8FAFC;
-  --text: #0F172A;
-  --card-bg: #FFFFFF;
-  --character-bg: #FFFFFF;
-  --gradient-primary: linear-gradient(135deg, #2D3FDE 0%, #7C3AED 100%);
-  --gradient-secondary: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%);
-  --gradient-hero: linear-gradient(135deg, #2D3FDE 0%, #7C3AED 50%, #06B6D4 100%);
-  --shadow-light: 0 4px 20px rgba(15, 23, 42, 0.08);
-  --shadow-medium: 0 8px 30px rgba(15, 23, 42, 0.12);
-  --shadow-heavy: 0 15px 40px rgba(15, 23, 42, 0.15);
+  /* Vibrant Green Tech Color Palette */
+  --matrix-green: #00ff41;
+  --matrix-green-dark: #00cc33;
+  --cyber-blue: #00d4ff;
+  --cyber-blue-dark: #0099cc;
+  --bright-green: #39ff14;
+  --neon-green: #7fff00;
+  --lime-green: #32cd32;
+  --electric-cyan: #00ffff;
+  --terminal-green: #0dff0d;
+  
+  /* Override any purple colors from other stylesheets */
+  --primary-500: #00ff41 !important;
+  --primary-600: #00cc33 !important;
+  --primary-700: #00aa2b !important;
+  --accent-pink: #00ff41 !important;
+  --purple: #00ff41 !important;
+  --violet: #00d4ff !important;
+  
+  /* Vibrant Green Tech gradients */
+  --primary-gradient: linear-gradient(135deg, #00ff41 0%, #39ff14 50%, #7fff00 100%);
+  --secondary-gradient: linear-gradient(135deg, #0099cc 0%, #00ff41 100%);
+  --accent-gradient: linear-gradient(135deg, #32cd32 0%, #00d4ff 100%);
+  --success-gradient: linear-gradient(135deg, #39ff14 0%, #00ff41 100%);
+  --warning-gradient: linear-gradient(135deg, #7fff00 0%, #32cd32 100%);
+  --code-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  --vibrant-gradient: linear-gradient(135deg, #39ff14 0%, #00ff41 30%, #00d4ff 70%, #00ffff 100%);
+  
+  /* Dark tech backgrounds */
+  --dark-bg: #0a0a0f;
+  --darker-bg: #050508;
+  --card-bg: rgba(0, 255, 65, 0.03);
+  --terminal-bg: rgba(0, 0, 0, 0.8);
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #001a00;
+  --bg-card: rgba(0, 26, 0, 0.9);
+  --bg-glass: rgba(0, 20, 0, 0.8);
+  --bg-hover: rgba(0, 51, 0, 0.6);
+  
+  /* Text colors */
+  --text-primary: #00ff41;
+  --text-secondary: #00d4ff;
+  --text-muted: rgba(0, 255, 65, 0.6);
+  --text-code: #39ff14;
+  --text-accent: #7fff00;
+  --text-highlight: #00d4ff;
+  --text-bright: #0dff0d;
+  
+  /* Borders and effects */
+  --border-color: rgba(0, 255, 65, 0.2);
+  --border-glow: rgba(0, 212, 255, 0.3);
+  --shadow-light: 0 8px 32px rgba(0, 255, 65, 0.15);
+  --shadow-heavy: 0 15px 35px rgba(0, 212, 255, 0.25);
+  --blur-bg: rgba(0, 255, 65, 0.05);
+  --glow-effect: 0 0 20px rgba(0, 255, 65, 0.5);
+  --border-primary: rgba(0, 255, 65, 0.5);
+  --border-secondary: rgba(57, 255, 20, 0.4);
+  --border-accent: rgba(127, 255, 0, 0.4);
+  --border-cyber: rgba(0, 212, 255, 0.3);
+  --glow-primary: 0 0 25px rgba(0, 255, 65, 0.4);
+  --glow-secondary: 0 0 20px rgba(57, 255, 20, 0.4);
+  --glow-accent: 0 0 15px rgba(127, 255, 0, 0.3);
+  --glow-cyber: 0 0 18px rgba(0, 212, 255, 0.3);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* Custom Scrollbar Styling - Matrix/Tech Theme */
+::-webkit-scrollbar {
+  width: 12px;
+  background: var(--bg-primary);
 }
 
+::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-tertiary) 50%, var(--bg-secondary) 100%);
+  border-radius: 6px;
+  border: 1px solid rgba(0, 255, 65, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--matrix-green) 0%, var(--bright-green) 50%, var(--neon-green) 100%);
+  border-radius: 6px;
+  border: 1px solid var(--matrix-green);
+  box-shadow: var(--glow-primary), inset 0 0 10px rgba(0, 255, 65, 0.2);
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--bright-green) 0%, var(--neon-green) 50%, var(--matrix-green) 100%);
+  box-shadow: var(--glow-secondary), var(--glow-primary), inset 0 0 15px rgba(57, 255, 20, 0.3);
+  transform: scale(1.1);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, var(--neon-green) 0%, var(--bright-green) 100%);
+  box-shadow: var(--glow-accent), var(--glow-secondary), inset 0 0 20px rgba(127, 255, 0, 0.4);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg-primary);
+}
+
+/* Firefox Scrollbar Styling */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--matrix-green) var(--bg-secondary);
+}
+
+/* Global Styles - Override any purple backgrounds */
+body.landing-page-body,
 body {
-  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-  color: rgba(255, 255, 255, 0.87);
-  min-height: 100vh;
-  margin: 0;
-  background: #1E1E2D !important;
-  overflow-x: hidden;
-  position: relative;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
+  background: var(--dark-bg) !important;
+  background-image: 
+    /* Matrix-like grid pattern */
+    linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+    /* Tech glow effects - NO PURPLE */
+    radial-gradient(circle at 20% 80%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(0, 255, 65, 0.08) 0%, transparent 50%),
+    /* Binary code pattern */
+    radial-gradient(circle at 60% 60%, rgba(57, 255, 20, 0.05) 0%, transparent 70%) !important;
+  background-size: 50px 50px, 50px 50px, 800px 800px, 600px 600px, 400px 400px, 300px 300px !important;
+  min-height: 100vh !important;
+  overflow-x: hidden !important;
+  position: relative !important;
 }
 
+/* Add floating mathematical symbols */
 body::before {
-  content: '';
+  content: '∑ ∫ π ∞ √ ∆ ∇ ∂ ≈ ≠ ≤ ≥ ∈ ∉ ∪ ∩ ⊂ ⊃ ∀ ∃ ∴ ∵ ∧ ∨ ¬ ⊕ ⊗';
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: 
-    radial-gradient(circle at 25% 25%, rgba(45, 63, 222, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+  font-size: 2rem;
+  color: rgba(0, 255, 65, 0.05);
+  pointer-events: none;
+  z-index: -2;
+  animation: floatMathSymbols 20s linear infinite;
+  white-space: pre-wrap;
+  word-spacing: 100px;
+  line-height: 200px;
+  overflow: hidden;
+}
+
+@keyframes floatMathSymbols {
+  0% { transform: translateY(100vh) rotate(0deg); }
+  100% { transform: translateY(-100vh) rotate(360deg); }
+}
+
+/* Landing Container - Highest specificity to override ALL global styles including App.css */
+.landing-container,
+body .landing-container,
+.app-container .landing-container,
+html body .app-container .landing-container {
+  min-height: 100vh !important;
+  width: 100% !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  padding: 2rem !important;
+  background: var(--dark-bg) !important;
+  background-color: var(--dark-bg) !important;
+  background-image: 
+    /* Matrix-like grid pattern - NO PURPLE */
+    linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+    /* Tech glow effects - ONLY GREEN AND BLUE */
+    radial-gradient(circle at 20% 80%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(0, 255, 65, 0.08) 0%, transparent 50%),
+    /* Binary code pattern */
+    radial-gradient(circle at 60% 60%, rgba(57, 255, 20, 0.05) 0%, transparent 70%) !important;
+  background-size: 50px 50px, 50px 50px, 800px 800px, 600px 600px, 400px 400px, 300px 300px !important;
+  background-attachment: fixed !important;
+  overflow-x: hidden !important;
+  max-width: min(1400px, 100vw) !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+}
+
+/* Interactive Background */
+.interactive-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   z-index: -1;
 }
 
-.landing-container {
-  min-height: 100vh;
-  padding-top: 70px;
-  position: relative;
+.bg-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--matrix-green);
+  border-radius: 0;
+  animation: digitalRain 8s linear infinite;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--terminal-green);
+}
+
+.bg-particle::before {
+  content: attr(data-binary);
+  position: absolute;
+  top: -6px;
+  left: -3px;
+  font-size: 8px;
+  opacity: 0.7;
+}
+
+.bg-particle:nth-child(odd) {
+  animation-delay: -2s;
+  background: var(--cyber-blue);
+}
+
+.bg-particle:nth-child(even) {
+  animation-delay: -4s;
+  background: var(--bright-green);
+}
+
+.bg-particle:nth-child(3n) {
+  animation-delay: -6s;
+  background: var(--terminal-green);
+}
+
+@keyframes digitalRain {
+  0% {
+    transform: translateY(-100vh) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) scale(0);
+    opacity: 0;
+  }
+}
+
+.mouse-follower {
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  background: radial-gradient(circle, rgba(0, 255, 65, 0.4) 0%, rgba(57, 255, 20, 0.3) 40%, rgba(127, 255, 0, 0.2) 80%, rgba(0, 212, 255, 0.1) 100%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: screen;
+  transition: transform 0.1s ease-out;
+  box-shadow: var(--glow-primary), var(--glow-secondary), var(--glow-accent);
+  transform: translate(-50%, -50%);
 }
 
 /* Hero Section */
 .hero-section {
-  background: transparent;
-  padding: 4rem 2rem 6rem;
+  text-align: center;
+  padding: clamp(3rem, 8vw, 6rem) clamp(1rem, 4vw, 2rem) clamp(4rem, 10vw, 8rem);
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: min(1200px, 95vw);
+  margin: clamp(1rem, 3vw, 2rem) auto;
+  background: linear-gradient(135deg, rgba(0, 255, 65, 0.02) 0%, rgba(0, 212, 255, 0.02) 100%);
+  border-radius: clamp(12px, 3vw, 24px);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 255, 65, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.hero-badge {
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  background: var(--terminal-bg);
+  backdrop-filter: blur(10px);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.8s ease, terminalGlow 2s ease-in-out infinite alternate;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 2px;
   position: relative;
   overflow: hidden;
-  margin-bottom: 4rem;
 }
 
-.hero-section .h1{
-  color: white;
+.hero-badge::before {
+  content: '> ';
+  color: var(--matrix-green);
+  animation: blink 1s infinite;
 }
 
-
-.hero-content {
-  max-width: 800px;
-  margin: 0 auto;
-  text-align: center;
-  position: relative;
-  z-index: 2;
+.hero-badge::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.2), transparent);
+  animation: scanLine 3s infinite;
 }
 
+@keyframes terminalGlow {
+  0% { box-shadow: 0 0 5px var(--matrix-green); }
+  100% { box-shadow: 0 0 20px var(--matrix-green), 0 0 30px var(--cyber-blue); }
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@keyframes scanLine {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+@keyframes typewriter {
+  0% { width: 0; }
+  50% { width: 100%; }
+  100% { width: 100%; border-right-color: transparent; }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes colorShift {
+  0%, 100% {
+    filter: hue-rotate(0deg) brightness(1);
+  }
+  25% {
+    filter: hue-rotate(90deg) brightness(1.1);
+  }
+  50% {
+    filter: hue-rotate(180deg) brightness(0.9);
+  }
+  75% {
+    filter: hue-rotate(270deg) brightness(1.1);
+  }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
 .hero-title {
-  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-size: clamp(2rem, 6vw, 4.5rem);
   font-weight: 800;
-  color: white !important;
-  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+  margin: 0 0 2rem;
   line-height: 1.2;
-  text-align: center;
-  background: none !important;
-  -webkit-background-clip: unset !important;
-  -webkit-text-fill-color: white !important;
-  background-clip: unset !important;
-
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  animation: fadeInUp 0.8s ease 0.2s both;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
 }
 
 .gradient-text {
-  font-family: 'Poppins', 'Segoe UI', sans-serif;
-  font-size: clamp(2.8rem, 7vw, 4.5rem);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  display: inline-block;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 30%, var(--accent) 70%, var(--primary) 100%);
-  background-size: 300% auto;
-  background-clip: text;
+  background: var(--primary-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-fill-color: transparent;
-
-  animation: colorShift 8s linear infinite;
-  position: relative;
-  z-index: 2;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition: all 0.3s ease;
+  background-clip: text;
+  animation: gradientShift 3s ease-in-out infinite, matrixGlow 2s ease-in-out infinite alternate;
 }
 
-.gradient-text:hover {
-  letter-spacing: 2px;
-
-  transform: scale(1.05);
-  animation: colorShift 4s linear infinite, pulse 1.5s ease-in-out infinite;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 30%, var(--primary) 70%, var(--accent) 100%);
-  background-size: 300% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
+@keyframes matrixGlow {
+  0% { filter: drop-shadow(0 0 5px var(--matrix-green)); }
+  100% { filter: drop-shadow(0 0 15px var(--cyber-blue)) drop-shadow(0 0 25px var(--bright-green)); }
 }
 
 .hero-subtitle {
-  font-family: 'Poppins', 'Segoe UI', sans-serif;
-  font-size: clamp(1.1rem, 3vw, 1.4rem);
-  margin-bottom: 3rem;
-  font-weight: 600;
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  color: var(--text-secondary);
+  margin: clamp(1rem, 3vw, 2rem) auto clamp(2rem, 5vw, 4rem);
+  max-width: min(700px, 90vw);
   line-height: 1.6;
-
-  letter-spacing: 0.5px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 0.8rem 1.5rem;
-  border-radius: 10px;
-  display: inline-block;
+  animation: fadeInUp 0.8s ease 0.4s both;
+  font-family: 'JetBrains Mono', monospace;
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-
+  font-weight: 400;
+  opacity: 0.9;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-.hero-subtitle span {
-  color: white;
+.hero-subtitle::before {
+  content: '/* ';
+  color: var(--terminal-green);
+  opacity: 0.7;
+  font-weight: 600;
+}
 
+.hero-subtitle::after {
+  content: ' */';
+  color: var(--terminal-green);
+  opacity: 0.7;
+  font-weight: 600;
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: clamp(1rem, 4vw, 3rem);
+  margin: clamp(2rem, 4vw, 3rem) 0;
+  animation: fadeInUp 0.8s ease 0.6s both;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .hero-features {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  flex-wrap: wrap;
-  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+  gap: clamp(1rem, 3vw, 2rem);
+  margin: clamp(2rem, 5vw, 4rem) 0;
+  animation: fadeInUp 0.8s ease 0.8s both;
+  width: 100%;
+  max-width: 100%;
 }
 
 .feature-item {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 0.8rem 1.6rem;
-  background: rgba(0, 0, 0, 0.25);
-  border-radius: 20px;
-
-  border: 2px solid rgba(255, 255, 255, 0.25);
-  font-family: 'Poppins', 'Segoe UI', sans-serif;
-  font-weight: 700;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
-
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  padding: 2rem;
+  background: var(--terminal-bg);
+  backdrop-filter: blur(10px);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  font-family: 'JetBrains Mono', monospace;
 }
 
-.feature-item span:not(.feature-icon) {
-  background: linear-gradient(135deg, #FFFFFF 0%, var(--secondary) 100%);
-  background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-fill-color: transparent;
-  animation: colorShift 12s linear infinite;
+.feature-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--primary-gradient);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
 }
 
 .feature-item:hover {
   transform: translateY(-5px);
-  background: rgba(124, 58, 237, 0.25);
-
-  border-color: rgba(255, 255, 255, 0.4);
-  letter-spacing: 0.8px;
+  box-shadow: var(--shadow-heavy), var(--glow-effect);
+  border-color: var(--bright-green);
+  background: var(--bg-hover);
 }
 
-.feature-item:hover span:not(.feature-icon) {
-  background: linear-gradient(135deg, var(--accent) 0%, #FFFFFF 100%);
-  background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  animation: colorShift 8s linear infinite;
+.feature-item:hover::before {
+  transform: scaleX(1);
+}
+
+.feature-item:hover .feature-title {
+  color: var(--matrix-green);
+  text-shadow: 0 0 10px var(--matrix-green);
 }
 
 .feature-icon {
-  font-size: 1.2rem;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1rem;
+  background: var(--primary-gradient);
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature-icon svg {
+  width: 30px;
+  height: 30px;
+  fill: white;
+}
+
+.feature-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem;
+}
+
+.feature-description {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.hero-cta {
+  display: flex;
+  gap: clamp(1rem, 3vw, 2rem);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: clamp(2rem, 5vw, 4rem);
+  animation: fadeInUp 0.8s ease 0.6s both;
+  width: 100%;
+  max-width: 100%;
+}
+
+.hero-cta .btn {
+  padding: clamp(0.8rem, 2vw, 1.25rem) clamp(1.5rem, 4vw, 3rem);
+  border-radius: clamp(8px, 2vw, 12px);
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: none;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  font-size: clamp(0.8rem, 2vw, 1rem);
+  min-width: fit-content;
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+.hero-cta .btn::before {
+  content: '> ';
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+}
+
+.hero-cta .btn:hover::before {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.hero-cta .btn-primary {
+  background: var(--primary-gradient);
+  color: white;
+  box-shadow: var(--shadow-light), var(--glow-primary);
+  border: 2px solid var(--matrix-green);
+}
+
+.hero-cta .btn-primary:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: var(--shadow-heavy), var(--glow-secondary), 0 0 30px rgba(0, 255, 65, 0.4);
+  background: linear-gradient(135deg, #39ff14 0%, #00ff41 50%, #0dff0d 100%);
+}
+
+.hero-cta .btn-secondary {
+  background: rgba(0, 255, 65, 0.05);
+  color: var(--text-primary);
+  border: 2px solid var(--border-primary);
+  backdrop-filter: blur(15px);
+}
+
+.hero-cta .btn-secondary:hover {
+  background: rgba(0, 255, 65, 0.1);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: var(--shadow-light), var(--glow-accent);
+  border-color: var(--bright-green);
+  color: var(--bright-green);
 }
 
 /* Game Options Section */
 .game-options {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 2rem;
-  margin: 0 auto 4rem;
-  padding: 0 2rem;
-  max-width: 1400px;
+  margin: 6rem 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  animation: fadeInUp 0.8s ease;
+}
+
+.section-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 clamp(1rem, 2vw, 1.5rem);
+  background: var(--primary-gradient);
+  background-size: 200% 200%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 20px var(--matrix-green);
+  animation: gradientShift 4s ease-in-out infinite, matrixGlow 3s ease-in-out infinite alternate;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
+}
+
+.section-title::before {
+  content: '[ ';
+  color: var(--terminal-green);
+  opacity: 0.8;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.section-title::after {
+  content: ' ]';
+  color: var(--terminal-green);
+  opacity: 0.8;
+  animation: pulse 2s ease-in-out infinite 0.5s;
+}
+
+.section-subtitle {
+  font-size: 1.4rem;
+  color: var(--text-secondary);
+  margin: 0 auto 2rem;
+  max-width: 700px;
+  opacity: 0.9;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.6;
+  position: relative;
+}
+
+.section-subtitle::before {
+  content: '// ';
+  color: var(--terminal-green);
+  opacity: 0.7;
+}
+
+.section-subtitle::after {
+  content: ' //';
+  color: var(--terminal-green);
+  opacity: 0.7;
+}
+
+.game-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(350px, 100%), 1fr));
+  gap: clamp(1rem, 3vw, 2rem);
+  margin-top: clamp(2rem, 4vw, 3rem);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.game-card-wrapper {
+  position: relative;
+  animation: fadeInUp 0.8s ease;
 }
 
 .game-card {
-  border-radius: 24px;
-  padding: 2rem 1.5rem 1.5rem;
-  text-decoration: none;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   position: relative;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  background: linear-gradient(135deg, rgba(0, 255, 65, 0.03) 0%, rgba(0, 212, 255, 0.02) 100%);
+  border: 2px solid var(--border-primary);
+  border-radius: clamp(16px, 3vw, 24px);
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   overflow: hidden;
-
-  text-align: center;
-  color: white;
-  width: 350px;
-  height: 400px;
-  min-width: 350px;
-  min-height: 400px;
-  max-width: 350px;
-  max-height: 400px;
-  flex: none;
-}
-
-/* Loop Land Card - Green Theme */
-.game1-card {
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(139, 195, 74, 0.1));
-  border: 2px solid rgba(76, 175, 80, 0.3);
-}
-
-.game1-card:hover {
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.25), rgba(139, 195, 74, 0.2));
-  border-color: rgba(76, 175, 80, 0.5);
-  box-shadow: 0 20px 40px rgba(76, 175, 80, 0.2);
-}
-
-/* Number World Card - Purple Theme */
-.numeration-card {
-  background: linear-gradient(135deg, rgba(156, 39, 176, 0.15), rgba(103, 58, 183, 0.1));
-  border: 2px solid rgba(156, 39, 176, 0.3);
-}
-
-.numeration-card:hover {
-  background: linear-gradient(135deg, rgba(156, 39, 176, 0.25), rgba(103, 58, 183, 0.2));
-  border-color: rgba(156, 39, 176, 0.5);
-  box-shadow: 0 20px 40px rgba(156, 39, 176, 0.2);
-}
-
-/* Adventure World Card - Orange Theme */
-.open-world-card {
-  background: linear-gradient(135deg, rgba(255, 152, 0, 0.15), rgba(255, 193, 7, 0.1));
-  border: 2px solid rgba(255, 152, 0, 0.3);
-}
-
-.open-world-card:hover {
-  background: linear-gradient(135deg, rgba(255, 152, 0, 0.25), rgba(255, 193, 7, 0.2));
-  border-color: rgba(255, 152, 0, 0.5);
-  box-shadow: 0 20px 40px rgba(255, 152, 0, 0.2);
-}
-
-/* Default Game Card - Keep existing blue theme */
-.game-card:not(.game1-card):not(.numeration-card):not(.open-world-card) {
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .game-card::before {
@@ -285,107 +754,71 @@ body::before {
   top: 0;
   left: -100%;
   width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  transition: left 0.6s ease;
-}
-
-.game-card:hover::before {
-  left: 100%;
+  height: 2px;
+  background: var(--primary-gradient);
+  transition: left 0.5s ease;
 }
 
 .game-card:hover {
-  transform: translateY(-15px) scale(1.03);
-
-  border-color: rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3), var(--glow-primary), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-color: var(--matrix-green);
+  background: linear-gradient(135deg, rgba(0, 255, 65, 0.05) 0%, rgba(0, 212, 255, 0.03) 100%);
 }
 
-.game-card:hover .card-icon {
-  transform: scale(1.1) translateY(-5px);
-  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.3));
+.game-card:hover::before {
+  left: 0;
 }
 
-.game-card:hover h3 {
-  transform: translateY(-3px);
-  color: #FFFFFF;
-
+.card-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
-.game-card:hover .card-footer {
-  background: rgba(255, 255, 255, 0.25);
-  transform: translateY(-3px);
-
+.game-card:hover .card-glow {
+  opacity: 1;
 }
 
-.game-card h3 {
-  font-size: 1.8rem;
-  margin: 1.5rem 0 0.8rem;
-  font-weight: 800;
-  text-align: center;
-  position: relative;
-  z-index: 2;
-  font-family: 'Poppins', 'Quicksand', 'Nunito', sans-serif;
-  transition: all 0.3s ease;
-
-  background: linear-gradient(135deg, #FFFFFF 0%, var(--secondary) 100%);
-  background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-fill-color: transparent;
-  animation: colorShift 10s linear infinite;
-}
-
-.game-card p {
-  font-family: 'Poppins', 'Segoe UI', sans-serif;
-  font-size: 1.1rem;
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 1.5rem;
-  text-align: center;
-  line-height: 1.6;
-  position: relative;
-  z-index: 2;
-  font-weight: 500;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 100%);
-  background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-fill-color: transparent;
-  animation: colorShift 15s linear infinite;
-  flex-grow: 1;
+}
 
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.card-badge {
+  padding: 0.25rem 0.75rem;
+  background: var(--accent-gradient);
+  color: white;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .card-icon {
-  width: 100px;
-  height: 100px;
-  margin: 0 auto;
-  border-radius: 50%;
+  width: 90px;
+  height: 90px;
+  background: var(--primary-gradient);
+  border-radius: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--glow-primary), 0 8px 20px rgba(0, 0, 0, 0.2);
+  border: 2px solid var(--matrix-green);
   position: relative;
-  z-index: 2;
-  aspect-ratio: 1 / 1;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  border: 3px solid rgba(255, 255, 255, 0.3);
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  flex-shrink: 0;
-  min-width: 100px;
-  min-height: 100px;
-  max-width: 100px;
-  max-height: 100px;
-}
-
-/* Default Card Icon - Blue */
-.game-card:not(.game1-card):not(.numeration-card):not(.open-world-card):not(.iteration-card):not(.tower-defense-card) .card-icon {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  box-shadow: 0 8px 25px rgba(94, 129, 244, 0.3);
 }
 
 .card-icon::before {
@@ -395,715 +828,550 @@ body::before {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: rotate(45deg);
+  transition: all 0.6s ease;
   opacity: 0;
-  transition: opacity 0.5s ease;
-  pointer-events: none;
 }
 
 .game-card:hover .card-icon {
-  transform: scale(1.1) rotate(5deg);
-
+  transform: scale(1.15) rotate(8deg);
+  box-shadow: var(--glow-secondary), var(--glow-accent), 0 12px 30px rgba(0, 0, 0, 0.3);
 }
 
 .game-card:hover .card-icon::before {
   opacity: 1;
+  transform: rotate(45deg) translate(50%, 50%);
 }
 
-.card-icon svg {
-  width: 65px;
-  height: 65px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-  fill: #FFFFFF;
-  transition: all 0.3s ease;
+.card-content h3 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+}
+
+.card-content h3::before {
+  content: '{ ';
+  color: var(--terminal-green);
+  opacity: 0.7;
+}
+
+.card-content h3::after {
+  content: ' }';
+  color: var(--terminal-green);
+  opacity: 0.7;
+}
+
+.card-content p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin: 0 0 2rem;
+  font-size: 1rem;
+  opacity: 0.9;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.card-stats {
+  display: flex;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.stat-badge {
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
 }
 
 .card-footer {
-  font-family: 'Poppins', 'Segoe UI', sans-serif;
-  font-weight: 700;
-  margin-top: auto;
-  padding: 0.8rem 1.2rem;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 15px;
-  border: 2px solid rgba(255, 255, 255, 0.25);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  position: relative;
-  z-index: 2;
-  flex-shrink: 0;
-
-  width: 100%;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-fill-color: transparent;
-  animation: colorShift 8s linear infinite;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.game-card:hover .card-footer {
-  background: rgba(255, 255, 255, 0.35);
-  transform: translateY(-2px);
-  color: rgba(255, 255, 255, 0.9);
-  -webkit-text-fill-color: rgba(255, 255, 255, 0.9);
-  text-fill-color: rgba(255, 255, 255, 0.9);
-  font-weight: 800;
-}
-
-/* Card specific styles */
-.iteration-card {
-  background: linear-gradient(135deg, rgba(94, 114, 235, 0.15) 0%, rgba(123, 92, 250, 0.15) 100%);
-  border-color: rgba(94, 114, 235, 0.25);
-}
-
-.iteration-card .card-icon {
-  background: linear-gradient(135deg, var(--primary), #8EA7FF);
-  border-color: rgba(94, 114, 235, 0.4);
-  border-radius: 50% !important;
-  box-shadow: 0 8px 25px rgba(94, 114, 235, 0.4);
-}
-
-.iteration-card .card-icon svg {
-  fill: white;
-}
-
-.game1-card {
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.15) 0%, rgba(139, 195, 74, 0.15) 100%);
-  border-color: rgba(76, 175, 80, 0.25);
-}
-
-.game1-card .card-icon {
-  background: linear-gradient(135deg, #4CAF50, #8BC34A);
-  border-color: rgba(76, 175, 80, 0.4);
-  border-radius: 50% !important;
-  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
-}
-
-.game1-card .card-icon svg {
-  fill: white;
-}
-
-.game1-link {
-  text-decoration: none;
-  color: inherit;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  height: 100%;
-  width: 100%;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
 }
 
-.numeration-card {
-  background: linear-gradient(135deg, rgba(255, 107, 154, 0.15) 0%, rgba(255, 159, 118, 0.15) 100%);
-  border-color: rgba(255, 107, 154, 0.25);
+.footer-text {
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
-.numeration-card .card-icon {
-  background: linear-gradient(135deg, #9C27B0, #673AB7);
-  border-color: rgba(156, 39, 176, 0.4);
-  border-radius: 50% !important;
-  box-shadow: 0 8px 25px rgba(156, 39, 176, 0.4);
+.footer-arrow {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
 }
 
-.numeration-card .card-icon svg {
-  fill: white;
-}
-
-.tower-defense-card {
-  background: linear-gradient(135deg, rgba(6, 214, 160, 0.15) 0%, rgba(255, 209, 102, 0.15) 100%);
-  border-color: rgba(6, 214, 160, 0.25);
-}
-
-.tower-defense-card .card-icon {
-  background: linear-gradient(135deg, var(--accent), #FFD54F);
-  border-color: rgba(6, 214, 160, 0.4);
-  border-radius: 50% !important;
-  box-shadow: 0 8px 25px rgba(6, 214, 160, 0.4);
-}
-
-.tower-defense-card .card-icon svg {
-  fill: white;
-}
-
-/* Add colorful glow effects to cards */
-.iteration-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(94, 114, 235, 0.3) 0%, transparent 70%);
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  pointer-events: none;
-  border-radius: 24px;
-}
-
-.numeration-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(255, 107, 154, 0.3) 0%, transparent 70%);
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  pointer-events: none;
-  border-radius: 24px;
-}
-
-.tower-defense-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(6, 214, 160, 0.3) 0%, transparent 70%);
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  pointer-events: none;
-  border-radius: 24px;
-}
-
-.game1-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(76, 175, 80, 0.3) 0%, transparent 70%);
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  pointer-events: none;
-  border-radius: 24px;
-}
-
-.game-card:hover::before {
-  opacity: 1;
-}
-
-.open-world-card {
-  background: linear-gradient(135deg, rgba(255, 152, 0, 0.15) 0%, rgba(255, 183, 77, 0.15) 100%);
-  border-color: rgba(255, 152, 0, 0.25);
-}
-
-.open-world-card .card-icon {
-  background: linear-gradient(135deg, #FF9800, #FFC107);
-  border-color: rgba(255, 152, 0, 0.4);
-  border-radius: 50% !important;
-  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4);
-}
-
-.open-world-card .card-icon svg {
-  fill: white;
-}
-
-/* Remove special height overrides for Adventure World card - now uses standard height */
-
-.open-world-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(255, 152, 0, 0.3) 0%, transparent 70%);
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  pointer-events: none;
-  border-radius: 24px;
+.game-card:hover .footer-arrow {
+  transform: translateX(5px);
 }
 
 /* Character Selection Section */
 .character-selection {
-  margin: 4rem auto;
-  padding: 4rem 2rem;
-  background: rgba(255, 255, 255, 0.15);
-
-  border-radius: 35px;
-  max-width: 800px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  text-align: center;
+  margin: 6rem 0;
+  animation: fadeInUp 0.8s ease;
 }
 
-.character-selection::before {
+.progress-section {
+  text-align: center;
+  margin-bottom: 4rem;
+  padding: 3rem;
+  background: linear-gradient(135deg, rgba(0, 255, 65, 0.03) 0%, rgba(0, 212, 255, 0.02) 100%);
+  border-radius: 24px;
+  backdrop-filter: blur(20px);
+  border: 2px solid var(--border-primary);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-section::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
-  background: var(--gradient-primary);
+  height: 2px;
+  background: var(--primary-gradient);
+  animation: scanLine 3s infinite;
 }
 
-.character-selection h3 {
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  color: var(--text);
-  margin-bottom: 2rem;
-  text-align: center;
-  font-weight: 700;
-  position: relative;
+.progress-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 1rem;
 }
 
-.character-selection h3::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 3px;
-  background: var(--gradient-secondary);
-  border-radius: 2px;
-}
-
-
-
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-  .landing-container {
-    padding: 1rem;
-  }
-  
-  .hero-section {
-    padding: 4rem 2rem;
-  }
-  
-  .game-options {
-    gap: 1.5rem;
-    padding: 0 1rem;
-  }
-  
-  .game-card {
-    width: 320px;
-    height: 380px;
-    min-width: 320px;
-    min-height: 380px;
-    max-width: 320px;
-    max-height: 380px;
-  }
-  
-  .character-selection {
-    margin: 3rem auto;
-    padding: 3rem 1.5rem;
-    max-width: 700px;
-  }
-}
-
-/* Tablet responsive adjustments */
-@media (max-width: 992px) {
-  .game-options {
-    gap: 1.2rem;
-    padding: 0 1rem;
-  }
-  
-  .game-card {
-    width: 300px;
-    height: 360px;
-    min-width: 300px;
-    min-height: 360px;
-    max-width: 300px;
-    max-height: 360px;
-    padding: 1.8rem 1.3rem 1.3rem;
-  }
-  
-  .game-card h3 {
-    font-size: 1.6rem;
-    margin: 1.2rem 0 0.6rem;
-  }
-  
-  .game-card p {
-    font-size: 1rem;
-    margin-bottom: 1.2rem;
-  }
-  
-  .card-icon {
-    width: 90px;
-    height: 90px;
-    min-width: 90px;
-    min-height: 90px;
-    max-width: 90px;
-    max-height: 90px;
-    font-size: 2.2rem;
-  }
-  
-  .card-icon svg {
-    width: 55px;
-    height: 55px;
-  }
-}
-
-/* Mobile responsive adjustments */
-@media (max-width: 768px) {
-  .hero-section {
-    padding: 3rem 1rem;
-  }
-  
-  .feature-item {
-    font-size: 0.9rem;
-  }
-  
-  .game-options {
-    gap: 1rem;
-    padding: 0 0.5rem;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .game-card {
-    width: min(280px, calc(100vw - 2rem));
-    height: 320px;
-    min-width: 280px;
-    min-height: 320px;
-    max-width: calc(100vw - 2rem);
-    max-height: 320px;
-    padding: 1.5rem 1rem 1rem;
-  }
-  
-  .game-card h3 {
-    font-size: 1.4rem;
-    margin: 1rem 0 0.5rem;
-  }
-  
-  .game-card p {
-    font-size: 0.95rem;
-    margin-bottom: 1rem;
-    line-height: 1.5;
-  }
-  
-  .card-icon {
-    width: 80px;
-    height: 80px;
-    min-width: 80px;
-    min-height: 80px;
-    max-width: 80px;
-    max-height: 80px;
-    font-size: 2rem;
-  }
-  
-  .card-icon svg {
-    width: 50px;
-    height: 50px;
-  }
-  
-  .card-footer {
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
-  }
-  
-  .character-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
-    gap: 1rem;
-    padding: 1rem 0.5rem;
-    max-width: 100%;
-  }
-  
-  .character {
-    width: 85px;
-    height: 180px; /* Adjusted height for consistent card size */
-    min-width: 85px;
-    min-height: 85px;
-    max-width: 85px;
-    max-height: 180px; /* Adjusted height for consistent card size */
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Center vertically */
-    align-items: center; /* Center horizontally */
-  }
-  
-  .character-emoji {
-    font-size: 2.2rem;
-  }
-  
-  .character-selection {
-    margin: 2rem auto 1rem;
-    padding: 1.5rem 1rem;
-    max-width: 95%;
-    width: calc(100% - 2rem);
-  }
-  
-  .character-selection h3 {
-    font-size: clamp(1.3rem, 4vw, 1.8rem);
-    margin-bottom: 1.5rem;
-  }
-}
-
-/* Small mobile responsive adjustments */
-@media (max-width: 480px) {
-  .game-options {
-    padding: 0 0.25rem;
-  }
-  
-  .game-card {
-    width: min(260px, calc(100vw - 1rem));
-    height: 320px;
-    min-width: 260px;
-    min-height: 320px;
-    max-width: calc(100vw - 1rem);
-    max-height: 320px;
-    padding: 1.2rem 0.8rem 0.8rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  /* Remove special height for Adventure World card - now uses standard height */
-  
-  .game-card h3 {
-    font-size: 1.3rem;
-    margin: 0.8rem 0 0.4rem;
-    flex-shrink: 0;
-  }
-  
-  .game-card p {
-    font-size: 0.9rem;
-    margin-bottom: 0.8rem;
-    line-height: 1.4;
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    text-align: center;
-  }
-  
-  /* Remove special text styling for Adventure World card - now uses standard styling */
-  
-  .card-icon {
-    width: 70px;
-    height: 70px;
-    min-width: 70px;
-    min-height: 70px;
-    max-width: 70px;
-    max-height: 70px;
-    font-size: 1.8rem;
-    flex-shrink: 0;
-  }
-  
-  .card-icon svg {
-    width: 45px;
-    height: 45px;
-  }
-  
-  .card-footer {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.85rem;
-    flex-shrink: 0;
-    margin-top: auto;
-  }
-  
-  /* Remove special footer styling for Adventure World card - now uses standard styling */
-  
-  .character-selection {
-    padding: 1rem;
-    border-radius: 12px;
-    margin: 1.5rem 0.5rem 0;
-    width: calc(100% - 1rem);
-  }
-  
-  .character-selection h3 {
-    font-size: 1.1rem;
-    margin-bottom: 0.8rem;
-  }
-}
-
-/* For very small screens */
-@media (max-width: 360px) {
-  .game-card {
-    width: min(240px, calc(100vw - 0.5rem));
-    height: 300px;
-    min-width: 240px;
-    min-height: 300px;
-    max-width: calc(100vw - 0.5rem);
-    max-height: 300px;
-    padding: 1rem 0.6rem 0.6rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  /* Remove special height for Adventure World card - now uses standard height */
-  
-  .game-card h3 {
-    font-size: 1.2rem;
-    margin: 0.6rem 0 0.3rem;
-    flex-shrink: 0;
-  }
-  
-  .game-card p {
-    font-size: 0.85rem;
-    margin-bottom: 0.6rem;
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    line-height: 1.3;
-  }
-  
-  /* Remove special text styling for Adventure World card - now uses standard styling */
-  
-  .card-icon {
-    width: 60px;
-    height: 60px;
-    min-width: 60px;
-    min-height: 60px;
-    max-width: 60px;
-    max-height: 60px;
-    font-size: 1.6rem;
-    flex-shrink: 0;
-  }
-  
-  .card-icon svg {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .card-footer {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.8rem;
-    flex-shrink: 0;
-    margin-top: auto;
-  }
-  
-  /* Remove special footer styling for Adventure World card - now uses standard styling */
-  
-  .character-selection {
-    padding: 0.8rem;
-    border-radius: 10px;
-  }
-  
-  .character-options {
-    display: grid;
-    gap: 0.8rem;
-    padding: 0.5rem;
-  }
-}
-
-.character-options {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 1.5rem;
-  padding: 1rem 0;
-  max-width: 700px;
+.progress-bar-container {
+  width: 100%;
+  max-width: 400px;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
   margin: 0 auto;
-  justify-content: center;
-  justify-items: center;
-}
-
-.character {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  padding: 0;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid transparent;
-  position: relative;
   overflow: hidden;
-  width: 100px;
-  height: 100px;
-  min-width: 100px;
-  min-height: 100px;
-  max-width: 100px;
-  max-height: 100px;
-  aspect-ratio: 1 / 1;
 }
 
-.character::before {
+.progress-bar {
+  height: 100%;
+  background: var(--success-gradient);
+  border-radius: 6px;
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.progress-bar::after {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(94, 129, 244, 0.1), rgba(255, 122, 198, 0.1));
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.progress-text {
+  margin-top: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.character-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.character-card {
+  padding: 2.5rem;
+  background: linear-gradient(135deg, rgba(0, 255, 65, 0.03) 0%, rgba(0, 212, 255, 0.02) 100%);
+  border: 2px solid var(--border-primary);
+  border-radius: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  min-height: 300px;
+  animation: fadeInUp 0.6s ease forwards;
+  animation-delay: var(--delay, 0s);
   opacity: 0;
-  transition: opacity 0.3s ease;
 }
 
-.character:hover {
-  transform: translateY(-8px) scale(1.05);
-
-  border-color: rgba(94, 129, 244, 0.3);
+.character-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: var(--primary-gradient);
+  transition: left 0.5s ease;
 }
 
-.character:hover::before {
-  opacity: 1;
+.character-card.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(0, 0, 0, 0.05) 100%);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
-.character.selected {
-  background: linear-gradient(135deg, rgba(94, 129, 244, 0.1), rgba(255, 122, 198, 0.1));
-  border: 3px solid var(--primary);
-
+.character-card.selected {
+  border-color: var(--matrix-green);
+  background: linear-gradient(135deg, rgba(0, 255, 65, 0.08) 0%, rgba(0, 212, 255, 0.05) 100%);
   transform: scale(1.05);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25), var(--glow-primary), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.character-emoji {
-  font-size: 2.5rem;
+.character-card.selected::before {
+  left: 0;
+}
+
+.character-card:not(.locked):hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2), var(--glow-accent), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border-color: var(--bright-green);
+  background: linear-gradient(135deg, rgba(0, 255, 65, 0.05) 0%, rgba(0, 212, 255, 0.03) 100%);
+}
+
+.character-card:not(.locked):hover::before {
+  left: 0;
+}
+
+.character-avatar {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 1.5rem;
+  position: relative;
+}
+
+.character-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+.character-svg svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.lock-icon {
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  color: var(--text-muted);
+  font-size: 2rem;
+}
+
+.character-info h4 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   position: relative;
-  z-index: 2;
-  transition: transform 0.3s ease;
-  line-height: 1;
-  margin: 0;
 }
 
-.character:hover .character-emoji {
-  transform: scale(1.1);
+.character-info h4::before {
+  content: '< ';
+  color: var(--terminal-green);
+  opacity: 0.7;
 }
 
-.character-name {
-  display: none;
+.character-info h4::after {
+  content: ' />';
+  color: var(--terminal-green);
+  opacity: 0.7;
 }
 
-/* Animations */
+.character-info p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 1.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  opacity: 0.9;
+}
+
+.character-abilities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.ability-tag {
+  padding: 0.25rem 0.75rem;
+  background: var(--accent-gradient);
+  color: white;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.selected-indicator {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 24px;
+  height: 24px;
+  background: var(--success-gradient);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.875rem;
+}
+
+.unlock-requirement {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.selected-character-info {
+  margin-top: 3rem;
+  padding: 2.5rem;
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  text-align: center;
+  animation: fadeInUp 0.5s ease;
+}
+
+.selected-character-avatar {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 1.5rem;
+}
+
+.selected-character-name {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem;
+}
+
+.selected-character-description {
+  color: var(--text-secondary);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  margin: 0 0 2rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.start-journey-btn {
+  padding: 1rem 2.5rem;
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.start-journey-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-light);
+}
+
+/* Character Feedback Popup */
+.character-feedback-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  z-index: 1000;
+  animation: popupAppear 0.3s ease;
+}
+
+.character-feedback-popup.success {
+  border-color: rgba(56, 239, 125, 0.5);
+}
+
+.character-feedback-popup.hint {
+  border-color: rgba(251, 191, 36, 0.5);
+}
+
+.feedback-character {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.feedback-avatar {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+}
+
+.feedback-content {
+  text-align: center;
+}
+
+.feedback-message {
+  font-size: 1.125rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.feedback-character-name {
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: 0.875rem;
+}
+
+.feedback-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.feedback-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+/* SVG Character Animations */
+.character-svg.animated .bounce {
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.character-svg.animated .blink {
+  animation: blink 3s ease-in-out infinite;
+}
+
+.character-svg.animated .wave {
+  animation: wave 1.5s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+.character-svg.animated .float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.character-svg.animated .flap {
+  animation: flap 1s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.character-svg.animated .pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.character-svg.animated .wiggle {
+  animation: wiggle 2s ease-in-out infinite;
+}
+
+.character-svg.animated .wag {
+  animation: wag 0.8s ease-in-out infinite;
+  transform-origin: left center;
+}
+
+.character-svg.animated .quantum-pulse {
+  animation: quantumPulse 2s ease-in-out infinite;
+}
+
+.character-svg.animated .quantum-rotate {
+  animation: quantumRotate 4s linear infinite;
+  transform-origin: center;
+}
+
+.character-svg.animated .quantum-rotate-reverse {
+  animation: quantumRotate 4s linear infinite reverse;
+  transform-origin: center;
+}
+
+.character-svg.animated .quantum-glow {
+  animation: quantumGlow 1.5s ease-in-out infinite alternate;
+}
+
+/* Keyframe Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideInUp {
-  from { opacity: 0; transform: translateY(50px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 @keyframes gradientShift {
-  0% { background-position: 0% 50%; }
+  0%, 100% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes colorShift {
-  0% { background-position: 0% 50%; }
-  25% { background-position: 100% 50%; }
-  50% { background-position: 200% 50%; }
-  75% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
 }
 
 @keyframes float {
@@ -1111,736 +1379,458 @@ body::before {
   50% { transform: translateY(-10px); }
 }
 
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+@keyframes blink {
+  0%, 90%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(15deg); }
+  75% { transform: rotate(-15deg); }
+}
+
+@keyframes flap {
+  0%, 100% { transform: rotateZ(0deg); }
+  50% { transform: rotateZ(-10deg); }
+}
+
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
 }
 
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(1deg); }
+  75% { transform: rotate(-1deg); }
 }
 
-/* Apply animations */
-.hero-content {
-  animation: fadeIn 1s ease-out;
+@keyframes wag {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(15deg); }
 }
 
-.game-options {
-  animation: slideInUp 0.8s ease-out 0.2s both;
+@keyframes quantumPulse {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
 }
 
-.character-selection {
-  animation: slideInUp 0.8s ease-out 0.4s both;
+@keyframes quantumRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-.login-options {
-  animation: slideInUp 0.8s ease-out 0.6s both;
+@keyframes quantumGlow {
+  from { opacity: 0.5; }
+  to { opacity: 1; }
 }
 
-.character {
-  animation: bounce 3s infinite ease-in-out;
+@keyframes popupAppear {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 
-.character:nth-child(even) {
-  animation-delay: 0.5s;
-}
-
-.feature-item {
-  animation: float 4s infinite ease-in-out;
-}
-
-.feature-item:nth-child(2) {
-  animation-delay: 1s;
-}
-
-.feature-item:nth-child(3) {
-  animation-delay: 2s;
-}
-
-/* Theme toggle button removed */
-
-/* Modern Responsive Design with Standardized Breakpoints */
+/* Responsive Design */
 
 /* Extra Large Screens (1440px+) */
 @media (min-width: 1440px) {
   .landing-container {
-    max-width: 1400px;
-    margin: 0 auto;
+    max-width: 1600px;
+    padding: 3rem;
   }
   
-  .game-options {
-    grid-template-columns: repeat(4, 1fr);
+  .game-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .character-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Large Screens (1200px - 1439px) */
+@media (max-width: 1439px) and (min-width: 1200px) {
+  .landing-container {
     max-width: 1200px;
   }
-}
-
-/* Large Desktops (1200px - 1439px) */
-@media (max-width: 1439px) and (min-width: 1200px) {
-  .game-options {
-    grid-template-columns: repeat(3, 1fr);
-    max-width: 1000px;
+  
+  .game-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Medium Desktops (992px - 1199px) */
+/* Medium Screens (992px - 1199px) */
 @media (max-width: 1199px) and (min-width: 992px) {
-  .hero-section {
-    padding: 4rem 2rem 6rem;
+  .landing-container {
+    max-width: 960px;
+    padding: 2rem 1.5rem;
   }
   
-  .game-options {
-    grid-template-columns: repeat(2, 1fr);
-    max-width: 800px;
+  .hero-stats {
     gap: 2rem;
   }
+  
+  .stat-number {
+    font-size: 2rem;
+  }
 }
 
-/* Small Desktops & Large Tablets (768px - 991px) */
+/* Small Screens (768px - 991px) */
 @media (max-width: 991px) and (min-width: 768px) {
-  .hero-section {
-    padding: 3rem 1.5rem 5rem;
-  }
-  
-  .hero-title {
-    font-size: clamp(2.5rem, 5vw, 3.5rem);
-  }
-  
-  .game-options {
-    grid-template-columns: repeat(2, 1fr);
-    max-width: 700px;
-    gap: 1.5rem;
-    padding: 0 1.5rem;
-  }
-  
-  .character-selection {
-    margin: 0 1.5rem;
-    padding: 2.5rem 2rem;
-  }
-  
-  .character-options {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 1.2rem;
-  }
-  
-  .character {
-    width: 100px;
-    height: 100px;
-    min-width: 100px;
-    min-height: 100px;
-    max-width: 100px;
-    max-height: 100px;
-  }
-}
-
-/* Tablets (576px - 767px) */
-@media (max-width: 767px) and (min-width: 576px) {
   .landing-container {
-    padding-top: 70px;
+    padding: 1.5rem;
   }
   
   .hero-section {
-    padding: 2.5rem 1rem 4rem;
-    margin-bottom: 3rem;
+    padding: 3rem 0 4rem;
   }
   
-  .hero-title {
-    font-size: clamp(2rem, 6vw, 3rem);
+  .hero-stats {
+    gap: 1.5rem;
+  }
+  
+  .stat-number {
+    font-size: 1.75rem;
   }
   
   .hero-features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .game-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .character-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile Screens (480px - 767px) */
+@media (max-width: 767px) {
+  .landing-container {
+    padding: 1rem;
+  }
+  
+  .hero-section {
+    padding: 2rem 0 3rem;
+  }
+  
+  .hero-stats {
+    flex-direction: column;
     gap: 1rem;
-    flex-wrap: wrap;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+  
+  .hero-features {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .feature-item {
+    padding: 1.5rem;
+  }
+  
+  .hero-cta {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .cta-primary, .cta-secondary {
+    width: 100%;
+    max-width: 280px;
     justify-content: center;
   }
   
-  .feature-item {
-    padding: 0.8rem 1.2rem;
-    font-size: 0.9rem;
-    min-width: 140px;
-  }
-  
-  .game-options {
+  .game-cards-grid {
     grid-template-columns: 1fr;
-    max-width: 500px;
-    margin: 0 auto 3rem;
-    gap: 1.5rem;
-    padding: 0 1rem;
-  }
-  
-  .game-card {
-    padding: 2.5rem 2rem;
-    width: 300px;
-    height: 300px;
-    min-width: 300px;
-    min-height: 300px;
-    max-width: 300px;
-    max-height: 300px;
-  }
-  
-  .character-selection {
-    margin: 0 1rem;
-    padding: 2rem 1.5rem;
-  }
-  
-  .character-options {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: 1rem;
   }
   
-  .character {
-    width: 100px;
-    height: 100px;
-    min-width: 100px;
-    min-height: 100px;
-    max-width: 100px;
-    max-height: 100px;
-  }
-}
-
-/* Mobile Landscape & Small Tablets (480px - 575px) */
-@media (max-width: 575px) and (min-width: 480px) {
-  .hero-section {
-    padding: 2rem 1rem 3rem;
-  }
-  
-  .hero-title {
-    font-size: clamp(1.8rem, 7vw, 2.5rem);
-  }
-  
-  .hero-features {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.8rem;
-  }
-  
-  .feature-item {
-    padding: 0.7rem 1rem;
-    font-size: 0.85rem;
-    width: 100%;
-    max-width: 200px;
-  }
-  
-  .game-options {
-    padding: 0 1rem;
-    gap: 1.2rem;
-  }
-  
   .game-card {
-    padding: 2rem 1.5rem;
-    width: 280px;
-    height: 280px;
-    min-width: 280px;
-    min-height: 280px;
-    max-width: 280px;
-    max-height: 280px;
+    padding: 1.5rem;
   }
   
   .card-icon {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .card-icon svg {
     width: 60px;
     height: 60px;
   }
   
-  .card-footer {
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
-  }
-  
-  /* Remove special footer styling for Adventure World card - now uses standard styling */
-  
-  .character-selection {
-    margin: 0 1rem;
-    padding: 2rem 1rem;
-  }
-  
-  .character-options {
-    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-    gap: 0.8rem;
-  }
-  
-  .character {
-    width: 90px;
-    height: 90px;
-    min-width: 90px;
-    min-height: 90px;
-    max-width: 90px;
-    max-height: 90px;
-  }
-}
-
-/* Mobile Portrait (320px - 479px) */
-@media (max-width: 479px) {
-  .hero-section {
-    padding: 1.5rem 0.5rem 2.5rem;
-  }
-  
-  .hero-title {
-    font-size: clamp(1.5rem, 8vw, 2rem);
-    line-height: 1.2;
-  }
-  
-  .hero-subtitle {
-    font-size: clamp(0.9rem, 4vw, 1.1rem);
-  }
-  
-  .hero-features {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.6rem;
-  }
-  
-  .feature-item {
-    padding: 0.6rem 0.8rem;
-    font-size: 0.8rem;
-    width: 100%;
-    max-width: 180px;
-  }
-  
-  .game-options {
-    padding: 0 0.5rem;
+  .character-grid {
+    grid-template-columns: 1fr;
     gap: 1rem;
   }
   
+  .character-card {
+    padding: 1.5rem;
+  }
+  
+  .character-avatar {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .selected-character-info {
+    padding: 1.5rem;
+  }
+  
+  .selected-character-avatar {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+/* Small Mobile Screens (360px - 479px) */
+@media (max-width: 479px) {
+  .landing-container {
+    padding: 0.75rem;
+  }
+  
+  .hero-badge {
+    padding: 0.375rem 1rem;
+    font-size: 0.75rem;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .section-subtitle {
+    font-size: 1rem;
+  }
+  
   .game-card {
-    padding: 1.5rem 1rem;
-    width: 260px;
-    height: 260px;
-    min-width: 260px;
-    min-height: 260px;
-    max-width: 260px;
-    max-height: 260px;
-  }
-  
-  .game-card h3 {
-    font-size: 1.3rem;
-  }
-  
-  .game-card p {
-    font-size: 0.9rem;
+    padding: 1rem;
   }
   
   .card-icon {
-    width: 70px;
-    height: 70px;
-  }
-  
-  .card-icon svg {
     width: 50px;
     height: 50px;
+    font-size: 1.5rem;
   }
   
-  .card-footer {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.85rem;
+  .character-card {
+    padding: 1rem;
   }
   
-  /* Remove special footer styling for Adventure World card - now uses standard styling */
-  
-  .character-selection {
-    margin: 1.5rem auto 1rem;
-    padding: 1.5rem 0.8rem;
-    max-width: calc(100% - 1rem);
-    border-radius: 16px;
+  .character-avatar {
+    width: 60px;
+    height: 60px;
   }
   
-  .character-selection h3 {
-    font-size: clamp(1.2rem, 5vw, 1.6rem);
-    margin-bottom: 1.2rem;
-    text-align: center;
+  .character-feedback-popup {
+    padding: 1.5rem;
+    width: 95%;
   }
   
-  .character-options {
-    grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
-    gap: 0.8rem;
-    padding: 0.8rem 0.2rem;
-    justify-content: center;
-    max-width: 100%;
-  }
-  
-  .character {
-    width: 80px;
-    height: 80px;
-    min-width: 80px;
-    min-height: 80px;
-    max-width: 80px;
-    max-height: 80px;
-    border-radius: 12px;
-  }
-  
-  .character-emoji {
-    font-size: 2.2rem;
+  .feedback-avatar {
+    width: 60px;
+    height: 60px;
   }
 }
 
-/* Very Small Screens (below 360px) */
+/* Extra Small Mobile Screens (max 359px) */
 @media (max-width: 359px) {
   .hero-title {
-    font-size: 1.4rem;
+    font-size: 2.5rem;
   }
   
   .hero-subtitle {
-    font-size: 0.85rem;
+    font-size: 1rem;
   }
   
   .feature-item {
-    font-size: 0.75rem;
-    padding: 0.5rem 0.6rem;
+    padding: 1rem;
   }
   
-  .game-card {
-    padding: 1.2rem 0.8rem;
-    width: 240px;
-    height: 240px;
-    min-width: 240px;
-    min-height: 240px;
-    max-width: 240px;
-    max-height: 240px;
-  }
-  
-  .game-card h3 {
-    font-size: 1.1rem;
-  }
-  
-  .game-card p {
-    font-size: 0.8rem;
-  }
-  
-  .card-footer {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.8rem;
-  }
-  
-  /* Specific fix for adventure card footer */
-  .open-world-card .card-footer {
-    padding: 0.5rem 0.6rem;
-    font-size: 0.75rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .character-options {
-    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-  }
-  
-  .character {
-    width: 70px;
-    height: 70px;
-    min-width: 70px;
-    min-height: 70px;
-    max-width: 70px;
-    max-height: 70px;
-    padding: 0;
-  }
-  
-  .character-emoji {
-    font-size: 1.8rem;
-  }
-}
-
-/* Ultra Small Screens (280px - 359px) */
-@media (max-width: 359px) and (min-width: 280px) {
-  .hero-section {
-    padding: 1.5rem 0.5rem;
-  }
-  
-  .hero-content h1 {
-    font-size: clamp(1.8rem, 9vw, 2.2rem);
-    margin-bottom: 0.8rem;
-  }
-  
-  .hero-content p {
-    font-size: clamp(0.9rem, 4.5vw, 1rem);
-    margin-bottom: 1.5rem;
-  }
-  
-  .game-options {
-    gap: 0.6rem;
-    padding: 0 0.2rem;
-  }
-  
-  .game-card {
-    width: min(240px, calc(100vw - 1rem));
-    height: 280px;
-    min-width: 240px;
-    min-height: 280px;
-    max-width: calc(100vw - 1rem);
-    max-height: 280px;
-    padding: 1rem 0.6rem 0.6rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  .game-card h3 {
-    font-size: 1.2rem;
-    margin: 0.6rem 0 0.3rem;
-    flex-shrink: 0;
-  }
-  
-  .game-card p {
-    font-size: 0.85rem;
-    margin-bottom: 0.6rem;
-    line-height: 1.3;
-    flex-grow: 1;
-  }
-  
-  .card-icon {
-    width: 60px;
-    height: 60px;
-    min-width: 60px;
-    min-height: 60px;
-    max-width: 60px;
-    max-height: 60px;
-    font-size: 1.6rem;
-    flex-shrink: 0;
-  }
-  
-  .card-icon svg {
+  .feature-icon {
     width: 40px;
     height: 40px;
   }
   
-  .card-footer {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.75rem;
-    flex-shrink: 0;
+  .feature-icon svg {
+    width: 20px;
+    height: 20px;
   }
   
-  /* Remove special footer styling for Adventure World card - now uses standard styling */
-  
-  .character-selection {
-    margin: 1rem auto 0.5rem;
-    padding: 1rem 0.5rem;
-    max-width: calc(100% - 1rem);
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(10px);
-  }
-  
-  .character-selection h3 {
-    font-size: clamp(1.1rem, 5.5vw, 1.4rem);
-    margin-bottom: 1rem;
-    text-align: center;
-    color: rgba(255, 255, 255, 0.95);
-  }
-  
-  .character-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
-    gap: 0.6rem;
-    padding: 0.6rem 0.2rem;
-    justify-content: center;
-    max-width: 100%;
-    justify-items: center;
-  }
-  
-  .character {
-    width: 70px;
-    height: 70px;
-    min-width: 70px;
-    min-height: 70px;
-    max-width: 70px;
-    max-height: 70px;
-    border-radius: 10px;
-    transition: all 0.3s ease;
-  }
-  
-  .character:hover {
-    transform: translateY(-4px) scale(1.02);
-  }
-  
-  .character-emoji {
-    font-size: 1.8rem;
-  }
-}
-
-/* Extra Ultra Small Screens (below 280px) */
-@media (max-width: 279px) {
   .game-card {
-    width: min(200px, calc(100vw - 0.3rem));
-    height: 260px;
-    min-width: 200px;
-    min-height: 260px;
-    max-width: calc(100vw - 0.3rem);
-    max-height: 260px;
-    padding: 0.6rem 0.4rem 0.4rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    padding: 0.75rem;
   }
   
-  .game-card h3 {
-    font-size: 1rem;
-    margin: 0.4rem 0 0.2rem;
-    flex-shrink: 0;
-  }
-  
-  .game-card p {
-    font-size: 0.75rem;
-    margin-bottom: 0.4rem;
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    line-height: 1.1;
-  }
-  
-  .card-icon {
-    width: 45px;
-    height: 45px;
-    min-width: 45px;
-    min-height: 45px;
-    max-width: 45px;
-    max-height: 45px;
-    font-size: 1.2rem;
-    flex-shrink: 0;
-  }
-  
-  .card-icon svg {
-    width: 30px;
-    height: 30px;
-  }
-  
-  .card-footer {
-    padding: 0.25rem 0.4rem;
-    font-size: 0.65rem;
-    flex-shrink: 0;
-    margin-top: auto;
-  }
-  
-  /* Remove special footer styling for Adventure World card - now uses standard styling */
-  
-  .character-selection {
-    padding: 0.5rem;
-    border-radius: 6px;
-  }
-  
-  .character-options {
-    display: grid;
-    gap: 0.5rem;
-    padding: 0.2rem;
+  .character-card {
+    padding: 0.75rem;
   }
 }
 
-/* Extra Ultra Small Screens (below 240px) */
-@media (max-width: 239px) {
+/* Comprehensive override system to eliminate ALL purple colors */
+.landing-container *,
+.landing-container *::before,
+.landing-container *::after {
+  /* Override any purple background colors */
+  background-color: inherit !important;
+}
+
+/* Specific overrides for common purple CSS classes */
+.landing-container .purple,
+.landing-container .violet,
+.landing-container .primary-500,
+.landing-container .accent-pink,
+.landing-container [style*="purple"],
+.landing-container [style*="violet"],
+.landing-container [style*="#8b5cf6"],
+.landing-container [style*="#a855f7"],
+.landing-container [style*="#9333ea"],
+.landing-container [style*="#7c3aed"],
+.landing-container [style*="#6d28d9"] {
+  background: var(--primary-gradient) !important;
+  background-color: var(--matrix-green) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--matrix-green) !important;
+}
+
+/* Button overrides within landing container */
+.landing-container button,
+.landing-container .btn,
+.landing-container .button,
+.landing-container input[type="button"],
+.landing-container input[type="submit"] {
+  background: var(--primary-gradient) !important;
+  background-color: var(--matrix-green) !important;
+  color: var(--dark-bg) !important;
+  border: 2px solid var(--matrix-green) !important;
+  box-shadow: var(--glow-primary) !important;
+  transition: all 0.3s ease !important;
+}
+
+.landing-container button:hover,
+.landing-container .btn:hover,
+.landing-container .button:hover,
+.landing-container input[type="button"]:hover,
+.landing-container input[type="submit"]:hover {
+  background: var(--secondary-gradient) !important;
+  background-color: var(--cyber-blue) !important;
+  border-color: var(--cyber-blue) !important;
+  box-shadow: var(--glow-secondary) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Enhanced Responsive Design - Mobile First Approach */
+@media (max-width: 480px) {
+  .landing-container {
+    padding: 0.75rem !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+  }
+  
   .hero-section {
-    padding: 1rem 0.3rem;
+    padding: 2rem 1rem 3rem !important;
+    margin: 0.5rem auto !important;
+    max-width: 95vw !important;
+    border-radius: 12px !important;
   }
   
-  .hero-content h1 {
-    font-size: clamp(1.5rem, 10vw, 1.8rem);
-    margin-bottom: 0.6rem;
+  .hero-badge {
+    font-size: 0.7rem !important;
+    padding: 0.4rem 0.8rem !important;
+    margin-bottom: 1rem !important;
   }
   
-  .hero-content p {
-    font-size: clamp(0.8rem, 5vw, 0.9rem);
-    margin-bottom: 1rem;
+  .hero-title {
+    font-size: 1.8rem !important;
+    line-height: 1.3 !important;
+    letter-spacing: 0.5px !important;
+    margin-bottom: 1rem !important;
   }
   
-  .game-options {
-    gap: 0.4rem;
-    padding: 0 0.1rem;
+  .hero-subtitle {
+    font-size: 0.9rem !important;
+    margin: 1rem auto 2rem !important;
+    max-width: 85vw !important;
+    line-height: 1.5 !important;
   }
   
-  .game-card {
-    width: min(200px, calc(100vw - 0.6rem));
-    height: 260px;
-    min-width: 200px;
-    min-height: 260px;
-    max-width: calc(100vw - 0.6rem);
-    max-height: 260px;
-    padding: 0.6rem 0.4rem 0.4rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  .hero-stats {
+    gap: 1rem !important;
+    margin: 1.5rem 0 !important;
   }
   
-  .game-card h3 {
-    font-size: 1rem;
-    margin: 0.4rem 0 0.2rem;
-    flex-shrink: 0;
+  .stat-number {
+    font-size: 1.8rem !important;
   }
   
-  .game-card p {
-    font-size: 0.75rem;
-    margin-bottom: 0.4rem;
-    line-height: 1.2;
-    flex-grow: 1;
+  .stat-label {
+    font-size: 0.7rem !important;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .landing-container {
+    padding: 1rem !important;
+    overflow-x: hidden !important;
   }
   
-  .card-icon {
-    width: 45px;
-    height: 45px;
-    min-width: 45px;
-    min-height: 45px;
-    max-width: 45px;
-    max-height: 45px;
-    font-size: 1.2rem;
-    flex-shrink: 0;
+  .hero-section {
+    padding: 3rem 1.5rem 4rem !important;
+    margin: 1rem auto !important;
+    max-width: 90vw !important;
   }
   
-  .card-icon svg {
-    width: 30px;
-    height: 30px;
+  .hero-title {
+    font-size: 2.2rem !important;
+    line-height: 1.25 !important;
   }
   
-  .card-footer {
-    padding: 0.3rem 0.4rem;
-    font-size: 0.65rem;
-    flex-shrink: 0;
+  .hero-subtitle {
+    font-size: 1rem !important;
+    max-width: 80vw !important;
   }
   
-  /* Remove special footer styling for Adventure World card - now uses standard styling */
-  
-  .character-selection {
-    margin: 0.8rem auto 0.4rem;
-    padding: 0.8rem 0.4rem;
-    max-width: calc(100% - 0.8rem);
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(8px);
+  .hero-features {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    gap: 1.5rem !important;
   }
   
-  .character-selection h3 {
-    font-size: clamp(1rem, 6vw, 1.2rem);
-    margin-bottom: 0.8rem;
-    text-align: center;
-    color: rgba(255, 255, 255, 0.9);
+  .hero-cta .btn {
+    padding: 1rem 2rem !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .landing-container {
+    padding: 2rem !important;
+    max-width: 900px !important;
   }
   
-  .character-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(55px, 1fr));
-    gap: 0.4rem;
-    padding: 0.4rem 0.1rem;
-    justify-content: center;
-    max-width: 100%;
-    justify-items: center;
+  .hero-section {
+    padding: 5rem 0 6rem !important;
+  }
+}
+
+@media (min-width: 1025px) {
+  .landing-container {
+    max-width: 1400px !important;
+    padding: 2rem !important;
   }
   
-  .character {
-    width: 60px;
-    height: 60px;
-    min-width: 60px;
-    min-height: 60px;
-    max-width: 60px;
-    max-height: 60px;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-  }
-  
-  .character:hover {
-    transform: translateY(-2px) scale(1.01);
-  }
-  
-  .character-emoji {
-    font-size: 1.6rem;
+  .hero-section {
+    padding: 6rem 0 8rem !important;
   }
 }

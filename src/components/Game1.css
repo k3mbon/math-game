@@ -29,15 +29,15 @@ html, body {
   overflow-x: hidden;
 }
 
-/* Unified workspace layout */
+/* Optimized unified workspace for 1366x768 */
 .kubo-unified-workspace {
   flex: 1;
-  max-width: 1200px;
+  max-width: 1300px; /* Increased for better 1366px utilization */
   margin: 0 auto;
-  width: 100%;
+  width: calc(100% - 40px); /* Better margin handling */
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
-  padding: 10px;
+  padding: 15px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 3px solid #2196F3;
   display: flex;
@@ -45,8 +45,8 @@ html, body {
   align-items: center;
   justify-content: center;
   position: relative;
-  min-height: calc(100vh - 200px);
-  height: calc(100vh - 200px);
+  min-height: calc(100vh - 180px); /* Optimized for 768px height */
+  height: calc(100vh - 180px);
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -62,7 +62,7 @@ html, body {
   z-index: 100;
 }
 
-/* Game canvas positioning to fill space between controls and programming section */
+/* Improved game canvas positioning */
 .game-canvas {
   position: relative;
   z-index: 1;
@@ -70,12 +70,13 @@ html, body {
   border: 2px solid #2E7D32;
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  margin: 20px auto;
   flex-shrink: 0;
   overflow: hidden;
   box-sizing: border-box;
-  /* Dynamic sizing handled by JavaScript - ensure canvas stays centered */
   display: block;
+  /* Better centering for desktop */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Car character positioning - ensure it appears above control overlays */
@@ -535,20 +536,58 @@ html, body {
 
 .game-cell {
   position: absolute;
-  border: 1px solid #E0E0E0;
-  background: #FAFAFA;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+}
+
+/* Terrain-specific styles */
+.game-cell.terrain-grass {
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.game-cell.terrain-tree {
+  border-color: rgba(46, 125, 50, 0.5);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.game-cell.terrain-rock {
+  border-color: rgba(117, 117, 117, 0.5);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+.game-cell.terrain-water {
+  border-color: rgba(33, 150, 243, 0.5);
+  animation: water-shimmer 2s ease-in-out infinite;
+}
+
+.game-cell.terrain-dirt {
+  border-color: rgba(141, 110, 99, 0.4);
+}
+
+/* Water animation */
+@keyframes water-shimmer {
+  0%, 100% {
+    filter: brightness(1) saturate(1);
+  }
+  50% {
+    filter: brightness(1.1) saturate(1.2);
+  }
 }
 
 .game-cell.target-cell {
   background: linear-gradient(45deg, #FFE0B2, #FFCC80);
-  border: 3px solid #FF9800;
+  border: 2px solid #FF9800;
   border-radius: 8px;
-  box-shadow: 0 0 15px rgba(255, 152, 0, 0.5);
+  box-shadow: 0 0 20px rgba(255, 152, 0, 0.8), inset 0 0 20px rgba(255, 152, 0, 0.3);
   animation: targetGlow 2s infinite alternate;
+  z-index: 3;
 }
 
 @keyframes targetGlow {
@@ -558,7 +597,9 @@ html, body {
 
 .game-cell.start-cell {
   background: linear-gradient(45deg, #2196F3, #64B5F6);
-  border-color: #1976D2;
+  border: 2px solid #2196F3;
+  box-shadow: 0 0 15px rgba(33, 150, 243, 0.6), inset 0 0 15px rgba(33, 150, 243, 0.2);
+  z-index: 3;
 }
 
 .target-asset {
@@ -568,6 +609,8 @@ html, body {
   border-radius: 8px;
   animation: targetPulse 2s infinite;
   filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+  position: relative;
+  z-index: 5;
 }
 
 @keyframes targetPulse {
@@ -583,6 +626,8 @@ html, body {
 
 .start-marker {
   font-size: 20px;
+  position: relative;
+  z-index: 5;
 }
 
 @keyframes bounce {
@@ -599,6 +644,7 @@ html, body {
 .game-cell.car-cell {
   background: transparent;
   border-color: #E0E0E0;
+  z-index: 4;
 }
 
 /* Game Status */
@@ -1166,6 +1212,18 @@ html, body {
   border-radius: 10px;
   background: rgba(255, 152, 0, 0.1);
   width: 100%;
+}
+
+.sequence-tile-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sequence-tile-wrapper .kubo-tile {
+  width: 70px;
+  height: 70px;
 }
 
 .sequence-tile {

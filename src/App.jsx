@@ -24,6 +24,7 @@ const DashboardRedirect = lazy(() => import('./components/DashboardRedirect'));
 const DashboardPage = lazy(() => import('./components/DashboardPage'));
 const ArcadeMode = lazy(() => import('./components/Arcade'));
 const Game1 = lazy(() => import('./components/Game1'));
+const KuboTerrainGame = lazy(() => import('./components/KuboTerrainGame'));
 const OpenWorldGame = lazy(() => import('./components/OpenWorldGame'));
 const SimpleOpenWorldGame = lazy(() => import('./components/SimpleOpenWorldGame'));
 const GameComparison = lazy(() => import('./components/GameComparison'));
@@ -96,7 +97,7 @@ function AppContent() {
                   
                   {/* Game routes */}
                   <Route path="/arcade" element={<ArcadeMode />} />
-                  <Route path="/kubo" element={<Game1 />} />
+                  <Route path="/kubo" element={<KuboTerrainGame />} />
                   
                   {/* Role-based routes */}
                   {role === 'teacher' && (

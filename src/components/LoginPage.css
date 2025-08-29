@@ -1,8 +1,63 @@
 :root {
-  /* Using the global theme variables from index.css */
+  /* Vibrant Green Tech Color Palette */
+  --matrix-green: #00ff41;
+  --matrix-green-dark: #00cc33;
+  --cyber-blue: #00d4ff;
+  --cyber-blue-dark: #0099cc;
+  --bright-green: #39ff14;
+  --neon-green: #7fff00;
+  --lime-green: #32cd32;
+  --electric-cyan: #00ffff;
+  --terminal-green: #0dff0d;
+  
+  /* Vibrant Green Tech gradients */
+  --primary-gradient: linear-gradient(135deg, #00ff41 0%, #39ff14 50%, #7fff00 100%);
+  --secondary-gradient: linear-gradient(135deg, #0099cc 0%, #00ff41 100%);
+  --accent-gradient: linear-gradient(135deg, #32cd32 0%, #00d4ff 100%);
+  --success-gradient: linear-gradient(135deg, #39ff14 0%, #00ff41 100%);
+  --warning-gradient: linear-gradient(135deg, #7fff00 0%, #32cd32 100%);
+  --code-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  --vibrant-gradient: linear-gradient(135deg, #39ff14 0%, #00ff41 30%, #00d4ff 70%, #00ffff 100%);
+  
+  /* Dark tech backgrounds */
+  --dark-bg: #0a0a0f;
+  --darker-bg: #050508;
+  --card-bg: rgba(0, 255, 65, 0.03);
+  --terminal-bg: rgba(0, 0, 0, 0.8);
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #001a00;
+  --bg-card: rgba(0, 26, 0, 0.9);
+  --bg-glass: rgba(0, 20, 0, 0.8);
+  --bg-hover: rgba(0, 51, 0, 0.6);
+  
+  /* Text colors */
+  --text-primary: #00ff41;
+  --text-secondary: #00d4ff;
+  --text-muted: rgba(0, 255, 65, 0.6);
+  --text-code: #39ff14;
+  --text-accent: #7fff00;
+  --text-highlight: #00d4ff;
+  --text-bright: #0dff0d;
+  
+  /* Borders and effects */
+  --border-color: rgba(0, 255, 65, 0.2);
+  --border-glow: rgba(0, 212, 255, 0.3);
+  --shadow-light: 0 8px 32px rgba(0, 255, 65, 0.15);
+  --shadow-heavy: 0 15px 35px rgba(0, 212, 255, 0.25);
+  --blur-bg: rgba(0, 255, 65, 0.05);
+  --glow-effect: 0 0 20px rgba(0, 255, 65, 0.5);
+  --border-primary: rgba(0, 255, 65, 0.5);
+  --border-secondary: rgba(57, 255, 20, 0.4);
+  --border-accent: rgba(127, 255, 0, 0.4);
+  --border-cyber: rgba(0, 212, 255, 0.3);
+  --glow-primary: 0 0 25px rgba(0, 255, 65, 0.4);
+  --glow-secondary: 0 0 20px rgba(57, 255, 20, 0.4);
+  --glow-accent: 0 0 15px rgba(127, 255, 0, 0.3);
+  --glow-cyber: 0 0 18px rgba(0, 212, 255, 0.3);
 }
 
-/* Modern Vibrant Theme */
+/* Techy, Mathy Modern, Futuristic Theme */
 
 .login-page {
   min-height: 100vh;
@@ -14,10 +69,47 @@
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--dark-bg);
+  background-image: 
+    /* Matrix-like grid pattern */
+    linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+    /* Tech glow effects */
+    radial-gradient(circle at 20% 80%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(191, 0, 255, 0.08) 0%, transparent 50%),
+    /* Binary code pattern */
+    radial-gradient(circle at 60% 60%, rgba(57, 255, 20, 0.05) 0%, transparent 70%);
+  background-size: 50px 50px, 50px 50px, 800px 800px, 600px 600px, 400px 400px, 300px 300px;
   background-attachment: fixed;
-  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
   z-index: 10;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Add floating mathematical symbols */
+.login-page::before {
+  content: '∑ ∫ π ∞ √ ∆ ∇ ∂ ≈ ≠ ≤ ≥ ∈ ∉ ∪ ∩ ⊂ ⊃ ∀ ∃ ∴ ∵ ∧ ∨ ¬ ⊕ ⊗';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 2rem;
+  color: rgba(0, 255, 65, 0.05);
+  pointer-events: none;
+  z-index: -2;
+  animation: floatMathSymbols 20s linear infinite;
+  white-space: pre-wrap;
+  word-spacing: 100px;
+  line-height: 200px;
+  overflow: hidden;
+}
+
+@keyframes floatMathSymbols {
+  0% { transform: translateY(100vh) rotate(0deg); }
+  100% { transform: translateY(-100vh) rotate(360deg); }
 }
 
 
@@ -31,9 +123,12 @@
   position: relative;
   z-index: 2;
   gap: 0.25rem;
-  background: #f7fafc;
-  border-radius: 8px;
+  background: var(--terminal-bg);
+  backdrop-filter: blur(10px);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
   padding: 0.25rem;
+  box-shadow: var(--shadow-light);
 }
 
 .login-toggle button {
@@ -42,23 +137,44 @@
   padding: 0.75rem 1.25rem;
   cursor: pointer;
   font-size: 0.875rem;
-  font-weight: 500;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-  color: #4a5568;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  color: var(--text-muted);
   position: relative;
   flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.login-toggle button::before {
+  content: '> ';
+  color: var(--matrix-green);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .login-toggle button:hover {
-  background: #edf2f7;
-  color: #2d3748;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  box-shadow: var(--glow-cyber);
+}
+
+.login-toggle button:hover::before {
+  opacity: 1;
 }
 
 .login-toggle button.active {
-  background: #667eea;
-  color: white;
-  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+  background: var(--primary-gradient);
+  color: var(--bg-primary);
+  box-shadow: var(--glow-primary);
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.login-toggle button.active::before {
+  opacity: 1;
+  color: var(--bg-primary);
 }
 
 
@@ -124,30 +240,85 @@
 .login-form h2 {
   text-align: center;
   margin-bottom: 2rem;
-  color: #2d3748;
+  color: var(--text-primary);
   font-size: 1.875rem;
   font-weight: 700;
-  letter-spacing: -0.025em;
+  letter-spacing: 2px;
   line-height: 1.2;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 20px var(--matrix-green);
+  position: relative;
+}
+
+.login-form h2::before {
+  content: 'function ';
+  font-size: 0.4em;
+  color: var(--cyber-blue);
+  position: absolute;
+  top: -0.8em;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0.7;
+}
+
+.login-form h2::after {
+  content: '() { return access; }';
+  font-size: 0.3em;
+  color: var(--terminal-green);
+  position: absolute;
+  bottom: -1em;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0.6;
+  animation: typewriter 4s steps(20) infinite;
+}
+
+@keyframes typewriter {
+  0% { width: 0; }
+  50% { width: 100%; }
+  100% { width: 0; }
 }
 
 .login-form {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-glass);
   backdrop-filter: blur(20px);
   padding: 2.5rem;
   border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: var(--shadow-heavy), inset 0 1px 0 rgba(0, 255, 65, 0.1);
+  border: 2px solid var(--border-primary);
   width: 100%;
   max-width: 420px;
   position: relative;
   z-index: 1;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.login-form::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.1), transparent);
+  animation: scanLine 3s infinite;
+}
+
+@keyframes scanLine {
+  0% { left: -100%; }
+  100% { left: 100%; }
 }
 
 .login-form:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.05);
+  transform: translateY(-5px);
+  box-shadow: var(--glow-primary), var(--shadow-heavy), inset 0 1px 0 rgba(0, 255, 65, 0.2);
+  border-color: var(--matrix-green);
 }
 
 .login-form input,
@@ -155,111 +326,156 @@
   width: 100%;
   padding: 0.875rem 1rem;
   margin-bottom: 1.25rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   font-size: 0.95rem;
   font-weight: 400;
-  background: #ffffff;
-  color: #2d3748;
-  transition: all 0.2s ease;
+  background: var(--terminal-bg);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
   outline: none;
   box-sizing: border-box;
+  font-family: 'JetBrains Mono', monospace;
+  backdrop-filter: blur(10px);
 }
 
 .login-form input::placeholder {
-  color: #a0aec0;
+  color: var(--text-muted);
   font-weight: 400;
 }
 
 .login-form input:focus,
 .login-form select:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  transform: translateY(-1px);
+  border-color: var(--matrix-green);
+  box-shadow: var(--glow-primary);
+  transform: translateY(-2px);
+  background: rgba(0, 26, 0, 0.8);
 }
 
 .login-form input:hover,
 .login-form select:hover {
-  border-color: #cbd5e0;
+  border-color: var(--border-secondary);
+  box-shadow: var(--glow-secondary);
 }
 
 
 
 .login-form select {
-  color: #2d3748;
+  color: var(--text-primary);
   cursor: pointer;
 }
 
 .login-form select option {
-  background: #ffffff;
-  color: #2d3748;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   padding: 0.5rem;
 }
 
 .login-form button[type="submit"] {
   width: 100%;
   padding: 0.875rem 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #ffffff;
-  border: none;
+  background: var(--primary-gradient);
+  color: var(--bg-primary);
+  border: 2px solid var(--matrix-green);
   border-radius: 8px;
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-  letter-spacing: 0.025em;
+  transition: all 0.3s ease;
+  box-shadow: var(--glow-primary);
+  letter-spacing: 1px;
   margin-top: 0.5rem;
   margin-bottom: 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-form button[type="submit"]::before {
+  content: '> ';
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.login-form button[type="submit"]:hover::before {
+  opacity: 1;
 }
 
 .login-form button[type="submit"]:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-  background: linear-gradient(135deg, #5a67d8 0%, #667eea 100%);
+  transform: translateY(-3px);
+  box-shadow: var(--glow-primary), var(--glow-secondary);
+  background: var(--success-gradient);
+  border-color: var(--bright-green);
 }
 
 .login-form button[type="submit"]:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  transform: translateY(-1px);
+  box-shadow: var(--glow-accent);
 }
 
 .guest-btn {
   width: 100%;
   padding: 0.75rem 1.5rem;
   background: transparent;
-  color: #667eea;
-  border: 2px solid #667eea;
+  color: var(--text-secondary);
+  border: 2px solid var(--border-cyber);
   border-radius: 8px;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
-  letter-spacing: 0.025em;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+}
+
+.guest-btn::before {
+  content: '// ';
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.guest-btn:hover::before {
+  opacity: 1;
 }
 
 .guest-btn:hover {
-  background: #667eea;
-  color: #ffffff;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  background: var(--secondary-gradient);
+  color: var(--bg-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--glow-cyber);
+  border-color: var(--cyber-blue);
 }
 
 .guest-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+  transform: translateY(-1px);
+  box-shadow: var(--glow-accent);
 }
 
 .error-msg {
-  background: #fed7d7;
-  color: #c53030;
+  background: rgba(255, 0, 0, 0.1);
+  color: #ff6b6b;
   padding: 0.875rem 1rem;
   border-radius: 8px;
   margin-bottom: 1.25rem;
   text-align: center;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.875rem;
-  border: 1px solid #feb2b2;
+  border: 2px solid rgba(255, 107, 107, 0.3);
+  font-family: 'JetBrains Mono', monospace;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 15px rgba(255, 107, 107, 0.2);
 }
 
 .lang-switcher {
