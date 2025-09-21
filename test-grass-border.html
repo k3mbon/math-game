@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Grass Border Pattern - Map Tiles</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .demo-grid {
+            display: inline-block;
+            border: 2px solid #333;
+            background-color: white;
+            position: relative;
+        }
+        
+        .demo-tile {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: 1px solid rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        
+        .demo-tile:hover {
+            transform: scale(1.05);
+            z-index: 10;
+            border: 2px solid #007acc;
+        }
+        
+        .legend {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 600px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .legend-preview {
+            width: 30px;
+            height: 30px;
+            background-size: cover;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .controls button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            background: #007acc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .controls button:hover {
+            background: #005a9e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Grass Border Pattern Test - Using Map Tile Assets</h1>
+            <p>This demonstrates the 9-tile grass border pattern using Map_tile_01.png through Map_tile_09.png</p>
+        </div>
+        
+        <div class="controls">
+            <button onclick="generatePattern(8, 8)">8x8 Grid (Game Size)</button>
+            <button onclick="generatePattern(10, 10)">10x10 Grid</button>
+            <button onclick="generatePattern(5, 8)">5x8 Grid</button>
+            <button onclick="generatePattern(3, 3)">3x3 Grid</button>
+        </div>
+        
+        <div id="demo-area" style="text-align: center;">
+            <!-- Grid will be generated here -->
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-preview" style="background-image: url('public/assets/terrain/1 Tiles/Map_tile_01.png')"></div>
+                <div>
+                    <strong>Map_tile_01.png</strong><br>
+                    Top-Left Corner
+                </div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-preview" style="background-image: url('public/assets/terrain/1 Tiles/Map_tile_02.png')"></div>
+                <div>
+                    <strong>Map_tile_02.png</strong><br>
+                    Top Edge
+                </div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-preview" style="background-image: url('public/assets/terrain/1 Tiles/Map_tile_03.png')"></div>
+                <div>
+                    <strong>Map_tile_03.png</strong><br>
+                    Top-Right Corner
+                </div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-preview" style="background-image: url('public/assets/terrain/1 Tiles/Map_tile_04.png')"></div>
+                <div>
+                    <strong>Map_tile_04.png</strong><br>
+                    Left Edge
+                </div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-preview" style="background-image: url('public/assets/terrain/1 Tiles/Map_tile_05.png')"></div>
+                <div>
+                    <strong>Map_tile_05.png</strong><br>
+                    Center Fill
+                </div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-preview" style="background-image: url('public/assets/terrain/1 Tiles/Map_tile_06.png')"></div>
+                <div>
+                    <strong>Map_tile_06.png</strong><br>
+                    Right Edge
+                </div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-preview" style="background-image: url('public/assets/terrain/1 Tiles/Map_tile_07.png')"></div>
+                <div>
+                    <strong>Map_tile_07.png</strong><br>
+                    Bottom-Left Corner
+                </div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-preview" style="background-image: url('public/assets/terrain/1 Tiles/Map_tile_08.png')"></div>
+                <div>
+                    <strong>Map_tile_08.png</strong><br>
+                    Bottom Edge
+                </div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-preview" style="background-image: url('public/assets/terrain/1 Tiles/Map_tile_09.png')"></div>
+                <div>
+                    <strong>Map_tile_09.png</strong><br>
+                    Bottom-Right Corner
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Grass border pattern mapping using Map_tile assets
+        const GRASS_BORDER_MAPPING = {
+            // Corners
+            'top-left': 'Map_tile_01.png',
+            'top-right': 'Map_tile_03.png', 
+            'bottom-left': 'Map_tile_07.png',
+            'bottom-right': 'Map_tile_09.png',
+            
+            // Edges  
+            'top': 'Map_tile_02.png',
+            'left': 'Map_tile_04.png',
+            'right': 'Map_tile_06.png',
+            'bottom': 'Map_tile_08.png',
+            
+            // Center
+            'center': 'Map_tile_05.png'
+        };
+        
+        function getGrassTileByPosition(x, y, gridWidth, gridHeight) {
+            // Handle single tile case
+            if (gridWidth === 1 && gridHeight === 1) {
+                return 'public/assets/terrain/1 Tiles/' + GRASS_BORDER_MAPPING['center'];
+            }
+            
+            const isTopRow = y === 0;
+            const isBottomRow = y === gridHeight - 1;
+            const isLeftCol = x === 0;
+            const isRightCol = x === gridWidth - 1;
+            
+            // Corner cases
+            if (isTopRow && isLeftCol) return 'public/assets/terrain/1 Tiles/' + GRASS_BORDER_MAPPING['top-left'];
+            if (isTopRow && isRightCol) return 'public/assets/terrain/1 Tiles/' + GRASS_BORDER_MAPPING['top-right'];
+            if (isBottomRow && isLeftCol) return 'public/assets/terrain/1 Tiles/' + GRASS_BORDER_MAPPING['bottom-left'];
+            if (isBottomRow && isRightCol) return 'public/assets/terrain/1 Tiles/' + GRASS_BORDER_MAPPING['bottom-right'];
+            
+            // Edge cases
+            if (isTopRow) return 'public/assets/terrain/1 Tiles/' + GRASS_BORDER_MAPPING['top'];
+            if (isBottomRow) return 'public/assets/terrain/1 Tiles/' + GRASS_BORDER_MAPPING['bottom'];
+            if (isLeftCol) return 'public/assets/terrain/1 Tiles/' + GRASS_BORDER_MAPPING['left'];
+            if (isRightCol) return 'public/assets/terrain/1 Tiles/' + GRASS_BORDER_MAPPING['right'];
+            
+            // Center case
+            return 'public/assets/terrain/1 Tiles/' + GRASS_BORDER_MAPPING['center'];
+        }
+        
+        function generatePattern(width, height) {
+            const demoArea = document.getElementById('demo-area');
+            const tileSize = 60;
+            
+            const gridHtml = `
+                <div class="demo-grid" style="width: ${width * tileSize}px; height: ${height * tileSize}px;">
+                    ${Array.from({length: height}, (_, y) => 
+                        Array.from({length: width}, (_, x) => {
+                            const asset = getGrassTileByPosition(x, y, width, height);
+                            return `<div class="demo-tile" 
+                                style="left: ${x * tileSize}px; top: ${y * tileSize}px; background-image: url('${asset}')"
+                                title="Position: (${x}, ${y}) - ${asset.split('/').pop()}"
+                                onclick="console.log('Clicked tile (${x}, ${y}): ${asset}')">
+                            </div>`;
+                        }).join('')
+                    ).join('')}
+                </div>
+                <p style="margin-top: 10px;">Grid: ${width}x${height} | Click tiles to see position info in console</p>
+            `;
+            
+            demoArea.innerHTML = gridHtml;
+        }
+        
+        // Generate initial 8x8 pattern (same as game)
+        generatePattern(8, 8);
+    </script>
+</body>
+</html>

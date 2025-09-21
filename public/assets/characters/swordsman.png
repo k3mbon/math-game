@@ -1,0 +1,14 @@
+<!-- This is a placeholder SVG that will be displayed until the actual swordsman.png is added -->
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <rect width="64" height="64" fill="#4CAF50" opacity="0.2"/>
+  <circle cx="32" cy="24" r="12" fill="#795548"/>
+  <rect x="24" y="36" width="16" height="20" fill="#795548"/>
+  <rect x="16" y="40" width="8" height="4" fill="#795548"/>
+  <rect x="40" y="40" width="8" height="4" fill="#795548"/>
+  <rect x="24" y="56" width="6" height="8" fill="#795548"/>
+  <rect x="34" y="56" width="6" height="8" fill="#795548"/>
+  <rect x="28" y="20" width="2" height="2" fill="#000"/>
+  <rect x="34" y="20" width="2" height="2" fill="#000"/>
+  <path d="M28 28 Q32 32 36 28" stroke="#000" fill="none"/>
+  <rect x="28" y="12" width="8" height="4" fill="#333"/>
+</svg>

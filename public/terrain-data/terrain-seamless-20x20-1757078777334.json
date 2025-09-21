@@ -1,0 +1,3336 @@
+{
+  "levels": {
+    "0": [
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Rocks/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Rocks/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Rocks/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Rocks/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Rocks/2.png"
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Other/Cave_enter.png"
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_131.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_47.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_131.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_35.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_131.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_47.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Rocks/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_50.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Rocks/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Trees/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Rocks/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": "/assets/characters/terrain-object/Bushes/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_23.png",
+          "obstacle": null
+        }
+      ]
+    ],
+    "1": [
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_121.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_121.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Ruins/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_121.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Ruins/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Rocks/3.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_121.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_121.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Ruins/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Rocks/3.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_121.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_121.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_121.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Rocks/3.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Ruins/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_121.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_121.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Other/Cave_enter.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Rocks/3.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Ruins/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_140.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_141.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_141.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_141.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_121.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_122.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_122.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_122.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_122.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_122.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_122.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_122.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_122.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_122.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_122.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_122.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_122.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_122.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_122.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Rocks/3.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_121.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Rocks/3.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_121.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_121.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Rocks/3.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_121.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Rocks/3.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Rocks/3.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_121.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Ruins/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Rocks/3.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        }
+      ],
+      [
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Ruins/2.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_123.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_135.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_121.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": "/assets/characters/terrain-object/Crystals/1.png"
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        },
+        {
+          "terrain": "/assets/terrain/1 Tiles/Map_tile_110.png",
+          "obstacle": null
+        }
+      ]
+    ]
+  },
+  "levelConnections": [
+    {
+      "from": {
+        "row": 5,
+        "col": 19,
+        "level": 0
+      },
+      "to": {
+        "row": 9,
+        "col": 11,
+        "level": 1
+      },
+      "id": 1757078499911
+    }
+  ],
+  "dimensions": {
+    "rows": 20,
+    "cols": 20
+  },
+  "exportDimensions": {
+    "width": 1400,
+    "height": 1400
+  },
+  "cellSize": 32,
+  "seamlessData": {
+    "0": {
+      "tiles": {},
+      "obstacles": {},
+      "seamlessMap": {},
+      "tileMapping": {},
+      "blendingData": {}
+    },
+    "1": {
+      "tiles": {},
+      "obstacles": {},
+      "seamlessMap": {},
+      "tileMapping": {},
+      "blendingData": {}
+    }
+  },
+  "timestamp": "2025-09-05T13:26:17.334Z",
+  "metadata": {
+    "surfaceLevel": 0,
+    "undergroundLevel": 1,
+    "caveEntrances": 1,
+    "totalCells": 400,
+    "exportResolution": "1400x1400"
+  }
+}

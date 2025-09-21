@@ -25,17 +25,38 @@ export const useGameLoop = (keys, gameState, updateGameState, isWalkable, genera
       }
       
       // Handle movement input
-
+      let movementDetected = false;
       updateGameState(prev => {
         let newX = prev.player.x;
         let newY = prev.player.y;
         const speed = GAME_CONFIG.PLAYER_SPEED;
 
         // Handle player movement
-        if (keys['ArrowUp'] || keys['KeyW']) newY -= speed;
-        if (keys['ArrowDown'] || keys['KeyS']) newY += speed;
-        if (keys['ArrowLeft'] || keys['KeyA']) newX -= speed;
-        if (keys['ArrowRight'] || keys['KeyD']) newX += speed;
+        if (keys['ArrowUp'] || keys['KeyW']) {
+          newY -= speed;
+          movementDetected = true;
+        }
+        if (keys['ArrowDown'] || keys['KeyS']) {
+          newY += speed;
+          movementDetected = true;
+        }
+        if (keys['ArrowLeft'] || keys['KeyA']) {
+          newX -= speed;
+          movementDetected = true;
+        }
+        if (keys['ArrowRight'] || keys['KeyD']) {
+          newX += speed;
+          movementDetected = true;
+        }
+        
+        // Debug movement
+        if (movementDetected && frameCountRef.current % 60 === 0) { // Log every 60 frames when moving
+          console.log('🎮 Player movement detected:', { 
+            oldPos: `(${prev.player.x}, ${prev.player.y})`, 
+            newPos: `(${newX}, ${newY})`,
+            keys: Object.keys(keys).filter(k => keys[k])
+          });
+        }
         
         // Position updated
 
@@ -45,26 +66,37 @@ export const useGameLoop = (keys, gameState, updateGameState, isWalkable, genera
         newY = Math.max(GAME_CONFIG.PLAYER_SIZE / 2, Math.min(worldPixelSize - GAME_CONFIG.PLAYER_SIZE / 2, newY));
 
         // Collision detection
-        if (!isWalkable(newX, newY, prev.terrain, customWorld)) {
+        const walkableResult = isWalkable(newX, newY, prev.terrain, customWorld);
+        if (!walkableResult) {
+          if (movementDetected && frameCountRef.current % 60 === 0) {
+            console.log('🚫 Movement blocked by collision detection:', { 
+              attemptedPos: `(${newX}, ${newY})`,
+              terrainChunks: prev.terrain.size,
+              walkableResult
+            });
+          }
           newX = prev.player.x;
           newY = prev.player.y;
         }
 
-        // Update camera to follow player
+        // Update camera to follow player - ensure camera stays centered on player
         const newCamera = {
-          x: Math.max(0, Math.min(
-            worldPixelSize - GAME_CONFIG.CANVAS_WIDTH,
-            newX - GAME_CONFIG.CANVAS_WIDTH / 2
-          )),
-          y: Math.max(0, Math.min(
-            worldPixelSize - GAME_CONFIG.CANVAS_HEIGHT,
-            newY - GAME_CONFIG.CANVAS_HEIGHT / 2
-          ))
+          x: newX - GAME_CONFIG.CANVAS_WIDTH / 2,
+          y: newY - GAME_CONFIG.CANVAS_HEIGHT / 2
         };
 
-        // Load terrain chunks around camera
-        const cameraChunkX = Math.floor(newCamera.x / (GAME_CONFIG.CHUNK_SIZE * GAME_CONFIG.TILE_SIZE));
-        const cameraChunkY = Math.floor(newCamera.y / (GAME_CONFIG.CHUNK_SIZE * GAME_CONFIG.TILE_SIZE));
+        // Debug camera movement
+        if (movementDetected && frameCountRef.current % 60 === 0) { // Log every 60 frames when moving
+          console.log('📷 Camera update:', { 
+            oldCamera: `(${prev.camera.x}, ${prev.camera.y})`, 
+            newCamera: `(${newCamera.x}, ${newCamera.y})`,
+            playerPos: `(${newX}, ${newY})`
+          });
+        }
+
+        // Load terrain chunks around camera - use tile-based coordinates for chunk calculation
+        const cameraChunkX = Math.floor((newCamera.x + GAME_CONFIG.CANVAS_WIDTH / 2) / (GAME_CONFIG.CHUNK_SIZE * GAME_CONFIG.TILE_SIZE));
+        const cameraChunkY = Math.floor((newCamera.y + GAME_CONFIG.CANVAS_HEIGHT / 2) / (GAME_CONFIG.CHUNK_SIZE * GAME_CONFIG.TILE_SIZE));
         const updatedTerrain = new Map(prev.terrain);
         let newTreasureBoxes = [...prev.treasureBoxes];
         let newMonsters = [...prev.monsters];

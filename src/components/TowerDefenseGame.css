@@ -1,16 +1,4 @@
-:root {
-  --grass-color: #7cba6b;
-  --path-color: #b39268;
-  --water-color: #4a90e2;
-  --rocks-color: #8a8a8a;
-  --tower-basic-color: #4a4a4a;
-  --tower-sniper-color: #8e44ad;
-  --tower-rapid-color: #e67e22;
-  --enemy-normal-color: #e74c3c;
-  --enemy-fast-color: #f1c40f;
-  --enemy-tank-color: #34495e;
-  --enemy-boss-color: #c0392b;
-}
+/* Component-scoped variables can be declared as fallbacks inline; avoid redefining :root to keep one global palette. */
 
 .tower-defense-container {
   display: flex;

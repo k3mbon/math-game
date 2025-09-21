@@ -1,0 +1,53 @@
+<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- Enhanced Human Character - Idle Frame 1 -->
+  <!-- Background for visibility -->
+  <circle cx="24" cy="24" r="23" fill="#F0F8FF" stroke="#4A90E2" stroke-width="1" opacity="0.2"/>
+  
+  <!-- Head -->
+  <circle cx="24" cy="15" r="8" fill="#FDBCB4" stroke="#E09F94" stroke-width="1"/>
+  
+  <!-- Hair -->
+  <path d="M16 10 Q24 6 32 10 Q32 8 29 6 Q24 3 19 6 Q16 8 16 10" fill="#8B4513"/>
+  <circle cx="19" cy="8" r="1.2" fill="#A0522D" opacity="0.7"/>
+  <circle cx="29" cy="8" r="1.2" fill="#A0522D" opacity="0.7"/>
+  
+  <!-- Eyes -->
+  <circle cx="20" cy="14" r="1.8" fill="#FFFFFF"/>
+  <circle cx="28" cy="14" r="1.8" fill="#FFFFFF"/>
+  <circle cx="20" cy="14" r="1.1" fill="#4A90E2"/>
+  <circle cx="28" cy="14" r="1.1" fill="#4A90E2"/>
+  <circle cx="20.4" cy="13.6" r="0.4" fill="#FFFFFF"/>
+  <circle cx="28.4" cy="13.6" r="0.4" fill="#FFFFFF"/>
+  
+  <!-- Nose -->
+  <ellipse cx="24" cy="16" rx="0.7" ry="1.2" fill="#F5A9A0"/>
+  
+  <!-- Mouth - Neutral expression -->
+  <path d="M21 18 Q24 19 27 18" stroke="#D0021B" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Cheeks -->
+  <circle cx="17" cy="17" r="1.8" fill="#FFB6C1" opacity="0.5"/>
+  <circle cx="31" cy="17" r="1.8" fill="#FFB6C1" opacity="0.5"/>
+  
+  <!-- Body - Colorful shirt -->
+  <rect x="16" y="23" width="16" height="16" rx="3" fill="#7ED321"/>
+  <rect x="18" y="25" width="12" height="2" fill="#50E3C2"/>
+  <rect x="18" y="29" width="12" height="2" fill="#F5A623"/>
+  <rect x="18" y="33" width="12" height="2" fill="#BD10E0"/>
+  
+  <!-- Arms -->
+  <rect x="10" y="24" width="6" height="11" rx="3" fill="#FDBCB4"/>
+  <rect x="32" y="24" width="6" height="11" rx="3" fill="#FDBCB4"/>
+  
+  <!-- Hands -->
+  <circle cx="13" cy="36" r="2.2" fill="#FDBCB4"/>
+  <circle cx="35" cy="36" r="2.2" fill="#FDBCB4"/>
+  
+  <!-- Legs - Pants -->
+  <rect x="18" y="39" width="4" height="8" rx="2" fill="#4A90E2"/>
+  <rect x="26" y="39" width="4" height="8" rx="2" fill="#4A90E2"/>
+  
+  <!-- Shoes -->
+  <ellipse cx="20" cy="47.5" rx="3" ry="1.5" fill="#2C3E50"/>
+  <ellipse cx="28" cy="47.5" rx="3" ry="1.5" fill="#2C3E50"/>
+</svg>

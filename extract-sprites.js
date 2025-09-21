@@ -3,9 +3,9 @@
  * Run with: node extract-sprites.js
  */
 
-const fs = require('fs');
-const path = require('path');
-const { createCanvas, loadImage } = require('canvas');
+import fs from 'fs';
+import path from 'path';
+import { createCanvas, loadImage } from 'canvas';
 
 // Configuration for different sprite types
 const SPRITE_CONFIGS = {
@@ -111,27 +111,18 @@ async function extractSprites(inputPath, outputDir, config) {
 async function main() {
   console.log('🎮 Sprite Extractor Tool\n');
   
-  // Example extractions - modify these paths as needed
+  // Kubo character sprite extraction
   const extractions = [
     {
-      input: './public/assets/downloaded-assets/terrain/Characters/Basic Charakter Spritesheet.png',
-      output: './public/assets/extracted-sprites/characters',
-      config: SPRITE_CONFIGS.CHARACTER_BASIC
-    },
-    {
-      input: './public/assets/downloaded-assets/terrain/Tilesets/Grass.png',
-      output: './public/assets/extracted-sprites/grass-tiles',
-      config: SPRITE_CONFIGS.TILESET_32
-    },
-    {
-      input: './public/assets/downloaded-assets/terrain/Tilesets/Water.png',
-      output: './public/assets/extracted-sprites/water-tiles',
-      config: SPRITE_CONFIGS.TILESET_32
-    },
-    {
-      input: './public/assets/downloaded-assets/terrain/Tilesets/Hills.png',
-      output: './public/assets/extracted-sprites/hill-tiles',
-      config: SPRITE_CONFIGS.TILESET_32
+      input: './public/assets/characters/char-kubo/Swordsman_lvl3_Idle.png',
+      output: './src/assets/characters/kubo-sprites',
+      config: {
+        spriteWidth: 64, // Estimated sprite width - will adjust if needed
+        spriteHeight: 64, // Estimated sprite height - will adjust if needed
+        columns: 4, // 4 frames per row for idle animation
+        rows: 4, // 4 rows: front, left, right, up
+        namePrefix: 'kubo-idle'
+      }
     }
   ];
   
@@ -156,8 +147,8 @@ async function main() {
 }
 
 // Run the script
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch(console.error);
 }
 
-module.exports = { extractSprites, SPRITE_CONFIGS };
+export { extractSprites, SPRITE_CONFIGS };

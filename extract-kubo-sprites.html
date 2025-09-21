@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kubo Sprite Extractor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        .upload-area:hover {
+            border-color: #007bff;
+        }
+        .upload-area.dragover {
+            border-color: #007bff;
+            background: #f8f9fa;
+        }
+        .preview-container {
+            margin: 20px 0;
+        }
+        .sprite-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .sprite-item {
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        .sprite-item:hover {
+            border-color: #007bff;
+        }
+        .sprite-item canvas {
+            max-width: 100%;
+            height: auto;
+            image-rendering: pixelated;
+        }
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #1e7e34;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .input-group label {
+            font-weight: bold;
+            min-width: 100px;
+        }
+        .input-group input {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            width: 80px;
+        }
+        .direction-labels {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 10px 0;
+            font-weight: bold;
+            text-align: center;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Kubo Sprite Extractor</h1>
+        <p>Extract individual idle animation frames from the Kubo sprite sheet</p>
+        
+        <div class="upload-area" id="uploadArea">
+            <p>📁 Drop the Kubo sprite sheet here or click to select</p>
+            <input type="file" id="fileInput" accept="image/*" style="display: none;">
+        </div>
+        
+        <div class="controls">
+            <div class="input-group">
+                <label>Sprite Width:</label>
+                <input type="number" id="spriteWidth" value="64" min="16" max="256">
+            </div>
+            <div class="input-group">
+                <label>Sprite Height:</label>
+                <input type="number" id="spriteHeight" value="64" min="16" max="256">
+            </div>
+            <div class="input-group">
+                <label>Frames per row:</label>
+                <input type="number" id="framesPerRow" value="4" min="1" max="16">
+            </div>
+            <button class="btn btn-primary" id="extractBtn">🔍 Extract Sprites</button>
+        </div>
+        
+        <div id="status"></div>
+        
+        <div class="preview-container" id="previewContainer" style="display: none;">
+            <h3>🖼️ Extracted Kubo Sprites</h3>
+            <div class="direction-labels">
+                <div>Front-facing (Row 1)</div>
+                <div>Left-facing (Row 2)</div>
+                <div>Right-facing (Row 3)</div>
+                <div>Up-facing (Row 4)</div>
+            </div>
+            <div class="sprite-grid" id="spriteGrid"></div>
+            <button class="btn btn-success" id="downloadAllBtn" style="display: none;">📥 Download All Sprites</button>
+        </div>
+    </div>
+
+    <script>
+        let extractedSprites = [];
+        let originalImage = null;
+        
+        // File upload handling
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const extractBtn = document.getElementById('extractBtn');
+        const previewContainer = document.getElementById('previewContainer');
+        const spriteGrid = document.getElementById('spriteGrid');
+        const downloadAllBtn = document.getElementById('downloadAllBtn');
+        const statusDiv = document.getElementById('status');
+        
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('drop', handleDrop);
+        fileInput.addEventListener('change', handleFileSelect);
+        extractBtn.addEventListener('click', extractSprites);
+        downloadAllBtn.addEventListener('click', downloadAllSprites);
+        
+        function handleDragOver(e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        }
+        
+        function handleDrop(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                loadImage(files[0]);
+            }
+        }
+        
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            if (files.length > 0) {
+                loadImage(files[0]);
+            }
+        }
+        
+        function loadImage(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    originalImage = img;
+                    showStatus(`Loaded sprite sheet: ${file.name} (${img.width}x${img.height})`, 'success');
+                    uploadArea.innerHTML = `<p>✅ Loaded: ${file.name} (${img.width}x${img.height})</p>`;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        function showStatus(message, type = 'info') {
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        function extractSprites() {
+            if (!originalImage) {
+                showStatus('Please load a sprite sheet first!', 'error');
+                return;
+            }
+            
+            const spriteWidth = parseInt(document.getElementById('spriteWidth').value);
+            const spriteHeight = parseInt(document.getElementById('spriteHeight').value);
+            const framesPerRow = parseInt(document.getElementById('framesPerRow').value);
+            const rows = 4; // Fixed for Kubo sprite sheet
+            
+            extractedSprites = [];
+            spriteGrid.innerHTML = '';
+            
+            const directions = ['front', 'left', 'right', 'up'];
+            
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < framesPerRow; col++) {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = spriteWidth;
+                    canvas.height = spriteHeight;
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Extract sprite from original image
+                    ctx.drawImage(
+                        originalImage,
+                        col * spriteWidth, row * spriteHeight, spriteWidth, spriteHeight,
+                        0, 0, spriteWidth, spriteHeight
+                    );
+                    
+                    const direction = directions[row];
+                    const frameIndex = col + 1;
+                    const filename = `kubo-idle-${direction}-${frameIndex.toString().padStart(2, '0')}.png`;
+                    
+                    extractedSprites.push({
+                        canvas: canvas,
+                        filename: filename,
+                        direction: direction,
+                        frame: frameIndex
+                    });
+                    
+                    // Create preview item
+                    const spriteItem = document.createElement('div');
+                    spriteItem.className = 'sprite-item';
+                    spriteItem.innerHTML = `
+                        <canvas width="${spriteWidth}" height="${spriteHeight}"></canvas>
+                        <p>${filename}</p>
+                    `;
+                    
+                    const previewCanvas = spriteItem.querySelector('canvas');
+                    const previewCtx = previewCanvas.getContext('2d');
+                    previewCtx.drawImage(canvas, 0, 0);
+                    
+                    spriteItem.addEventListener('click', () => downloadSprite(canvas, filename));
+                    spriteGrid.appendChild(spriteItem);
+                }
+            }
+            
+            previewContainer.style.display = 'block';
+            downloadAllBtn.style.display = 'block';
+            showStatus(`Successfully extracted ${extractedSprites.length} Kubo sprites! Click on individual sprites to download.`, 'success');
+        }
+        
+        function downloadSprite(canvas, filename) {
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        }
+        
+        function downloadAllSprites() {
+            if (extractedSprites.length === 0) return;
+            
+            showStatus('Downloading all sprites...', 'success');
+            
+            extractedSprites.forEach((sprite, index) => {
+                setTimeout(() => {
+                    downloadSprite(sprite.canvas, sprite.filename);
+                }, index * 100); // Small delay between downloads
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Kubo Character - Right Facing Idle Frame 1 -->
+  <defs>
+    <radialGradient id="bodyGradient" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#8B4513" />
+      <stop offset="100%" stop-color="#654321" />
+    </radialGradient>
+    <radialGradient id="armorGradient" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#C0C0C0" />
+      <stop offset="100%" stop-color="#808080" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Shadow -->
+  <ellipse cx="32" cy="60" rx="12" ry="3" fill="rgba(0,0,0,0.2)" />
+  
+  <!-- Back Leg -->
+  <rect x="29" y="48" width="5" height="12" fill="#654321" rx="2" />
+  <!-- Front Leg -->
+  <rect x="33" y="48" width="5" height="12" fill="#654321" rx="2" />
+  
+  <!-- Back Boot -->
+  <rect x="27" y="58" width="8" height="4" fill="#2F1B14" rx="2" />
+  <!-- Front Boot -->
+  <rect x="31" y="58" width="9" height="4" fill="#2F1B14" rx="2" />
+  
+  <!-- Body/Torso (side view, mirrored) -->
+  <ellipse cx="34" cy="39" rx="8" ry="11" fill="url(#bodyGradient)" />
+  
+  <!-- Armor Side Plate -->
+  <ellipse cx="34" cy="37" rx="6" ry="9" fill="url(#armorGradient)" />
+  <rect x="30" y="32" width="8" height="2" fill="#A0A0A0" rx="1" />
+  <rect x="30" y="37" width="8" height="2" fill="#A0A0A0" rx="1" />
+  <rect x="30" y="42" width="8" height="2" fill="#A0A0A0" rx="1" />
+  
+  <!-- Back Arm -->
+  <ellipse cx="29" cy="35" rx="3" ry="8" fill="url(#bodyGradient)" />
+  <!-- Front Arm -->
+  <ellipse cx="42" cy="35" rx="3" ry="8" fill="url(#bodyGradient)" />
+  
+  <!-- Arm Guards -->
+  <ellipse cx="29" cy="35" rx="2" ry="6" fill="url(#armorGradient)" />
+  <ellipse cx="42" cy="35" rx="2" ry="6" fill="url(#armorGradient)" />
+  
+  <!-- Back Hand -->
+  <circle cx="29" cy="45" r="2.5" fill="#8B4513" />
+  <!-- Front Hand -->
+  <circle cx="45" cy="45" r="3" fill="#8B4513" />
+  
+  <!-- Head (profile, mirrored) -->
+  <ellipse cx="36" cy="20" rx="8" ry="10" fill="#8B4513" />
+  
+  <!-- Hair (side view, mirrored) -->
+  <path d="M44 15 Q36 8 29 12 Q32 10 36 9 Q42 11 44 15" fill="#4A4A4A" />
+  
+  <!-- Eye (profile, mirrored) -->
+  <circle cx="39" cy="18" r="2" fill="white" />
+  <circle cx="40" cy="18" r="1" fill="black" />
+  
+  <!-- Nose (profile, mirrored) -->
+  <path d="M42 20 L44 22 L42 23" stroke="#654321" stroke-width="1" fill="none" />
+  
+  <!-- Mouth (profile, mirrored) -->
+  <path d="M44 25 Q42 26 40 25" stroke="#654321" stroke-width="1" fill="none" />
+  
+  <!-- Sword (on back, side view, mirrored) -->
+  <rect x="27" y="15" width="2" height="15" fill="#C0C0C0" />
+  <rect x="26" y="14" width="4" height="3" fill="#FFD700" rx="1" />
+  <rect x="26" y="12" width="2" height="4" fill="#8B4513" />
+  
+  <!-- Belt (side view) -->
+  <ellipse cx="34" cy="45" rx="8" ry="2" fill="#654321" />
+  <rect x="35" y="44" width="3" height="4" fill="#FFD700" rx="1" />
+</svg>

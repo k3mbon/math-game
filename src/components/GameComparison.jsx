@@ -59,7 +59,7 @@ const GameComparison = () => {
             </div>
           </div>
 
-          <Link to="/open-world" className="play-button original-button">
+          <Link to="/open-world-game" className="play-button original-button">
             🎮 Play Original Version
           </Link>
         </div>

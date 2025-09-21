@@ -2,6 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as Blockly from 'blockly';
 import * as BlocklyJS from 'blockly/javascript';
 import './BlocklyComponent.css'; // You can create this file for styles
+import {
+  ArrowForward,
+  ArrowBack,
+  ArrowUpward,
+  ArrowDownward
+} from '@mui/icons-material';
 
 export default function BlocklyMazeGame() {
   const blocklyDiv = useRef(null);
@@ -27,7 +33,7 @@ export default function BlocklyMazeGame() {
     Blockly.defineBlocksWithJsonArray([
       {
         type: 'move_forward',
-        message0: '🚗➡️ Move Right',
+        message0: '→ Move Right',
         previousStatement: null,
         nextStatement: null,
         colour: '#2196F3',
@@ -35,7 +41,7 @@ export default function BlocklyMazeGame() {
       },
       {
         type: 'turn_left',
-        message0: '⬅️🚗 Move Left',
+        message0: '← Move Left',
         previousStatement: null,
         nextStatement: null,
         colour: '#2196F3',
@@ -43,7 +49,7 @@ export default function BlocklyMazeGame() {
       },
       {
         type: 'turn_right',
-        message0: '🚗⬆️ Move Up',
+        message0: '↑ Move Up',
         previousStatement: null,
         nextStatement: null,
         colour: '#2196F3',
@@ -51,7 +57,7 @@ export default function BlocklyMazeGame() {
       },
       {
         type: 'move_down',
-        message0: '⬇️🚗 Move Down',
+        message0: '↓ Move Down',
         previousStatement: null,
         nextStatement: null,
         colour: '#2196F3',

@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
 export const CharacterContext = createContext();
 
@@ -59,7 +59,7 @@ export const CharacterProvider = ({ children }) => {
     {
       id: 3,
       name: 'Spark',
-      description: 'An energetic lightning bolt who makes learning fast and exciting.',
+      description: 'An energetic lightning bolt who makes learning fast and exciting. Unlocks after collecting 50 crystals!',
       unlocked: false,
       unlockLevel: 5,
       abilities: ['Speed Boost', 'Quick Tips'],
@@ -81,7 +81,7 @@ export const CharacterProvider = ({ children }) => {
     {
       id: 4,
       name: 'Pixel',
-      description: 'A digital cat who loves pixel art and creative coding challenges.',
+      description: 'A digital cat who loves pixel art and creative coding challenges. Unlocks after collecting 100 crystals!',
       unlocked: false,
       unlockLevel: 10,
       abilities: ['Creative Mode', 'Art Helper'],
@@ -107,7 +107,7 @@ export const CharacterProvider = ({ children }) => {
     {
       id: 5,
       name: 'Quantum',
-      description: 'A mysterious quantum entity that helps with advanced programming concepts.',
+      description: 'A mysterious quantum entity that helps with advanced programming concepts. Unlocks after collecting 200 crystals!',
       unlocked: false,
       unlockLevel: 15,
       abilities: ['Advanced Logic', 'Quantum Tips'],
@@ -132,7 +132,7 @@ export const CharacterProvider = ({ children }) => {
   ];
   
   const [selectedCharacter, setSelectedCharacter] = useState(null);
-  const [userProgress, setUserProgress] = useState({ level: 0, completedLevels: [] });
+  const [userProgress, setUserProgress] = useState({ level: 0, completedLevels: [], crystalsCollected: 0 });
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState('');
   const [feedbackType, setFeedbackType] = useState('success'); // 'success' or 'hint'
@@ -150,11 +150,26 @@ export const CharacterProvider = ({ children }) => {
     localStorage.setItem('brainquests-progress', JSON.stringify(userProgress));
   }, [userProgress]);
 
-  // Update character unlock status based on progress
-  const updatedCharacters = characters.map(char => ({
-    ...char,
-    unlocked: char.unlockLevel <= userProgress.level
-  }));
+  // Update character unlock status based on progress and crystal achievements
+  const updatedCharacters = characters.map(char => {
+    let unlocked = char.unlockLevel <= userProgress.level;
+    
+    // Special crystal-based unlocks
+    if (char.id === 3 && userProgress.crystalsCollected >= 50) { // Spark unlocks at 50 crystals
+      unlocked = true;
+    }
+    if (char.id === 4 && userProgress.crystalsCollected >= 100) { // Pixel unlocks at 100 crystals
+      unlocked = true;
+    }
+    if (char.id === 5 && userProgress.crystalsCollected >= 200) { // Quantum unlocks at 200 crystals
+      unlocked = true;
+    }
+    
+    return {
+      ...char,
+      unlocked
+    };
+  });
 
   // Character feedback functions
   const showSuccessFeedback = (message) => {
@@ -202,7 +217,15 @@ export const CharacterProvider = ({ children }) => {
   const updateProgress = (newLevel, completedLevel) => {
     setUserProgress(prev => ({
       level: Math.max(prev.level, newLevel),
-      completedLevels: [...new Set([...prev.completedLevels, completedLevel])]
+      completedLevels: [...new Set([...prev.completedLevels, completedLevel])],
+      crystalsCollected: prev.crystalsCollected || 0
+    }));
+  };
+
+  const updateCrystalProgress = (crystalCount) => {
+    setUserProgress(prev => ({
+      ...prev,
+      crystalsCollected: Math.max(prev.crystalsCollected || 0, crystalCount)
     }));
   };
 
@@ -213,6 +236,7 @@ export const CharacterProvider = ({ children }) => {
       setSelectedCharacter,
       userProgress,
       updateProgress,
+      updateCrystalProgress,
       showSuccessFeedback,
       showHintFeedback,
       showFeedback,

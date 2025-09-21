@@ -1,268 +1,593 @@
-/* App.css - Matrix Green Theme */
-/* Matrix Green Theme Override - Force override any purple colors */
-:root {
-  /* Override primary colors with matrix green */
-  --primary-500: #00ff41 !important;
-  --primary-600: #00cc33 !important;
-  --primary-700: #00aa2b !important;
-  --accent-pink: #00ff41 !important;
-  --purple: #00ff41 !important;
-  --violet: #00d4ff !important;
-  
-  /* Cyber Blue Secondary Colors */
-  --secondary-400: #00d4ff !important;
-  --secondary-500: #0099cc !important;
-  --secondary-600: #007799 !important;
-  
-  /* Dark Tech Backgrounds */
-  --dark-bg: #0a0a0a !important;
-  --dark-surface: #111111 !important;
-  --dark-card: #1a1a1a !important;
-  
-  /* Matrix Text Colors */
-  --text-primary: #00ff41 !important;
-  --text-secondary: #00d4ff !important;
-  --text-muted: #39ff14 !important;
-  
-  /* Tech Status Colors */
-  --success: #00ff41 !important;
-  --warning: #ffff00 !important;
-  --error: #ff0040 !important;
-  --info: #00d4ff !important;
-  
-  /* Matrix Gradients */
-  --primary-gradient: linear-gradient(135deg, #00ff41 0%, #39ff14 50%, #7fff00 100%) !important;
-  --secondary-gradient: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #007799 100%) !important;
-  
-  /* Tech Shadows */
-  --glow-primary: 0 0 20px rgba(0, 255, 65, 0.5) !important;
-  --glow-secondary: 0 0 20px rgba(0, 212, 255, 0.5) !important;
-}
+/* App.css - Global Styles with Consistent Purple/Violet Theme */
 
-:root {
-  /* Matrix Green Primary Palette - NO PURPLE OVERRIDE */
-  --primary-50: #e8f5e8 !important;
-  --primary-100: #c8e6c9 !important;
-  --primary-200: #a5d6a7 !important;
-  --primary-300: #81c784 !important;
-  --primary-400: #66bb6a !important;
-  --primary-500: #00ff41 !important;  /* Matrix Green */
-  --primary-600: #00cc33 !important;
-  --primary-700: #00aa2b !important;
-  --primary-800: #008822 !important;
-  --primary-900: #006619 !important;
-  
-  /* Cyber Blue Secondary Palette */
-  --secondary-500: #00d4ff; /* Cyber Blue */
-  --secondary-600: #00b8e6;
-  --secondary-700: #009ccc;
-  
-  /* Tech Accent Colors - NO PURPLE */
-  --accent-pink: #00ff41 !important;   /* Override pink with matrix green */
-  --accent-yellow: #ffff00; /* Electric Yellow */
-  --accent-green: #39ff14;  /* Bright Green */
-  --accent-orange: #ff8000; /* Neon Orange */
-  --accent-cyan: #00e5ff !important;
-  --accent-lime: #76ff03 !important;
-  
-  /* Dark Tech Backgrounds */
-  --bg-main: #0a0a0f;      /* Dark Main */
-  --bg-light: #001a00;     /* Dark Green Tint */
-  --bg-card: rgba(0, 26, 0, 0.9); /* Semi-transparent Dark Green */
-  
-  /* Matrix Text Colors */
-  --text-primary: #00ff41;   /* Matrix Green */
-  --text-secondary: #00d4ff; /* Cyber Blue */
-  --text-light: #0dff0d;     /* Bright Terminal Green */
-  
-  /* Tech Status Colors */
-  --error: #ff0040;      /* Neon Red */
-  --success: #39ff14;    /* Bright Green */
-  --warning: #ffff00;    /* Electric Yellow */
-  --info: #00d4ff;       /* Cyber Blue */
-  
-  /* Matrix Gradients */
-  --gradient-primary: linear-gradient(135deg, #00ff41 0%, #39ff14 50%, #7fff00 100%);
-  --gradient-secondary: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
-  --gradient-hero: linear-gradient(135deg, #00ff41 0%, #00d4ff 50%, #39ff14 100%);
-  
-  /* Matrix Shadows */
-  --shadow-sm: 0 4px 6px rgba(0, 255, 65, 0.1);
-  --shadow-md: 0 6px 15px rgba(0, 255, 65, 0.15);
-  --shadow-lg: 0 10px 25px rgba(0, 255, 65, 0.2);
-  --shadow-xl: 0 15px 35px rgba(0, 255, 65, 0.25);
-  
-  /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-bounce: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
-  --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* Uses global CSS variables from index.css */
 
-/* Global Styles - Override any existing styles with responsive design */
-* {
-  box-sizing: border-box !important;
-}
-
-body,
-html {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
-  background: var(--dark-bg) !important;
-  color: var(--text-primary) !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  width: 100% !important;
-  overflow-x: hidden !important;
-}
-
+/* App Container */
 .app-container {
-  min-height: 100vh !important;
-  width: 100% !important;
-  background: var(--dark-bg) !important;
-  color: var(--text-primary) !important;
-  position: relative !important;
-}
-
-/* Override landing page body specifically */
-body.landing-page-body {
-  background: var(--dark-bg) !important;
-  background-image: 
-    linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px),
-    radial-gradient(circle at 20% 80%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(0, 255, 65, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 60% 60%, rgba(57, 255, 20, 0.05) 0%, transparent 70%) !important;
-  background-size: 50px 50px, 50px 50px, 800px 800px, 600px 600px, 400px 400px, 300px 300px !important;
-}
-
-/* Landing container override */
-.app-container .landing-container {
-  background: var(--dark-bg) !important;
-  background-image: 
-    linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px),
-    radial-gradient(circle at 20% 80%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(0, 255, 65, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 60% 60%, rgba(57, 255, 20, 0.05) 0%, transparent 70%) !important;
-  background-size: 50px 50px, 50px 50px, 800px 800px, 600px 600px, 400px 400px, 300px 300px !important;
-}
-
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.header {
-  text-align: center;
-  padding: 2rem;
-  background: white;
-
-  border-bottom: 1px solid var(--neutral-200);
-}
-
-.header h1 {
-  color: var(--primary-700);
-  margin: 0;
-  font-weight: 700;
-}
-
-.main-content {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-  background: var(--neutral-100);
-}
-
-.landing-buttons {
+  min-height: 100vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+/* Main Content Area */
+.main-content {
+  flex: 1;
+  width: 100%;
+  padding: var(--space-4);
+  background: var(--bg-secondary);
+}
+
+/* Button Styles */
+.btn,
+.btn-primary,
+.cta-primary,
+.landing-button {
+  display: inline-flex;
   align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-8);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--text-inverse);
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+  border: none;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  min-height: 48px;
 }
 
-/* Landing Page Button Styles - Matrix Theme Only */
-.landing-button,
-.landing-page .btn-primary,
-.landing-page .cta-primary,
-.landing-container .btn-primary,
-.landing-container .cta-primary {
-  background: rgba(0, 255, 65, 0.1) !important;
-  padding: 1.25rem 2.5rem !important;
-  color: var(--primary-500) !important;
-  border: 2px solid var(--primary-500) !important;
-  font-size: 1.25rem !important;
-  font-weight: 600 !important;
-  border-radius: 10px !important;
-  cursor: pointer !important;
-  text-decoration: none !important;
-  transition: var(--transition-normal) !important;
-  width: 100% !important;
-  max-width: 300px !important;
-  text-align: center !important;
-  letter-spacing: 0.5px !important;
-  box-shadow: var(--shadow-sm) !important;
-}
-
-.landing-button:hover,
-.landing-page .btn-primary:hover,
-.landing-page .cta-primary:hover,
-.landing-container .btn-primary:hover,
-.landing-container .cta-primary:hover {
-  transform: translateY(-3px) !important;
-  background: var(--gradient-primary) !important;
-  box-shadow: var(--shadow-lg) !important;
-  border-color: var(--primary-400) !important;
-}
-
-.landing-button:active {
-  transform: translateY(1px);
-}
-
-.landing-button.secondary {
-  background: rgba(137, 80, 252, 0.1);
-  color: var(--accent-500);
-  border: 1px solid rgba(137, 80, 252, 0.2);
-}
-
-.landing-button:hover, .landing-button.secondary:hover {
-  background: rgba(54, 153, 255, 0.15);
+.btn:hover,
+.btn-primary:hover,
+.cta-primary:hover,
+.landing-button:hover {
+  background: linear-gradient(135deg, var(--primary-700), var(--primary-800));
   transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
-/* Status colors for messages */
+.btn:active,
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--neutral-300);
+}
+
+.btn-secondary:hover {
+  background: var(--neutral-50);
+  border-color: var(--neutral-400);
+}
+
+/* Card Components */
+.card {
+  background: var(--bg-primary);
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-fast);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Status Messages */
 .message-success {
-  color: var(--success-500);
-  background-color: rgba(16, 185, 129, 0.1);
-  padding: 0.75rem;
-  border-radius: 6px;
-  border-left: 4px solid var(--success-500);
+  background: var(--success-50);
+  color: var(--success-700);
+  border: 1px solid var(--success-200);
+  border-left: 4px solid var(--success-600);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  margin: var(--space-4) 0;
 }
 
 .message-error {
-  color: var(--error-500);
-  background-color: rgba(239, 68, 68, 0.1);
-  padding: 0.75rem;
-  border-radius: 6px;
-  border-left: 4px solid var(--error-500);
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-left: 4px solid var(--error);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  margin: var(--space-4) 0;
 }
 
-/* Global Responsive Design - Apply to ALL pages */
-@media (max-width: 480px) {
-  .app-container {
-    padding: 0.5rem !important;
+/* Loading States */
+.loading-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  margin: var(--space-8);
+  padding: var(--space-8);
+  text-align: center;
+}
+
+/* Game-specific styles with purple theme */
+.terrain-designer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg-secondary);
+  font-family: inherit;
+  overflow: hidden;
+}
+
+.terrain-designer h2 {
+  color: var(--text-primary);
+  text-align: center;
+  margin: 0;
+  padding: var(--space-4);
+  background: var(--bg-primary);
+  border-bottom: 2px solid var(--primary-500);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main-content {
+    padding: var(--space-2);
   }
   
-  /* Landing page specific */
+  .btn,
+  .btn-primary,
+  .landing-button {
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
+/* Ensure landing page styles take precedence */
+.landing-page-body .app-container {
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%);
+  background-attachment: fixed;
+}
+
+/* Universal responsive layout system with purple theme */
+@media (max-width: 319px) {
+  .app-container,
+  .page-container,
+  .main-content {
+    padding: 0.25rem !important;
+    margin: 0 !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    box-sizing: border-box !important;
+  }
+}
+
+@media (min-width: 320px) and (max-width: 479px) {
+  .app-container,
+  .page-container,
+  .main-content {
+    padding: 0.5rem !important;
+  }
+}
+
+@media (min-width: 480px) and (max-width: 767px) {
+  .app-container,
+  .page-container,
+  .main-content {
+    padding: 0.75rem !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .app-container,
+  .page-container,
+  .main-content {
+    padding: 1rem !important;
+  }
+}
+
+/* App Container */
+.app-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+/* Landing Page Specific Styles are defined globally in index.css; avoid local overrides here. */
+
+.landing-container {
+  width: 100%;
+  min-height: 100vh;
+  background: inherit;
+}
+
+/* Main Content Area */
+.main-content {
+  flex: 1;
+  width: 100%;
+  padding: var(--space-4);
+  background: var(--bg-secondary);
+}
+
+/* Landing Page Buttons */
+.landing-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-8);
+}
+
+.landing-button,
+.btn-primary,
+.cta-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-8);
+  font-family: var(--font-primary);
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--primary-600);
+  background: var(--glass-bg);
+  border: 2px solid var(--primary-500);
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  width: 100%;
+  max-width: 320px;
+  min-height: 56px;
+}
+
+.landing-button:hover,
+.btn-primary:hover,
+.cta-primary:hover {
+  background: var(--primary-600);
+  color: var(--text-inverse);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-700);
+}
+
+.landing-button:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Status Messages */
+.message-success {
+  background: var(--success-50);
+  color: var(--success-700);
+  border: 1px solid var(--success-200);
+  border-left: 4px solid var(--success-600);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  margin: var(--space-4) 0;
+}
+
+.message-error {
+  background: var(--error-50);
+  color: var(--error-700);
+  border: 1px solid var(--error-200);
+  border-left: 4px solid var(--error-600);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  margin: var(--space-4) 0;
+}
+
+/* Terrain Designer Styles */
+.terrain-designer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg-secondary);
+  font-family: var(--font-primary);
+  overflow: hidden;
+}
+
+.terrain-designer h2 {
+  color: var(--text-primary);
+  text-align: center;
+  margin: 0;
+  padding: var(--space-4);
+  background: var(--bg-primary);
+  border-bottom: 2px solid var(--primary-500);
+  box-shadow: var(--shadow-sm);
+}
+
+.terrain-designer-content {
+  display: flex;
+  flex: 1;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  overflow: hidden;
+}
+
+.terrain-designer-sidebar {
+  width: 320px;
+  background: var(--bg-primary);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.terrain-designer-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--bg-primary);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.toolbar button {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--gray-300);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  font-size: 0.875rem;
+}
+
+.toolbar button:hover {
+  background: var(--primary-100);
+  border-color: var(--primary-400);
+}
+
+.toolbar button.active {
+  background: var(--primary-600);
+  color: var(--text-inverse);
+  border-color: var(--primary-700);
+}
+
+/* Palette */
+.palette {
+  background: var(--bg-primary);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.palette h3 {
+  color: var(--text-primary);
+  margin: 0 0 var(--space-4) 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-align: center;
+  padding: var(--space-2);
+  background: var(--primary-50);
+  border-radius: var(--radius-md);
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: var(--space-2);
+  max-height: 300px;
+  overflow-y: auto;
+  padding: var(--space-2);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+}
+
+.tiles img {
+  width: 48px;
+  height: 48px;
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  background: var(--bg-primary);
+  object-fit: cover;
+  box-shadow: var(--shadow-sm);
+}
+
+.tiles img:hover {
+  border-color: var(--primary-400);
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
+}
+
+.tiles img.selected {
+  border-color: var(--primary-600);
+  background: var(--primary-50);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
+  transform: scale(1.1);
+}
+
+/* Grid */
+.grid-container {
+  flex: 1;
+  overflow: auto;
+  padding: var(--space-4);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.grid {
+  border: 2px solid var(--primary-500);
+  border-radius: var(--radius-lg);
+  background: var(--bg-primary);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.grid-row {
+  display: flex;
+}
+
+.grid-cell {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--gray-200);
+  position: relative;
+  background: var(--bg-secondary);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.grid-cell:hover {
+  background: var(--primary-50);
+  border-color: var(--primary-300);
+}
+
+.grid-cell img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.grid-cell .obstacle-img {
+  width: 80%;
+  height: 80%;
+  top: 10%;
+  left: 10%;
+  object-fit: contain;
+  z-index: 2;
+}
+
+/* Loading States */
+.loading-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  margin: var(--space-8);
+  padding: var(--space-8);
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .terrain-designer-content {
+    flex-direction: column;
+  }
+  
+  .terrain-designer-sidebar {
+    width: 100%;
+    height: 200px;
+  }
+  
+  .landing-buttons {
+    flex-direction: column;
+    padding: var(--space-4);
+  }
+  
+  .toolbar {
+    justify-content: center;
+  }
+  
+  .tiles {
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+    gap: var(--space-1);
+  }
+  
+  .tiles img {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .grid-cell {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (min-width: 768px) {
+  .landing-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .landing-button {
+    width: auto;
+    min-width: 200px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .main-content {
+    padding: var(--space-8);
+  }
+  
+  .terrain-designer-content {
+    gap: var(--space-6);
+  }
+  
+  .terrain-designer-sidebar {
+    width: 350px;
+  }
+}
+
+/* Universal Responsive Layout System - Comprehensive Breakpoints */
+
+/* Ultra Small Screens (240px - 319px) */
+@media (max-width: 319px) {
+  .app-container,
+  .page-container,
+  .main-content,
+  [class*="page-"],
+  [class*="Page-"] {
+    padding: 0.25rem !important;
+    margin: 0 !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    box-sizing: border-box !important;
+  }
+  
   .landing-buttons {
     flex-direction: column !important;
-    gap: 1rem !important;
+    gap: 0.5rem !important;
     width: 100% !important;
   }
   
@@ -270,61 +595,271 @@ body.landing-page-body {
   .cta-primary,
   .landing-button {
     width: 100% !important;
-    padding: 0.75rem 1.5rem !important;
-    font-size: 0.9rem !important;
+    padding: 0.6rem 1rem !important;
+    font-size: 0.8rem !important;
+    min-height: 40px !important;
   }
   
-  /* Global button styles for all pages */
   button, .btn, .button {
-    padding: 0.75rem 1.5rem !important;
-    font-size: 0.9rem !important;
+    padding: 0.6rem 1rem !important;
+    font-size: 0.8rem !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 40px !important;
   }
   
-  /* Text scaling */
-  h1 { font-size: 1.8rem !important; }
-  h2 { font-size: 1.5rem !important; }
-  h3 { font-size: 1.3rem !important; }
+  h1 { font-size: 1.4rem !important; }
+  h2 { font-size: 1.2rem !important; }
+  h3 { font-size: 1.1rem !important; }
+  p { font-size: 0.8rem !important; }
+}
+
+/* Small Mobile Screens (320px - 479px) */
+@media (min-width: 320px) and (max-width: 479px) {
+  .app-container,
+  .page-container,
+  .main-content,
+  [class*="page-"],
+  [class*="Page-"] {
+    padding: 0.5rem !important;
+    margin: 0 !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    box-sizing: border-box !important;
+  }
+  
+  .landing-buttons {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+  }
+  
+  .landing-page .btn-primary,
+  .cta-primary,
+  .landing-button {
+    width: 100% !important;
+    padding: 0.75rem 1.25rem !important;
+    font-size: 0.9rem !important;
+    min-height: 44px !important;
+  }
+  
+  button, .btn, .button {
+    padding: 0.75rem 1.25rem !important;
+    font-size: 0.9rem !important;
+    width: 100% !important;
+    max-width: 280px !important;
+    min-height: 44px !important;
+  }
+  
+  h1 { font-size: 1.6rem !important; }
+  h2 { font-size: 1.4rem !important; }
+  h3 { font-size: 1.2rem !important; }
   p { font-size: 0.9rem !important; }
 }
 
-@media (min-width: 481px) and (max-width: 768px) {
-  .app-container {
-    padding: 1rem !important;
+/* Mobile Screens (480px - 767px) */
+@media (min-width: 480px) and (max-width: 767px) {
+  .app-container,
+  .page-container,
+  .main-content,
+  [class*="page-"],
+  [class*="Page-"] {
+    padding: 0.75rem !important;
+    margin: 0 !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    box-sizing: border-box !important;
   }
   
   .landing-buttons {
     flex-direction: column !important;
     gap: 1rem !important;
+    width: 100% !important;
   }
   
   .landing-page .btn-primary,
   .cta-primary,
   .landing-button {
     width: 100% !important;
-    padding: 1rem 2rem !important;
+    padding: 0.875rem 1.5rem !important;
     font-size: 1rem !important;
+    min-height: 48px !important;
   }
   
-  /* Global button styles */
+  button, .btn, .button {
+    padding: 0.875rem 1.5rem !important;
+    font-size: 1rem !important;
+    width: 100% !important;
+    max-width: 320px !important;
+    min-height: 48px !important;
+  }
+  
+  h1 { font-size: 1.8rem !important; }
+  h2 { font-size: 1.5rem !important; }
+  h3 { font-size: 1.3rem !important; }
+  p { font-size: 1rem !important; }
+}
+
+/* Tablet Portrait (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .app-container,
+  .page-container,
+  .main-content,
+  [class*="page-"],
+  [class*="Page-"] {
+    padding: 1rem !important;
+    margin: 0 !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    box-sizing: border-box !important;
+  }
+  
+  .landing-buttons {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 1rem !important;
+    justify-content: center !important;
+  }
+  
+  .landing-page .btn-primary,
+  .cta-primary,
+  .landing-button {
+    width: auto !important;
+    min-width: 180px !important;
+    padding: 1rem 2rem !important;
+    font-size: 1.1rem !important;
+    min-height: 52px !important;
+  }
+  
   button, .btn, .button {
     padding: 1rem 2rem !important;
-    font-size: 1rem !important;
+    font-size: 1.1rem !important;
+    max-width: 400px !important;
+    min-height: 52px !important;
   }
+  
+  h1 { font-size: 2rem !important; }
+  h2 { font-size: 1.7rem !important; }
+  h3 { font-size: 1.4rem !important; }
+  p { font-size: 1.1rem !important; }
 }
 
-@media (min-width: 769px) and (max-width: 1024px) {
-  .app-container {
+/* Tablet Landscape / Small Desktop (992px - 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .app-container,
+  .page-container,
+  .main-content,
+  [class*="page-"],
+  [class*="Page-"] {
     padding: 1.5rem !important;
-    max-width: 900px !important;
-    margin: 0 auto !important;
+    margin: 0 !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    box-sizing: border-box !important;
+  }
+  
+  .landing-buttons {
+    flex-direction: row !important;
+    gap: 1.5rem !important;
+    justify-content: center !important;
+  }
+  
+  .landing-page .btn-primary,
+  .cta-primary,
+  .landing-button {
+    width: auto !important;
+    min-width: 200px !important;
+    padding: 1.125rem 2.25rem !important;
+    font-size: 1.125rem !important;
+    min-height: 56px !important;
+  }
+  
+  button, .btn, .button {
+    padding: 1.125rem 2.25rem !important;
+    font-size: 1.125rem !important;
+    max-width: 450px !important;
+    min-height: 56px !important;
+  }
+  
+  h1 { font-size: 2.2rem !important; }
+  h2 { font-size: 1.8rem !important; }
+  h3 { font-size: 1.5rem !important; }
+  p { font-size: 1.125rem !important; }
+}
+
+/* Desktop (1200px - 1599px) */
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .app-container,
+  .page-container,
+  .main-content,
+  [class*="page-"],
+  [class*="Page-"] {
+    padding: 2rem !important;
+    margin: 0 !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    box-sizing: border-box !important;
+  }
+  
+  .landing-buttons {
+    flex-direction: row !important;
+    gap: 2rem !important;
+    justify-content: center !important;
+  }
+  
+  .landing-page .btn-primary,
+  .cta-primary,
+  .landing-button {
+    width: auto !important;
+    min-width: 220px !important;
+    padding: 1.25rem 2.5rem !important;
+    font-size: 1.2rem !important;
+    min-height: 60px !important;
+  }
+  
+  button, .btn, .button {
+    padding: 1.25rem 2.5rem !important;
+    font-size: 1.2rem !important;
+    max-width: 500px !important;
+    min-height: 60px !important;
   }
 }
 
-@media (min-width: 1025px) {
-  .app-container {
-    max-width: 1400px !important;
-    margin: 0 auto !important;
-    padding: 2rem !important;
+/* Large Desktop (1600px+) */
+@media (min-width: 1600px) {
+  .app-container,
+  .page-container,
+  .main-content,
+  [class*="page-"],
+  [class*="Page-"] {
+    padding: 2.5rem !important;
+    margin: 0 !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    box-sizing: border-box !important;
+  }
+  
+  .landing-buttons {
+    flex-direction: row !important;
+    gap: 2.5rem !important;
+    justify-content: center !important;
+  }
+  
+  .landing-page .btn-primary,
+  .cta-primary,
+  .landing-button {
+    width: auto !important;
+    min-width: 250px !important;
+    padding: 1.5rem 3rem !important;
+    font-size: 1.3rem !important;
+    min-height: 64px !important;
+  }
+  
+  button, .btn, .button {
+    padding: 1.5rem 3rem !important;
+    font-size: 1.3rem !important;
+    max-width: 600px !important;
+    min-height: 64px !important;
   }
 }
 
@@ -348,29 +883,55 @@ body.landing-page-body {
   }
 }
 
-/* Focus states for accessibility */
-.landing-button:focus {
-  outline: 3px solid var(--accent-500);
-  outline-offset: 2px;
+/* Universal full viewport coverage for all page components */
+.page-container, 
+.main-content, 
+.content-wrapper,
+.page-wrapper,
+[class*="page-"],
+[class*="Page-"],
+[class*="game-"],
+[class*="Game-"],
+div[data-testid*="page"],
+div[id*="page"] {
+  min-height: 100vh !important;
+  width: 100% !important;
+  margin: 0 !important;
+  background: inherit !important;
+  position: relative !important;
 }
 
-/* App Container Styles */
+/* Ensure full coverage for body when different page classes are applied */
+body.signup-page-body,
+body.login-page-body,
+body.game-page-body,
+body.blockly-page-body,
+body.open-world-page-body,
+body.kubo-page-body,
+body.not-found-page-body {
+  background: var(--bg-secondary) !important;
+  background-attachment: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* App Container Styles - Full Viewport Coverage */
 .app-container {
-  background: var(--bg-main);
-  background-image: 
-    /* Matrix-like grid pattern */
-    linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px),
-    /* Tech glow effects */
-    radial-gradient(circle at 20% 80%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
-  background-size: 50px 50px, 50px 50px, 800px 800px, 600px 600px;
+  background: var(--bg-secondary);
   background-attachment: fixed;
-  color: var(--text-light);
+  color: var(--text-primary);
   min-height: 100vh;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  padding-top: 0; /* Remove padding since navbar is fixed */
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* Responsive padding adjustments for navbar height changes */
@@ -402,3 +963,1142 @@ body.landing-page-body {
   .main-content {
     background: var(--neutral-800);
   }
+
+/* Terrain Designer Styles */
+.terrain-designer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg-main);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+}
+
+.terrain-designer h2 {
+  color: var(--text-primary);
+  text-align: center;
+  margin: 0;
+  padding: 1rem;
+  background: var(--bg-card);
+  border-bottom: 2px solid var(--primary-500);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.terrain-designer-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.terrain-designer-sidebar {
+  width: 300px;
+  background: var(--bg-card);
+  border-right: 2px solid var(--primary-300);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
+.terrain-designer-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: var(--bg-light);
+  border-bottom: 1px solid var(--primary-300);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.toolbar button {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid var(--primary-500);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.toolbar button:hover {
+  background: var(--primary-100);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.toolbar button.active {
+  background: var(--primary-500);
+  color: white;
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
+}
+
+.toolbar .action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.toolbar .action-buttons button {
+  padding: 0.5rem 1rem;
+  font-size: 12px;
+}
+
+.palette {
+  padding: 1rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.palette h3 {
+  color: var(--text-primary);
+  margin: 0 0 1rem 0;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.5rem;
+  background: var(--primary-100);
+  border-radius: 6px;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: 8px;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.tiles img {
+  width: 48px;
+  height: 48px;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+  object-fit: cover;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tiles img:hover {
+  border-color: var(--primary-400);
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.tiles img.selected {
+  border-color: var(--primary-500);
+  background: var(--primary-50);
+  box-shadow: 0 0 12px rgba(22, 163, 74, 0.4);
+  transform: scale(1.1);
+}
+
+.grid-container {
+  flex: 1;
+  overflow: auto;
+  padding: 1rem;
+  background: var(--bg-light);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.grid {
+  border: 3px solid var(--primary-500);
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.grid-row {
+  display: flex;
+}
+
+.grid-cell {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e0e0e0;
+  position: relative;
+  background: #f8f9fa;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.grid-cell:hover {
+  background: var(--primary-50);
+  border-color: var(--primary-300);
+}
+
+.grid-cell img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.grid-cell .obstacle-img {
+  width: 80%;
+  height: 80%;
+  top: 10%;
+  left: 10%;
+  z-index: 2;
+}
+
+.grid-controls {
+  padding: 1rem;
+  background: var(--bg-card);
+  border-top: 2px solid var(--primary-300);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.grid-controls p {
+  margin: 0.5rem 0;
+}
+
+.mode-indicator {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: var(--primary-500);
+  color: white;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+/* Loading and Error States */
+/* Terrain Designer Styles */
+.terrain-designer {
+  padding: 0.5rem;
+  height: 100vh;
+  background: var(--bg-light);
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.terrain-designer h2 {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  color: var(--primary-600);
+  flex-shrink: 0;
+  font-size: 1.5rem;
+}
+
+.terrain-designer-content {
+  display: flex;
+  gap: 0.75rem;
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  align-items: flex-start;
+  flex: 1;
+  min-height: 0;
+  height: calc(100vh - 3rem);
+}
+
+.terrain-designer-sidebar {
+  width: 350px;
+  background: var(--bg-card);
+  border-radius: 8px;
+  padding: 1rem;
+  height: 100%;
+  box-shadow: var(--shadow-md);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.terrain-designer-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+  min-height: 500px;
+}
+
+.toolbar {
+  background: var(--bg-card);
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+.toolbar button {
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--primary-300);
+  background: var(--bg-light);
+  color: var(--text-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.toolbar button:hover {
+  background: var(--primary-100);
+  border-color: var(--primary-400);
+}
+
+.toolbar button.active {
+  background: var(--primary-500);
+  color: white;
+  border-color: var(--primary-600);
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.palette {
+  background: var(--bg-card);
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border: 2px solid var(--primary-200);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 250px;
+  max-height: 400px;
+}
+
+.palette h3 {
+  color: var(--primary-600);
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.5rem;
+  background: var(--primary-100);
+  border-radius: 6px;
+}
+
+.tiles-container {
+  background: var(--bg-light);
+  border-radius: 6px;
+  padding: 0.75rem;
+  border: 1px solid var(--primary-200);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.tiles-count {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: 6px;
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid var(--primary-200);
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-400) var(--primary-100);
+  min-height: 150px;
+  max-height: 400px;
+}
+
+/* Custom scrollbar for webkit browsers */
+.tiles::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tiles::-webkit-scrollbar-track {
+  background: var(--primary-100);
+  border-radius: 4px;
+}
+
+.tiles::-webkit-scrollbar-thumb {
+  background: var(--primary-400);
+  border-radius: 4px;
+}
+
+.tiles::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-500);
+}
+
+.tiles img {
+  width: 48px !important;
+  height: 48px !important;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+  object-fit: cover;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.tiles img:hover {
+  border-color: var(--primary-400);
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.tiles img.selected {
+  border-color: var(--primary-500);
+  background: var(--primary-50);
+  box-shadow: 0 0 12px rgba(22, 163, 74, 0.4);
+  transform: scale(1.1);
+}
+
+.grid-container {
+  flex: 1;
+  overflow: auto;
+  padding: 0.5rem;
+  background: var(--bg-light);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 400px;
+  height: 100%;
+}
+
+.grid {
+  border: 2px solid var(--primary-400);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  background: #f0f0f0;
+  width: auto;
+  height: auto;
+}
+
+.grid-row {
+  display: flex;
+}
+
+.grid-cell {
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
+  background: #eee;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.grid-cell:hover {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: var(--primary-400);
+}
+
+.grid-cell img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+}
+
+.grid-cell .obstacle-img {
+  width: 80%;
+  height: 80%;
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  object-fit: contain;
+}
+
+.grid-controls {
+  background: var(--bg-card);
+  padding: 0.5rem;
+  border-radius: 6px;
+  margin-top: 0.5rem;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+.grid-controls p {
+  margin: 0.15rem 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.mode-indicator {
+  background: var(--primary-500);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.5rem;
+  background: var(--primary-100);
+  border-radius: 6px;
+}
+
+.loading-tiles {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  font-size: 1.2rem;
+  color: var(--primary-600);
+  background: var(--bg-card);
+  border-radius: 8px;
+  margin: 2rem;
+  padding: 2rem;
+  text-align: center;
+  font-style: italic;
+}
+
+.error-message {
+  background: #fee;
+  border: 1px solid #fcc;
+  color: #c33;
+  padding: 1rem;
+  border-radius: 6px;
+  margin: 1rem;
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .terrain-designer-content {
+    flex-direction: column;
+  }
+  
+  .terrain-designer-sidebar {
+    width: 100%;
+    height: 200px;
+    border-right: none;
+    border-bottom: 2px solid var(--primary-300);
+  }
+  
+  .palette {
+    padding: 0.5rem;
+  }
+  
+  .tiles {
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+    gap: 4px;
+  }
+  
+  .tiles img {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .grid-cell {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .toolbar {
+    padding: 0.5rem;
+  }
+  
+  .toolbar button {
+    padding: 0.5rem 1rem;
+    font-size: 12px;
+  }
+  
+  .terrain-designer-sidebar {
+    height: 150px;
+  }
+  
+  .grid-cell {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Level Controls */
+.level-controls {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border-radius: 8px;
+  border: 2px solid var(--primary-200);
+}
+
+.level-controls h3 {
+  color: var(--primary-600);
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.level-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: column;
+}
+
+.level-buttons button {
+  padding: 0.75rem;
+  border: 2px solid var(--primary-300);
+  background: var(--bg-light);
+  color: var(--text-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.level-buttons button:hover {
+  background: var(--primary-100);
+  border-color: var(--primary-400);
+}
+
+.level-buttons button.active {
+  background: var(--primary-500);
+  color: white;
+  border-color: var(--primary-600);
+}
+
+/* Cave Controls */
+.cave-controls {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border-radius: 8px;
+  border: 2px solid var(--accent-200);
+}
+
+.cave-controls h3 {
+  color: var(--accent-600);
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.cave-controls button {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--accent-300);
+  background: var(--bg-light);
+  color: var(--text-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.cave-controls button:hover {
+  background: var(--accent-100);
+  border-color: var(--accent-400);
+}
+
+.cave-controls button.active {
+  background: var(--accent-500);
+  color: white;
+  border-color: var(--accent-600);
+}
+
+.connection-help {
+  background: var(--warning-100);
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--warning-300);
+  margin: 0.5rem 0;
+}
+
+.connection-help p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+  color: var(--warning-700);
+}
+
+.connection-list {
+  margin-top: 0.5rem;
+}
+
+.connection-list h4 {
+  color: var(--accent-600);
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+}
+
+.connection-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--accent-50);
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.connection-item button {
+  background: var(--danger-500);
+  color: white;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  width: auto;
+  margin: 0;
+}
+
+.connection-item button:hover {
+  background: var(--danger-600);
+}
+
+/* Grid Cell Enhancements */
+.grid-cell.cave-entrance {
+  border: 3px solid #ff6b35 !important;
+  box-shadow: 0 0 8px rgba(255, 107, 53, 0.5);
+  background: rgba(255, 107, 53, 0.1) !important;
+}
+
+.grid-cell.connecting {
+  cursor: crosshair !important;
+}
+
+.grid-cell.connecting:hover {
+  background: rgba(34, 197, 94, 0.2) !important;
+  border-color: #22c55e !important;
+}
+
+/* Level and Connecting Indicators */
+.level-indicator {
+  background: var(--accent-500);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.connecting-indicator {
+  background: var(--warning-500);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+/* Crystal Collection Modal Styles */
+.crystal-info {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: white;
+}
+
+.crystal-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.crystal-visual img {
+  animation: crystal-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes crystal-glow {
+  from {
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+  }
+  to {
+    filter: drop-shadow(0 4px 16px rgba(102, 126, 234, 0.6));
+  }
+}
+
+/* Game Terrain Styles */
+.game-terrain {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background: var(--bg-light);
+  min-height: 100vh;
+}
+
+.level-indicator {
+  background: var(--bg-card);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 2px solid var(--primary-300);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.level-indicator h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--primary-600);
+}
+
+.level-indicator p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.terrain-grid {
+  border: 2px solid var(--primary-400);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: #8B7355;
+}
+
+.terrain-row {
+  display: flex;
+}
+
+.terrain-cell {
+  width: 32px;
+  height: 32px;
+  position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.terrain-cell.cave-entrance {
+  animation: cave-pulse 2s ease-in-out infinite;
+}
+
+@keyframes cave-pulse {
+  0%, 100% {
+    box-shadow: 0 0 4px rgba(255, 107, 53, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(255, 107, 53, 0.9);
+  }
+}
+
+.cave-entrance-indicator {
+  animation: cave-glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes cave-glow {
+  from {
+    background: rgba(255, 107, 53, 0.2);
+  }
+  to {
+    background: rgba(255, 107, 53, 0.4);
+  }
+}
+
+.controls-hint {
+  margin-top: 1rem;
+  background: var(--info-100);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--info-300);
+  text-align: center;
+  max-width: 600px;
+}
+
+.controls-hint p {
+  margin: 0.25rem 0;
+  color: var(--info-700);
+  font-size: 0.9rem;
+}
+
+/* Terrain Game Demo Styles */
+.terrain-game-demo {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.demo-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.demo-header h1 {
+  color: var(--primary-600);
+  margin: 0 0 0.5rem 0;
+}
+
+.demo-header p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.demo-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border-radius: 8px;
+  border: 2px solid var(--primary-200);
+}
+
+.file-loader h3 {
+  color: var(--primary-600);
+  margin: 0 0 0.5rem 0;
+}
+
+.game-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.info-item {
+  padding: 0.5rem;
+  background: var(--primary-50);
+  border-radius: 4px;
+  color: var(--primary-700);
+  font-size: 0.9rem;
+}
+
+.demo-instructions {
+  background: var(--info-50);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 2px solid var(--info-200);
+  margin-bottom: 2rem;
+}
+
+.demo-instructions h3 {
+  color: var(--info-600);
+  margin: 0 0 1rem 0;
+}
+
+.demo-instructions ol {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.demo-instructions li {
+  margin-bottom: 0.5rem;
+  color: var(--info-700);
+}
+
+.no-terrain {
+  text-align: center;
+  padding: 3rem;
+  background: var(--warning-50);
+  border-radius: 8px;
+  border: 2px solid var(--warning-200);
+  color: var(--warning-700);
+}
+
+.collected-crystals {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--success-50);
+  border-radius: 8px;
+  border: 2px solid var(--success-200);
+}
+
+.collected-crystals h3 {
+  color: var(--success-600);
+  margin: 0 0 1rem 0;
+}
+
+.crystal-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.crystal-item {
+  background: var(--success-100);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--success-300);
+  color: var(--success-700);
+  font-size: 0.9rem;
+}
+
+/* Level and Cave Controls */
+.level-controls, .cave-controls {
+  background: var(--primary-50);
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--primary-200);
+  flex-shrink: 0;
+}
+
+.level-controls h3, .cave-controls h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  color: var(--primary-700);
+}
+
+.level-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.level-buttons button {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--primary-300);
+  border-radius: 4px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.level-buttons button.active {
+  background: var(--primary-500);
+  color: white;
+  border-color: var(--primary-600);
+}
+
+.cave-controls button {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--primary-300);
+  border-radius: 4px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.cave-controls button.active {
+  background: var(--warning);
+  color: white;
+}
+
+/* Grid Size Controls */
+.grid-size-controls {
+  background: var(--accent-50);
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--accent-200);
+  flex-shrink: 0;
+}
+
+.grid-size-controls h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  color: var(--accent-700);
+}
+
+.grid-size-controls h4 {
+  margin: 0.75rem 0 0.5rem 0;
+  font-size: 0.8rem;
+  color: var(--accent-600);
+}
+
+.size-inputs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 80px;
+}
+
+.input-group label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.input-group input {
+  padding: 0.4rem;
+  border: 1px solid var(--primary-300);
+  border-radius: 4px;
+  background: white;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  width: 100%;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
+}
+
+.export-size {
+  border-top: 1px solid var(--accent-300);
+  padding-top: 0.5rem;
+}
+
+.export-info {
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.export-info small {
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+}
+
+.preset-sizes {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.preset-sizes button {
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--accent-400);
+  border-radius: 3px;
+  background: var(--accent-100);
+  color: var(--accent-700);
+  cursor: pointer;
+  font-size: 0.7rem;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.preset-sizes button:hover {
+  background: var(--accent-200);
+  border-color: var(--accent-500);
+}

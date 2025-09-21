@@ -15,14 +15,29 @@ export const isWalkable = (x, y, terrain, customWorld = null) => {
   const chunkKey = `${chunkX},${chunkY}`;
   
   const chunk = terrain.get(chunkKey);
-  if (!chunk) return false;
+  if (!chunk) {
+    console.log('🚫 No chunk found for:', { x, y, tileX, tileY, chunkX, chunkY, chunkKey, terrainSize: terrain.size });
+    return false;
+  }
   
   const localX = tileX % GAME_CONFIG.CHUNK_SIZE;
   const localY = tileY % GAME_CONFIG.CHUNK_SIZE;
   const tile = chunk.find(t => t.x % GAME_CONFIG.CHUNK_SIZE === localX && t.y % GAME_CONFIG.CHUNK_SIZE === localY);
   
+  if (!tile) {
+    console.log('🚫 No tile found at position:', { 
+      x, y, tileX, tileY, localX, localY, 
+      chunkSize: chunk.length,
+      sampleTiles: chunk.slice(0, 3).map(t => ({ x: t.x, y: t.y, type: t.type }))
+    });
+    return false;
+  }
+  
   const terrainWalkable = tile ? TERRAIN_TYPES[tile.type].walkable : false;
-  if (!terrainWalkable) return false;
+  if (!terrainWalkable) {
+    console.log('🚫 Terrain not walkable:', { tile: tile.type, walkable: terrainWalkable });
+    return false;
+  }
   
   // Check for unwalkable objects like trees in custom world
   if (customWorld && customWorld.objects) {

@@ -5,6 +5,7 @@ import { signInWithEmailAndPassword, signInAnonymously } from 'firebase/auth';
 import { getDoc, doc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import Navbar from './Navbar';
+import { Person, School, Warning } from '@mui/icons-material';
 import './LoginPage.css';
 
 const LoginPage = () => {
@@ -63,20 +64,20 @@ const LoginPage = () => {
               className={!isTeacher ? 'active' : ''}
               onClick={() => setIsTeacher(false)}
             >
-              👦 Student
+              <Person sx={{ marginRight: '8px', fontSize: '1.2rem' }} /> Student
             </button>
             <button
               type="button"
               className={isTeacher ? 'active' : ''}
               onClick={() => setIsTeacher(true)}
             >
-              👩‍🏫 Teacher
+              <School sx={{ marginRight: '8px', fontSize: '1.2rem' }} /> Teacher
             </button>
           </div>
 
           <h2>{isTeacher ? 'Teacher Login' : 'Student Login'}</h2>
           
-          {error && <p className="error-msg">⚠️ {error}</p>}
+          {error && <p className="error-msg"><Warning sx={{ marginRight: '8px', fontSize: '1.1rem' }} /> {error}</p>}
           
           <input
             type="text"

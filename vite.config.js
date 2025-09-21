@@ -1,16 +1,22 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
+import react from "@vitejs/plugin-react"
+import { defineConfig } from "vite"
+import path from "path"
+ 
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
   server: {
     host: true,
-    port: 5174,
+    port: 5176,
     hmr: {
-      port: 5174,
-      host: 'localhost'
-    }
+      port: 5176,
+    },
   },
+
   build: {
     rollupOptions: {
       output: {

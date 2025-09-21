@@ -13,7 +13,7 @@ html, body {
 /* Main container for Kubo Terrain Game */
 .kubo-theme {
   width: 100%;
-  max-width: 100vw;
+  height: 100%;
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   background-image: url('../assets/kubo-game-background.svg');
@@ -28,6 +28,7 @@ html, body {
   box-sizing: border-box;
   font-family: 'Comic Sans MS', cursive, sans-serif;
   overflow-x: hidden;
+  /* Allow page to scroll normally */
   overflow-y: auto;
 }
 
@@ -35,21 +36,25 @@ html, body {
 .scratch-workspace {
   width: 100%;
   max-width: 1400px;
-  height: calc(1200px - 160px); /* Adjusted for navbar space */
+  /* Allow container to grow with content */
+  min-height: calc(100vh - 120px);
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
   padding: 15px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 3px solid #2196F3;
   display: grid;
+  /* Two columns: left palette, right stage; header and scripts span both */
   grid-template-areas: 
-    "info info info"
-    "palette stage stage"
-    "scripts scripts scripts";
-  grid-template-rows: auto 1fr auto;
+    "info info"
+    "palette stage"
+    "scripts scripts";
+  /* Reserve space for each row so all components are visible */
+  grid-template-rows: minmax(56px, auto) minmax(38vh, 1fr) minmax(20vh, auto);
   grid-template-columns: 280px 1fr;
   gap: 15px;
-  overflow: hidden;
+  /* Enable internal scroll if content overflows */
+  overflow: visible;
   box-sizing: border-box;
 }
 
@@ -63,25 +68,27 @@ html, body {
   border-radius: 15px;
   padding: 20px;
   box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
-  overflow: auto;
-  max-height: 70vh;
+  /* Allow stage area to grow with content */
+  overflow: visible;
 }
 
 /* Game info header */
 .kubo-game-info {
   grid-area: info;
   display: flex;
-  gap: 15px;
+  gap: 12px;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   padding: 10px 0;
   max-width: 100%;
   box-sizing: border-box;
+  /* Header stays visible without its own scrollbar */
+  overflow: hidden;
 }
 
 .level-info {
-  margin-bottom: 15px;
+  margin-bottom: 6px;
   padding: 10px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 8px;
@@ -118,7 +125,7 @@ html, body {
   color: #f0f0f0;
 }
 
-.kubo-mission, .kubo-score, .kubo-difficulty {
+.kubo-mission, .kubo-score, .kubo-difficulty, .crystal-counter, .level-crystal-counter {
   background: white;
   padding: 8px 15px;
   border-radius: 15px;
@@ -126,6 +133,158 @@ html, body {
   border: 2px solid #4CAF50;
   font-size: 14px;
   white-space: nowrap;
+}
+
+.crystal-counter {
+  border-color: #9C27B0;
+  background: linear-gradient(135deg, #E1BEE7, #F3E5F5);
+}
+
+.level-crystal-counter {
+  border-color: #FF6B35;
+  background: linear-gradient(135deg, #FFE0B2, #FFF3E0);
+  color: #E65100;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 2px solid;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.level-crystal-counter.complete {
+  border-color: #4CAF50;
+  background: linear-gradient(135deg, #C8E6C9, #E8F5E8);
+  color: #2E7D32;
+  animation: celebration-glow 2s ease-in-out infinite alternate;
+}
+
+/* Crystal Progress Bar */
+.crystal-progress {
+  margin: 8px 0;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  border: 2px solid #9C27B0;
+}
+
+.crystal-progress-label {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #6A1B9A;
+  font-size: 14px;
+}
+
+.crystal-progress-bar {
+  width: 100%;
+  height: 20px;
+  background: #f0f0f0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  margin-bottom: 8px;
+}
+
+.crystal-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #9C27B0, #E1BEE7);
+  transition: width 0.5s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.crystal-progress-text {
+  text-align: center;
+  font-weight: bold;
+  color: #6A1B9A;
+  font-size: 14px;
+}
+
+@keyframes celebration-glow {
+  0% {
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.8);
+  }
+}
+
+@keyframes crystal-collect-float {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -100px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -150px) scale(0.8);
+  }
+}
+
+.crystal-counter .crystal-icon {
+  color: #9C27B0;
+  margin-right: 8px;
+  font-size: 16px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.crystal-counter .crystal-count {
+  color: #6A1B9A;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Tile limit warning styles */
+.tile-limit-warning {
+  color: #FF6600 !important;
+  font-weight: bold;
+  animation: pulse 1s infinite;
+}
+
+.tile-limit-caution {
+  color: #FF9800 !important;
+  font-weight: bold;
+}
+
+.tile-limit-exceeded {
+  color: #FF0000;
+  font-weight: bold;
+  margin-left: 10px;
+  animation: blink 0.8s infinite;
+}
+
+.efficiency-hint {
+  color: #2196F3;
+  font-weight: bold;
+  margin-left: 10px;
+  animation: glow 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes glow {
+  0% { opacity: 1; text-shadow: 0 0 5px #2196F3; }
+  50% { opacity: 0.8; text-shadow: 0 0 10px #2196F3; }
+  100% { opacity: 1; text-shadow: 0 0 5px #2196F3; }
 }
 
 .mission-label, .score-label {
@@ -156,8 +315,9 @@ html, body {
   padding: 15px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   border: 3px solid #4CAF50;
-  overflow-y: auto;
-  max-height: 100%;
+  /* Palette can scroll within the workspace */
+  overflow: auto;
+  min-height: 0;
 }
 
 .palette-header {
@@ -207,25 +367,27 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   background: rgba(255, 255, 255, 0.95);
   border-radius: 15px;
   padding: 15px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   border: 3px solid #2196F3;
   position: relative;
-  overflow: hidden;
+  /* Scroll stage content if necessary */
+  overflow: auto;
+  min-height: 0;
 }
 
 .game-canvas-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   position: relative;
   width: 100%;
-  height: 100%;
-  overflow: hidden;
+  height: auto;
+  overflow: visible;
   /* Removed cursor grab/grabbing styles */
 }
 
@@ -260,9 +422,6 @@ html, body {
 .zoom-btn {
   width: 40px;
   height: 40px;
-  border: 2px solid #2196F3;
-  background: white;
-  border-radius: 8px;
   font-size: 18px;
   font-weight: bold;
   color: #2196F3;
@@ -303,7 +462,9 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  overflow: hidden;
+  /* Scripts section scrolls internally */
+  min-height: 20vh;
+  overflow: auto;
 }
 
 .scripts-header {
@@ -328,15 +489,15 @@ html, body {
   gap: 15px;
   align-items: center;
   height: 80px;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .program-sequence {
   flex: 1;
   display: flex;
   align-items: center;
-  overflow-x: auto;
-  overflow-y: hidden;
+  /* Avoid internal scrollbars; allow wrapping and let page scroll */
+  overflow: auto;
   padding: 5px;
   min-height: 70px;
   background: rgba(255, 152, 0, 0.05);
@@ -719,15 +880,80 @@ html, body {
   z-index: 10;
 }
 
-/* Game cells - MISSING STYLES ADDED */
+/* Game cells - Seamless terrain styling */
 .game-cell {
   position: absolute;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: none; /* Removed borders for seamless appearance */
   box-sizing: border-box;
   transition: all 0.2s ease;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Terrain obstacle styling with vibrant backgrounds */
+.terrain-obstacle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: contain !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  pointer-events: none;
+  z-index: 2;
+  /* Add subtle drop shadow for depth */
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+  transition: transform 0.2s ease;
+  /* Vibrant background color support */
+  border-radius: 8px;
+  padding: 4px;
+}
+
+/* Grass decoration styling */
+.grass-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: contain !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.grass-decoration:hover {
+  opacity: 1;
+}
+
+.terrain-obstacle:hover {
+  transform: scale(1.05);
+}
+
+.terrain-crystal {
+  filter: drop-shadow(0 0 8px rgba(147, 51, 234, 0.6));
+  text-shadow: 0 0 10px rgba(147, 51, 234, 0.8);
+}
+
+@keyframes crystal-glow {
+  0% {
+    filter: drop-shadow(0 0 8px rgba(147, 51, 234, 0.6));
+    text-shadow: 0 0 10px rgba(147, 51, 234, 0.8);
+    transform: scale(1);
+  }
+  100% {
+    filter: drop-shadow(0 0 15px rgba(147, 51, 234, 0.9));
+    text-shadow: 0 0 20px rgba(147, 51, 234, 1);
+    transform: scale(1.1);
+  }
 }
 
 .game-cell.car-cell {
@@ -769,9 +995,10 @@ html, body {
 /* Fix game stats styling */
 .game-stats {
   display: flex;
-  gap: 15px;
+  gap: 10px;
   align-items: center;
   flex-wrap: wrap;
+  margin-top: 4px;
 }
 
 .game-stats span {
@@ -911,7 +1138,8 @@ html, body {
   border: 2px dashed #FF9800;
   border-radius: 10px;
   min-height: 80px;
-  overflow-x: auto;
+  /* No internal scrollbar */
+  overflow: visible;
   flex-wrap: wrap;
 }
 
@@ -1035,13 +1263,13 @@ html, body {
       "info info"
       "stage stage"
       "palette scripts";
-    grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto auto auto;
     gap: 8px;
   }
   
   .scratch-blocks-palette {
-    max-height: 200px;
-    overflow-y: auto;
+  max-height: 200px;
+  overflow: auto;
   }
   
   .tiles-grid {
@@ -1067,11 +1295,12 @@ html, body {
       "palette"
       "scripts";
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto 1fr;
+  grid-template-rows: auto auto auto auto;
   }
   
   .scratch-blocks-palette {
-    max-height: 150px;
+  max-height: 250px;
+  overflow: auto;
   }
   
   .category-header.clickable {
@@ -1092,6 +1321,72 @@ html, body {
   align-items: center;
   justify-content: center;
   z-index: 1000;
+}
+
+/* Achievement notification styling */
+.achievement-notification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #FFD700, #FFA000);
+  color: #333;
+  padding: 30px 40px;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  text-align: center;
+  border: 3px solid #FF8F00;
+  animation: achievementPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.achievement-notification h2 {
+  margin: 0 0 15px 0;
+  font-size: 28px;
+  font-weight: bold;
+  color: #E65100;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.achievement-notification p {
+  margin: 0 0 20px 0;
+  font-size: 16px;
+  color: #BF360C;
+  font-weight: 500;
+}
+
+.achievement-notification button {
+  padding: 12px 24px;
+  border: 2px solid #FF6F00;
+  background: #FF8F00;
+  color: white;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 143, 0, 0.3);
+}
+
+.achievement-notification button:hover {
+  background: #FF6F00;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 143, 0, 0.4);
+}
+
+@keyframes achievementPop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3) rotate(-10deg);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
 }
 
 .popup-content {
@@ -1131,6 +1426,8 @@ html, body {
   background: #66BB6A;
   transform: translateY(-2px);
 }
+
+/* Removed global safe-space overrides to restore original Kubo styling */
 
 /* Loop Container Styles */
 .loop-container {
@@ -1289,12 +1586,11 @@ html, body {
       "stage"
       "scripts";
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto 1fr auto;
+    /* Ensure stage and scripts remain visible on small screens */
+    grid-template-rows: minmax(48px, auto) minmax(150px, auto) minmax(32vh, 1fr) minmax(24vh, auto);
   }
   
-  .scratch-blocks-palette {
-    max-height: 200px;
-  }
+  .scratch-blocks-palette { max-height: 200px; }
   
   .kubo-game-info {
     flex-direction: column;
@@ -1320,4 +1616,487 @@ html, body {
 .popup-content button:hover {
   background: #66BB6A;
   transform: translateY(-2px);
+}
+
+/* Removed temporary program sequence override to use base styles */
+
+/* Kubo Jigsaw Tile Layout */
+.kubo-game-container {
+  display: grid;
+  grid-template-areas: 
+    "controls canvas"
+    "program program";
+  grid-template-columns: 300px 1fr;
+  grid-template-rows: 1fr auto;
+  gap: 20px;
+  width: 100%;
+  height: calc(100vh - 120px);
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.kubo-controls-panel {
+  grid-area: controls;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 20px;
+  border: 2px solid #2196F3;
+  overflow-y: auto;
+}
+
+.kubo-game-canvas {
+  grid-area: canvas;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 20px;
+  border: 2px solid #4CAF50;
+  display: flex;
+  flex-direction: column;
+}
+
+.kubo-program-area {
+  grid-area: program;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 20px;
+  border: 2px solid #FF9800;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+/* Jigsaw Puzzle Tiles - Horizontal Layout */
+.jigsaw-tiles-horizontal {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.jigsaw-tile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  height: 50px;
+  background: #4CAF50;
+  color: white;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  user-select: none;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 0 15px;
+}
+
+/* Jigsaw puzzle shape effect */
+.jigsaw-tile::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background: inherit;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.jigsaw-tile::after {
+  content: '';
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.jigsaw-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  filter: brightness(110%);
+}
+
+.jigsaw-tile:active,
+.jigsaw-tile.clicked {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.jigsaw-tile.dragging {
+  opacity: 0.7;
+  transform: rotate(5deg);
+}
+
+.tile-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 2;
+  position: relative;
+}
+
+.tile-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.tile-name {
+  font-size: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.tile-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-bottom: 5px;
+}
+
+.tile-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.9);
+}
+
+/* Control sections */
+.movement-controls,
+.math-controls,
+.loop-controls {
+  margin: 15px 0;
+  padding: 10px;
+  border: 1px solid #E0E0E0;
+  border-radius: 10px;
+  background: rgba(248, 249, 250, 0.8);
+}
+
+.movement-controls h4,
+.math-controls h4,
+.loop-controls h4 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.level-info {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(240, 248, 255, 0.9);
+  border-radius: 10px;
+  border: 1px solid #2196F3;
+}
+
+.level-info h3 {
+  margin: 0 0 10px 0;
+  color: #1976D2;
+  font-size: 18px;
+}
+
+.level-description {
+  color: #666;
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+.level-controls {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.level-controls button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #2196F3;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.level-controls button:hover:not(:disabled) {
+  background: #1976D2;
+  transform: translateY(-2px);
+}
+
+.level-controls button:disabled {
+  background: #BDBDBD;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Game canvas styles */
+.game-canvas-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.game-grid {
+  gap: 0px;
+  border: 3px solid #333;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  width: fit-content;
+  height: fit-content;
+}
+
+.terrain-tile {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #8BC34A;
+  position: relative;
+  transition: all 0.3s ease;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: none;
+}
+
+.terrain-tile:hover {
+  transform: scale(1.05);
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.terrain-tile.wall {
+  background: #795548;
+}
+
+.terrain-tile.water {
+  background: #2196F3;
+}
+
+.terrain-tile.crystal {
+  background: #8BC34A;
+}
+
+.terrain-tile.target {
+  background: #FFEB3B;
+}
+
+.game-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(240, 248, 255, 0.9);
+  border-radius: 8px;
+  border: 1px solid #2196F3;
+}
+
+.game-stats span {
+  font-weight: bold;
+  color: #1976D2;
+}
+
+/* Program area styles */
+.program-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.program-header h3 {
+  margin: 0;
+  color: #E65100;
+  font-size: 20px;
+}
+
+.program-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.program-controls button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.program-controls button:nth-child(1) {
+  background: #4CAF50;
+  color: white;
+}
+
+.program-controls button:nth-child(2) {
+  background: #FF9800;
+  color: white;
+}
+
+.program-controls button:nth-child(3) {
+  background: #F44336;
+  color: white;
+}
+
+.program-controls button:nth-child(4) {
+  background: #2196F3;
+  color: white;
+}
+
+.program-controls button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(110%);
+}
+
+.program-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.programming-workspace {
+  margin-top: 15px;
+}
+
+.program-sequence {
+  min-height: 100px;
+  border: 2px dashed #E0E0E0;
+  border-radius: 10px;
+  padding: 15px;
+  background: rgba(250, 250, 250, 0.8);
+  transition: all 0.3s ease;
+}
+
+.program-sequence:hover {
+  border-color: #FF9800;
+  background: rgba(255, 248, 225, 0.9);
+}
+
+.empty-program {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 20px;
+}
+
+.empty-program p {
+  margin: 5px 0;
+}
+
+.sequence-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.game-message {
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.game-message.info {
+  background: #E3F2FD;
+  color: #1976D2;
+  border: 1px solid #2196F3;
+}
+
+.game-message.error {
+  background: #FFEBEE;
+  color: #C62828;
+  border: 1px solid #F44336;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .kubo-game-container {
+    grid-template-areas: 
+      "controls"
+      "canvas"
+      "program";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+  
+  .kubo-controls-panel {
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .kubo-theme {
+    padding: 60px 5px 5px 5px;
+  }
+  
+  .kubo-game-container {
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  .jigsaw-tiles-horizontal {
+    gap: 5px;
+  }
+  
+  .jigsaw-tile {
+    min-width: 100px;
+    height: 45px;
+    font-size: 12px;
+  }
+  
+  .level-controls {
+    flex-direction: column;
+  }
+  
+  .program-controls {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
+  .program-controls button {
+    flex: 1;
+    min-width: 80px;
+  }
+}
+
+@keyframes crystal-glow {
+  from {
+    filter: drop-shadow(0 0 8px rgba(147, 51, 234, 0.6));
+    transform: scale(1);
+  }
+  to {
+    filter: drop-shadow(0 0 15px rgba(147, 51, 234, 0.9));
+    transform: scale(1.1);
+  }
 }

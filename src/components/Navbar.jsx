@@ -9,14 +9,15 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
+import Menu from '@mui/icons-material/Menu';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
+import RocketLaunch from '@mui/icons-material/RocketLaunch';
 
-import './Navbar.css';
+// import './Navbar.css';
 
 const Navbar = () => {
   const location = useLocation();
@@ -48,14 +49,14 @@ const Navbar = () => {
           my: 3, 
           color: 'white', 
           fontWeight: 900,
-          textShadow: '0 2px 10px rgba(124, 58, 237, 0.5)',
+          textShadow: '0 2px 10px rgba(22, 163, 74, 0.5)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           gap: 1
         }}
       >
-        <span style={{ fontSize: '1.5rem' }}>🚀</span>
+        <RocketLaunch sx={{ fontSize: '1.5rem', color: 'var(--primary-400)' }} />
         BrainQuests
       </Typography>
       <List sx={{ mt: 4 }}>
@@ -73,10 +74,10 @@ const Navbar = () => {
               py: 1.5,
               transition: 'all 0.3s ease',
               '&:hover': {
-                background: 'rgba(124, 58, 237, 0.2)',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 4px 15px rgba(124, 58, 237, 0.3)'
-              }
+                  background: 'rgba(22, 163, 74, 0.2)',
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 15px rgba(22, 163, 74, 0.3)'
+                }
             }}
           >
             <ListItemText 
@@ -98,16 +99,16 @@ const Navbar = () => {
             sx={{ 
               textAlign: 'center', 
               borderRadius: '12px',
-              background: 'linear-gradient(135deg, rgba(45, 63, 222, 0.8) 0%, rgba(124, 58, 237, 0.8) 100%)',
+              background: 'linear-gradient(135deg, rgba(22, 163, 74, 0.8) 0%, rgba(34, 197, 94, 0.8) 100%)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
               border: '1px solid rgba(255, 255, 255, 0.2)',
               py: 1.5,
               transition: 'all 0.3s ease',
               '&:hover': {
-                background: 'linear-gradient(135deg, rgba(45, 63, 222, 0.9) 0%, rgba(124, 58, 237, 0.9) 100%)',
+                background: 'linear-gradient(135deg, rgba(22, 163, 74, 0.9) 0%, rgba(34, 197, 94, 0.9) 100%)',
                 transform: 'translateY(-2px)',
-                boxShadow: '0 6px 20px rgba(124, 58, 237, 0.4)'
+                boxShadow: '0 6px 20px rgba(22, 163, 74, 0.4)'
               }
             }}
           >
@@ -139,15 +140,15 @@ const Navbar = () => {
         borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
         borderRadius: '0 0 20px 20px',
         boxShadow: scrolled 
-          ? '0 20px 60px rgba(0, 0, 0, 0.3), 0 8px 25px rgba(45, 63, 222, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)' 
-          : '0 15px 45px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(45, 63, 222, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08)',
+          ? '0 20px 60px rgba(0, 0, 0, 0.3), 0 8px 25px rgba(22, 163, 74, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)' 
+          : '0 15px 45px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(22, 163, 74, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08)',
         // Gradient overlay for enhanced glassmorphism
         '&::before': {
           content: '""',
           position: 'absolute',
           inset: 0,
           zIndex: -1,
-          background: 'linear-gradient(135deg, rgba(45, 63, 222, 0.1) 0%, rgba(124, 58, 237, 0.08) 50%, rgba(6, 182, 212, 0.1) 100%)',
+          background: 'linear-gradient(135deg, rgba(22, 163, 74, 0.1) 0%, rgba(34, 197, 94, 0.08) 50%, rgba(16, 185, 129, 0.1) 100%)',
           borderRadius: 'inherit',
           opacity: scrolled ? 0.9 : 1,
         },
@@ -188,15 +189,15 @@ const Navbar = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 1,
-                  textShadow: '0 2px 10px rgba(124, 58, 237, 0.3)',
+                  textShadow: '0 2px 10px rgba(22, 163, 74, 0.3)',
                   transition: 'all 0.3s ease',
                   '&:hover': {
                     transform: 'scale(1.05)',
-                    textShadow: '0 2px 15px rgba(124, 58, 237, 0.5)',
+                    textShadow: '0 2px 15px rgba(22, 163, 74, 0.5)',
                   }
                 }}
               >
-                <span style={{ fontSize: '1.8rem', filter: 'drop-shadow(0 2px 5px rgba(124, 58, 237, 0.4))' }}>🚀</span>
+                <RocketLaunch sx={{ fontSize: '1.8rem', color: 'var(--primary-400)', filter: 'drop-shadow(0 2px 5px rgba(22, 163, 74, 0.4))' }} />
                 <span className="navbar-brand-text">BrainQuests</span>
               </Typography>
             </Link>
@@ -224,8 +225,8 @@ const Navbar = () => {
                 boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
                 transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
                 '&:hover': { 
-                  borderColor: 'rgba(124, 58, 237, 0.8)', 
-                  background: 'rgba(124, 58, 237, 0.1)',
+                  borderColor: 'rgba(22, 163, 74, 0.8)', 
+                  background: 'rgba(22, 163, 74, 0.1)',
                   transform: 'translateY(-2px)',
                   boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)'
                 } 
@@ -240,7 +241,7 @@ const Navbar = () => {
               to="/signup" 
               variant="contained"
               sx={{ 
-                background: 'linear-gradient(135deg, rgba(45, 63, 222, 0.8) 0%, rgba(124, 58, 237, 0.8) 100%)',
+                background: 'linear-gradient(135deg, rgba(22, 163, 74, 0.8) 0%, rgba(34, 197, 94, 0.8) 100%)',
                 backgroundSize: '200% auto',
                 backdropFilter: 'blur(10px)',
                 WebkitBackdropFilter: 'blur(10px)',
@@ -255,7 +256,7 @@ const Navbar = () => {
                 transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
                 '&:hover': { 
                   backgroundPosition: 'right center',
-                  boxShadow: '0 6px 15px rgba(124, 58, 237, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 6px 15px rgba(22, 163, 74, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
                   transform: 'translateY(-2px)'
                 } 
               }}
@@ -279,13 +280,13 @@ const Navbar = () => {
                 border: '1px solid rgba(255, 255, 255, 0.1)',
                 transition: 'all 0.3s ease',
                 '&:hover': {
-                  background: 'rgba(124, 58, 237, 0.2)',
+                  background: 'rgba(22, 163, 74, 0.2)',
                   transform: 'scale(1.05)',
-                  boxShadow: '0 4px 15px rgba(124, 58, 237, 0.3)'
+                  boxShadow: '0 4px 15px rgba(22, 163, 74, 0.3)'
                 }
               }}
             >
-              <MenuIcon sx={{ fontSize: '1.5rem' }} />
+              <Menu sx={{ fontSize: '1.5rem' }} />
             </IconButton>
           </Box>
         </Toolbar>
@@ -313,7 +314,7 @@ const Navbar = () => {
               content: '""',
               position: 'absolute',
               inset: 0,
-              background: 'linear-gradient(135deg, rgba(45, 63, 222, 0.08) 0%, rgba(124, 58, 237, 0.06) 50%, rgba(6, 182, 212, 0.08) 100%)',
+              background: 'linear-gradient(135deg, rgba(22, 163, 74, 0.08) 0%, rgba(34, 197, 94, 0.06) 50%, rgba(16, 185, 129, 0.08) 100%)',
               zIndex: -1
             }
           },

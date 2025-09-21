@@ -1,24 +1,78 @@
 import React, { useEffect, useRef } from 'react';
 import { GAME_CONFIG, TERRAIN_TYPES, WORLD_COLORS } from '../config/gameConfig';
+import { GRASS_BORDER_MAPPING } from '../utils/pixelTerrainAssets';
+import { getGrassTileByPosition, getGrassTileImage, preloadGrassTiles } from '../utils/grassTileLoader';
 
-// Simplified color interpolation for better performance
-const interpolateColor = (color1, color2, ratio) => {
-  const hex1 = color1.replace('#', '');
-  const hex2 = color2.replace('#', '');
+// Helper function to interpolate between two colors
+const interpolateColor = (color1, color2, factor) => {
+  const r1 = parseInt(color1.substring(1, 3), 16);
+  const g1 = parseInt(color1.substring(3, 5), 16);
+  const b1 = parseInt(color1.substring(5, 7), 16);
   
-  const r1 = parseInt(hex1.substr(0, 2), 16);
-  const g1 = parseInt(hex1.substr(2, 2), 16);
-  const b1 = parseInt(hex1.substr(4, 2), 16);
+  const r2 = parseInt(color2.substring(1, 3), 16);
+  const g2 = parseInt(color2.substring(3, 5), 16);
+  const b2 = parseInt(color2.substring(5, 7), 16);
   
-  const r2 = parseInt(hex2.substr(0, 2), 16);
-  const g2 = parseInt(hex2.substr(2, 2), 16);
-  const b2 = parseInt(hex2.substr(4, 2), 16);
+  const r = Math.round(r1 + factor * (r2 - r1));
+  const g = Math.round(g1 + factor * (g2 - g1));
+  const b = Math.round(b1 + factor * (b2 - b1));
   
-  const r = Math.round(r1 + (r2 - r1) * ratio);
-  const g = Math.round(g1 + (g2 - g1) * ratio);
-  const b = Math.round(b1 + (b2 - b1) * ratio);
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+};
+
+// Render grass terrain
+const renderGrassTerrain = (ctx, grassTerrainMap, visibleArea, tileImages) => {
+  const tileSize = 64; // Grass tiles are 64x64 pixels
   
-  return `rgb(${r}, ${g}, ${b})`;
+  // Calculate visible area for grass terrain
+  const startX = Math.max(0, Math.floor(visibleArea.startTileX));
+  const endX = Math.min(grassTerrainMap[0].length, Math.ceil(visibleArea.endTileX));
+  const startY = Math.max(0, Math.floor(visibleArea.startTileY));
+  const endY = Math.min(grassTerrainMap.length, Math.ceil(visibleArea.endTileY));
+  
+  // Render only visible tiles
+  for (let y = startY; y < endY; y++) {
+    for (let x = startX; x < endX; x++) {
+      const tileType = grassTerrainMap[y][x];
+      const tileImage = getTileImageByType(tileType, tileImages);
+      
+      if (tileImage) {
+        ctx.drawImage(
+          tileImage,
+          x * tileSize, 
+          y * tileSize, 
+          tileSize, 
+          tileSize
+        );
+      }
+    }
+  }
+};
+
+// Helper function to get the correct tile image based on tile type
+const getTileImageByType = (tileType, tileImages) => {
+  switch (tileType) {
+    case '/assets/terrain_tileset/grass1.png':
+      return tileImages.grassTopLeftImage;
+    case '/assets/terrain_tileset/grass2.png':
+      return tileImages.grassTopImage;
+    case '/assets/terrain_tileset/grass3.png':
+      return tileImages.grassTopRightImage;
+    case '/assets/terrain_tileset/grass4.png':
+      return tileImages.grassLeftImage;
+    case '/assets/terrain_tileset/grass5.png':
+      return tileImages.grassCenterImage;
+    case '/assets/terrain_tileset/grass6.png':
+      return tileImages.grassRightImage;
+    case '/assets/terrain_tileset/grass7.png':
+      return tileImages.grassBottomLeftImage;
+    case '/assets/terrain_tileset/grass8.png':
+      return tileImages.grassBottomImage;
+    case '/assets/terrain_tileset/grass9.png':
+      return tileImages.grassBottomRightImage;
+    default:
+      return tileImages.grassCenterImage; // Default to center tile
+  }
 };
 
 const CanvasRenderer = ({ 
@@ -46,6 +100,18 @@ const CanvasRenderer = ({
   sproutCoinImage,
   monsterGoblinImage,
   monsterDragonImage,
+  // Grass terrain tiles
+  grassTopLeftImage,
+  grassTopImage,
+  grassTopRightImage,
+  grassLeftImage,
+  grassCenterImage,
+  grassRightImage,
+  grassBottomLeftImage,
+  grassBottomImage,
+  grassBottomRightImage,
+  terrainType,
+  grassTerrainMap,
   monsterOrcImage,
   waterGrassShorelineVerticalImage,
     waterGrassShorelineImage,
@@ -53,9 +119,19 @@ const CanvasRenderer = ({
     grassWaterShorelineCornerImage,
   isAttacking,
   attackTarget,
-  onTreasureInteraction
+  onTreasureInteraction,
+  skipPlayerRendering = false
 }) => {
   const frameCountRef = useRef(0);
+  const grassTilesInitialized = useRef(false);
+
+  // Initialize grass tiles on first render
+  useEffect(() => {
+    if (!grassTilesInitialized.current) {
+      preloadGrassTiles();
+      grassTilesInitialized.current = true;
+    }
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -83,25 +159,40 @@ const CanvasRenderer = ({
       endTileY: Math.ceil((gameState.camera.y + GAME_CONFIG.CANVAS_HEIGHT) / GAME_CONFIG.TILE_SIZE)
     };
 
-    // Render terrain with viewport culling
-    renderTerrain(ctx, gameState, visibleArea, {
-      treeImage,
-      realisticTreeImage,
-      bridgeImage,
-      cliffImage,
-      highGrassImage,
-      rockyGroundImage,
-      caveEntranceImage,
-      realisticWaterImage,
-      realisticRockImage,
-      realisticTreasureImage,
-      sproutPlayerImage,
-      sproutCoinImage,
-      waterGrassShorelineVerticalImage,
-          waterGrassShorelineImage,
-          realisticGrassImage,
-          grassWaterShorelineCornerImage
-        }, frameCountRef.current);
+    // Render terrain based on selected terrain type
+    if (terrainType === 'grass' && grassTerrainMap) {
+      renderGrassTerrain(ctx, grassTerrainMap, visibleArea, {
+        grassTopLeftImage,
+        grassTopImage,
+        grassTopRightImage,
+        grassLeftImage,
+        grassCenterImage,
+        grassRightImage,
+        grassBottomLeftImage,
+        grassBottomImage,
+        grassBottomRightImage
+      });
+    } else {
+      // Render default terrain with viewport culling
+      renderTerrain(ctx, gameState, visibleArea, {
+        treeImage,
+        realisticTreeImage,
+        bridgeImage,
+        cliffImage,
+        highGrassImage,
+        rockyGroundImage,
+        caveEntranceImage,
+        realisticWaterImage,
+        realisticRockImage,
+        realisticTreasureImage,
+        sproutPlayerImage,
+        sproutCoinImage,
+        waterGrassShorelineVerticalImage,
+        waterGrassShorelineImage,
+        realisticGrassImage,
+        grassWaterShorelineCornerImage
+      }, frameCountRef.current);
+    }
     
     // Emergency fallback: Draw a simple grid if no terrain is rendered
     if (gameState.terrain.size === 0) {
@@ -136,7 +227,11 @@ const CanvasRenderer = ({
       dragon: monsterDragonImage,
       orc: monsterOrcImage
     }, isAttacking, attackTarget);
-    renderPlayer(ctx, gameState, playerImage, playerSpriteImage, playerFrontImage, playerBackImage, playerLeftImage, playerRightImage, playerDirection);
+    
+    // Only render player if not using external character component
+    if (!skipPlayerRendering) {
+      renderPlayer(ctx, gameState, playerImage, playerSpriteImage, playerFrontImage, playerBackImage, playerLeftImage, playerRightImage, playerDirection);
+    }
 
     // Restore context
     ctx.restore();
@@ -210,31 +305,74 @@ const calculateSeamlessTileIndex = (tileX, tileY, gameState, targetType) => {
   return tileMap[bitmask] || { x: 0, y: 0 };
 };
 
-// Render seamless grass tiles with proper edge detection
-const renderSeamlessGrassTile = (ctx, tile, tileX, tileY, gameState, assets) => {
+// Render seamless grass tiles with border pattern system
+const renderSeamlessGrassTile = (ctx, tile, tileX, tileY, gameState, assets, terrainBounds) => {
   const x = tileX * GAME_CONFIG.TILE_SIZE;
   const y = tileY * GAME_CONFIG.TILE_SIZE;
   
-  // Use realistic grass SVG first, then high grass SVG as fallback for grass tiles
-  if (assets.realisticGrassImage.current && assets.realisticGrassImage.current.complete && assets.realisticGrassImage.current.naturalWidth !== 0) {
+  // Determine the terrain bounds (min/max x/y for the current terrain area)
+  // If not provided, use a default area size for border detection
+  const bounds = terrainBounds || {
+    minX: Math.floor(gameState.camera.x / GAME_CONFIG.TILE_SIZE) - 10,
+    maxX: Math.floor(gameState.camera.x / GAME_CONFIG.TILE_SIZE) + 20,
+    minY: Math.floor(gameState.camera.y / GAME_CONFIG.TILE_SIZE) - 10,
+    maxY: Math.floor(gameState.camera.y / GAME_CONFIG.TILE_SIZE) + 20
+  };
+  
+  const gridWidth = bounds.maxX - bounds.minX + 1;
+  const gridHeight = bounds.maxY - bounds.minY + 1;
+  const relativeX = tileX - bounds.minX;
+  const relativeY = tileY - bounds.minY;
+  
+  // Get the appropriate grass tile based on position
+  const grassAssetPath = getGrassTileByPosition(relativeX, relativeY, gridWidth, gridHeight);
+  
+  // Try to load and draw the specific grass tile
+  const grassTileImage = getGrassTileImage(grassAssetPath);
+  
+  if (grassTileImage && grassTileImage.complete && grassTileImage.naturalWidth !== 0) {
+    // Draw the specific grass tile for this position
     ctx.drawImage(
-      assets.realisticGrassImage.current,
+      grassTileImage,
       x, y, GAME_CONFIG.TILE_SIZE, GAME_CONFIG.TILE_SIZE
     );
-  } else if (assets.highGrassImage.current && assets.highGrassImage.current.complete && assets.highGrassImage.current.naturalWidth !== 0) {
-    ctx.drawImage(
-      assets.highGrassImage.current,
-      x, y, GAME_CONFIG.TILE_SIZE, GAME_CONFIG.TILE_SIZE
-    );
+    return true; // Successfully rendered
   } else {
-    // Fallback to simple grass terrain with subtle pattern
-    ctx.fillStyle = TERRAIN_TYPES[tile.type].color;
+    // Fallback to solid color with grid for visibility
+    ctx.fillStyle = '#4CAF50'; // Default grass green
     ctx.fillRect(x, y, GAME_CONFIG.TILE_SIZE, GAME_CONFIG.TILE_SIZE);
     
-    // Add subtle grass texture
-    const grassPattern = (tileX + tileY) % 3;
-    ctx.fillStyle = grassPattern === 0 ? 'rgba(34, 139, 34, 0.1)' : 'rgba(0, 100, 0, 0.05)';
+    // Add grid lines for clarity
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x, y, GAME_CONFIG.TILE_SIZE, GAME_CONFIG.TILE_SIZE);
+    
+    return false; // Used fallback rendering
+  }
+    const isTopRow = relativeY === 0;
+    const isBottomRow = relativeY === gridHeight - 1;
+    const isLeftCol = relativeX === 0;
+    const isRightCol = relativeX === gridWidth - 1;
+    
+    let fillColor = '#4CAF50'; // Default center (grass5)
+    
+    // Apply different colors based on border position for visual testing
+    if (isTopRow && isLeftCol) fillColor = '#FF5722'; // Top-left (grass1) - red
+    else if (isTopRow && isRightCol) fillColor = '#2196F3'; // Top-right (grass3) - blue
+    else if (isBottomRow && isLeftCol) fillColor = '#FF9800'; // Bottom-left (grass7) - orange
+    else if (isBottomRow && isRightCol) fillColor = '#9C27B0'; // Bottom-right (grass9) - purple
+    else if (isTopRow) fillColor = '#E91E63'; // Top edge (grass2) - pink
+    else if (isBottomRow) fillColor = '#009688'; // Bottom edge (grass8) - teal
+    else if (isLeftCol) fillColor = '#795548'; // Left edge (grass4) - brown
+    else if (isRightCol) fillColor = '#607D8B'; // Right edge (grass6) - blue-gray
+    
+    ctx.fillStyle = fillColor;
     ctx.fillRect(x, y, GAME_CONFIG.TILE_SIZE, GAME_CONFIG.TILE_SIZE);
+    
+    // Add border for clarity
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x, y, GAME_CONFIG.TILE_SIZE, GAME_CONFIG.TILE_SIZE);
   }
   
   // Add occasional interactive elements (sheep, resources, etc.)
@@ -349,6 +487,14 @@ const renderTerrain = (ctx, gameState, visibleArea, assets, frameCount) => {
   const { startTileX, endTileX, startTileY, endTileY } = visibleArea;
   let tilesRendered = 0;
 
+  // Calculate terrain bounds for border pattern detection
+  const terrainBounds = {
+    minX: startTileX,
+    maxX: endTileX,
+    minY: startTileY,
+    maxY: endTileY
+  };
+
   for (let tileX = startTileX; tileX <= endTileX; tileX++) {
     for (let tileY = startTileY; tileY <= endTileY; tileY++) {
       const chunkX = Math.floor(tileX / GAME_CONFIG.CHUNK_SIZE);
@@ -374,15 +520,15 @@ const renderTerrain = (ctx, gameState, visibleArea, assets, frameCount) => {
       // Simplified base terrain rendering
       if (tile.type === 'FOREST') {
         // Render seamless grass background for forest tiles
-        renderSeamlessGrassTile(ctx, { type: 'GRASS' }, tileX, tileY, gameState, assets);
+        renderSeamlessGrassTile(ctx, { type: 'GRASS' }, tileX, tileY, gameState, assets, terrainBounds);
         // Always render trees on forest tiles
         renderTerrainPattern(ctx, tile, tileX, tileY, gameState, assets);
       } else if (tile.type === 'WATER') {
         // Always render water with full effects for realism
         renderTerrainPattern(ctx, tile, tileX, tileY, gameState, assets);
       } else if (tile.type === 'GRASS') {
-        // Render seamless grass tiles with proper edge detection
-        renderSeamlessGrassTile(ctx, tile, tileX, tileY, gameState, assets);
+        // Render seamless grass tiles with proper border pattern
+        renderSeamlessGrassTile(ctx, tile, tileX, tileY, gameState, assets, terrainBounds);
       } else {
         // Check if this is a walkable terrain type that should use seamless rendering
         const walkableTerrainTypes = ['CAVE_FLOOR', 'ROCKY_GROUND', 'DESERT', 'HIGH_GRASS', 'BRIDGE'];

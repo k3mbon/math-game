@@ -1,38 +1,324 @@
+/* BlocklyPage.css - Green Nature Theme - Consistent with Landing Page */
 .blockly-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 1rem;
   min-height: 100vh;
-  background: #eef2f7;
+  width: 100%;
+  background: linear-gradient(135deg, var(--primary-100) 0%, var(--secondary-100) 50%, var(--accent-100) 100%);
+  background-image: 
+    /* Subtle grid pattern */
+    linear-gradient(rgba(22, 163, 74, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 163, 74, 0.02) 1px, transparent 1px),
+    /* Subtle glow effects */
+    radial-gradient(circle at 20% 80%, rgba(22, 163, 74, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(34, 197, 94, 0.03) 0%, transparent 50%);
+  background-size: 60px 60px, 60px 60px, 1000px 1000px, 800px 800px;
+  background-attachment: fixed;
+  margin: 0;
+  position: relative;
 }
 
 .blockly-area {
   width: 100%;
   height: 400px;
   max-width: 900px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background: white;
+  border: 2px solid var(--primary-300);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 25px rgba(22, 163, 74, 0.15);
+  transition: all 0.3s ease;
+}
+
+.blockly-area:hover {
+  border-color: var(--primary-500);
+  box-shadow: 0 12px 35px rgba(22, 163, 74, 0.2);
 }
 
 .run-button {
   margin-top: 1rem;
-  padding: 10px 20px;
-  background: #007bff;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   color: white;
   font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(22, 163, 74, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .run-button:hover {
-  background: #0056b3;
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
+}
+
+.run-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(22, 163, 74, 0.5);
 }
 
 .feedback {
   margin-top: 1rem;
   font-size: 1.2rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border-left: 4px solid var(--primary-500);
+  box-shadow: 0 4px 15px rgba(22, 163, 74, 0.1);
+  color: var(--primary-900);
+  font-weight: 500;
+}
+
+/* Enhanced Responsive Design - Comprehensive Breakpoints */
+
+/* Ultra Small Screens (240px - 319px) */
+@media (max-width: 319px) {
+  .blockly-wrapper {
+    padding: 0.25rem !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+  }
+  
+  .blockly-area {
+    width: 100% !important;
+    height: 250px !important;
+    max-width: none !important;
+    border-radius: 8px !important;
+  }
+  
+  .run-button {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0.6rem 1rem !important;
+    font-size: 0.8rem !important;
+    min-height: 40px !important;
+  }
+  
+  .feedback {
+    font-size: 0.8rem !important;
+    padding: 0.5rem !important;
+    line-height: 1.3 !important;
+  }
+  
+  .blockly-page h1 {
+    font-size: 1.2rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+}
+
+/* Small Mobile Screens (320px - 479px) */
+@media (min-width: 320px) and (max-width: 479px) {
+  .blockly-wrapper {
+    padding: 0.5rem !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+  }
+  
+  .blockly-area {
+    width: 100% !important;
+    height: 280px !important;
+    max-width: none !important;
+    border-radius: 12px !important;
+  }
+  
+  .run-button {
+    width: 100% !important;
+    max-width: 280px !important;
+    padding: 0.75rem 1.25rem !important;
+    font-size: 0.9rem !important;
+    min-height: 44px !important;
+  }
+  
+  .feedback {
+    font-size: 0.9rem !important;
+    padding: 0.75rem !important;
+    line-height: 1.4 !important;
+  }
+  
+  .blockly-page h1 {
+    font-size: 1.4rem !important;
+    margin-bottom: 1rem !important;
+  }
+}
+
+/* Mobile Screens (480px - 767px) */
+@media (min-width: 480px) and (max-width: 767px) {
+  .blockly-wrapper {
+    padding: 0.75rem !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+  }
+  
+  .blockly-area {
+    width: 100% !important;
+    height: 300px !important;
+    max-width: 100% !important;
+    border-radius: 16px !important;
+  }
+  
+  .run-button {
+    width: 100% !important;
+    max-width: 300px !important;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 1rem !important;
+    min-height: 48px !important;
+  }
+  
+  .feedback {
+    font-size: 1rem !important;
+    padding: 0.8rem !important;
+    line-height: 1.5 !important;
+  }
+  
+  .blockly-page h1 {
+    font-size: 1.6rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+}
+
+/* Tablet Portrait (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .blockly-wrapper {
+    padding: 1rem !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+  }
+  
+  .blockly-area {
+    width: 100% !important;
+    height: 350px !important;
+    max-width: 100% !important;
+    border-radius: 20px !important;
+  }
+  
+  .run-button {
+    width: 100% !important;
+    max-width: 350px !important;
+    padding: 0.875rem 1.75rem !important;
+    font-size: 1.1rem !important;
+    min-height: 52px !important;
+  }
+  
+  .feedback {
+    font-size: 1.1rem !important;
+    padding: 1rem !important;
+    line-height: 1.6 !important;
+  }
+  
+  .blockly-page h1 {
+    font-size: 1.8rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+}
+
+/* Tablet Landscape / Small Desktop (992px - 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .blockly-wrapper {
+    padding: 1.5rem !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+  }
+  
+  .blockly-area {
+    width: 100% !important;
+    height: 400px !important;
+    max-width: 900px !important;
+    border-radius: 24px !important;
+  }
+  
+  .run-button {
+    width: auto !important;
+    max-width: 400px !important;
+    padding: 1rem 2rem !important;
+    font-size: 1.125rem !important;
+    min-height: 56px !important;
+  }
+  
+  .feedback {
+    font-size: 1.125rem !important;
+    padding: 1.25rem !important;
+    line-height: 1.7 !important;
+  }
+  
+  .blockly-page h1 {
+    font-size: 2rem !important;
+    margin-bottom: 1.75rem !important;
+  }
+}
+
+/* Desktop (1200px - 1599px) */
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .blockly-wrapper {
+    padding: 2rem !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+  }
+  
+  .blockly-area {
+    width: 100% !important;
+    height: 450px !important;
+    max-width: 1000px !important;
+    border-radius: 28px !important;
+  }
+  
+  .run-button {
+    width: auto !important;
+    max-width: 450px !important;
+    padding: 1.125rem 2.25rem !important;
+    font-size: 1.2rem !important;
+    min-height: 60px !important;
+  }
+  
+  .feedback {
+    font-size: 1.2rem !important;
+    padding: 1.5rem !important;
+    line-height: 1.8 !important;
+  }
+  
+  .blockly-page h1 {
+    font-size: 2.2rem !important;
+    margin-bottom: 2rem !important;
+  }
+}
+
+/* Large Desktop (1600px+) */
+@media (min-width: 1600px) {
+  .blockly-wrapper {
+    padding: 2.5rem !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+  }
+  
+  .blockly-area {
+    width: 100% !important;
+    height: 500px !important;
+    max-width: 1200px !important;
+    border-radius: 32px !important;
+  }
+  
+  .run-button {
+    width: auto !important;
+    max-width: 500px !important;
+    padding: 1.25rem 2.5rem !important;
+    font-size: 1.3rem !important;
+    min-height: 64px !important;
+  }
+  
+  .feedback {
+    font-size: 1.3rem !important;
+    padding: 1.75rem !important;
+    line-height: 1.9 !important;
+  }
+  
+  .blockly-page h1 {
+    font-size: 2.5rem !important;
+    margin-bottom: 2.25rem !important;
+  }
 }

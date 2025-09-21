@@ -6,6 +6,7 @@ import FloatingCharacter from './FloatingCharacter';
 import { useCharacter } from '../contexts/CharacterContext';
 import { useGameProgress } from '../contexts/GameProgressContext';
 import problemBank from '../data/NumerationProblem.json';
+import { GpsFixed, Celebration, Close, Warning } from '@mui/icons-material';
 
 const NumerationPage = () => {
   useEffect(() => {
@@ -76,17 +77,17 @@ const NumerationPage = () => {
       );
 
       if (verificationResult) {
-        setMessage(`🎉 Great job! You solved Level ${level}.`);
+        setMessage(<><Celebration sx={{ color: '#4caf50', marginRight: '8px' }} /> Great job! You solved Level {level}.</>);
         if (progress.numeration < level) {
           updateProgress('numeration', level);
         }
       } else {
-        setMessage('❌ Try again! Your solution is not correct.');
+        setMessage(<><Close sx={{ color: '#f44336', marginRight: '8px' }} /> Try again! Your solution is not correct.</>);
         setConsoleOutput(prev => prev + `\nExpected answer: ${currentChallenge.expectedAnswer}`);
       }
 
     } catch (e) {
-      setMessage(`⚠️ Error: ${e.message}`);
+      setMessage(<><Warning sx={{ color: '#ff9800', marginRight: '8px' }} /> Error: {e.message}</>);
       setConsoleOutput(prev => prev + `Error: ${e.message}\n`);
     }
   };
@@ -273,15 +274,15 @@ const NumerationPage = () => {
         <div className="challenge-box">
           {currentChallenge && (
             <>
-              <p className="challenge-description">🎯 Goal: {currentChallenge.description}</p>
-              <p className={`message ${message.startsWith('🎉') ? 'success' : message.startsWith('❌') ? 'error' : ''}`}>
+              <p className="challenge-description"><GpsFixed sx={{ color: '#2196f3', marginRight: '8px' }} /> Goal: {currentChallenge.description}</p>
+              <p className={`message ${React.isValidElement(message) && message.props.children[0].type === Celebration ? 'success' : React.isValidElement(message) && message.props.children[0].type === Close ? 'error' : ''}`}>
                 {message}
               </p>
               <div className="level-controls">
                 <button onClick={prevLevel} className="btn level-btn" disabled={level === 1}>
                   ← Previous
                 </button>
-                {message.startsWith('🎉') && (
+                {React.isValidElement(message) && message.props.children[0].type === Celebration && (
                   <button onClick={nextLevel} className="btn next-level-btn">
                     Next Level →
                   </button>

@@ -16,7 +16,7 @@ import './TeacherDashboard.css';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../firebase';
 
-const problemsCollection = collection(db, 'Problem'); // Capital 'P'
+const problemsCollection = collection(db, 'problems');
 const studentsCollection = collection(db, 'students');
 
 const defaultProblem = {
@@ -94,7 +94,7 @@ const TeacherDashboard = () => {
       const docRef = await addDoc(problemsCollection, newProblem);
       newProblem.id = docRef.id;
     } else {
-      const docRef = doc(db, 'Problem', newProblem.id);
+      const docRef = doc(db, 'problems', newProblem.id);
       await updateDoc(docRef, newProblem);
     }
 
@@ -136,7 +136,7 @@ const TeacherDashboard = () => {
   };
 
   const handleDeleteProblem = async (id) => {
-    const docRef = doc(db, 'Problem', id);
+    const docRef = doc(db, 'problems', id);
     await deleteDoc(docRef);
     fetchProblems();
   };

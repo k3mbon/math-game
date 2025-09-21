@@ -4,6 +4,12 @@ import { javascriptGenerator } from 'blockly/javascript';
 import { useCharacter } from '../contexts/CharacterContext';
 import { useGameProgress } from '../contexts/GameProgressContext';
 import FloatingCharacter from './FloatingCharacter';
+import { 
+  GpsFixed,
+  Celebration, 
+  EmojiEvents, 
+  Warning 
+} from '@mui/icons-material';
 import './IterationPage.css';
 
 const IterationPage = () => {
@@ -205,7 +211,7 @@ const challengeGenerators = [
 
   const runCode = () => {
   if (!workspaceRef.current || !currentChallenge) {
-    setConsoleOutput('⚠️ Workspace not ready. Please try again.\n');
+    setConsoleOutput('Workspace not ready. Please try again.\n');
     return;
   }
 
@@ -254,9 +260,9 @@ const challengeGenerators = [
     const isCorrect = currentChallenge.verify(capturedOutput, capturedResult);
     
     if (isCorrect) {
-      const newMessage = `🎉 Great job! You solved Level ${level}!`;
+      const newMessage = <><Celebration sx={{ color: '#10b981', mr: 1 }} />Great job! You solved Level {level}!</>;
       setMessage(newMessage);
-      setConsoleOutput(prev => prev + '\n✅ Correct solution!\n\n' + newMessage + '\n');
+      setConsoleOutput(prev => prev + '\n✅ Correct solution!\n\nGreat job! You solved Level ' + level + '!\n');
       
       if (level >= progress.iteration.level) {
         updateProgress('iteration', level + 1, 100);
@@ -271,7 +277,7 @@ const challengeGenerators = [
     }
 
   } catch (error) {
-    setMessage(`⚠️ Error: ${error.message}`);
+    setMessage(<><Warning sx={{ color: '#f59e0b', mr: 1 }} />Error: {error.message}</>);
     setConsoleOutput(prev => prev + `\n⚠️ Runtime Error: ${error.message}\n`);
     console.error('Execution error:', error);
   }
@@ -310,7 +316,7 @@ const challengeGenerators = [
         setMessage('');
       } catch (error) {
         console.error('Error clearing blocks:', error);
-        setMessage('⚠️ Error clearing workspace. Please refresh the page.');
+        setMessage(<><Warning sx={{ color: '#f59e0b', mr: 1 }} />Error clearing workspace. Please refresh the page.</>);
       }
     }
   };
@@ -418,7 +424,7 @@ const challengeGenerators = [
       setWorkspaceInitialized(true);
     } catch (error) {
       console.error('Workspace initialization failed:', error);
-      setMessage('⚠️ Failed to initialize workspace. Please refresh the page.');
+      setMessage(<><Warning sx={{ color: '#f59e0b', mr: 1 }} />Failed to initialize workspace. Please refresh the page.</>);
       setConsoleOutput('Error initializing Blockly. Please try again.');
     }
   };
@@ -440,7 +446,7 @@ const challengeGenerators = [
   }, [level]);
 
   const progressPercentage = Math.min(
-    (progress.iteration.completed + (message.startsWith('🎉') ? 20 : 0)),
+    (progress.iteration.completed + ((typeof message === 'string' ? message.startsWith('🎉') : message?.props?.children?.[0]?.type === Celebration) ? 20 : 0)),
     100
   );
 
@@ -452,7 +458,7 @@ const challengeGenerators = [
         <div className="maze-box">
           {currentChallenge && (
             <>
-              <p>🎯 Goal: {currentChallenge.description}</p>
+              <p><GpsFixed sx={{ color: 'var(--primary-500)', mr: 1 }} />Goal: {currentChallenge.description}</p>
               <p className="message">{message}</p>
               <div className="level-controls">
                 <button 
@@ -462,14 +468,14 @@ const challengeGenerators = [
                 >
                   ← Previous
                 </button>
-                {message.startsWith('🎉') && level < challengeGenerators.length * 3 && (
+                {(typeof message === 'string' ? message.startsWith('🎉') : message?.props?.children?.[0]?.type === Celebration) && level < challengeGenerators.length * 3 && (
                   <button onClick={nextLevel} className="btn next-level-btn">
                     Next Level →
                   </button>
                 )}
-                {message.startsWith('🎉') && level >= challengeGenerators.length * 3 && (
+                {(typeof message === 'string' ? message.startsWith('🎉') : message?.props?.children?.[0]?.type === Celebration) && level >= challengeGenerators.length * 3 && (
                   <div className="completion-message">
-                    🏆 Congratulations! You've completed all levels!
+                    <EmojiEvents sx={{ color: '#fbbf24', mr: 1 }} />Congratulations! You've completed all levels!
                   </div>
                 )}
               </div>

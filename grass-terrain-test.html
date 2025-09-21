@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grass Terrain Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    
+    p {
+      color: #7f8c8d;
+      margin-bottom: 20px;
+    }
+    
+    .terrain-container {
+      border: 1px solid #ccc;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin: 20px 0;
+    }
+    
+    .controls {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 20px;
+    }
+    
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .tile-legend {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 600px;
+    }
+    
+    .tile-types {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .tile-type {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .tile-icon {
+      width: 32px;
+      height: 32px;
+      border: 1px solid #ccc;
+    }
+    
+    .corner-tile {
+      background-color: #e74c3c;
+    }
+    
+    .edge-tile {
+      background-color: #3498db;
+    }
+    
+    .center-tile {
+      background-color: #2ecc71;
+    }
+  </style>
+</head>
+<body>
+  <h1>Grass Terrain Mapping Test</h1>
+  <p>A demonstration of seamless terrain with proper tile placement</p>
+  
+  <div class="controls">
+    <div class="control-group">
+      <label for="width-input">Width:</label>
+      <input type="range" id="width-input" min="3" max="12" value="7">
+      <span id="width-value">7</span>
+    </div>
+    
+    <div class="control-group">
+      <label for="height-input">Height:</label>
+      <input type="range" id="height-input" min="3" max="12" value="7">
+      <span id="height-value">7</span>
+    </div>
+  </div>
+  
+  <canvas id="terrain-canvas" class="terrain-container"></canvas>
+  
+  <div class="tile-legend">
+    <h2>Tile Mapping Legend</h2>
+    <div class="tile-types">
+      <div class="tile-type">
+        <div class="tile-icon corner-tile"></div>
+        <span>Corner Tiles: TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT</span>
+      </div>
+      <div class="tile-type">
+        <div class="tile-icon edge-tile"></div>
+        <span>Edge Tiles: TOP, RIGHT, BOTTOM, LEFT</span>
+      </div>
+      <div class="tile-type">
+        <div class="tile-icon center-tile"></div>
+        <span>Center Tile: CENTER</span>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Grass tile mapping constants
+    const GRASS_TILES = {
+      TOP_LEFT: '/assets/terrain_tileset/Grass/grass1.png',
+      TOP: '/assets/terrain_tileset/Grass/grass2.png',
+      TOP_RIGHT: '/assets/terrain_tileset/Grass/grass3.png',
+      LEFT: '/assets/terrain_tileset/Grass/grass4.png',
+      CENTER: '/assets/terrain_tileset/Grass/grass5.png',
+      RIGHT: '/assets/terrain_tileset/Grass/grass6.png',
+      BOTTOM_LEFT: '/assets/terrain_tileset/Grass/grass7.png',
+      BOTTOM: '/assets/terrain_tileset/Grass/grass8.png',
+      BOTTOM_RIGHT: '/assets/terrain_tileset/Grass/grass9.png'
+    };
+
+    // Character sprite
+    const SWORDSMAN_SPRITE = '/assets/characters/swordsman.png';
+    
+    // DOM elements
+    const canvas = document.getElementById('terrain-canvas');
+    const ctx = canvas.getContext('2d');
+    const widthInput = document.getElementById('width-input');
+    const heightInput = document.getElementById('height-input');
+    const widthValue = document.getElementById('width-value');
+    const heightValue = document.getElementById('height-value');
+    
+    // State
+    let terrainWidth = parseInt(widthInput.value, 10);
+    let terrainHeight = parseInt(heightInput.value, 10);
+    let tileImages = {};
+    let characterImage = null;
+    let characterPosition = {
+      x: Math.floor(terrainWidth / 2),
+      y: Math.floor(terrainHeight / 2)
+    };
+    
+    // Generate terrain map based on width and height
+    function generateTerrainMap(width, height) {
+      const map = [];
+      
+      for (let y = 0; y < height; y++) {
+        const row = [];
+        for (let x = 0; x < width; x++) {
+          // Determine tile type based on position
+          let tileType;
+          
+          if (x === 0 && y === 0) {
+            tileType = GRASS_TILES.TOP_LEFT;
+          } else if (x === width - 1 && y === 0) {
+            tileType = GRASS_TILES.TOP_RIGHT;
+          } else if (x === 0 && y === height - 1) {
+            tileType = GRASS_TILES.BOTTOM_LEFT;
+          } else if (x === width - 1 && y === height - 1) {
+            tileType = GRASS_TILES.BOTTOM_RIGHT;
+          } else if (y === 0) {
+            tileType = GRASS_TILES.TOP;
+          } else if (y === height - 1) {
+            tileType = GRASS_TILES.BOTTOM;
+          } else if (x === 0) {
+            tileType = GRASS_TILES.LEFT;
+          } else if (x === width - 1) {
+            tileType = GRASS_TILES.RIGHT;
+          } else {
+            tileType = GRASS_TILES.CENTER;
+          }
+          
+          row.push(tileType);
+        }
+        map.push(row);
+      }
+      
+      return map;
+    }
+    
+    // Preload all tile images
+    function preloadTileImages() {
+      const imagePromises = [];
+      
+      // Load grass tiles
+      Object.entries(GRASS_TILES).forEach(([key, src]) => {
+        const img = new Image();
+        const promise = new Promise((resolve) => {
+          img.onload = resolve;
+          img.onerror = () => {
+            console.warn(`Failed to load image: ${src}`);
+            resolve(); // Resolve anyway to continue
+          };
+          img.src = src;
+        });
+        tileImages[src] = img;
+        imagePromises.push(promise);
+      });
+      
+      return Promise.all(imagePromises);
+    }
+    
+    // Preload character sprite
+    function preloadCharacterSprite() {
+      return new Promise((resolve) => {
+        characterImage = new Image();
+        characterImage.onload = resolve;
+        characterImage.onerror = () => {
+          console.warn(`Failed to load character sprite: ${SWORDSMAN_SPRITE}`);
+          resolve(); // Resolve anyway to continue
+        };
+        characterImage.src = SWORDSMAN_SPRITE;
+      });
+    }
+    
+    // Render the terrain and character
+    function renderTerrain() {
+      const terrainMap = generateTerrainMap(terrainWidth, terrainHeight);
+      const tileSize = 64; // Assuming each tile is 64x64 pixels
+      
+      // Set canvas dimensions
+      canvas.width = terrainWidth * tileSize;
+      canvas.height = terrainHeight * tileSize;
+      
+      // Draw terrain tiles
+      for (let y = 0; y < terrainMap.length; y++) {
+        for (let x = 0; x < terrainMap[y].length; x++) {
+          const tileType = terrainMap[y][x];
+          const tileImage = tileImages[tileType];
+          
+          if (tileImage && tileImage.complete) {
+            ctx.drawImage(tileImage, x * tileSize, y * tileSize, tileSize, tileSize);
+          } else {
+            // Draw placeholder if image failed to load
+            ctx.fillStyle = getTilePlaceholderColor(tileType);
+            ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+            ctx.strokeRect(x * tileSize, y * tileSize, tileSize, tileSize);
+          }
+        }
+      }
+      
+      // Draw character
+      if (characterImage && characterImage.complete) {
+        ctx.drawImage(
+          characterImage,
+          0, 0, 64, 64, // Source coordinates and dimensions
+          characterPosition.x * tileSize, characterPosition.y * tileSize, tileSize, tileSize // Destination coordinates and dimensions
+        );
+      } else {
+        // Draw placeholder if character image failed to load
+        ctx.fillStyle = '#795548';
+        ctx.fillRect(
+          characterPosition.x * tileSize + tileSize / 4,
+          characterPosition.y * tileSize + tileSize / 4,
+          tileSize / 2,
+          tileSize / 2
+        );
+      }
+    }
+    
+    // Get placeholder color for different tile types
+    function getTilePlaceholderColor(tileType) {
+      if (tileType.includes('1') || tileType.includes('3') || tileType.includes('7') || tileType.includes('9')) {
+        return '#e74c3c'; // Corner tiles
+      } else if (tileType.includes('2') || tileType.includes('4') || tileType.includes('6') || tileType.includes('8')) {
+        return '#3498db'; // Edge tiles
+      } else {
+        return '#2ecc71'; // Center tile
+      }
+    }
+    
+    // Initialize the terrain
+    async function initTerrain() {
+      await Promise.all([
+        preloadTileImages(),
+        preloadCharacterSprite()
+      ]);
+      
+      renderTerrain();
+    }
+    
+    // Event listeners for controls
+    widthInput.addEventListener('input', (e) => {
+      terrainWidth = parseInt(e.target.value, 10);
+      widthValue.textContent = terrainWidth;
+      characterPosition.x = Math.floor(terrainWidth / 2);
+      renderTerrain();
+    });
+    
+    heightInput.addEventListener('input', (e) => {
+      terrainHeight = parseInt(e.target.value, 10);
+      heightValue.textContent = terrainHeight;
+      characterPosition.y = Math.floor(terrainHeight / 2);
+      renderTerrain();
+    });
+    
+    // Start the application
+    initTerrain();
+  </script>
+</body>
+</html>

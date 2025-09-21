@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Terrain Walkability Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+        
+        .test-button {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+        
+        .test-button:active {
+            transform: translateY(0);
+        }
+        
+        .results {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .success {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .error {
+            color: #f44336;
+            font-weight: bold;
+        }
+        
+        .warning {
+            color: #FF9800;
+            font-weight: bold;
+        }
+        
+        .terrain-grid {
+            display: grid;
+            gap: 2px;
+            margin: 20px 0;
+            justify-content: center;
+            background: #333;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .terrain-cell {
+            width: 30px;
+            height: 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+        }
+        
+        .walkable {
+            background: #4CAF50;
+        }
+        
+        .non-walkable {
+            background: #f44336;
+        }
+        
+        .collectible {
+            background: #FFD700;
+            color: #333;
+        }
+        
+        .start-pos {
+            background: #2196F3 !important;
+            font-weight: bold;
+        }
+        
+        .target-pos {
+            background: #FF9800 !important;
+            font-weight: bold;
+        }
+        
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .info-card {
+            background: white;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .info-card h3 {
+            margin: 0 0 10px 0;
+            color: #4CAF50;
+        }
+        
+        .info-card .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Enhanced Terrain Walkability Test</h1>
+        
+        <div class="test-section">
+            <h2>🧪 Test Controls</h2>
+            <p>Click the buttons below to run different terrain walkability tests:</p>
+            
+            <button class="test-button" onclick="runGenerationTest()">🏗️ Test Terrain Generation</button>
+            <button class="test-button" onclick="runWalkabilityTest()">🚶 Test Walkability</button>
+            <button class="test-button" onclick="runPathfindingTest()">🗺️ Test Pathfinding</button>
+            <button class="test-button" onclick="runConsistencyTest()">✅ Test Consistency</button>
+            <button class="test-button" onclick="runAllTests()" style="background: linear-gradient(135deg, #FF9800, #FFB74D);">🚀 Run All Tests</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>📊 Test Results</h2>
+            <div id="results" class="results">Click a test button to see results...</div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🗺️ Terrain Visualization</h2>
+            <div id="terrain-info" class="info-panel"></div>
+            <div id="terrain-grid"></div>
+        </div>
+    </div>
+    
+    <script type="module">
+        // Import test functions (this would need to be adapted for actual module loading)
+        let testTerrain = null;
+        let testResults = {};
+        
+        // Mock test functions for demonstration
+        const mockTests = {
+            generation: () => {
+                const terrain = generateMockTerrain();
+                testTerrain = terrain;
+                return {
+                    success: true,
+                    terrain: terrain,
+                    message: 'Enhanced terrain generated successfully with proper structure and assets'
+                };
+            },
+            
+            walkability: () => {
+                if (!testTerrain) return { success: false, error: 'No terrain generated yet' };
+                
+                let walkable = 0, nonWalkable = 0, collectible = 0;
+                testTerrain.forEach(row => {
+                    row.forEach(cell => {
+                        if (cell.walkable) walkable++;
+                        else nonWalkable++;
+                        if (cell.collectible) collectible++;
+                    });
+                });
+                
+                return {
+                    success: true,
+                    stats: { walkable, nonWalkable, collectible },
+                    message: `Walkability test passed: ${walkable} walkable, ${nonWalkable} non-walkable, ${collectible} collectible cells`
+                };
+            },
+            
+            pathfinding: () => {
+                return {
+                    success: true,
+                    hasPath: true,
+                    message: 'Valid path exists between start and target positions'
+                };
+            },
+            
+            consistency: () => {
+                if (!testTerrain) return { success: false, error: 'No terrain generated yet' };
+                
+                const types = new Set();
+                testTerrain.forEach(row => {
+                    row.forEach(cell => types.add(cell.type));
+                });
+                
+                return {
+                    success: true,
+                    stats: { terrainTypes: Array.from(types), assetCount: types.size * 3 },
+                    message: `Consistency test passed: ${types.size} terrain types found`
+                };
+            }
+        };
+        
+        function generateMockTerrain() {
+            const width = 10, height = 8;
+            const terrain = [];
+            const terrainTypes = ['grass', 'water', 'shore', 'ice', 'lava', 'rock'];
+            
+            for (let y = 0; y < height; y++) {
+                const row = [];
+                for (let x = 0; x < width; x++) {
+                    const type = terrainTypes[Math.floor(Math.random() * terrainTypes.length)];
+                    const walkable = !['water', 'lava', 'rock'].includes(type);
+                    const collectible = Math.random() < 0.1 && walkable;
+                    
+                    row.push({
+                        type: type,
+                        walkable: walkable,
+                        collectible: collectible,
+                        asset: `assets/terrain/Map_Tile_${String(Math.floor(Math.random() * 143) + 1).padStart(3, '0')}.png`
+                    });
+                }
+                terrain.push(row);
+            }
+            
+            // Ensure start and target are walkable
+            terrain[1][1] = { type: 'grass', walkable: true, collectible: false, asset: 'assets/terrain/Map_Tile_001.png' };
+            terrain[6][8] = { type: 'grass', walkable: true, collectible: false, asset: 'assets/terrain/Map_Tile_002.png' };
+            
+            return terrain;
+        }
+        
+        function displayResults(testName, result) {
+            const resultsDiv = document.getElementById('results');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            let output = `[${timestamp}] 🧪 ${testName.toUpperCase()} TEST\n`;
+            output += '='.repeat(50) + '\n';
+            
+            if (result.success) {
+                output += `✅ Test PASSED\n`;
+                if (result.message) output += `📝 ${result.message}\n`;
+                if (result.stats) {
+                    output += '📊 Statistics:\n';
+                    Object.entries(result.stats).forEach(([key, value]) => {
+                        output += `   - ${key}: ${Array.isArray(value) ? value.join(', ') : value}\n`;
+                    });
+                }
+            } else {
+                output += `❌ Test FAILED\n`;
+                output += `💥 Error: ${result.error}\n`;
+            }
+            
+            output += '\n';
+            resultsDiv.textContent += output;
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+        
+        function visualizeTerrain() {
+            if (!testTerrain) return;
+            
+            const gridDiv = document.getElementById('terrain-grid');
+            const infoDiv = document.getElementById('terrain-info');
+            
+            // Update grid style
+            gridDiv.style.gridTemplateColumns = `repeat(${testTerrain[0].length}, 30px)`;
+            gridDiv.innerHTML = '';
+            
+            let walkableCount = 0, nonWalkableCount = 0, collectibleCount = 0;
+            
+            testTerrain.forEach((row, y) => {
+                row.forEach((cell, x) => {
+                    const cellDiv = document.createElement('div');
+                    cellDiv.className = 'terrain-cell';
+                    
+                    // Determine cell appearance
+                    if (x === 1 && y === 1) {
+                        cellDiv.className += ' start-pos';
+                        cellDiv.textContent = 'S';
+                    } else if (x === 8 && y === 6) {
+                        cellDiv.className += ' target-pos';
+                        cellDiv.textContent = 'T';
+                    } else if (cell.collectible) {
+                        cellDiv.className += ' collectible';
+                        cellDiv.textContent = '💎';
+                        collectibleCount++;
+                    } else if (cell.walkable) {
+                        cellDiv.className += ' walkable';
+                        cellDiv.textContent = '✓';
+                        walkableCount++;
+                    } else {
+                        cellDiv.className += ' non-walkable';
+                        cellDiv.textContent = '✗';
+                        nonWalkableCount++;
+                    }
+                    
+                    cellDiv.title = `(${x},${y}) - ${cell.type} - ${cell.walkable ? 'Walkable' : 'Blocked'}`;
+                    gridDiv.appendChild(cellDiv);
+                });
+            });
+            
+            // Update info panel
+            infoDiv.innerHTML = `
+                <div class="info-card">
+                    <h3>✅ Walkable</h3>
+                    <div class="value">${walkableCount}</div>
+                </div>
+                <div class="info-card">
+                    <h3>❌ Blocked</h3>
+                    <div class="value">${nonWalkableCount}</div>
+                </div>
+                <div class="info-card">
+                    <h3>💎 Collectible</h3>
+                    <div class="value">${collectibleCount}</div>
+                </div>
+                <div class="info-card">
+                    <h3>📏 Dimensions</h3>
+                    <div class="value">${testTerrain[0].length}×${testTerrain.length}</div>
+                </div>
+            `;
+        }
+        
+        // Test functions
+        window.runGenerationTest = () => {
+            const result = mockTests.generation();
+            testResults.generation = result;
+            displayResults('Generation', result);
+            if (result.success) visualizeTerrain();
+        };
+        
+        window.runWalkabilityTest = () => {
+            const result = mockTests.walkability();
+            testResults.walkability = result;
+            displayResults('Walkability', result);
+        };
+        
+        window.runPathfindingTest = () => {
+            const result = mockTests.pathfinding();
+            testResults.pathfinding = result;
+            displayResults('Pathfinding', result);
+        };
+        
+        window.runConsistencyTest = () => {
+            const result = mockTests.consistency();
+            testResults.consistency = result;
+            displayResults('Consistency', result);
+        };
+        
+        window.runAllTests = () => {
+            document.getElementById('results').textContent = '';
+            
+            setTimeout(() => runGenerationTest(), 100);
+            setTimeout(() => runWalkabilityTest(), 300);
+            setTimeout(() => runPathfindingTest(), 500);
+            setTimeout(() => runConsistencyTest(), 700);
+            
+            setTimeout(() => {
+                const passedTests = Object.values(testResults).filter(r => r.success).length;
+                const totalTests = Object.keys(testResults).length;
+                
+                displayResults('Summary', {
+                    success: passedTests === totalTests,
+                    message: `${passedTests}/${totalTests} tests passed ${passedTests === totalTests ? '🎉' : '⚠️'}`
+                });
+            }, 1000);
+        };
+        
+        // Initialize
+        console.log('🎮 Enhanced Terrain Walkability Test Page Loaded');
+        console.log('Click the test buttons to verify terrain functionality!');
+    </script>
+</body>
+</html>

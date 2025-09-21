@@ -1,34 +1,37 @@
 .open-world-game {
   position: fixed;
-  top: 0;
+  top: 64px; /* Height of the navbar */
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: calc(100vh - 64px); /* Adjust height to account for navbar */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  font-family: 'Arial', sans-serif;
+  justify-content: flex-start; /* Align to top instead of center */
+  background: linear-gradient(135deg, var(--primary-200) 0%, var(--secondary-300) 50%, var(--accent-400) 100%);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
   overflow: hidden;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  padding-top: 0; /* Remove any top padding */
 }
 
 .game-canvas {
-  border: 3px solid #333;
+  border: 3px solid var(--primary-800);
   border-radius: 10px;
   cursor: crosshair;
-  background: #4a9;
+  background: var(--primary-400);
   /* Remove CSS width/height to use canvas element dimensions */
   display: block;
+  margin-top: 0; /* Ensure no gap between navbar and canvas */
+  max-height: calc(100vh - 70px); /* Ensure it fits within the available space */
 }
 
-.game-canvas:hover {
+/* Remove empty ruleset */
 
-}
+/* Remove empty ruleset */
 
 .game-instructions {
   position: absolute;
@@ -36,9 +39,10 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 15px 25px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 8px;
-
+  box-shadow: 0 4px 15px rgba(22, 163, 74, 0.2);
+  border: 2px solid rgba(22, 163, 74, 0.3);
   max-width: 600px;
   text-align: center;
 }
@@ -100,10 +104,10 @@
 
 .problem-content h3 {
   margin: 0 0 15px 0;
-  color: #333;
+  color: var(--primary-800);
   font-size: 24px;
   text-align: center;
-  border-bottom: 2px solid #667eea;
+  border-bottom: 2px solid var(--primary-500);
   padding-bottom: 10px;
 }
 
@@ -171,10 +175,10 @@
 .problem-story {
   margin: 0 0 10px 0;
   padding: 15px;
-  background: #f8f9fa;
+  background: var(--primary-50);
   border-radius: 8px;
-  border-left: 4px solid #667eea;
-  color: #555;
+  border-left: 4px solid var(--primary-500);
+  color: var(--primary-900);
   font-size: 16px;
   line-height: 1.6;
 }
@@ -196,9 +200,9 @@
 .problem-details {
   margin: 0 0 20px 0;
   padding: 8px 15px;
-  background: #e3f2fd;
+  background: var(--accent-100);
   border-radius: 6px;
-  color: #1976d2;
+  color: var(--primary-800);
   font-size: 14px;
   text-align: center;
 }
@@ -252,7 +256,7 @@
 }
 
 .run-button {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
   color: white;
   border: none;
   padding: 12px 25px;
@@ -261,13 +265,13 @@
   font-size: 16px;
   font-weight: bold;
   transition: all 0.3s ease;
-
+  box-shadow: 0 4px 15px rgba(22, 163, 74, 0.3);
 }
 
 .run-button:hover {
-  background: linear-gradient(135deg, #45a049, #4CAF50);
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
   transform: translateY(-2px);
-
+  box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
 }
 
 .run-button:active {
@@ -310,13 +314,185 @@
   transform: translateY(0);
 }
 
-/* Responsive Design with Standardized Breakpoints */
+/* Enhanced Responsive Design - Comprehensive Breakpoints Aligned with Global System */
 
-/* Extra Large Screens (1440px+) */
-@media (min-width: 1440px) {
+/* Ultra Small Screens (240px - 319px) */
+@media (max-width: 319px) {
+  .open-world-game {
+    padding: 0.25rem !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+  }
+  
   .problem-content {
-    max-width: 1600px;
-    max-height: 1000px;
+    width: 100% !important;
+    height: 100vh !important;
+    padding: 0.5rem !important;
+    border-radius: 8px !important;
+    margin: 0 !important;
+  }
+  
+  .problem-header {
+    font-size: 0.8rem !important;
+    padding: 0.5rem !important;
+    min-height: 40px !important;
+  }
+  
+  .problem-main-content {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    padding: 0.25rem !important;
+  }
+  
+  .problem-left-panel {
+    flex: none !important;
+    width: 100% !important;
+    min-height: auto !important;
+    max-height: 50vh !important;
+    overflow-y: auto !important;
+  }
+  
+  .problem-description {
+    font-size: 0.7rem !important;
+    line-height: 1.3 !important;
+    padding: 0.5rem !important;
+  }
+  
+  .problem-title,
+  .problem-content h3 {
+    font-size: 0.9rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .canvas-container {
+    width: 100% !important;
+    height: 45vh !important;
+    min-height: 200px !important;
+  }
+  
+  .canvas-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+  }
+  
+  .close-button,
+  .run-button {
+    font-size: 0.7rem !important;
+    padding: 0.4rem 0.6rem !important;
+    min-height: 32px !important;
+  }
+  
+  .blockly-workspace {
+    min-height: 200px !important;
+  }
+  
+  .game-ui button {
+    font-size: 0.7rem !important;
+    padding: 0.4rem 0.8rem !important;
+    min-height: 32px !important;
+  }
+  
+  .problem-story {
+    font-size: 0.7rem !important;
+    padding: 0.5rem !important;
+  }
+}
+
+/* Small Mobile Screens (320px - 479px) */
+@media (min-width: 320px) and (max-width: 479px) {
+  .open-world-game {
+    padding: 0.5rem !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+  }
+  
+  .problem-content {
+    width: 99vw !important;
+    height: 96vh !important;
+    padding: 0.75rem !important;
+    border-radius: 12px !important;
+    margin: 0 !important;
+  }
+  
+  .problem-header {
+    font-size: 0.9rem !important;
+    padding: 0.75rem !important;
+    min-height: 44px !important;
+  }
+  
+  .problem-main-content {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    padding: 0.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .problem-left-panel {
+    flex: none !important;
+    width: 100% !important;
+    min-height: auto !important;
+    max-height: 50vh !important;
+    overflow-y: auto !important;
+  }
+  
+  .problem-description {
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+    padding: 0.75rem !important;
+  }
+  
+  .problem-title,
+  .problem-content h3 {
+    font-size: 1rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .canvas-container {
+    width: 100% !important;
+    height: 45vh !important;
+    min-height: 220px !important;
+  }
+  
+  .canvas-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+  }
+  
+  .close-button,
+  .run-button {
+    font-size: 0.8rem !important;
+    padding: 0.6rem 0.8rem !important;
+    min-height: 36px !important;
+  }
+  
+  .popup-buttons {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+  
+  .blockly-workspace {
+    min-height: 250px !important;
+  }
+  
+  .game-ui button {
+    font-size: 0.8rem !important;
+    padding: 0.6rem 1rem !important;
+    min-height: 36px !important;
+  }
+  
+  .problem-story {
+    font-size: 0.8rem !important;
+    padding: 0.5rem !important;
+  }
+  
+  .difficulty-badge,
+  .level-badge {
+    font-size: 0.7rem !important;
+    padding: 0.25rem 0.5rem !important;
   }
 }
 
@@ -539,7 +715,7 @@
 @media (max-width: 359px) {
   
   .problem-content {
-    width: 100vw;
+    width: 100%;
     height: 97vh;
     padding: 8px;
     border-radius: 0;
@@ -639,4 +815,218 @@
 
 .message-overlay.error {
   border-left: 5px solid #f44336;
+}
+
+/* Terrain Controls Styles */
+.terrain-controls {
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.terrain-controls h3 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.terrain-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.terrain-buttons button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.terrain-toggle {
+  background: linear-gradient(135deg, #6c757d, #495057);
+  color: white;
+}
+
+.terrain-toggle:hover {
+  background: linear-gradient(135deg, #5a6268, #343a40);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.terrain-toggle.active {
+  background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.terrain-toggle.active:hover {
+  background: linear-gradient(135deg, #218838, #1c7430);
+}
+
+.terrain-toggle:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.terrain-designer-btn {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+}
+
+.terrain-designer-btn:hover {
+  background: linear-gradient(135deg, #0056b3, #004085);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.4);
+}
+
+/* Terrain Loading Controls */
+.loaded-terrain-info {
+  background: rgba(76, 175, 80, 0.1);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  border-radius: 4px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.loaded-terrain-info small {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.terrain-upload {
+  margin-bottom: 0.5rem;
+}
+
+.terrain-upload-btn {
+  display: inline-block;
+  background: #2196f3;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  border: none;
+  width: 100%;
+  text-align: center;
+}
+
+.terrain-upload-btn:hover {
+  background: #1976d2;
+  transform: translateY(-2px);
+}
+
+.terrain-presets {
+  margin-bottom: 0.5rem;
+}
+
+.preset-btn {
+  background: #ff9800;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.preset-btn:hover {
+  background: #f57c00;
+  transform: translateY(-2px);
+}
+
+.terrain-reload-btn {
+  background: linear-gradient(135deg, #ffc107, #e0a800);
+  color: #212529;
+}
+
+.terrain-reload-btn:hover {
+  background: linear-gradient(135deg, #e0a800, #d39e00);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.4);
+}
+
+.terrain-info {
+  margin-top: 10px;
+  padding: 8px;
+  background: rgba(40, 167, 69, 0.2);
+  border-radius: 4px;
+  border-left: 3px solid #28a745;
+}
+
+.terrain-info p {
+  margin: 2px 0;
+  font-size: 11px;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Controls info styles */
+.controls-info {
+  margin-bottom: 10px;
+}
+
+.controls-info h3 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.controls-info p {
+  margin: 2px 0;
+  font-size: 11px;
+  color: #ccc;
+  line-height: 1.3;
+}
+
+.interaction-prompt {
+  margin-top: 8px;
+  padding: 6px;
+  background: rgba(255, 255, 0, 0.2);
+  border-radius: 4px;
+  border-left: 3px solid #ffff00;
+}
+
+.interaction-prompt p {
+  margin: 0;
+  font-size: 12px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* === Safe-space and palette enforcement for Open World page === */
+.open-world-game {
+  background: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--accent))) !important;
+}
+
+.game-canvas {
+  background: hsl(var(--accent)) !important;
+  border-color: hsl(var(--primary)) !important;
+}
+
+.game-container,
+.game-ui,
+.game-instructions,
+.terrain-controls,
+.terrain-buttons,
+.terrain-presets {
+  padding: 0 !important;
+  margin: 0 !important;
+  gap: 0 !important;
 }

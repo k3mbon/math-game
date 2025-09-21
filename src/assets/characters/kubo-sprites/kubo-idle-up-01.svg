@@ -1,0 +1,75 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Kubo Character - Up/Back Facing Idle Frame 1 -->
+  <defs>
+    <radialGradient id="bodyGradient" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#8B4513" />
+      <stop offset="100%" stop-color="#654321" />
+    </radialGradient>
+    <radialGradient id="armorGradient" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#C0C0C0" />
+      <stop offset="100%" stop-color="#808080" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Shadow -->
+  <ellipse cx="32" cy="60" rx="12" ry="3" fill="rgba(0,0,0,0.2)" />
+  
+  <!-- Legs -->
+  <rect x="26" y="48" width="5" height="12" fill="#654321" rx="2" />
+  <rect x="33" y="48" width="5" height="12" fill="#654321" rx="2" />
+  
+  <!-- Boots -->
+  <rect x="24" y="58" width="9" height="4" fill="#2F1B14" rx="2" />
+  <rect x="31" y="58" width="9" height="4" fill="#2F1B14" rx="2" />
+  
+  <!-- Body/Torso -->
+  <rect x="22" y="28" width="20" height="22" fill="url(#bodyGradient)" rx="3" />
+  
+  <!-- Armor Back Plate -->
+  <rect x="24" y="30" width="16" height="16" fill="url(#armorGradient)" rx="2" />
+  <rect x="26" y="32" width="12" height="3" fill="#A0A0A0" rx="1" />
+  <rect x="26" y="37" width="12" height="3" fill="#A0A0A0" rx="1" />
+  <rect x="26" y="42" width="12" height="3" fill="#A0A0A0" rx="1" />
+  
+  <!-- Arms -->
+  <rect x="16" y="30" width="6" height="16" fill="url(#bodyGradient)" rx="3" />
+  <rect x="42" y="30" width="6" height="16" fill="url(#bodyGradient)" rx="3" />
+  
+  <!-- Arm Guards -->
+  <rect x="17" y="32" width="4" height="8" fill="url(#armorGradient)" rx="1" />
+  <rect x="43" y="32" width="4" height="8" fill="url(#armorGradient)" rx="1" />
+  
+  <!-- Hands -->
+  <circle cx="19" cy="48" r="3" fill="#8B4513" />
+  <circle cx="45" cy="48" r="3" fill="#8B4513" />
+  
+  <!-- Head (back view) -->
+  <circle cx="32" cy="20" r="10" fill="#8B4513" />
+  
+  <!-- Hair (back view) -->
+  <path d="M22 15 Q32 8 42 15 Q40 10 32 8 Q24 10 22 15" fill="#4A4A4A" />
+  <path d="M25 18 Q32 12 39 18 Q35 15 32 14 Q29 15 25 18" fill="#4A4A4A" />
+  
+  <!-- Ears (visible from back) -->
+  <ellipse cx="23" cy="20" rx="2" ry="3" fill="#8B4513" />
+  <ellipse cx="41" cy="20" rx="2" ry="3" fill="#8B4513" />
+  
+  <!-- Sword (prominent on back) -->
+  <rect x="30" y="10" width="4" height="20" fill="#C0C0C0" />
+  <rect x="29" y="8" width="6" height="4" fill="#FFD700" rx="1" />
+  <rect x="31" y="6" width="2" height="6" fill="#8B4513" />
+  
+  <!-- Sword Guard -->
+  <rect x="28" y="12" width="8" height="2" fill="#FFD700" />
+  
+  <!-- Sword Pommel -->
+  <circle cx="32" cy="32" r="2" fill="#FFD700" />
+  
+  <!-- Belt (back view) -->
+  <rect x="22" y="44" width="20" height="3" fill="#654321" />
+  <rect x="30" y="43" width="4" height="5" fill="#FFD700" rx="1" />
+  
+  <!-- Cape/Cloak attachment points -->
+  <circle cx="26" cy="32" r="1.5" fill="#FFD700" />
+  <circle cx="38" cy="32" r="1.5" fill="#FFD700" />
+</svg>

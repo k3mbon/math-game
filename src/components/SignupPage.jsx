@@ -5,6 +5,7 @@ import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import Navbar from './Navbar';
+import { Person, School, Warning } from '@mui/icons-material';
 import '../pages/SignupPage.css';
 
 const SignupPage = () => {
@@ -94,20 +95,20 @@ const SignupPage = () => {
               className={!isTeacher ? 'active' : ''}
               onClick={() => setIsTeacher(false)}
             >
-              🎓 Student
+              <Person sx={{ marginRight: '8px', fontSize: '1.2rem' }} /> Student
             </button>
             <button
               type="button"
               className={isTeacher ? 'active' : ''}
               onClick={() => setIsTeacher(true)}
             >
-              👩‍🏫 Teacher
+              <School sx={{ marginRight: '8px', fontSize: '1.2rem' }} /> Teacher
             </button>
           </div>
 
-          <h2>{isTeacher ? '📝 Teacher Signup' : '🎓 Student Signup'}</h2>
+          <h2>{isTeacher ? 'Teacher Signup' : 'Student Signup'}</h2>
           
-          {error && <div className="error-msg">⚠️ {error}</div>}
+          {error && <div className="error-msg"><Warning sx={{ marginRight: '8px', fontSize: '1.1rem' }} /> {error}</div>}
           
           <input 
             name="firstName" 

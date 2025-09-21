@@ -1,9 +1,11 @@
 // App.jsx
-import './App.css';
+import './App.css?v=1';
+import './components/temp.css';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useEffect, useState, Suspense, lazy } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { getDoc, doc } from 'firebase/firestore';
+import { DataTable } from './components/data-table';
 
 // Core components (keep as direct imports for faster initial load)
 import LoginPage from './components/LoginPage';
@@ -15,8 +17,7 @@ import { GameProgressProvider } from './contexts/GameProgressContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { auth, db } from './firebase';
 
-// Lazy load heavy components
-const LandingPage = lazy(() => import('./components/LandingPage'));
+import LandingPage from './components/LandingPage';
 const IterationPage = lazy(() => import('./components/IterationPage'));
 const NumerationPage = lazy(() => import('./components/NumerationPage'));
 const TeacherDashboard = lazy(() => import('./components/TeacherDashboard'));
@@ -24,14 +25,65 @@ const DashboardRedirect = lazy(() => import('./components/DashboardRedirect'));
 const DashboardPage = lazy(() => import('./components/DashboardPage'));
 const ArcadeMode = lazy(() => import('./components/Arcade'));
 const Game1 = lazy(() => import('./components/Game1'));
+const GrassTerrainDemo = lazy(() => import('./pages/GrassTerrainDemo'));
 const KuboTerrainGame = lazy(() => import('./components/KuboTerrainGame'));
-const OpenWorldGame = lazy(() => import('./components/OpenWorldGame'));
-const SimpleOpenWorldGame = lazy(() => import('./components/SimpleOpenWorldGame'));
+const KuboGameNew = lazy(() => import('./components/KuboGameNew'));
+// Import OpenWorldGame and related components directly to avoid module fetch errors
+import OpenWorldGame from './components/OpenWorldGame';
+import SimpleOpenWorldGame from './components/SimpleOpenWorldGame';
+import CanvasRenderer from './components/CanvasRenderer';
 const GameComparison = lazy(() => import('./components/GameComparison'));
 const TestGame = lazy(() => import('./components/TestGame'));
+const GameStart = lazy(() => import('./components/GameStart'));
 const CharacterDemo = lazy(() => import('./pages/CharacterDemo'));
 const CharacterAnimationGIF = lazy(() => import('./components/CharacterAnimationGIF'));
 const WorldEditorDemo = lazy(() => import('./components/WorldEditorDemo'));
+const TerrainDesigner = lazy(() => import('./pages/TerrainDesigner'));
+const TerrainDesignerSimple = lazy(() => import('./pages/TerrainDesignerSimple'));
+const TerrainGameDemo = lazy(() => import('./pages/TerrainGameDemo'));
+const TerrainDemo = lazy(() => import('./pages/TerrainDemo'));
+
+const data = [
+  {
+    id: "728ed52f",
+    amount: 100,
+    status: "pending",
+    email: "m@example.com",
+  },
+  {
+    id: "489e1d42",
+    amount: 125,
+    status: "processing",
+    email: "example@gmail.com",
+  },
+  {
+    id: "489e1d43",
+    amount: 75,
+    status: "success",
+    email: "test@test.com",
+  },
+  {
+    id: "489e1d44",
+    amount: 200,
+    status: "failed",
+    email: "another@example.com",
+  },
+];
+
+const columns = [
+  {
+    accessorKey: "status",
+    header: "Status",
+  },
+  {
+    accessorKey: "email",
+    header: "Email",
+  },
+  {
+    accessorKey: "amount",
+    header: "Amount",
+  },
+];
 
 // AppContent component to use router hooks
 function AppContent() {
@@ -76,28 +128,38 @@ function AppContent() {
       <Suspense fallback={<div className="loading-screen">Loading...</div>}>
         <Routes>
               {/* Public routes */}
+              <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
+              {/* Public game preview routes */}
+              <Route path="/iteration" element={<IterationPage />} />
+              <Route path="/numeration" element={<NumerationPage />} />
+              <Route path="/kubo" element={<KuboGameNew />} />
               
               {/* Test routes (temporarily public) */}
               <Route path="/test-game" element={<TestGame />} />
-              <Route path="/open-world" element={<OpenWorldGame />} />
+              <Route path="/game-start" element={<GameStart />} />
+              <Route path="/open-world-game" element={<OpenWorldGame />} />
               <Route path="/simple-open-world" element={<SimpleOpenWorldGame />} />
               <Route path="/game-comparison" element={<GameComparison />} />
               <Route path="/character-demo" element={<CharacterDemo />} />
               <Route path="/character-gif" element={<CharacterAnimationGIF />} />
               <Route path="/world-editor" element={<WorldEditorDemo />} />
+              <Route path="/terrain-designer" element={<TerrainDesigner />} />
+              <Route path="/terrain-designer-simple" element={<TerrainDesignerSimple />} />
+              <Route path="/terrain-game-demo" element={<TerrainGameDemo />} />
+              <Route path="/grass-terrain-demo" element={<GrassTerrainDemo />} />
+              <Route path="/terrain-demo" element={<TerrainDemo />} />
               
-              {/* Protected routes with Navbar */}
-              {user ? (
+              {/* Protected routes shown only when authenticated */}
+              {user && (
                 <>
-                  <Route path="/" element={<LandingPage />} />
                   <Route path="/dashboard" element={<DashboardRedirect />} />
                   <Route path="/dashboard-home" element={<DashboardPage />} />
                   
                   {/* Game routes */}
                   <Route path="/arcade" element={<ArcadeMode />} />
-                  <Route path="/kubo" element={<KuboTerrainGame />} />
+                  <Route path="/kubo" element={<KuboGameNew />} />
                   
                   {/* Role-based routes */}
                   {role === 'teacher' && (
@@ -111,12 +173,11 @@ function AppContent() {
                     </>
                   )}
                 </>
-              ) : (
-                <Route path="*" element={<Navigate to="/login" />} />
               )}
               
               {/* 404 fallback */}
               <Route path="*" element={<NotFound />} />
+              <Route path="/test-table" element={<DataTable columns={columns} data={data} />} />
             </Routes>
         </Suspense>
       </div>

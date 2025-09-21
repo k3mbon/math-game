@@ -1,259 +1,179 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Import Google Fonts and JetBrains Mono */
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Fira+Code:wght@400;500;600;700&display=swap');
+@layer base {
+  :root {
+  /* Palette based on provided slate scale */
+  --background: 210 40% 98%;          /* #f8fafc (slate-50) */
+  --foreground: 222.2 84% 4.9%;       /* #0f172a (slate-900) */
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  --card: 210 40% 98%;                /* #f8fafc */
+  --card-foreground: 222.2 84% 4.9%;  /* #0f172a */
+
+  --popover: 210 40% 98%;             /* #f8fafc */
+  --popover-foreground: 222.2 84% 4.9%; /* #0f172a */
+
+  /* Use slate-700 as primary for strong contrast on light bg */
+  --primary: 215 25% 27%;             /* #334155 (slate-700) */
+  --primary-foreground: 210 40% 98%;  /* #f8fafc */
+
+  --secondary: 210 40% 96%;           /* #f1f5f9 (slate-100) */
+  --secondary-foreground: 222.2 84% 4.9%; /* #0f172a */
+
+  --muted: 210 40% 96%;               /* #f1f5f9 */
+  --muted-foreground: 215.4 16.3% 46.9%; /* #64748b (slate-500) */
+
+  --accent: 214.3 31.8% 91.4%;        /* #e2e8f0 (slate-200) */
+  --accent-foreground: 222.2 84% 4.9%; /* #0f172a */
+
+  --destructive: 0 84.2% 60.2%;       /* red-500 */
+  --destructive-foreground: 210 40% 98%; /* #f8fafc */
+
+  --border: 214.3 31.8% 91.4%;        /* #e2e8f0 */
+  --input: 214.3 31.8% 91.4%;         /* #e2e8f0 */
+  --ring: 215 25% 27%;                /* match primary */
+
+  --radius: 0.5rem;
+  }
+
+  .dark {
+  --background: 222.2 84% 4.9%;       /* #0f172a (slate-900) */
+  --foreground: 210 40% 98%;          /* #f8fafc */
+
+  --card: 222.2 84% 4.9%;             /* #0f172a */
+  --card-foreground: 210 40% 98%;     /* #f8fafc */
+
+  --popover: 222.2 84% 4.9%;          /* #0f172a */
+  --popover-foreground: 210 40% 98%;  /* #f8fafc */
+
+  /* Use slate-300 as primary in dark for contrast */
+  --primary: 214 32% 91%;             /* #e2e8f0 (slate-200/300-ish) */
+  --primary-foreground: 222.2 84% 4.9%;  /* #0f172a */
+
+  --secondary: 215 27.9% 16.9%;       /* #1e293b (slate-800) */
+  --secondary-foreground: 210 40% 98%; /* #f8fafc */
+
+  --muted: 215 27.9% 16.9%;           /* #1e293b */
+  --muted-foreground: 217.9 10.6% 64.9%; /* #94a3b8 (slate-400) */
+
+  --accent: 215 27.9% 16.9%;          /* #1e293b */
+  --accent-foreground: 210 40% 98%;   /* #f8fafc */
+
+  --destructive: 0 62.8% 30.6%;       /* red-600 */
+  --destructive-foreground: 210 40% 98%; /* #f8fafc */
+
+  --border: 215 27.9% 16.9%;          /* #1e293b */
+  --input: 215 27.9% 16.9%;           /* #1e293b */
+  --ring: 214 32% 91%;                /* match dark primary */
+  }
+
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Nunito', 'Fredoka', 'Comic Neue', 'Poppins', sans-serif;
+    overflow-x: hidden; /* avoid horizontal scroll when using full-bleed sections */
+  }
 }
 
-html {
+/* Baseline reset for root only */
+html, body, #root {
   margin: 0;
   padding: 0;
-  width: 100%;
-  overflow-x: hidden;
 }
 
+/* Avoid overly-aggressive spacing resets so Tailwind utilities work as expected */
+
+/* Provide aliases for legacy color tokens used in some pages, mapping to approved palette */
 :root {
-  /* Modern Tech Font Family */
-  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  line-height: 1.6;
-  font-weight: 400;
-
-  /* Matrix Green Tech Colors */
-  --matrix-green: #00ff41;
-  --matrix-green-dark: #00cc33;
-  --cyber-blue: #00d4ff;
-  --primary-gradient: linear-gradient(135deg, #00ff41 0%, #39ff14 50%, #7fff00 100%);
-  
-  /* Dark Tech Backgrounds */
-  --bg-main: #0a0a0f;
-  --bg-light: #001a00;
-  --bg-card: rgba(0, 26, 0, 0.9);
-  
-  /* Matrix Text Colors */
-  --text-primary: #00ff41;
-  --text-secondary: #00d4ff;
-  --text-light: #0dff0d;
-  
-  /* Tech Accent Colors */
-  --accent-pink: #ff0080;
-  --accent-yellow: #ffff00;
-  --accent-green: #39ff14;
-  --accent-orange: #ff8000;
-  
-  /* Matrix Shadows */
-  --shadow-sm: 0 4px 6px rgba(0, 255, 65, 0.1);
-  --shadow-md: 0 6px 15px rgba(0, 255, 65, 0.15);
-  --shadow-lg: 0 10px 25px rgba(0, 255, 65, 0.2);
-
-  /* Apply Base Styles */
-  color: var(--text-primary);
-  background-color: var(--bg-main);
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* Map page-specific tokens to the core palette */
+  --primary-200: hsl(var(--primary));
+  --primary-400: hsl(var(--primary));
+  --primary-800: hsl(var(--primary));
+  --secondary-300: hsl(var(--secondary));
+  --accent-100: hsl(var(--accent));
+  --accent-400: hsl(var(--accent));
 }
 
+/* Global media defaults for consistency */
+img, svg, video, canvas {
+  display: block;
+  max-width: 100%;
+}
+
+/* Full-bleed utility: lets a child stretch to viewport width regardless of parent padding */
+.full-bleed {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+/* Ensure full-bleed isn’t broken by the global reset */
+.app-container .full-bleed {
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
+}
+
+/* Avoid horizontal overflow on full-bleed sections */
+.full-bleed > .container {
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* Keep Tailwind's container centering behavior */
+.container {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Allow gaps defined via Tailwind utilities */
+
+/* Link styling - clean and professional */
 a {
-  font-weight: 600;
-  color: var(--matrix-green);
-  text-decoration: inherit;
-  transition: all 0.3s ease;
+  color: hsl(var(--primary));
+  text-underline-offset: 3px;
 }
 
 a:hover {
-  color: var(--cyber-blue);
-  transform: translateY(-2px);
+  text-decoration: underline;
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  width: 100%;
-  overflow-x: hidden;
-  color: var(--text-light);
+/* Landing page: do not substitute removed spacing with color */
+.landing-page-body {
+  background: transparent;
 }
 
-/* Apply background only to non-landing pages */
-body:not(.landing-page-body) {
-  background-color: var(--bg-main);
-  background-image: 
-    /* Matrix-like grid pattern */
-    linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px),
-    /* Tech glow effects */
-    radial-gradient(circle at 20% 80%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
-  background-size: 50px 50px, 50px 50px, 800px 800px, 600px 600px;
-  background-attachment: fixed;
+/* Hero images */
+.hero-undraw-image,
+.hero-illustration {
+  display: block;
+  max-width: 100%;
+  max-height: 380px;
+  object-fit: contain;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--text-primary);
+/* Stats cards styling */
+.stat-icon {
+  font-size: 1.5rem;
+  color: hsl(var(--primary));
+  margin-bottom: 0.25rem;
 }
 
-h1 {
-  font-size: clamp(2rem, 5vw, 3.2rem);
-  background: var(--primary-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-family: 'JetBrains Mono', monospace;
+.stat-number {
+  font-weight: 800;
+  font-size: 1.25rem;
+  line-height: 1.1;
 }
 
-h2 {
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
-}
-
-h3 {
-  font-size: clamp(1.25rem, 3vw, 2rem);
-}
-
-h4 {
-  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
-}
-
-p {
-  font-size: clamp(0.9rem, 2vw, 1rem);
-  line-height: 1.6;
-}
-
-button {
-  border-radius: 12px;
-  border: 2px solid rgba(0, 255, 65, 0.3);
-  padding: clamp(0.5em, 2vw, 0.7em) clamp(1em, 3vw, 1.4em);
-  font-size: clamp(0.9rem, 2vw, 1rem);
-  font-weight: 600;
-  font-family: 'JetBrains Mono', monospace;
-  background: var(--primary-gradient);
-  color: var(--text-light);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
-  min-height: 44px;
-  min-width: 44px;
-}
-
-button:hover {
-  transform: translateY(-3px);
-}
-
-button:active {
-  transform: translateY(-1px);
-}
-
-button:focus,
-button:focus-visible {
-  outline: 3px solid rgba(94, 114, 235, 0.4);
-  outline-offset: 2px;
-}
-
-/* Utility Classes */
-.text-gradient {
-  background: var(--primary-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.card {
-  background-color: var(--bg-card);
-  border-radius: 16px;
-  padding: 1.5rem;
-  transition: transform 0.3s ease;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-}
-
-/* Animation Keyframes */
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-
-/* Global Responsive Design Enhancements */
-@media (max-width: 480px) {
-  :root {
-    font-size: 14px;
-  }
-  
-  .card {
-    padding: 1rem;
-    margin: 0.5rem;
-  }
-  
-  button {
-    width: 100%;
-    max-width: 300px;
-  }
-}
-
-@media (min-width: 481px) and (max-width: 768px) {
-  :root {
-    font-size: 15px;
-  }
-  
-  .card {
-    padding: 1.25rem;
-    margin: 0.75rem;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-  :root {
-    font-size: 16px;
-  }
-  
-  .card {
-    padding: 1.5rem;
-    margin: 1rem;
-  }
-}
-
-@media (min-width: 1025px) {
-  :root {
-    font-size: 16px;
-  }
-  
-  .card {
-    padding: 1.5rem;
-    margin: 1rem;
-  }
-}
-
-/* Ensure all containers are responsive */
-.container, .main-container, .content-container {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-@media (max-width: 480px) {
-  .container, .main-container, .content-container {
-    padding: 0 0.5rem;
-  }
-}
-
-@media (min-width: 1025px) {
-  .container, .main-container, .content-container {
-    padding: 0 2rem;
-  }
+.stat-label {
+  color: hsl(var(--muted-foreground));
+  font-size: 0.875rem;
 }

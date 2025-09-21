@@ -1,5 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import './Game1.css';
+import HumanCharacter from './HumanCharacter';
+import { useCharacter } from '../contexts/CharacterContext';
+import { ENHANCED_TERRAIN_TYPES } from '../utils/pixelTerrainAssets.js';
+import { 
+  generateEnhancedTerrain, 
+  convertToLegacyTerrain,
+  enhancedTerrainGenerator
+} from '../utils/enhancedTerrainGenerator.js';
+import {
+  ArrowForward,
+  ArrowBack,
+  ArrowUpward,
+  ArrowDownward,
+  FastForward,
+  FastRewind,
+  LooksOne,
+  LooksTwo,
+  Looks3,
+  Looks4,
+  Looks5,
+  Looks6,
+  Filter7,
+  Filter8,
+  Filter9,
+  RocketLaunch,
+  Stop,
+  VolumeUp,
+  MusicNote,
+  Celebration,
+  Add,
+  Remove,
+  Close,
+  DragHandle,
+  Repeat,
+  Loop,
+  Cyclone
+} from '@mui/icons-material';
 
 // Enhanced game configuration for worm movement
 const DIFFICULTY_LEVELS = {
@@ -13,43 +50,35 @@ const DIFFICULTY_LEVELS = {
 const START_POS = { x: 1, y: 1 };
 const CELL_SIZE = 60; // Increased base cell size
 
+// Legacy terrain types for backward compatibility
+const TERRAIN_TYPES = ENHANCED_TERRAIN_TYPES;
 
 
 
 
-// Realistic Car Character with directional assets
-const CarCharacter = ({ size = 48, x = 0, y = 0, direction = 'right', isAnimating = false }) => {
-  const getCarAsset = () => {
-    switch (direction) {
-      case 'up': return '/assets/car-back.svg';
-      case 'down': return '/assets/car-front.svg';
-      case 'left': return '/assets/car-left.svg';
-      case 'right': return '/assets/car-right.svg';
-      default: return '/assets/car-right.svg';
-    }
-  };
+
+// Legacy CarCharacter wrapper for backward compatibility
+const CarCharacter = ({ size = 48, x = 0, y = 0, direction = 'right', isAnimating = false, currentMovement = null }) => {
+  // Determine animation state based on movement parameters
+  let animationState = 'idle';
+  
+  if (isAnimating && currentMovement) {
+    // Check if it's a sprint movement (2 steps)
+    const isSprint = Math.abs(currentMovement.x) === 2 || Math.abs(currentMovement.y) === 2;
+    animationState = isSprint ? 'running' : 'walking';
+  } else if (isAnimating) {
+    animationState = 'walking';
+  }
   
   return (
-    <div 
-      className="car-character" 
-      style={{
-        position: 'absolute',
-        left: `${x}px`,
-        top: `${y}px`,
-        transition: isAnimating ? 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)' : 'all 0.3s ease'
-      }}
-    >
-      <img 
-        src={getCarAsset()} 
-        alt={`Car facing ${direction}`}
-        width={size} 
-        height={size}
-        style={{
-          display: 'block',
-          imageRendering: 'crisp-edges'
-        }}
-      />
-    </div>
+    <HumanCharacter
+      size={size}
+      x={x}
+      y={y}
+      direction={direction}
+      isAnimating={isAnimating}
+      animationState={animationState}
+    />
   );
 };
 
@@ -85,47 +114,48 @@ const KuboTile = ({ id, name, icon, category, onClick, isDragging, onDragStart, 
 // Enhanced movement tiles for worm character
 const KUBO_TILES = {
   movement: [
-    { id: 'right1', name: 'Kanan 1', icon: '➡️', color: '#4CAF50', action: 'move', param: { x: 1, y: 0 }, size: 'large' },
-    { id: 'left1', name: 'Kiri 1', icon: '⬅️', color: '#4CAF50', action: 'move', param: { x: -1, y: 0 }, size: 'large' },
-    { id: 'up1', name: 'Atas 1', icon: '⬆️', color: '#4CAF50', action: 'move', param: { x: 0, y: -1 }, size: 'large' },
-    { id: 'down1', name: 'Bawah 1', icon: '⬇️', color: '#4CAF50', action: 'move', param: { x: 0, y: 1 }, size: 'large' },
-    { id: 'right2', name: 'Kanan 2', icon: '⏩', color: '#66BB6A', action: 'move', param: { x: 2, y: 0 }, size: 'large', minLevel: 2 },
-    { id: 'left2', name: 'Kiri 2', icon: '⏪', color: '#66BB6A', action: 'move', param: { x: -2, y: 0 }, size: 'large', minLevel: 2 }
+    { id: 'right1', name: 'Kanan 1', icon: <ArrowForward />, color: '#4CAF50', action: 'move', param: { x: 1, y: 0 }, size: 'large' },
+    { id: 'left1', name: 'Kiri 1', icon: <ArrowBack />, color: '#4CAF50', action: 'move', param: { x: -1, y: 0 }, size: 'large' },
+    { id: 'up1', name: 'Atas 1', icon: <ArrowUpward />, color: '#4CAF50', action: 'move', param: { x: 0, y: -1 }, size: 'large' },
+    { id: 'down1', name: 'Bawah 1', icon: <ArrowDownward />, color: '#4CAF50', action: 'move', param: { x: 0, y: 1 }, size: 'large' },
+    { id: 'right2', name: 'Kanan 2', icon: <FastForward />, color: '#66BB6A', action: 'move', param: { x: 2, y: 0 }, size: 'large', minLevel: 2 },
+    { id: 'left2', name: 'Kiri 2', icon: <FastRewind />, color: '#66BB6A', action: 'move', param: { x: -2, y: 0 }, size: 'large', minLevel: 2 }
   ],
   numbers: [
-    { id: 'num1', value: '1', icon: '1️⃣', color: '#FF9800', action: 'number', param: 1, size: 'large' },
-    { id: 'num2', value: '2', icon: '2️⃣', color: '#FFB74D', action: 'number', param: 2, size: 'large' },
-    { id: 'num3', value: '3', icon: '3️⃣', color: '#FFCC02', action: 'number', param: 3, size: 'large' },
-    { id: 'num4', value: '4', icon: '4️⃣', color: '#FFC107', action: 'number', param: 4, size: 'large', minLevel: 2 },
-    { id: 'num5', value: '5', icon: '5️⃣', color: '#FFD54F', action: 'number', param: 5, size: 'large', minLevel: 2 },
-    { id: 'num6', value: '6', icon: '6️⃣', color: '#FFEB3B', action: 'number', param: 6, size: 'large', minLevel: 3 },
-    { id: 'num7', value: '7', icon: '7️⃣', color: '#F9A825', action: 'number', param: 7, size: 'large', minLevel: 3 },
-    { id: 'num8', value: '8', icon: '8️⃣', color: '#F57F17', action: 'number', param: 8, size: 'large', minLevel: 4 },
-    { id: 'num9', value: '9', icon: '9️⃣', color: '#FF8F00', action: 'number', param: 9, size: 'large', minLevel: 4 },
-    { id: 'num10', value: '10', icon: '🔟', color: '#E65100', action: 'number', param: 10, size: 'large', minLevel: 5 }
+    { id: 'num1', value: '1', icon: <LooksOne />, color: '#FF9800', action: 'number', param: 1, size: 'large' },
+    { id: 'num2', value: '2', icon: <LooksTwo />, color: '#FFB74D', action: 'number', param: 2, size: 'large' },
+    { id: 'num3', value: '3', icon: <Looks3 />, color: '#FFCC02', action: 'number', param: 3, size: 'large' },
+    { id: 'num4', value: '4', icon: <Looks4 />, color: '#FFC107', action: 'number', param: 4, size: 'large', minLevel: 2 },
+    { id: 'num5', value: '5', icon: <Looks5 />, color: '#FFD54F', action: 'number', param: 5, size: 'large', minLevel: 2 },
+    { id: 'num6', value: '6', icon: <Looks6 />, color: '#FFEB3B', action: 'number', param: 6, size: 'large', minLevel: 3 },
+    { id: 'num7', value: '7', icon: <Filter7 />, color: '#F9A825', action: 'number', param: 7, size: 'large', minLevel: 3 },
+    { id: 'num8', value: '8', icon: <Filter8 />, color: '#F57F17', action: 'number', param: 8, size: 'large', minLevel: 4 },
+    { id: 'num9', value: '9', icon: <Filter9 />, color: '#FF8F00', action: 'number', param: 9, size: 'large', minLevel: 4 },
+    { id: 'num10', value: '10', icon: <DragHandle />, color: '#E65100', action: 'number', param: 10, size: 'large', minLevel: 5 }
   ],
   actions: [
-    { id: 'go', value: 'MULAI', icon: '🚀', color: '#9C27B0', action: 'start', param: null, size: 'large' },
-    { id: 'stop', value: 'BERHENTI', icon: '🛑', color: '#AD47B5', action: 'stop', param: null, size: 'large' },
-    { id: 'beep', value: 'BUNYI', icon: '🔊', color: '#BA68C8', action: 'beep', param: null, size: 'large' },
-    { id: 'dance', value: 'MENARI', icon: '💃', color: '#CE93D8', action: 'dance', param: null, size: 'large', minLevel: 3 },
-    { id: 'celebrate', value: 'PESTA', icon: '🎉', color: '#E1BEE7', action: 'celebrate', param: null, size: 'large', minLevel: 4 }
+    { id: 'go', value: 'MULAI', icon: <RocketLaunch />, color: '#9C27B0', action: 'start', param: null, size: 'large' },
+    { id: 'stop', value: 'BERHENTI', icon: <Stop />, color: '#AD47B5', action: 'stop', param: null, size: 'large' },
+    { id: 'beep', value: 'BUNYI', icon: <VolumeUp />, color: '#BA68C8', action: 'beep', param: null, size: 'large' },
+  { id: 'dance', value: 'MENARI', icon: <MusicNote />, color: '#CE93D8', action: 'dance', param: null, size: 'large', minLevel: 3 },
+    { id: 'celebrate', value: 'PESTA', icon: <Celebration />, color: '#E1BEE7', action: 'celebrate', param: null, size: 'large', minLevel: 4 }
   ],
   math: [
-    { id: 'add', value: '+', icon: '➕', color: '#2196F3', action: 'math', param: 'add', size: 'large', minLevel: 2 },
-    { id: 'subtract', value: '-', icon: '➖', color: '#42A5F5', action: 'math', param: 'subtract', size: 'large', minLevel: 2 },
-    { id: 'multiply', value: '×', icon: '✖️', color: '#64B5F6', action: 'math', param: 'multiply', size: 'large', minLevel: 4 },
-    { id: 'equals', value: '=', icon: '🟰', color: '#90CAF9', action: 'math', param: 'equals', size: 'large', minLevel: 3 }
+    { id: 'add', value: '+', icon: <Add />, color: '#2196F3', action: 'math', param: 'add', size: 'large', minLevel: 2 },
+    { id: 'subtract', value: '-', icon: <Remove />, color: '#42A5F5', action: 'math', param: 'subtract', size: 'large', minLevel: 2 },
+    { id: 'multiply', value: '×', icon: <Close />, color: '#64B5F6', action: 'math', param: 'multiply', size: 'large', minLevel: 4 },
+    { id: 'equals', value: '=', icon: <DragHandle />, color: '#90CAF9', action: 'math', param: 'equals', size: 'large', minLevel: 3 }
   ],
   loops: [
-    { id: 'repeat2', value: 'Ulangi 2x', icon: '🔄', color: '#FF5722', action: 'repeat', param: 2, size: 'large', minLevel: 3 },
-    { id: 'repeat3', value: 'Ulangi 3x', icon: '🔁', color: '#FF7043', action: 'repeat', param: 3, size: 'large', minLevel: 4 },
-    { id: 'repeat5', value: 'Ulangi 5x', icon: '🌀', color: '#FF8A65', action: 'repeat', param: 5, size: 'large', minLevel: 5 }
+    { id: 'repeat2', value: 'Ulangi 2x', icon: <Repeat />, color: '#FF5722', action: 'repeat', param: 2, size: 'large', minLevel: 3 },
+    { id: 'repeat3', value: 'Ulangi 3x', icon: <Loop />, color: '#FF7043', action: 'repeat', param: 3, size: 'large', minLevel: 4 },
+    { id: 'repeat5', value: 'Ulangi 5x', icon: <Cyclone />, color: '#FF8A65', action: 'repeat', param: 5, size: 'large', minLevel: 5 }
   ]
 };
 
 const Game1 = () => {
   // Enhanced game state with difficulty progression
+  const { userProgress, updateCrystalProgress } = useCharacter();
   const [difficultyLevel, setDifficultyLevel] = useState(1);
   const [carPos, setCarPos] = useState(START_POS);
   const [target, setTarget] = useState({ x: 6, y: 4 });
@@ -143,10 +173,41 @@ const Game1 = () => {
   const [carDirection, setCarDirection] = useState('right');
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [currentMovement, setCurrentMovement] = useState(null);
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
+  
+  // Crystal collection system state
+  const [terrain, setTerrain] = useState([]);
+  const [crystalsCollected, setCrystalsCollected] = useState(userProgress.crystalsCollected || 0);
+  const [collectedCrystals, setCollectedCrystals] = useState(new Set());
+  const [showAchievementNotification, setShowAchievementNotification] = useState(false);
   
   // Get current difficulty settings
   const currentDifficulty = DIFFICULTY_LEVELS[difficultyLevel];
+  
+  // Enhanced terrain generation with pixel assets
+  const generateTerrain = (width, height) => {
+    const enhancedTerrainData = generateEnhancedTerrain(width, height, START_POS, target, {
+      useTransitions: true,
+      biomeSize: 3,
+      transitionWidth: 1,
+      ensurePath: true
+    });
+    
+    // Store enhanced terrain data for rendering
+    setEnhancedTerrain(enhancedTerrainData);
+    
+    // Convert to legacy format for compatibility
+    return convertToLegacyTerrain(enhancedTerrainData);
+  };
+  
+  // Store enhanced terrain data for rendering
+  const [enhancedTerrain, setEnhancedTerrain] = useState([]);
+  
+  // Use enhanced terrain generator's pathfinding
+  const hasValidPath = (terrain, start, end) => {
+    return enhancedTerrainGenerator.hasValidPath(terrain, start, end, terrain[0].length, terrain.length);
+  };
   
   // Handle window resize for responsive canvas sizing
   useEffect(() => {
@@ -158,7 +219,7 @@ const Game1 = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   
-  // Initialize target based on difficulty level
+  // Initialize target and terrain based on difficulty level
   useEffect(() => {
     const { canvasWidth, canvasHeight } = currentDifficulty;
     // Generate random target position, avoiding start position
@@ -171,6 +232,34 @@ const Game1 = () => {
     } while (newTarget.x === START_POS.x && newTarget.y === START_POS.y);
     
     setTarget(newTarget);
+    
+    // Generate terrain with guaranteed path
+    let newTerrain;
+    let attempts = 0;
+    do {
+      newTerrain = generateTerrain(canvasWidth, canvasHeight);
+      attempts++;
+    } while (!hasValidPath(newTerrain, START_POS, newTarget) && attempts < 10);
+    
+    // If no valid path found after attempts, create a simple grass path
+    if (attempts >= 10) {
+      newTerrain = Array(canvasHeight).fill().map(() => Array(canvasWidth).fill('grass'));
+      // Add some obstacles but ensure path remains
+      for (let y = 0; y < canvasHeight; y++) {
+        for (let x = 0; x < canvasWidth; x++) {
+          if (Math.random() < 0.2 && 
+              !((x === START_POS.x && y === START_POS.y) || (x === newTarget.x && y === newTarget.y))) {
+            const nearStart = Math.abs(x - START_POS.x) <= 1 && Math.abs(y - START_POS.y) <= 1;
+            const nearTarget = Math.abs(x - newTarget.x) <= 1 && Math.abs(y - newTarget.y) <= 1;
+            if (!nearStart && !nearTarget) {
+              newTerrain[y][x] = Math.random() < 0.3 ? 'crystal' : (Math.random() < 0.5 ? 'tree' : 'rock');
+            }
+          }
+        }
+      }
+    }
+    
+    setTerrain(newTerrain);
     updateAvailableTiles();
   }, [difficultyLevel]);
   
@@ -200,6 +289,34 @@ const Game1 = () => {
     } while (newTarget.x === START_POS.x && newTarget.y === START_POS.y);
     
     setTarget(newTarget);
+    
+    // Generate new terrain with guaranteed path
+    let newTerrain;
+    let attempts = 0;
+    do {
+      newTerrain = generateTerrain(canvasWidth, canvasHeight);
+      attempts++;
+    } while (!hasValidPath(newTerrain, START_POS, newTarget) && attempts < 10);
+    
+    // If no valid path found after attempts, create a simple grass path
+    if (attempts >= 10) {
+      newTerrain = Array(canvasHeight).fill().map(() => Array(canvasWidth).fill('grass'));
+      // Add some obstacles but ensure path remains
+      for (let y = 0; y < canvasHeight; y++) {
+        for (let x = 0; x < canvasWidth; x++) {
+          if (Math.random() < 0.2 && 
+              !((x === START_POS.x && y === START_POS.y) || (x === newTarget.x && y === newTarget.y))) {
+            const nearStart = Math.abs(x - START_POS.x) <= 1 && Math.abs(y - START_POS.y) <= 1;
+            const nearTarget = Math.abs(x - newTarget.x) <= 1 && Math.abs(y - newTarget.y) <= 1;
+            if (!nearStart && !nearTarget) {
+              newTerrain[y][x] = Math.random() < 0.3 ? 'crystal' : (Math.random() < 0.5 ? 'tree' : 'rock');
+            }
+          }
+        }
+      }
+    }
+    
+    setTerrain(newTerrain);
     setMessage("");
     setProgramSequence([]);
     setMovesUsed(0);
@@ -322,7 +439,60 @@ const Game1 = () => {
             return;
           }
           
+          // Check enhanced terrain walkability
+          if (enhancedTerrain.length > 0 && enhancedTerrain[newPos.y] && enhancedTerrain[newPos.y][newPos.x]) {
+            const terrainTile = enhancedTerrain[newPos.y][newPos.x];
+            if (!terrainTile.walkable) {
+              setGameOver(true);
+              setMessage("💀 Game Over! Cannot move through obstacles. Try again!");
+              setIsRunning(false);
+              return;
+            }
+            
+            // Check for crystal collection
+            if (terrainTile.collectible) {
+              const crystalKey = `${newPos.x}-${newPos.y}`;
+              if (!collectedCrystals.has(crystalKey)) {
+                  setCollectedCrystals(prev => new Set([...prev, crystalKey]));
+                  const newCount = crystalsCollected + 1;
+                  setCrystalsCollected(newCount);
+                  updateCrystalProgress(newCount);
+                  
+                  // Check for achievement milestones
+                  if (newCount === 50) {
+                    setMessage('🎉 Amazing! You unlocked Spark, the Lightning Buddy! 50 crystals collected!');
+                    setShowAchievementNotification(true);
+                    setTimeout(() => setShowAchievementNotification(false), 5000);
+                  } else if (newCount === 100) {
+                    setMessage('🎉 Incredible! You unlocked Pixel, the Digital Cat! 100 crystals collected!');
+                    setShowAchievementNotification(true);
+                    setTimeout(() => setShowAchievementNotification(false), 5000);
+                  } else if (newCount === 200) {
+                    setMessage('🎉 Legendary! You unlocked Quantum, the Mysterious Entity! 200 crystals collected!');
+                    setShowAchievementNotification(true);
+                    setTimeout(() => setShowAchievementNotification(false), 5000);
+                  }
+                
+                // Replace crystal with grass in enhanced terrain
+                setEnhancedTerrain(prevTerrain => {
+                  const newTerrain = prevTerrain.map(row => [...row]);
+                  newTerrain[newPos.y][newPos.x] = enhancedTerrainGenerator.createTerrainTile('grass', newPos.x, newPos.y);
+                  return newTerrain;
+                });
+                
+                // Also update legacy terrain for compatibility
+                setTerrain(prevTerrain => {
+                  const newTerrain = prevTerrain.map(row => [...row]);
+                  newTerrain[newPos.y][newPos.x] = 'grass';
+                  return newTerrain;
+                });
+              }
+            }
+          }
+          
           pos = newPos;
+          // Set current movement for animation state detection
+          setCurrentMovement(tile.param);
           setCarDirection(direction);
           break;
           
@@ -352,6 +522,7 @@ const Game1 = () => {
       }
       setIsRunning(false);
       setIsAnimating(false);
+      setCurrentMovement(null);
     }, 500);
   };
 
@@ -445,6 +616,34 @@ const Game1 = () => {
                 height: `${optimalCellSize}px`
               }}
             >
+              {/* Render enhanced terrain with pixel assets */}
+              {enhancedTerrain.length > 0 && enhancedTerrain[y] && enhancedTerrain[y][x] ? (
+                <img 
+                  src={enhancedTerrain[y][x].asset}
+                  alt={enhancedTerrain[y][x].type}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    backgroundColor: enhancedTerrain[y][x].color || '#4CAF50'
+                  }}
+                />
+              ) : (
+                <div 
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: '#4CAF50',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0
+                  }}
+                />
+              )}
+              
               {isTarget && (
                 <img 
                   src="/assets/kubo-target-tile.svg" 
@@ -453,11 +652,24 @@ const Game1 = () => {
                   style={{
                     width: '100%',
                     height: '100%',
-                    objectFit: 'contain'
+                    objectFit: 'contain',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    zIndex: 2
                   }}
                 />
               )}
-              {isStartPos && !isCarPos && <div className="start-marker">🏠</div>}
+              {isStartPos && !isCarPos && (
+                <div className="start-marker" style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: 2,
+                  fontSize: `${optimalCellSize * 0.6}px`
+                }}>🏠</div>
+              )}
             </div>
           );
         }
@@ -478,11 +690,12 @@ const Game1 = () => {
         >
           {cells}
           <CarCharacter 
-            x={carPos.x * optimalCellSize + 2}
-            y={carPos.y * optimalCellSize + 2}
+            x={carPos.x * optimalCellSize - optimalCellSize * 0.1}
+            y={carPos.y * optimalCellSize - optimalCellSize * 0.1}
             direction={carDirection}
-            size={optimalCellSize - 4}
+            size={Math.floor(optimalCellSize * 1.2)}
             isAnimating={isAnimating}
+            currentMovement={currentMovement}
           />
         </div>
       );
@@ -506,6 +719,7 @@ const Game1 = () => {
         <div className="kubo-score">
           <span className="score-label">Skor:</span>
           <span className="score-value">{score}</span>
+          <span className="crystal-counter">💎 Crystals: {crystalsCollected}</span>
         </div>
         {gameOver && (
           <div className="game-over-notice">
@@ -655,6 +869,17 @@ const Game1 = () => {
         </div>
       )}
 
+      {showAchievementNotification && (
+        <div className="achievement-notification">
+          <div className="achievement-content">
+            <h3>🏆 Achievement Unlocked! 🏆</h3>
+            <p>Crystal Collector - Collected 50 crystals!</p>
+            <button onClick={() => setShowAchievementNotification(false)}>
+              ✨ Awesome!
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   );
