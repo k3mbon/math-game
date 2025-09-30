@@ -157,7 +157,7 @@
 
 /* Ensure landing page styles take precedence */
 .landing-page-body .app-container {
-  background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%);
+  background: #ffffff;
   background-attachment: fixed;
 }
 

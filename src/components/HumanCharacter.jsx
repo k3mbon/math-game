@@ -46,7 +46,7 @@ const HumanCharacter = ({
       columns: 4,
       rows: 4,
       frameCount: 4,
-      src: '/assets/characters/char-kubo/Swordsman_lvl3_Idle.png'
+      src: '/assets/characters/char-zeno/Swordsman_lvl3_Idle.png'
     },
     walk: {
       spriteWidth: 64,
@@ -54,7 +54,7 @@ const HumanCharacter = ({
       columns: 6,
       rows: 4,
       frameCount: 6,
-      src: '/assets/characters/char-kubo/Swordsman_lvl3_Walk_with_shadow.png'
+      src: '/assets/characters/char-zeno/Swordsman_lvl3_Walk_with_shadow.png'
     },
     run: {
       spriteWidth: 64,
@@ -62,7 +62,7 @@ const HumanCharacter = ({
       columns: 6,
       rows: 4,
       frameCount: 6,
-      src: '/assets/characters/char-kubo/Swordsman_lvl3_Walk_with_shadow.png'
+      src: '/assets/characters/char-zeno/Swordsman_lvl3_Walk_with_shadow.png'
     },
     walkAttack: {
       spriteWidth: 64,
@@ -70,7 +70,7 @@ const HumanCharacter = ({
       columns: 6,
       rows: 4,
       frameCount: 6,
-      src: '/assets/characters/char-kubo/Swordsman_lvl3_Walk_Attack_with_shadow.png'
+      src: '/assets/characters/char-zeno/Swordsman_lvl3_Walk_Attack_with_shadow.png'
     },
     runAttack: {
       spriteWidth: 64,
@@ -78,7 +78,7 @@ const HumanCharacter = ({
       columns: 6,
       rows: 4,
       frameCount: 6,
-      src: '/assets/characters/char-kubo/Swordsman_lvl3_Run_Attack_with_shadow.png'
+      src: '/assets/characters/char-zeno/Swordsman_lvl3_Run_Attack_with_shadow.png'
     },
     idleAttack: {
       spriteWidth: 64,
@@ -86,7 +86,7 @@ const HumanCharacter = ({
       columns: 6,
       rows: 4,
       frameCount: 6,
-      src: '/assets/characters/char-kubo/Swordsman_lvl3_attack_with_shadow.png'
+      src: '/assets/characters/char-zeno/Swordsman_lvl3_attack_with_shadow.png'
     },
     death: {
       spriteWidth: 64,
@@ -94,7 +94,7 @@ const HumanCharacter = ({
       columns: 6,
       rows: 4,
       frameCount: 6,
-      src: '/assets/characters/char-kubo/Swordsman_lvl3_Death_with_shadow.png'
+      src: '/assets/characters/char-zeno/Swordsman_lvl3_Death_with_shadow.png'
     }
   };
 

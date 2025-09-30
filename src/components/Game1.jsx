@@ -82,8 +82,8 @@ const CarCharacter = ({ size = 48, x = 0, y = 0, direction = 'right', isAnimatin
   );
 };
 
-// Digital KUBO Tile Component
-const KuboTile = ({ id, name, icon, category, onClick, isDragging, onDragStart, onDragEnd, ...props }) => {
+// Digital ZENO Tile Component
+const ZenoTile = ({ id, name, icon, category, onClick, isDragging, onDragStart, onDragEnd, action, value, param, ...props }) => {
   const handleClick = (e) => {
     e.currentTarget.classList.add('clicked');
     setTimeout(() => {
@@ -92,10 +92,30 @@ const KuboTile = ({ id, name, icon, category, onClick, isDragging, onDragStart, 
     if (onClick) onClick();
   };
 
+  // Determine data attributes for SVG selection
+  const getDataAttributes = () => {
+    const attrs = { 'data-category': category };
+    
+    if (action) {
+      attrs['data-action'] = action;
+    }
+    
+    if (value) {
+      attrs['data-value'] = value;
+    }
+    
+    // Special handling for math operations
+    if (category === 'math' && param) {
+      attrs['data-action'] = param;
+    }
+    
+    return attrs;
+  };
+
   return (
     <div 
-      className={`kubo-tile ${isDragging ? 'dragging' : ''}`}
-      data-category={category}
+      className={`zeno-tile ${isDragging ? 'dragging' : ''}`}
+      {...getDataAttributes()}
       onClick={handleClick}
       draggable
       onDragStart={onDragStart}
@@ -103,8 +123,8 @@ const KuboTile = ({ id, name, icon, category, onClick, isDragging, onDragStart, 
       title={name}
       {...props}
     >
-      <div className="kubo-tile-icon">{icon}</div>
-      <div className="kubo-tile-label">{name}</div>
+      <div className="zeno-tile-icon">{icon}</div>
+      <div className="zeno-tile-label">{name}</div>
     </div>
   );
 };
@@ -112,7 +132,7 @@ const KuboTile = ({ id, name, icon, category, onClick, isDragging, onDragStart, 
 
 
 // Enhanced movement tiles for worm character
-const KUBO_TILES = {
+const ZENO_TILES = {
   movement: [
     { id: 'right1', name: 'Kanan 1', icon: <ArrowForward />, color: '#4CAF50', action: 'move', param: { x: 1, y: 0 }, size: 'large' },
     { id: 'left1', name: 'Kiri 1', icon: <ArrowBack />, color: '#4CAF50', action: 'move', param: { x: -1, y: 0 }, size: 'large' },
@@ -266,8 +286,8 @@ const Game1 = () => {
   // Update available tiles based on difficulty level
   const updateAvailableTiles = () => {
     const tiles = {};
-    Object.keys(KUBO_TILES).forEach(category => {
-      tiles[category] = KUBO_TILES[category].filter(tile => 
+    Object.keys(ZENO_TILES).forEach(category => {
+      tiles[category] = ZENO_TILES[category].filter(tile => 
         !tile.minLevel || tile.minLevel <= difficultyLevel
       );
     });
@@ -646,7 +666,7 @@ const Game1 = () => {
               
               {isTarget && (
                 <img 
-                  src="/assets/kubo-target-tile.svg" 
+                  src="/assets/zeno-target-tile.svg" 
                   alt="Target" 
                   className="target-asset"
                   style={{
@@ -704,19 +724,19 @@ const Game1 = () => {
 
 
   return (
-    <div className="bnl-container kubo-theme">
-
-      <div className="kubo-game-info">
-        <div className="kubo-mission">
+    <div className="bnl-container zeno-theme">
+      
+      <div className="zeno-game-info">
+        <div className="zeno-mission">
           <span className="mission-label">Misi:</span>
           <span className="mission-text">Gerakkan Mobil ke</span>
           <span className="bnl-target-number">({target.x}, {target.y})</span>
         </div>
-        <div className="kubo-difficulty">
+        <div className="zeno-difficulty">
           <span className="level-label">Level {difficultyLevel}</span>
           <span className="moves-label">Langkah: {movesUsed}/{currentDifficulty.maxMoves}</span>
         </div>
-        <div className="kubo-score">
+        <div className="zeno-score">
           <span className="score-label">Skor:</span>
           <span className="score-value">{score}</span>
           <span className="crystal-counter">💎 Crystals: {crystalsCollected}</span>
@@ -729,8 +749,8 @@ const Game1 = () => {
       </div>
 
       {/* Single unified game workspace */}
-      <div className="kubo-unified-workspace">
-        <div className="kubo-playground full-width">
+      <div className="zeno-unified-workspace">
+        <div className="zeno-playground full-width">
           <div 
             className="game-canvas-container"
             onDrop={handleDrop}
@@ -749,10 +769,10 @@ const Game1 = () => {
                       <h4 className="category-title">{category === 'movement' ? 'Gerakan' : category === 'numbers' ? 'Angka' : category === 'actions' ? 'Aksi' : category === 'math' ? 'Matematika' : category === 'loops' ? 'Pengulangan' : category.charAt(0).toUpperCase() + category.slice(1)}</h4>
                       <div className="tiles-row">
                         {tiles.map(tile => (
-                          <KuboTile
+                          <ZenoTile
                             key={tile.id}
                             {...tile}
-                            data-category={category}
+                            category={category}
                             onClick={() => addTileToSequence(tile)}
                             onDragStart={() => handleDragStart(tile)}
                             onDragEnd={handleDragEnd}
@@ -783,7 +803,7 @@ const Game1 = () => {
                   ) : (
                     programSequence.map((tile, index) => (
                       <div key={tile.id || index} className="sequence-tile-wrapper">
-                        <KuboTile
+                        <ZenoTile
                           {...tile}
                           data-category={tile.category}
                           onClick={() => removeTileFromSequence(index)}
@@ -802,20 +822,20 @@ const Game1 = () => {
 
 
 
-      <div className="bnl-controls kubo-controls">
+      <div className="bnl-controls zeno-controls">
         <button 
-          className="bnl-button kubo-button primary" 
+          className="bnl-button zeno-button primary" 
           onClick={runProgram}
           disabled={isRunning || gameOver}
         >
           {isRunning ? '⏳ Berjalan...' : '🚀 Jalankan Mobil'}
         </button>
-        <button className="bnl-button kubo-button secondary" onClick={resetGame}>
+        <button className="bnl-button zeno-button secondary" onClick={resetGame}>
           🔄 Reset Permainan
         </button>
         {difficultyLevel > 1 && (
           <button
-            className="kubo-button kubo-level-button"
+            className="zeno-button zeno-level-button"
             onClick={() => setDifficultyLevel(prev => Math.max(1, prev - 1))}
           >
             ⬇️ Level Mudah
@@ -823,7 +843,7 @@ const Game1 = () => {
         )}
         {difficultyLevel < 5 && gamesWon >= 3 && (
           <button
-            className="kubo-button kubo-level-button"
+            className="zeno-button zeno-level-button"
             onClick={nextLevel}
           >
             ⬆️ Level Berikutnya

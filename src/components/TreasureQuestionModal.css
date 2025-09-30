@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -13,13 +13,13 @@
 }
 
 .treasure-modal {
-  background: linear-gradient(135deg, #2C1810 0%, #4A2C17 100%);
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
   border: 3px solid #FFD700;
   border-radius: 15px;
   width: 95vw;
   height: 90vh;
   max-width: 1400px;
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
   display: flex;
   flex-direction: column;
   overflow: hidden;

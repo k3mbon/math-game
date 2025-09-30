@@ -16,8 +16,9 @@ export const isWalkable = (x, y, terrain, customWorld = null) => {
   
   const chunk = terrain.get(chunkKey);
   if (!chunk) {
-    console.log('🚫 No chunk found for:', { x, y, tileX, tileY, chunkX, chunkY, chunkKey, terrainSize: terrain.size });
-    return false;
+    // Instead of blocking movement, allow it for missing chunks (they'll be generated)
+    console.log('⚠️ No chunk found, allowing movement:', { x, y, tileX, tileY, chunkX, chunkY, chunkKey });
+    return true;
   }
   
   const localX = tileX % GAME_CONFIG.CHUNK_SIZE;
@@ -25,15 +26,15 @@ export const isWalkable = (x, y, terrain, customWorld = null) => {
   const tile = chunk.find(t => t.x % GAME_CONFIG.CHUNK_SIZE === localX && t.y % GAME_CONFIG.CHUNK_SIZE === localY);
   
   if (!tile) {
-    console.log('🚫 No tile found at position:', { 
+    // Instead of blocking movement, allow it for missing tiles (default to walkable)
+    console.log('⚠️ No tile found, allowing movement:', { 
       x, y, tileX, tileY, localX, localY, 
-      chunkSize: chunk.length,
-      sampleTiles: chunk.slice(0, 3).map(t => ({ x: t.x, y: t.y, type: t.type }))
+      chunkSize: chunk.length
     });
-    return false;
+    return true;
   }
   
-  const terrainWalkable = tile ? TERRAIN_TYPES[tile.type].walkable : false;
+  const terrainWalkable = tile ? TERRAIN_TYPES[tile.type].walkable : true;
   if (!terrainWalkable) {
     console.log('🚫 Terrain not walkable:', { tile: tile.type, walkable: terrainWalkable });
     return false;

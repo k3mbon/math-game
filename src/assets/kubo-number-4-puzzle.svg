@@ -1,0 +1,74 @@
+<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="numberGradient4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFC107;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFB300;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF8F00;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="shadowGradient4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E65100;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#BF360C;stop-opacity:0.6" />
+    </linearGradient>
+    
+    <!-- Glow filter -->
+    <filter id="glow4" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Puzzle piece shape with shadow -->
+  <path d="M15 5 L50 5 Q55 5 55 10 Q60 8 65 10 Q70 12 65 17 Q60 19 55 17 Q55 22 50 22 L65 22 L65 35 Q67 30 72 35 Q77 40 72 45 Q67 50 65 45 L65 58 Q65 63 60 63 Q62 68 60 73 Q58 78 53 73 Q51 68 53 63 Q48 63 48 58 L48 73 L35 73 Q30 73 30 68 Q25 70 20 68 Q15 66 20 61 Q25 59 30 61 Q30 56 35 56 L20 56 L20 43 Q18 48 13 43 Q8 38 13 33 Q18 28 20 33 L20 20 Q20 15 25 15 Q23 10 25 5 Q27 0 32 5 Q34 10 32 15 Q37 15 37 20 L37 5 Z" 
+        fill="url(#shadowGradient4)" 
+        transform="translate(2,2)" 
+        opacity="0.4"/>
+  
+  <!-- Main puzzle piece shape -->
+  <path d="M15 5 L50 5 Q55 5 55 10 Q60 8 65 10 Q70 12 65 17 Q60 19 55 17 Q55 22 50 22 L65 22 L65 35 Q67 30 72 35 Q77 40 72 45 Q67 50 65 45 L65 58 Q65 63 60 63 Q62 68 60 73 Q58 78 53 73 Q51 68 53 63 Q48 63 48 58 L48 73 L35 73 Q30 73 30 68 Q25 70 20 68 Q15 66 20 61 Q25 59 30 61 Q30 56 35 56 L20 56 L20 43 Q18 48 13 43 Q8 38 13 33 Q18 28 20 33 L20 20 Q20 15 25 15 Q23 10 25 5 Q27 0 32 5 Q34 10 32 15 Q37 15 37 20 L37 5 Z" 
+        fill="url(#numberGradient4)" 
+        stroke="#E65100" 
+        stroke-width="1"/>
+  
+  <!-- Decorative dots pattern -->
+  <circle cx="25" cy="25" r="1.5" fill="#FFE082" opacity="0.6"/>
+  <circle cx="55" cy="25" r="1.5" fill="#FFE082" opacity="0.6"/>
+  <circle cx="25" cy="55" r="1.5" fill="#FFE082" opacity="0.6"/>
+  <circle cx="55" cy="55" r="1.5" fill="#FFE082" opacity="0.6"/>
+  
+  <!-- Central number 4 -->
+  <text x="40" y="50" 
+        font-family="Arial Black, sans-serif" 
+        font-size="28" 
+        font-weight="900" 
+        text-anchor="middle" 
+        fill="#FFFFFF" 
+        filter="url(#glow4)">4</text>
+  
+  <!-- Corner sparkles -->
+  <g opacity="0.8">
+    <path d="M20 15 L22 17 L20 19 L18 17 Z" fill="#FFE082"/>
+    <path d="M60 15 L62 17 L60 19 L58 17 Z" fill="#FFE082"/>
+    <path d="M20 65 L22 67 L20 69 L18 67 Z" fill="#FFE082"/>
+    <path d="M60 65 L62 67 L60 69 L58 67 Z" fill="#FFE082"/>
+  </g>
+  
+  <!-- Connection indicators -->
+  <circle cx="40" cy="8" r="2" fill="#E65100" opacity="0.3"/>
+  <circle cx="72" cy="40" r="2" fill="#E65100" opacity="0.3"/>
+  <circle cx="40" cy="72" r="2" fill="#E65100" opacity="0.3"/>
+  <circle cx="8" cy="40" r="2" fill="#E65100" opacity="0.3"/>
+  
+  <!-- Label -->
+  <text x="40" y="68" 
+        font-family="Arial, sans-serif" 
+        font-size="8" 
+        font-weight="bold" 
+        text-anchor="middle" 
+        fill="#E65100" 
+        opacity="0.8">FOUR</text>
+</svg>

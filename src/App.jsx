@@ -26,8 +26,8 @@ const DashboardPage = lazy(() => import('./components/DashboardPage'));
 const ArcadeMode = lazy(() => import('./components/Arcade'));
 const Game1 = lazy(() => import('./components/Game1'));
 const GrassTerrainDemo = lazy(() => import('./pages/GrassTerrainDemo'));
-const KuboTerrainGame = lazy(() => import('./components/KuboTerrainGame'));
-const KuboGameNew = lazy(() => import('./components/KuboGameNew'));
+const ZenoTerrainGame = lazy(() => import('./components/ZenoTerrainGame'));
+const ZenoGameNew = lazy(() => import('./components/ZenoGameNew'));
 // Import OpenWorldGame and related components directly to avoid module fetch errors
 import OpenWorldGame from './components/OpenWorldGame';
 import SimpleOpenWorldGame from './components/SimpleOpenWorldGame';
@@ -134,7 +134,7 @@ function AppContent() {
               {/* Public game preview routes */}
               <Route path="/iteration" element={<IterationPage />} />
               <Route path="/numeration" element={<NumerationPage />} />
-              <Route path="/kubo" element={<KuboGameNew />} />
+              <Route path="/zeno" element={<ZenoGameNew />} />
               
               {/* Test routes (temporarily public) */}
               <Route path="/test-game" element={<TestGame />} />
@@ -159,7 +159,7 @@ function AppContent() {
                   
                   {/* Game routes */}
                   <Route path="/arcade" element={<ArcadeMode />} />
-                  <Route path="/kubo" element={<KuboGameNew />} />
+                  <Route path="/zeno" element={<ZenoGameNew />} />
                   
                   {/* Role-based routes */}
                   {role === 'teacher' && (

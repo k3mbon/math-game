@@ -180,7 +180,7 @@ html, body {
 
 /* Workspace background */
 .blocklyMainBackground {
-  fill: #0a0a0a !important;
+  fill: #f8fafc !important;
 }
 
 /* Grid styling */

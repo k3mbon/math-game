@@ -1104,18 +1104,12 @@ const OpenWorldGame = () => {
         
         {/* Kubo Character Overlay - positioned relative to canvas */}
         <HumanCharacter
+          x={GAME_CONFIG.CANVAS_WIDTH / 2 - GAME_CONFIG.PLAYER_SIZE / 2}
+          y={GAME_CONFIG.CANVAS_HEIGHT / 2 - GAME_CONFIG.PLAYER_SIZE / 2}
+          size={GAME_CONFIG.PLAYER_SIZE}
           animationState={animationState}
           direction={playerDirection}
-          style={{
-            position: 'absolute',
-            left: `${GAME_CONFIG.CANVAS_WIDTH / 2 - GAME_CONFIG.PLAYER_SIZE / 2}px`,
-            top: `${GAME_CONFIG.CANVAS_HEIGHT / 2 - GAME_CONFIG.PLAYER_SIZE / 2}px`,
-            width: `${GAME_CONFIG.PLAYER_SIZE}px`,
-            height: `${GAME_CONFIG.PLAYER_SIZE}px`,
-            zIndex: 10,
-            pointerEvents: 'none',
-            transform: 'translateZ(0)' // Force hardware acceleration for smoother rendering
-          }}
+          isAnimating={gameState.player.isMoving}
         />
         
         <div className="game-ui">

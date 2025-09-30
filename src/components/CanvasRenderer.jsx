@@ -349,31 +349,6 @@ const renderSeamlessGrassTile = (ctx, tile, tileX, tileY, gameState, assets, ter
     
     return false; // Used fallback rendering
   }
-    const isTopRow = relativeY === 0;
-    const isBottomRow = relativeY === gridHeight - 1;
-    const isLeftCol = relativeX === 0;
-    const isRightCol = relativeX === gridWidth - 1;
-    
-    let fillColor = '#4CAF50'; // Default center (grass5)
-    
-    // Apply different colors based on border position for visual testing
-    if (isTopRow && isLeftCol) fillColor = '#FF5722'; // Top-left (grass1) - red
-    else if (isTopRow && isRightCol) fillColor = '#2196F3'; // Top-right (grass3) - blue
-    else if (isBottomRow && isLeftCol) fillColor = '#FF9800'; // Bottom-left (grass7) - orange
-    else if (isBottomRow && isRightCol) fillColor = '#9C27B0'; // Bottom-right (grass9) - purple
-    else if (isTopRow) fillColor = '#E91E63'; // Top edge (grass2) - pink
-    else if (isBottomRow) fillColor = '#009688'; // Bottom edge (grass8) - teal
-    else if (isLeftCol) fillColor = '#795548'; // Left edge (grass4) - brown
-    else if (isRightCol) fillColor = '#607D8B'; // Right edge (grass6) - blue-gray
-    
-    ctx.fillStyle = fillColor;
-    ctx.fillRect(x, y, GAME_CONFIG.TILE_SIZE, GAME_CONFIG.TILE_SIZE);
-    
-    // Add border for clarity
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(x, y, GAME_CONFIG.TILE_SIZE, GAME_CONFIG.TILE_SIZE);
-  }
   
   // Add occasional interactive elements (sheep, resources, etc.)
   const grassSeed = (tileX * 67 + tileY * 43) % 1000;

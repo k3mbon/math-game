@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import HumanCharacter from './HumanCharacter';
 import { getGrassTileByPosition, preloadGrassTiles } from '../utils/grassTileLoader';
 import { generateBalancedLayout } from '../utils/smartRandomizer';
-import './KuboGameNew.css';
+import './ZenoGameNew.css';
 
-const KuboGameNew = () => {
+const ZenoGameNew = () => {
   const [level] = useState(1);
   const [sequence, setSequence] = useState([]);
   const gridWidth = 6;
@@ -211,7 +211,7 @@ const KuboGameNew = () => {
               color: '#333',
               padding: '2px 4px',
               margin: 0
-            }}>Misi: Gerakkan Mobil ke</span>
+            }}>Misi: Gerakkan Ksatria ke</span>
             <span style={{
               background: '#FF9800',
               color: 'white',
@@ -626,7 +626,7 @@ const KuboGameNew = () => {
                 color: '#FF9800',
                 fontSize: '14px',
                 padding: '0'
-              }}>Program Mobil Anda</h3>
+              }}>Program Ksatriamu</h3>
             </div>
             
             <div style={{
@@ -752,7 +752,7 @@ const KuboGameNew = () => {
           }}
         >
           <span>✓</span>
-          JALANKAN MOBIL
+          JALANKAN KSATRIA
         </button>
         
         <button 
@@ -933,4 +933,4 @@ const KuboGameNew = () => {
   );
 };
 
-export default KuboGameNew;
+export default ZenoGameNew;

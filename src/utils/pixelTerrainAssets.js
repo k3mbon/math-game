@@ -35,17 +35,17 @@ export const getRandomGrassAsset = (seed) => {
 export const GRASS_BORDER_MAPPING = {
   // Corner tiles
   TOP_LEFT: '/assets/terrain_tileset/grass1.png',      // grass1.png
-  TOP_RIGHT: '/assets/terrain_tileset/grass3.png',     // grass3.png  
+  TOP_RIGHT: '/assets/terrain_tileset/grass3.png',     // grass3.png
   BOTTOM_LEFT: '/assets/terrain_tileset/grass7.png',   // grass7.png
   BOTTOM_RIGHT: '/assets/terrain_tileset/grass9.png',  // grass9.png
   
-  // Edge tiles
+  // Edge pieces (between corners)
   TOP_EDGE: '/assets/terrain_tileset/grass2.png',      // grass2.png (between top corners)
   BOTTOM_EDGE: '/assets/terrain_tileset/grass8.png',   // grass8.png (between bottom corners)
   LEFT_EDGE: '/assets/terrain_tileset/grass4.png',     // grass4.png (between left corners)
   RIGHT_EDGE: '/assets/terrain_tileset/grass6.png',    // grass6.png (between right corners)
   
-  // Fill tile
+  // Center fill
   CENTER: '/assets/terrain_tileset/grass5.png'         // grass5.png (center fill)
 };
 

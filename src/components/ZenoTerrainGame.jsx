@@ -1,5 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
-import './KuboTerrainGame.css';
+import React, { useState, useEffect } from 'react';
+import './ZenoTerrainGame.css';
 import { getGrassTileByPosition, preloadGrassTiles } from '../utils/grassTileLoader';
 import HumanCharacter from './HumanCharacter';
 
@@ -26,7 +26,7 @@ const getGrassTileByPositionWrapper = (x, y, gridWidth, gridHeight) => {
   return getGrassTileByPosition(x, y, gridWidth, gridHeight);
 };
 
-const KuboTerrainGame = () => {
+const ZenoTerrainGame = () => {
   const [level, setLevel] = useState(1);
   const [sequence, setSequence] = useState([]);
   const [gridWidth] = useState(8);
@@ -185,9 +185,9 @@ const KuboTerrainGame = () => {
   };
 
   return (
-    <div className="kubo-theme">
-      <div className="kubo-game-container">
-        <div className="kubo-controls-panel">
+    <div className="zeno-theme">
+        <div className="zeno-game-container">
+          <div className="zeno-controls-panel">
           <div className="level-info">
             <h3>Level {level} - Beginner</h3>
             <p className="level-description">Learn basic movement commands</p>
@@ -250,7 +250,7 @@ const KuboTerrainGame = () => {
           </div>
         </div>
 
-        <div className="kubo-game-canvas">
+        <div className="zeno-game-canvas">
           <div className="game-canvas-container">
             <div style={{ marginBottom: '10px', textAlign: 'center' }}>
               <h4>8x8 Grass Border Pattern Demo</h4>
@@ -314,7 +314,7 @@ const KuboTerrainGame = () => {
                       <div style={{
                         width: '80%',
                         height: '80%',
-                        backgroundImage: "url('/assets/kubo-target-tile.svg')",
+                        backgroundImage: "url('/assets/zeno-target-tile.svg')",
                         backgroundSize: 'contain',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',
@@ -328,7 +328,7 @@ const KuboTerrainGame = () => {
           </div>
         </div>
 
-        <div className="kubo-program-area">
+        <div className="zeno-program-area">
           <div className="program-header">
             <h3>Program Sequence</h3>
           </div>
@@ -364,4 +364,4 @@ const KuboTerrainGame = () => {
   );
 };
 
-export default KuboTerrainGame;
+export default ZenoTerrainGame;

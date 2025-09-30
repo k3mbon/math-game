@@ -45,8 +45,8 @@ const GameStart = () => {
               <Button className="justify-start" onClick={() => navigate('/numeration')}>
                 <FaCalculator className="mr-2" /> Number World
               </Button>
-              <Button className="justify-start" onClick={() => navigate('/kubo')}>
-                <FaRobot className="mr-2" /> KUBO Programming
+              <Button className="justify-start" onClick={() => navigate('/zeno')}>
+                <FaRobot className="mr-2" /> ZENO Programming
               </Button>
               <Button className="justify-start" onClick={() => navigate('/open-world-game')}>
                 <FaGlobe className="mr-2" /> Adventure World

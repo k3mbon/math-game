@@ -1,0 +1,140 @@
+<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Forward Movement Puzzle Tile -->
+  <defs>
+    <!-- Movement gradient -->
+    <linearGradient id="moveGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#C8E6C9;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#A5D6A7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#81C784;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Arrow gradient -->
+    <linearGradient id="arrowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#2E7D32;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4CAF50;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Shadow filter -->
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+    
+    <!-- Glow effect for arrow -->
+    <filter id="arrowGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Puzzle piece shape with interlocking edges -->
+  <path d="M 8 8 
+           L 28 8 
+           Q 33 3, 38 8
+           Q 43 13, 38 18
+           Q 33 13, 28 18
+           L 52 18
+           Q 57 13, 62 18
+           Q 67 23, 62 28
+           Q 57 23, 52 28
+           L 72 28
+           L 72 52
+           Q 77 57, 72 62
+           Q 67 67, 72 72
+           Q 77 67, 82 72
+           L 82 72
+           L 62 72
+           Q 57 77, 52 72
+           Q 47 67, 52 62
+           Q 57 67, 62 62
+           L 38 62
+           Q 33 67, 28 62
+           Q 23 57, 28 52
+           Q 33 57, 38 52
+           L 18 52
+           L 18 28
+           Q 13 23, 18 18
+           Q 23 13, 18 8
+           Q 13 13, 8 8
+           Z" 
+        fill="url(#moveGradient)" 
+        stroke="#388E3C" 
+        stroke-width="3" 
+        filter="url(#dropShadow)"/>
+  
+  <!-- Inner border for depth -->
+  <path d="M 13 13 
+           L 30 13 
+           Q 34 10, 36 13
+           Q 40 16, 36 18
+           Q 34 16, 30 18
+           L 50 18
+           Q 54 16, 57 18
+           Q 60 21, 57 23
+           Q 54 21, 50 23
+           L 67 23
+           L 67 47
+           Q 70 50, 67 54
+           Q 64 57, 67 60
+           Q 70 57, 72 60
+           L 72 67
+           L 60 67
+           Q 57 70, 54 67
+           Q 50 64, 54 62
+           Q 57 64, 60 62
+           L 40 62
+           Q 36 64, 33 62
+           Q 30 60, 33 57
+           Q 36 60, 40 57
+           L 23 57
+           L 23 33
+           Q 20 30, 23 26
+           Q 26 23, 23 20
+           Q 20 23, 18 20
+           L 18 13
+           Z" 
+        fill="none" 
+        stroke="#FFFFFF" 
+        stroke-width="1.5" 
+        opacity="0.6"/>
+  
+  <!-- Center content area -->
+  <circle cx="40" cy="40" r="20" fill="#FFFFFF" stroke="#388E3C" stroke-width="2" opacity="0.95"/>
+  
+  <!-- Forward arrow with enhanced design -->
+  <g transform="translate(40,40)" filter="url(#arrowGlow)">
+    <!-- Arrow body -->
+    <rect x="-12" y="-3" width="18" height="6" fill="url(#arrowGradient)" rx="2"/>
+    <!-- Arrow head -->
+    <path d="M 6 -8 L 16 0 L 6 8 Z" fill="url(#arrowGradient)"/>
+    <!-- Arrow highlight -->
+    <rect x="-12" y="-2" width="18" height="2" fill="#66BB6A" opacity="0.7" rx="1"/>
+    <path d="M 6 -6 L 14 0 L 6 6 Z" fill="#66BB6A" opacity="0.7"/>
+  </g>
+  
+  <!-- Movement indicator dots -->
+  <g opacity="0.7">
+    <circle cx="25" cy="40" r="1.5" fill="#4CAF50">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite" begin="0s"/>
+    </circle>
+    <circle cx="30" cy="40" r="1.5" fill="#4CAF50">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite" begin="0.3s"/>
+    </circle>
+    <circle cx="35" cy="40" r="1.5" fill="#4CAF50">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite" begin="0.6s"/>
+    </circle>
+  </g>
+  
+  <!-- Corner connection indicators -->
+  <g opacity="0.8">
+    <circle cx="18" cy="18" r="2.5" fill="#2E7D32"/>
+    <circle cx="62" cy="18" r="2.5" fill="#2E7D32"/>
+    <circle cx="62" cy="62" r="2.5" fill="#2E7D32"/>
+    <circle cx="18" cy="62" r="2.5" fill="#2E7D32"/>
+  </g>
+  
+  <!-- Label text -->
+  <text x="40" y="68" text-anchor="middle" font-size="8" font-weight="bold" fill="#2E7D32" font-family="Arial, sans-serif">FORWARD</text>
+</svg>

@@ -1,0 +1,144 @@
+<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Number 3 Puzzle Tile -->
+  <defs>
+    <!-- Number gradient -->
+    <linearGradient id="numberGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E3F2FD;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#BBDEFB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#90CAF9;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Number text gradient -->
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0D47A1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1565C0;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Shadow filter -->
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+    
+    <!-- Glow effect for number -->
+    <filter id="numberGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Puzzle piece shape with interlocking edges -->
+  <path d="M 8 8 
+           L 28 8 
+           Q 33 3, 38 8
+           Q 43 13, 38 18
+           Q 33 13, 28 18
+           L 52 18
+           Q 57 13, 62 18
+           Q 67 23, 62 28
+           Q 57 23, 52 28
+           L 72 28
+           L 72 52
+           Q 77 57, 72 62
+           Q 67 67, 72 72
+           Q 77 67, 82 72
+           L 82 72
+           L 62 72
+           Q 57 77, 52 72
+           Q 47 67, 52 62
+           Q 57 67, 62 62
+           L 38 62
+           Q 33 67, 28 62
+           Q 23 57, 28 52
+           Q 33 57, 38 52
+           L 18 52
+           L 18 28
+           Q 13 23, 18 18
+           Q 23 13, 18 8
+           Q 13 13, 8 8
+           Z" 
+        fill="url(#numberGradient)" 
+        stroke="#1565C0" 
+        stroke-width="3" 
+        filter="url(#dropShadow)"/>
+  
+  <!-- Inner border for depth -->
+  <path d="M 13 13 
+           L 30 13 
+           Q 34 10, 36 13
+           Q 40 16, 36 18
+           Q 34 16, 30 18
+           L 50 18
+           Q 54 16, 57 18
+           Q 60 21, 57 23
+           Q 54 21, 50 23
+           L 67 23
+           L 67 47
+           Q 70 50, 67 54
+           Q 64 57, 67 60
+           Q 70 57, 72 60
+           L 72 67
+           L 60 67
+           Q 57 70, 54 67
+           Q 50 64, 54 62
+           Q 57 64, 60 62
+           L 40 62
+           Q 36 64, 33 62
+           Q 30 60, 33 57
+           Q 36 60, 40 57
+           L 23 57
+           L 23 33
+           Q 20 30, 23 26
+           Q 26 23, 23 20
+           Q 20 23, 18 20
+           L 18 13
+           Z" 
+        fill="none" 
+        stroke="#FFFFFF" 
+        stroke-width="1.5" 
+        opacity="0.6"/>
+  
+  <!-- Center content area -->
+  <circle cx="40" cy="40" r="20" fill="#FFFFFF" stroke="#1565C0" stroke-width="2" opacity="0.95"/>
+  
+  <!-- Number 3 -->
+  <text x="40" y="50" text-anchor="middle" font-size="32" font-weight="bold" 
+        fill="url(#textGradient)" font-family="Arial, sans-serif" 
+        filter="url(#numberGlow)">3</text>
+  
+  <!-- Decorative dots pattern -->
+  <g opacity="0.4">
+    <circle cx="25" cy="25" r="1.5" fill="#1565C0"/>
+    <circle cx="55" cy="25" r="1.5" fill="#1565C0"/>
+    <circle cx="25" cy="55" r="1.5" fill="#1565C0"/>
+    <circle cx="55" cy="55" r="1.5" fill="#1565C0"/>
+  </g>
+  
+  <!-- Three dots indicator -->
+  <g opacity="0.7">
+    <circle cx="32" cy="25" r="3" fill="#2196F3"/>
+    <circle cx="40" cy="25" r="3" fill="#2196F3"/>
+    <circle cx="48" cy="25" r="3" fill="#2196F3"/>
+  </g>
+  
+  <!-- Corner sparkles -->
+  <g opacity="0.6">
+    <path d="M 18 18 L 20 20 L 18 22 L 16 20 Z" fill="#FFD700"/>
+    <path d="M 62 18 L 64 20 L 62 22 L 60 20 Z" fill="#FF69B4"/>
+    <path d="M 18 62 L 20 64 L 18 66 L 16 64 Z" fill="#00BCD4"/>
+    <path d="M 62 62 L 64 64 L 62 66 L 60 64 Z" fill="#9C27B0"/>
+  </g>
+  
+  <!-- Corner connection indicators -->
+  <g opacity="0.8">
+    <circle cx="18" cy="18" r="2.5" fill="#0D47A1"/>
+    <circle cx="62" cy="18" r="2.5" fill="#0D47A1"/>
+    <circle cx="62" cy="62" r="2.5" fill="#0D47A1"/>
+    <circle cx="18" cy="62" r="2.5" fill="#0D47A1"/>
+  </g>
+  
+  <!-- Label text -->
+  <text x="40" y="68" text-anchor="middle" font-size="8" font-weight="bold" fill="#0D47A1" font-family="Arial, sans-serif">THREE</text>
+</svg>
