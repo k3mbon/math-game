@@ -310,7 +310,7 @@ const ZenoGameNew = () => {
         padding: '0 15px',
         width: '100%',
         boxSizing: 'border-box',
-        overflow: 'hidden',
+        overflow: 'visible', // Changed from 'hidden' to 'visible' to prevent clipping
         maxHeight: 'calc(100vh - 140px)' // Reserve space for header and footer
       }}>
         <div style={{
@@ -461,7 +461,7 @@ const ZenoGameNew = () => {
           flexDirection: 'column',
           gap: '15px',
           minWidth: 0,
-          overflow: 'hidden',
+          overflow: 'visible', // Changed from 'hidden' to 'visible' to prevent clipping
           maxHeight: '100%'
         }}>
           <div style={{
@@ -608,9 +608,9 @@ const ZenoGameNew = () => {
             borderRadius: '12px',
             padding: '12px',
             flex: '1 1 auto',
-            minHeight: '120px', // Increased minimum height
-            maxHeight: '160px', // Increased maximum height
-            overflow: 'visible', // Keep visible to prevent clipping
+            minHeight: '140px', // Minimum height for better visibility
+            maxHeight: sequence.length > 12 ? '320px' : sequence.length > 6 ? '280px' : '240px', // Dynamic height based on sequence length
+            overflow: 'visible', // Changed to visible to prevent clipping
             display: 'flex',
             flexDirection: 'column'
           }}>
@@ -618,7 +618,8 @@ const ZenoGameNew = () => {
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              marginBottom: '10px'
+              marginBottom: '10px',
+              flexShrink: 0 // Prevent header from shrinking
             }}>
               <span style={{ fontSize: '16px' }}>🧩</span>
               <h3 style={{
@@ -629,22 +630,26 @@ const ZenoGameNew = () => {
               }}>Program Ksatriamu</h3>
             </div>
             
-            <div style={{
-              flex: 1,
-              minHeight: '80px', // Increased minimum height
-              border: '2px dashed #FFE0B2',
-              borderRadius: '8px',
-              padding: '12px', // Increased padding for better tile visibility
-              display: 'flex',
-              alignItems: sequence.length === 0 ? 'center' : 'flex-start',
-              justifyContent: sequence.length === 0 ? 'center' : 'flex-start',
-              overflowX: 'visible', // Changed to visible to prevent horizontal clipping
-              overflowY: 'auto', // Enable vertical scrolling
-              flexWrap: 'wrap', // Allow wrapping to next line
-              gap: '10px', // Increased gap for better tile spacing
-              background: '#FAFAFA', // Light background to make it more visible
-              alignContent: 'flex-start' // Align content to start to prevent centering issues
-            }}>
+            <div 
+                      className="program-sequence-container"
+                      style={{
+                        flex: 1,
+                        minHeight: '100px',
+                        border: '2px solid #FFE0B2',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        display: 'flex',
+                        alignItems: sequence.length === 0 ? 'center' : 'flex-start',
+                        justifyContent: sequence.length === 0 ? 'center' : 'flex-start',
+                        maxHeight: sequence.length > 12 ? '280px' : sequence.length > 6 ? '240px' : '200px',
+                        overflowY: 'auto',
+                        overflowX: 'hidden',
+                        flexWrap: 'wrap',
+                        gap: '12px',
+                        background: 'linear-gradient(135deg, #FFF8E1 0%, #FFFDE7 100%)',
+                        alignContent: 'flex-start',
+                        position: 'relative'
+                      }}>
               {sequence.length === 0 ? (
                 <div style={{ 
                   textAlign: 'center', 
@@ -662,26 +667,27 @@ const ZenoGameNew = () => {
                   }}>Seret ubin ke sini untuk membuat program Anda!</p>
                 </div>
               ) : (
-                // Remove the inner div wrapper since parent already has flex and gap
+                // Sequence tiles with improved layout for scrolling
                 sequence.map((tile, index) => (
                   <div
                     key={tile.uniqueId}
+                    className="sequence-tile"
                     style={{
-                      width: '50px', // Increased from 40px to accommodate indicators
-                      height: '50px', // Increased from 40px to accommodate indicators
+                      width: '50px', // Consistent tile size
+                      height: '50px', // Consistent tile size
                       borderRadius: '6px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       color: 'white',
-                      fontSize: '18px', // Increased font size for better visibility
+                      fontSize: '18px', // Font size for visibility
                       boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
                       backgroundColor: tile.color,
-                      flexShrink: 0,
-                      cursor: 'pointer', // Add cursor to indicate interactivity
-                      transition: 'transform 0.2s ease', // Add hover effect
+                      flexShrink: 0, // Prevent tiles from shrinking
+                      cursor: 'pointer', // Interactive cursor
+                      transition: 'transform 0.2s ease', // Hover effect
                       position: 'relative',
-                      margin: '8px' // Add margin to prevent clipping of indicators
+                      margin: '0' // No margin to prevent layout issues
                     }}
                     onMouseEnter={(e) => {
                       e.target.style.transform = 'scale(1.1)';
@@ -689,26 +695,27 @@ const ZenoGameNew = () => {
                     onMouseLeave={(e) => {
                       e.target.style.transform = 'scale(1)';
                     }}
-                    title={`${tile.name} (${index + 1})`} // Add tooltip
+                    title={`${tile.name} (${index + 1})`} // Tooltip
                   >
                     {tile.icon}
-                    {/* Add step number indicator */}
+                    {/* Step number indicator with improved positioning */}
                     <div style={{
                       position: 'absolute',
-                      top: '-6px', // Reduced from -8px to prevent excessive clipping
-                      right: '-6px', // Reduced from -8px to prevent excessive clipping
-                      width: '18px', // Increased size for better visibility
-                      height: '18px', // Increased size for better visibility
+                      top: '-4px', // Positioning to prevent clipping
+                      right: '-4px', // Positioning to prevent clipping
+                      width: '20px', // Size for visibility
+                      height: '20px', // Size for visibility
                       borderRadius: '50%',
                       background: '#2196F3',
                       color: 'white',
-                      fontSize: '11px', // Increased font size
+                      fontSize: '12px', // Font size for readability
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontWeight: 'bold',
                       border: '2px solid white',
-                      zIndex: 10 // Ensure it appears above other elements
+                      zIndex: 10, // Above other elements
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.3)' // Shadow for visibility
                     }}>
                       {index + 1}
                     </div>
