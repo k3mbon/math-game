@@ -50,6 +50,10 @@
     /* Force white background */
     background-color: #ffffff !important;
   }
+  html {
+    /* Ensure no dark edges from root element */
+    background-color: #ffffff !important;
+  }
 }
 
 /* Baseline reset for root only */

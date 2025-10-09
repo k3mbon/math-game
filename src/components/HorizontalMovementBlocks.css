@@ -1,0 +1,345 @@
+/* HorizontalMovementBlocks.css - Scratch-inspired horizontal block styling */
+
+.horizontal-movement-blocks {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.horizontal-blocks-header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(76, 175, 80, 0.3);
+}
+
+.horizontal-blocks-header h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.horizontal-blocks-header p {
+  margin: 0;
+  font-size: 0.95rem;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+.horizontal-blockly-container {
+  width: 100%;
+  height: 500px;
+  border: 3px solid #4CAF50;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 
+    inset 0 2px 8px rgba(0, 0, 0, 0.1),
+    0 4px 16px rgba(76, 175, 80, 0.2);
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.horizontal-blockly-workspace {
+  width: 100%;
+  height: 100%;
+}
+
+/* Custom Blockly styling for horizontal blocks */
+.horizontal-blockly-container .blocklyBlockCanvas .blocklyPath {
+  stroke-width: 2px;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.15));
+  transition: all 0.2s ease;
+}
+
+.horizontal-blockly-container .blocklyBlockCanvas .blocklyPath:hover {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25));
+  transform: translateY(-1px);
+}
+
+/* Movement blocks styling - Green theme */
+.horizontal-blockly-container .blocklyBlockCanvas .blocklyPath[fill="#4CAF50"] {
+  fill: linear-gradient(135deg, #4CAF50 0%, #45a049 50%, #388E3C 100%) !important;
+  stroke: #2E7D32;
+  stroke-width: 2px;
+}
+
+/* Rotation blocks styling - Orange theme */
+.horizontal-blockly-container .blocklyBlockCanvas .blocklyPath[fill="#FF9800"] {
+  fill: linear-gradient(135deg, #FF9800 0%, #F57C00 50%, #EF6C00 100%) !important;
+  stroke: #E65100;
+  stroke-width: 2px;
+}
+
+/* Control blocks styling - Purple theme */
+.horizontal-blockly-container .blocklyBlockCanvas .blocklyPath[fill="#9C27B0"] {
+  fill: linear-gradient(135deg, #9C27B0 0%, #8E24AA 50%, #7B1FA2 100%) !important;
+  stroke: #6A1B9A;
+  stroke-width: 2px;
+}
+
+/* Block text styling */
+.horizontal-blockly-container .blocklyText {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 600;
+  font-size: 14px !important;
+  fill: white !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Toolbox styling */
+.horizontal-blockly-container .blocklyToolboxDiv {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-right: 3px solid #4CAF50;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.horizontal-blockly-container .blocklyTreeRow {
+  background: transparent;
+  border-radius: 8px;
+  margin: 4px 8px;
+  padding: 8px 12px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.horizontal-blockly-container .blocklyTreeRow:hover {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);
+  border-color: #4CAF50;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+  transform: translateX(4px);
+}
+
+.horizontal-blockly-container .blocklyTreeLabel {
+  color: #2E7D32 !important;
+  font-weight: 600;
+  font-size: 13px;
+  text-shadow: none;
+}
+
+/* Workspace background */
+.horizontal-blockly-container .blocklyMainBackground {
+  fill: #f8f9fa !important;
+}
+
+/* Grid styling */
+.horizontal-blockly-container .blocklyGridPattern line {
+  stroke: #4CAF50;
+  stroke-opacity: 0.1;
+  stroke-width: 1;
+}
+
+/* Flyout styling */
+.horizontal-blockly-container .blocklyFlyoutBackground {
+  fill: rgba(255, 255, 255, 0.95) !important;
+  stroke: #4CAF50 !important;
+  stroke-width: 2px !important;
+}
+
+.horizontal-controls {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.execute-button,
+.clear-button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 160px;
+}
+
+.execute-button {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+}
+
+.execute-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #45a049 0%, #388E3C 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.3);
+}
+
+.execute-button:disabled {
+  background: linear-gradient(135deg, #9E9E9E 0%, #757575 100%);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.clear-button {
+  background: linear-gradient(135deg, #FF5722 0%, #E64A19 100%);
+  color: white;
+}
+
+.clear-button:hover {
+  background: linear-gradient(135deg, #E64A19 0%, #D84315 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 87, 34, 0.3);
+}
+
+.movement-info {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 12px;
+  border: 2px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 120px;
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: #6c757d;
+  font-weight: 500;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 1.1rem;
+  color: #2E7D32;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .horizontal-movement-blocks {
+    padding: 16px;
+    margin: 0 8px;
+  }
+
+  .horizontal-blocks-header h3 {
+    font-size: 1.3rem;
+  }
+
+  .horizontal-blocks-header p {
+    font-size: 0.9rem;
+  }
+
+  .horizontal-blockly-container {
+    height: 400px;
+    border-width: 2px;
+  }
+
+  .horizontal-controls {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .execute-button,
+  .clear-button {
+    width: 100%;
+    max-width: 280px;
+    padding: 14px 20px;
+  }
+
+  .movement-info {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .info-item {
+    min-width: auto;
+  }
+
+  /* Adjust Blockly text size for mobile */
+  .horizontal-blockly-container .blocklyText {
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .horizontal-movement-blocks {
+    padding: 12px;
+    margin: 0 4px;
+  }
+
+  .horizontal-blockly-container {
+    height: 350px;
+  }
+
+  .horizontal-blocks-header {
+    padding: 12px;
+  }
+
+  .horizontal-blocks-header h3 {
+    font-size: 1.2rem;
+  }
+
+  .horizontal-blocks-header p {
+    font-size: 0.85rem;
+  }
+
+  .execute-button,
+  .clear-button {
+    font-size: 0.9rem;
+    padding: 12px 16px;
+  }
+}
+
+/* Animation for block connections */
+.horizontal-blockly-container .blocklyInsertionMarker > .blocklyPath {
+  fill: #4CAF50 !important;
+  fill-opacity: 0.3 !important;
+  stroke: #2E7D32 !important;
+  stroke-width: 3px !important;
+  animation: pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from {
+    fill-opacity: 0.2;
+    stroke-width: 2px;
+  }
+  to {
+    fill-opacity: 0.4;
+    stroke-width: 4px;
+  }
+}
+
+/* Scratch-like block shadows and highlights */
+.horizontal-blockly-container .blocklySelected > .blocklyPath {
+  stroke: #FFD700 !important;
+  stroke-width: 3px !important;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+}
+
+.horizontal-blockly-container .blocklyDragging > .blocklyPath {
+  fill-opacity: 0.8 !important;
+  stroke-opacity: 0.8 !important;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
+}

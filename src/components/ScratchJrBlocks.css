@@ -1,0 +1,261 @@
+/* ScratchJr Blocks Container */
+.scratchjr-blocks-container {
+  background: white;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 2px solid #4CAF50;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Header */
+.blocks-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+  background: #F5F5F5;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.blocks-icon {
+  font-size: 16px;
+}
+
+.blocks-header h3 {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+  padding: 2px 0;
+}
+
+/* Categories */
+.blocks-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.category-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.category-title {
+  padding: 6px 10px;
+  margin: 0;
+  border-radius: 6px;
+  fontSize: 12px;
+  font-weight: bold;
+  color: white;
+}
+
+.movement-category {
+  background: #2196F3;
+}
+
+.control-category {
+  background: #4CAF50;
+}
+
+/* Horizontal Blocks Row */
+.horizontal-blocks-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+  border: 1px dashed #E0E0E0;
+}
+
+/* ScratchJr Block Styling */
+.scratchjr-block {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  height: 50px;
+  border-radius: 25px 8px 8px 25px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg, currentColor 0%, rgba(0, 0, 0, 0.1) 100%);
+  margin-right: 8px;
+}
+
+/* Block Content */
+.block-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.block-icon {
+  font-size: 20px;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Connector (Puzzle Piece Style) */
+.block-connector-right {
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background: inherit;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  z-index: 1;
+}
+
+/* Hover Effects */
+.scratchjr-block:hover:not(.dragging) {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
+.scratchjr-block:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Dragging State */
+.scratchjr-block.dragging {
+  opacity: 0.7;
+  transform: rotate(3deg) scale(1.1);
+  z-index: 1000;
+}
+
+/* Block Type Specific Styles */
+.scratchjr-block.movement {
+  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+}
+
+.scratchjr-block.control {
+  background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+}
+
+.scratchjr-block.control[title="Repeat"] {
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+}
+
+/* Info Section */
+.blocks-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  padding: 8px 12px;
+  background: #F8F9FA;
+  border-radius: 8px;
+  border: 1px solid #E9ECEF;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.info-icon {
+  font-size: 14px;
+}
+
+.info-text {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .scratchjr-blocks-container {
+    padding: 10px;
+  }
+  
+  .horizontal-blocks-row {
+    gap: 2px;
+    padding: 6px;
+  }
+  
+  .scratchjr-block {
+    min-width: 50px;
+    height: 40px;
+    margin-right: 6px;
+  }
+  
+  .block-icon {
+    font-size: 16px;
+  }
+  
+  .block-connector-right {
+    width: 12px;
+    height: 12px;
+    right: -6px;
+  }
+  
+  .blocks-info {
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+  }
+}
+
+/* Animation for block addition */
+@keyframes blockAdded {
+  0% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.scratchjr-block.added {
+  animation: blockAdded 0.3s ease-out;
+}
+
+/* Disabled state */
+.scratchjr-block:disabled,
+.scratchjr-block[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Focus styles for accessibility */
+.scratchjr-block:focus {
+  outline: 3px solid #FFD54F;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .scratchjr-block {
+    border: 3px solid white;
+  }
+  
+  .block-connector-right {
+    border: 3px solid white;
+  }
+}

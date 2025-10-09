@@ -62,7 +62,7 @@ const LandingPage = () => {
   const [selectedCharacterLocal, setSelectedCharacterLocal] = useState(selectedCharacter);
 
   useEffect(() => {
-    document.title = 'BrainQuest - Belajar Matematika Seru dengan AI';
+    document.title = 'Rekurno - Belajar Matematika Seru dengan AI';
     document.body.className = 'landing-page-body';
     
     return () => {
@@ -144,7 +144,7 @@ const LandingPage = () => {
       <section className="section-container" id="features-section">
         <div className="section-header">
           <h2 className="section-title">
-            Kenapa Guru-Guru Pilih BrainQuest
+            Kenapa Guru-Guru Pilih Rekurno
           </h2>
           <p className="section-description">
             Temuin fitur-fitur keren yang bikin belajar matematika jadi efektif, seru, dan bisa diukur hasilnya.
@@ -518,7 +518,7 @@ const LandingPage = () => {
             <div className="cta-testimonials">
               <div className="testimonial">
                 <div className="stars">★★★★★</div>
-                <p>"Anak saya jadi makin percaya diri sama matematika sejak pakai BrainQuest. Pendekatan personalnya beneran manjur!"</p>
+                <p>"Anak saya jadi makin percaya diri sama matematika sejak pakai Rekurno. Pendekatan personalnya beneran manjur!"</p>
                 <span>- Sarah M., Orang Tua</span>
               </div>
               <div className="testimonial">

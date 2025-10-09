@@ -150,15 +150,15 @@
   width: 100%;
   height: auto;
   max-height: 450px;
-  border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border-radius: 0; /* remove rounded corners for seamless look */
+  box-shadow: none; /* remove card-like shadow */
   object-fit: contain;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .hero-image:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: none; /* keep hover clean without shadow */
 }
 
 /* Section Styles */

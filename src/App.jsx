@@ -42,6 +42,7 @@ const TerrainDesigner = lazy(() => import('./pages/TerrainDesigner'));
 const TerrainDesignerSimple = lazy(() => import('./pages/TerrainDesignerSimple'));
 const TerrainGameDemo = lazy(() => import('./pages/TerrainGameDemo'));
 const TerrainDemo = lazy(() => import('./pages/TerrainDemo'));
+const HorizontalBlocksDemo = lazy(() => import('./pages/HorizontalBlocksDemo'));
 
 const data = [
   {
@@ -150,6 +151,7 @@ function AppContent() {
               <Route path="/terrain-game-demo" element={<TerrainGameDemo />} />
               <Route path="/grass-terrain-demo" element={<GrassTerrainDemo />} />
               <Route path="/terrain-demo" element={<TerrainDemo />} />
+              <Route path="/horizontal-blocks-demo" element={<HorizontalBlocksDemo />} />
               
               {/* Protected routes shown only when authenticated */}
               {user && (

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import HumanCharacter from './HumanCharacter';
+import OfficialScratchBlocks from './OfficialScratchBlocks';
 import { getGrassTileByPosition, preloadGrassTiles } from '../utils/grassTileLoader';
 import { generateBalancedLayout } from '../utils/smartRandomizer';
 import './ZenoGameNew.css';
+import './OfficialScratchBlocks.css';
 
 const ZenoGameNew = () => {
   const [level] = useState(1);
@@ -122,7 +124,8 @@ const ZenoGameNew = () => {
   const executeProgram = () => {
     if (sequence.length === 0 || sequence.length > maxMoves) return;
     
-    const moves = sequence.map(tile => tile.id);
+    // Map ScratchJr block actions to move IDs
+    const moves = sequence.map(block => block.action || block.id);
     setExecutionQueue([...moves]);
   };
 
@@ -166,304 +169,190 @@ const ZenoGameNew = () => {
   };
 
   return (
-    <div style={{
+    <>
+      <div style={{
       width: '100vw',
       height: '100vh',
       background: 'linear-gradient(135deg, #E8F4FD 0%, #B8E6B8 100%)',
-      display: 'flex',
-      flexDirection: 'column',
+      display: 'grid',
+      gridTemplateRows: 'auto 1fr',
+      gridTemplateColumns: '260px 1fr',
+      gridTemplateAreas: `
+        "header header"
+        "blocks game"
+      `,
+      gap: '15px',
+      padding: '15px',
       fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
       overflow: 'hidden',
       margin: 0,
-      padding: 0,
       position: 'fixed',
       top: 0,
       left: 0,
       zIndex: 1000,
       boxSizing: 'border-box'
     }}>
+      {/* Header Stats */}
       <div style={{
-        padding: '15px 20px',
-        background: 'transparent',
-        width: '100%',
-        boxSizing: 'border-box'
+        gridArea: 'header',
+        display: 'flex',
+        gap: '15px',
+        justifyContent: 'center'
       }}>
         <div style={{
+          background: 'white',
+          padding: '8px 16px',
+          borderRadius: '20px',
+          border: '2px solid #4CAF50',
           display: 'flex',
-          gap: '15px',
-          justifyContent: 'center',
-          width: '100%'
+          alignItems: 'center',
+          gap: '8px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          minHeight: '40px',
+          minWidth: '120px'
         }}>
-          <div style={{
-            background: 'white',
-            padding: '8px 16px',
-            borderRadius: '20px',
-            border: '2px solid #4CAF50',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-            minHeight: '40px',
-            minWidth: '120px'
-          }}>
-            <span style={{
-              fontSize: '14px',
-              color: '#333',
-              padding: '2px 4px',
-              margin: 0
-            }}>Misi: Gerakkan Ksatria ke</span>
-            <span style={{
-              background: '#FF9800',
-              color: 'white',
-              padding: '4px 8px',
-              borderRadius: '12px',
-              fontWeight: 'bold',
-              margin: 0
-            }}>({targetPosition.x}, {targetPosition.y})</span>
-          </div>
-          <div style={{
-            background: 'white',
-            padding: '8px 16px',
-            borderRadius: '20px',
-            border: '2px solid #4CAF50',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-            minHeight: '40px',
-            minWidth: '120px'
-          }}>
-            <span style={{
-              background: '#4CAF50',
-              color: 'white',
-              padding: '4px 8px',
-              borderRadius: '12px',
-              fontWeight: 'bold',
-              margin: 0
-            }}>Level 1</span>
-            <span style={{
-              background: '#FF9800',
-              color: 'white',
-              padding: '4px 8px',
-              borderRadius: '12px',
-              fontWeight: 'bold',
-              margin: 0
-            }}>Langkah: {sequence.length}/12</span>
-          </div>
-          
-          <div style={{
-            background: 'white',
-            padding: '8px 16px',
-            borderRadius: '20px',
-            border: '2px solid #9C27B0',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-            minHeight: '40px',
-            minWidth: '120px'
-          }}>
-            <span style={{
-              background: '#9C27B0',
-              color: 'white',
-              padding: '4px 8px',
-              borderRadius: '12px',
-              fontWeight: 'bold',
-              margin: 0
-            }}>💎 Kristal: {collectedCrystals}/{Object.keys(crystals).length}</span>
-          </div>
-          
-          <div style={{
-            background: 'white',
-            padding: '8px 16px',
-            borderRadius: '20px',
-            border: '2px solid #4CAF50',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-            minHeight: '40px',
-            minWidth: '120px'
-          }}>
-            <span style={{
-              fontSize: '14px',
-              color: '#333',
-              padding: '2px 4px',
-              margin: 0
-            }}>Skor:</span>
-            <span style={{
-              background: '#FF9800',
-              color: 'white',
-              padding: '4px 8px',
-              borderRadius: '12px',
-              fontWeight: 'bold',
-              margin: 0
-            }}>0</span>
-          </div>
+          <span style={{
+            fontSize: '14px',
+            color: '#333',
+            padding: '2px 4px',
+            margin: 0
+          }}>Misi: Gerakkan Ksatria ke</span>
+          <span style={{
+            background: '#FF9800',
+            color: 'white',
+            padding: '4px 8px',
+            borderRadius: '12px',
+            fontWeight: 'bold',
+            margin: 0
+          }}>({targetPosition.x}, {targetPosition.y})</span>
+        </div>
+        <div style={{
+          background: 'white',
+          padding: '8px 16px',
+          borderRadius: '20px',
+          border: '2px solid #4CAF50',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          minHeight: '40px',
+          minWidth: '120px'
+        }}>
+          <span style={{
+            background: '#4CAF50',
+            color: 'white',
+            padding: '4px 8px',
+            borderRadius: '12px',
+            fontWeight: 'bold',
+            margin: 0
+          }}>Level 1</span>
+          <span style={{
+            background: '#FF9800',
+            color: 'white',
+            padding: '4px 8px',
+            borderRadius: '12px',
+            fontWeight: 'bold',
+            margin: 0
+          }}>Langkah: {sequence.length}/12</span>
+        </div>
+        
+        <div style={{
+          background: 'white',
+          padding: '8px 16px',
+          borderRadius: '20px',
+          border: '2px solid #9C27B0',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          minHeight: '40px',
+          minWidth: '120px'
+        }}>
+          <span style={{
+            background: '#9C27B0',
+            color: 'white',
+            padding: '4px 8px',
+            borderRadius: '12px',
+            fontWeight: 'bold',
+            margin: 0
+          }}>💎 Kristal: {collectedCrystals}/{Object.keys(crystals).length}</span>
+        </div>
+        
+        <div style={{
+          background: 'white',
+          padding: '8px 16px',
+          borderRadius: '20px',
+          border: '2px solid #4CAF50',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          minHeight: '40px',
+          minWidth: '120px'
+        }}>
+          <span style={{
+            fontSize: '14px',
+            color: '#333',
+            padding: '2px 4px',
+            margin: 0
+          }}>Skor:</span>
+          <span style={{
+            background: '#FF9800',
+            color: 'white',
+            padding: '4px 8px',
+            borderRadius: '12px',
+            fontWeight: 'bold',
+            margin: 0
+          }}>0</span>
         </div>
       </div>
 
+      {/* Blocks Section */}
       <div style={{
+        gridArea: 'blocks',
+        background: 'white',
+        borderRadius: '15px',
+        padding: '15px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+        border: '2px solid #4CAF50',
+        overflowY: 'auto',
         display: 'flex',
-        flex: 1,
-        gap: '15px',
-        padding: '0 15px',
-        width: '100%',
-        boxSizing: 'border-box',
-        overflow: 'visible', // Changed from 'hidden' to 'visible' to prevent clipping
-        maxHeight: 'calc(100vh - 140px)' // Reserve space for header and footer
+        flexDirection: 'column'
       }}>
         <div style={{
-          width: '260px',
-          background: 'white',
-          borderRadius: '15px',
-          padding: '15px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-          border: '2px solid #4CAF50',
-          flexShrink: 0,
-          boxSizing: 'border-box',
-          overflowY: 'auto',
-          maxHeight: '100%'
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            marginBottom: '15px',
-            background: '#F5F5F5',
-            padding: '8px',
-            borderRadius: '8px'
-          }}>
-            <span style={{ fontSize: '16px' }}>🎮</span>
-            <h3 style={{
-              margin: 0,
-              fontSize: '14px',
-              color: '#333',
-              padding: '2px 0'
-            }}>Kontrol Gerakan (Level 1)</h3>
-          </div>
-          
-          <div style={{ marginBottom: '20px' }}>
-            <h4 style={{
-              background: '#4CAF50',
-              color: 'white',
-              padding: '6px 10px',
-              margin: '0 0 12px 0',
-              borderRadius: '6px',
-              fontSize: '12px',
-              fontWeight: 'bold'
-            }}>GERAKAN</h4>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '8px'
-            }}>
-              <div 
-                style={{
-                  width: '65px',
-                  height: '65px',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  background: '#4A90E2',
-                  boxShadow: '0 3px 6px rgba(74, 144, 226, 0.3)',
-                  border: '2px solid transparent'
-                }}
-                onClick={() => addToSequence({id: 'up', name: 'Up', icon: '⬆️', color: '#4A90E2'})}
-              >
-                <span style={{ fontSize: '20px', color: 'white' }}>⬆️</span>
-              </div>
-              <div 
-                style={{
-                  width: '65px',
-                  height: '65px',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  background: '#4A90E2',
-                  boxShadow: '0 3px 6px rgba(74, 144, 226, 0.3)',
-                  border: '2px solid transparent'
-                }}
-                onClick={() => addToSequence({id: 'left', name: 'Left', icon: '⬅️', color: '#4A90E2'})}
-              >
-                <span style={{ fontSize: '20px', color: 'white' }}>⬅️</span>
-              </div>
-              <div 
-                style={{
-                  width: '65px',
-                  height: '65px',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  background: '#4A90E2',
-                  boxShadow: '0 3px 6px rgba(74, 144, 226, 0.3)',
-                  border: '2px solid transparent'
-                }}
-                onClick={() => addToSequence({id: 'right', name: 'Right', icon: '➡️', color: '#4A90E2'})}
-              >
-                <span style={{ fontSize: '20px', color: 'white' }}>➡️</span>
-              </div>
-              <div 
-                style={{
-                  width: '65px',
-                  height: '65px',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  background: '#4A90E2',
-                  boxShadow: '0 3px 6px rgba(74, 144, 226, 0.3)',
-                  border: '2px solid transparent'
-                }}
-                onClick={() => addToSequence({id: 'down', name: 'Down', icon: '⬇️', color: '#4A90E2'})}
-              >
-                <span style={{ fontSize: '20px', color: 'white' }}>⬇️</span>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h4 style={{
-              background: '#4CAF50',
-              color: 'white',
-              padding: '6px 10px',
-              margin: '0 0 12px 0',
-              borderRadius: '6px',
-              fontSize: '12px',
-              fontWeight: 'bold'
-            }}>AKSI</h4>
-            <div style={{
-              width: '100px',
-              height: '65px',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              background: '#FF9800',
-              boxShadow: '0 3px 6px rgba(255, 152, 0, 0.3)'
-            }}>
-              <span style={{ fontSize: '20px', color: 'white' }}>↻</span>
-            </div>
-          </div>
-        </div>
-
-        <div style={{
-          flex: 1,
           display: 'flex',
-          flexDirection: 'column',
-          gap: '15px',
-          minWidth: 0,
-          overflow: 'visible', // Changed from 'hidden' to 'visible' to prevent clipping
-          maxHeight: '100%'
+          alignItems: 'center',
+          gap: '8px',
+          marginBottom: '15px',
+          background: '#F5F5F5',
+          padding: '8px',
+          borderRadius: '8px'
         }}>
+          <span style={{ fontSize: '16px' }}>🧩</span>
+          <h3 style={{
+            margin: 0,
+            fontSize: '14px',
+            color: '#333',
+            padding: '2px 0'
+          }}>Official Scratch Blocks (Level 1)</h3>
+        </div>
+        
+        <OfficialScratchBlocks 
+          onAddToSequence={addToSequence}
+          sequence={sequence}
+          maxMoves={maxMoves}
+          isExecuting={isExecuting}
+        />
+      </div>
+
+      {/* Game Area */}
+      <div style={{
+        gridArea: 'game',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '15px',
+        overflow: 'visible'
+      }}>
           <div style={{
             background: '#4CAF50',
             color: 'white',
@@ -724,219 +613,219 @@ const ZenoGameNew = () => {
               )}
             </div>
           </div>
-        </div>
-      </div>
-
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        gap: '15px',
-        padding: '12px 20px',
-        background: 'rgba(255,255,255,0.1)',
-        width: '100%',
-        boxSizing: 'border-box',
-        flexShrink: 0,
-        minHeight: '50px'
-      }}>
-        <button 
-          onClick={executeProgram}
-          disabled={isExecuting || sequence.length === 0 || sequence.length > maxMoves || gameWon}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '10px 20px',
-            border: 'none',
-            borderRadius: '20px',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            cursor: sequence.length === 0 || sequence.length > maxMoves || isExecuting || gameWon ? 'not-allowed' : 'pointer',
-            background: '#4CAF50',
-            color: 'white',
-            boxShadow: '0 3px 6px rgba(0,0,0,0.2)',
-            opacity: sequence.length === 0 || sequence.length > maxMoves || isExecuting || gameWon ? 0.5 : 1
-          }}
-        >
-          <span>✓</span>
-          JALANKAN KSATRIA
-        </button>
         
-        <button 
-          onClick={resetGame}
-          disabled={isExecuting}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '10px 20px',
-            border: 'none',
-            borderRadius: '20px',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            cursor: isExecuting ? 'not-allowed' : 'pointer',
-            background: '#FF9800',
-            color: 'white',
-            boxShadow: '0 3px 6px rgba(0,0,0,0.2)',
-            opacity: isExecuting ? 0.5 : 1
-          }}
-        >
-          <span>🔄</span>
-          RESET PERMAINAN
-        </button>
-        
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          background: '#FFF9C4',
-          padding: '8px 12px',
-          borderRadius: '15px',
-          border: '2px solid #FFD54F'
-        }}>
-          <span style={{ fontSize: '16px' }}>⚠️</span>
-          <span style={{ fontWeight: 'bold', color: '#F57F17', fontSize: '14px' }}>Skor: {score}</span>
-        </div>
-      </div>
-
-      {/* Victory Modal */}
-      {showVictoryModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          background: 'rgba(0, 0, 0, 0.8)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 2000,
-          animation: 'fadeIn 0.5s ease-in-out'
-        }}>
+          {/* Control Buttons */}
           <div style={{
-            background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)',
-            borderRadius: '20px',
-            padding: '40px',
-            textAlign: 'center',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
-            border: '3px solid #FFD700',
-            minWidth: '400px',
-            transform: 'scale(1)',
-            animation: 'celebrationBounce 0.6s ease-out'
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '15px',
+            padding: '12px 20px',
+            background: 'rgba(255,255,255,0.1)',
+            borderRadius: '12px',
+            flexShrink: 0,
+            minHeight: '50px'
           }}>
-            <div style={{
-              fontSize: '60px',
-              marginBottom: '20px',
-              animation: 'sparkle 1s ease-in-out infinite'
-            }}>🎉</div>
+            <button 
+              onClick={executeProgram}
+              disabled={isExecuting || sequence.length === 0 || sequence.length > maxMoves || gameWon}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '20px',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                cursor: sequence.length === 0 || sequence.length > maxMoves || isExecuting || gameWon ? 'not-allowed' : 'pointer',
+                background: '#4CAF50',
+                color: 'white',
+                boxShadow: '0 3px 6px rgba(0,0,0,0.2)',
+                opacity: sequence.length === 0 || sequence.length > maxMoves || isExecuting || gameWon ? 0.5 : 1
+              }}
+            >
+              <span>✓</span>
+              JALANKAN KSATRIA
+            </button>
             
-            <h1 style={{
-              color: 'white',
-              fontSize: '32px',
-              margin: '0 0 10px 0',
-              fontWeight: 'bold',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
-            }}>Selamat!</h1>
-            
-            <p style={{
-              color: 'white',
-              fontSize: '18px',
-              margin: '0 0 20px 0',
-              opacity: 0.95
-            }}>Anda berhasil mengumpulkan semua kristal!</p>
-            
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.2)',
-              borderRadius: '10px',
-              padding: '15px',
-              margin: '20px 0',
-              border: '1px solid rgba(255, 255, 255, 0.3)'
-            }}>
-              <div style={{ color: 'white', fontSize: '16px', marginBottom: '8px' }}>
-                🏆 <strong>Statistik Permainan:</strong>
-              </div>
-              <div style={{ color: 'white', fontSize: '14px', marginBottom: '5px' }}>
-                💎 Kristal dikumpulkan: {collectedCrystals}/{Object.keys(crystals).length}
-              </div>
-              <div style={{ color: 'white', fontSize: '14px', marginBottom: '5px' }}>
-                🎯 Langkah digunakan: {sequence.length}/12
-              </div>
-              <div style={{ color: 'white', fontSize: '14px' }}>
-                ⭐ Skor: {score} poin
-              </div>
-            </div>
+            <button 
+              onClick={resetGame}
+              disabled={isExecuting}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '20px',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                cursor: isExecuting ? 'not-allowed' : 'pointer',
+                background: '#FF9800',
+                color: 'white',
+                boxShadow: '0 3px 6px rgba(0,0,0,0.2)',
+                opacity: isExecuting ? 0.5 : 1
+              }}
+            >
+              <span>🔄</span>
+              RESET PERMAINAN
+            </button>
             
             <div style={{
               display: 'flex',
-              gap: '15px',
-              justifyContent: 'center',
-              marginTop: '25px'
+              alignItems: 'center',
+              gap: '6px',
+              background: '#FFF9C4',
+              padding: '8px 12px',
+              borderRadius: '15px',
+              border: '2px solid #FFD54F'
             }}>
-              <button 
-                onClick={nextLevel}
-                style={{
-                  background: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '25px',
-                  padding: '12px 24px',
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 15px rgba(255, 152, 0, 0.4)',
-                  transition: 'all 0.3s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.transform = 'translateY(-2px)';
-                  e.target.style.boxShadow = '0 6px 20px rgba(255, 152, 0, 0.6)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = '0 4px 15px rgba(255, 152, 0, 0.4)';
-                }}
-              >
-                <span>🚀</span>
-                Level Berikutnya
-              </button>
-              
-              <button 
-                onClick={repeatLevel}
-                style={{
-                  background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '25px',
-                  padding: '12px 24px',
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 15px rgba(33, 150, 243, 0.4)',
-                  transition: 'all 0.3s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.transform = 'translateY(-2px)';
-                  e.target.style.boxShadow = '0 6px 20px rgba(33, 150, 243, 0.6)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = '0 4px 15px rgba(33, 150, 243, 0.4)';
-                }}
-              >
-                <span>🔄</span>
-                Ulangi Level
-              </button>
+              <span style={{ fontSize: '16px' }}>⚠️</span>
+              <span style={{ fontWeight: 'bold', color: '#F57F17', fontSize: '14px' }}>Skor: {score}</span>
             </div>
           </div>
         </div>
-      )}
+      
+        {/* Victory Modal */}
+        {showVictoryModal && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(0, 0, 0, 0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+            animation: 'fadeIn 0.5s ease-in-out'
+          }}>
+            <div style={{
+              background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)',
+              borderRadius: '20px',
+              padding: '40px',
+              textAlign: 'center',
+              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
+              border: '3px solid #FFD700',
+              minWidth: '400px',
+              transform: 'scale(1)',
+              animation: 'celebrationBounce 0.6s ease-out'
+            }}>
+              <div style={{
+                fontSize: '60px',
+                marginBottom: '20px',
+                animation: 'sparkle 1s ease-in-out infinite'
+              }}>🎉</div>
+              
+              <h1 style={{
+                color: 'white',
+                fontSize: '32px',
+                margin: '0 0 10px 0',
+                fontWeight: 'bold',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+              }}>Selamat!</h1>
+              
+              <p style={{
+                color: 'white',
+                fontSize: '18px',
+                margin: '0 0 20px 0',
+                opacity: 0.95
+              }}>Anda berhasil mengumpulkan semua kristal!</p>
+              
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '10px',
+                padding: '15px',
+                margin: '20px 0',
+                border: '1px solid rgba(255, 255, 255, 0.3)'
+              }}>
+                <div style={{ color: 'white', fontSize: '16px', marginBottom: '8px' }}>
+                  🏆 <strong>Statistik Permainan:</strong>
+                </div>
+                <div style={{ color: 'white', fontSize: '14px', marginBottom: '5px' }}>
+                  💎 Kristal dikumpulkan: {collectedCrystals}/{Object.keys(crystals).length}
+                </div>
+                <div style={{ color: 'white', fontSize: '14px', marginBottom: '5px' }}>
+                  🎯 Langkah digunakan: {sequence.length}/12
+                </div>
+                <div style={{ color: 'white', fontSize: '14px' }}>
+                  ⭐ Skor: {score} poin
+                </div>
+              </div>
+              
+              <div style={{
+                display: 'flex',
+                gap: '15px',
+                justifyContent: 'center',
+                marginTop: '25px'
+              }}>
+                <button 
+                  onClick={nextLevel}
+                  style={{
+                    background: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '25px',
+                    padding: '12px 24px',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 15px rgba(255, 152, 0, 0.4)',
+                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 6px 20px rgba(255, 152, 0, 0.6)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 15px rgba(255, 152, 0, 0.4)';
+                  }}
+                >
+                  <span>🚀</span>
+                  Level Berikutnya
+                </button>
+                
+                <button 
+                  onClick={repeatLevel}
+                  style={{
+                    background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '25px',
+                    padding: '12px 24px',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 15px rgba(33, 150, 243, 0.4)',
+                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 6px 20px rgba(33, 150, 243, 0.6)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 15px rgba(33, 150, 243, 0.4)';
+                  }}
+                >
+                  <span>🔄</span>
+                  Ulangi Level
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
     </div>
+    </>
   );
 };
 

@@ -15,8 +15,19 @@ export default defineConfig({
     hmr: {
       port: 5176,
     },
+    fs: {
+      allow: ['..']
+    }
   },
-
+  define: {
+    // Polyfill for CommonJS modules
+    'global': 'globalThis',
+    'module': '{}',
+    'exports': '{}'
+  },
+  optimizeDeps: {
+    include: ['scratch-blocks']
+  },
   build: {
     rollupOptions: {
       output: {
@@ -26,5 +37,8 @@ export default defineConfig({
         }
       }
     }
-  }
+  },
+  // Copy scratch-blocks media files to public directory during build
+  publicDir: 'public',
+  assetsInclude: ['**/*.svg', '**/*.png', '**/*.gif']
 })
