@@ -1,16 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import * as Blockly from 'blockly';
 import HumanCharacter from './HumanCharacter';
-import OfficialScratchBlocks from './OfficialScratchBlocks';
 import { getGrassTileByPosition, preloadGrassTiles } from '../utils/grassTileLoader';
 import { generateBalancedLayout } from '../utils/smartRandomizer';
 import './ZenoGameNew.css';
-import './OfficialScratchBlocks.css';
+import './BlocklyComponent.css';
 
 const ZenoGameNew = () => {
   const [level] = useState(1);
   const [sequence, setSequence] = useState([]);
   const gridWidth = 6;
   const gridHeight = 5;
+  
+  // Blockly workspace reference
+  const workspaceRef = useRef(null);
+  const blocklyDiv = useRef(null);
 
   const getGrassTileByPositionWrapper = (x, y, width, height) => {
     return getGrassTileByPosition(x, y, width, height);
@@ -44,89 +48,440 @@ const ZenoGameNew = () => {
   const [maxMoves] = useState(12);
   const [isExecuting, setIsExecuting] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [totalSteps, setTotalSteps] = useState(0);
   const [score, setScore] = useState(0);
   const [gameWon, setGameWon] = useState(false);
   const [showVictoryModal, setShowVictoryModal] = useState(false);
 
   useEffect(() => {
     preloadGrassTiles();
+    
+    // Initialize Blockly workspace with a small delay to ensure proper loading
+    const timer = setTimeout(() => {
+      initializeBlockly();
+    }, 100);
+    
+    return () => {
+      clearTimeout(timer);
+      // Cleanup Blockly workspace on unmount
+      if (workspaceRef.current) {
+        workspaceRef.current.dispose();
+      }
+    };
   }, []);
 
-  useEffect(() => {
-    const processNextMove = () => {
-      if (executionQueue.length === 0) {
-        setIsExecuting(false);
-        return;
+  // Initialize Blockly workspace and custom blocks
+  const initializeBlockly = () => {
+    // Define custom movement blocks matching Blockly Maze exactly
+    Blockly.defineBlocksWithJsonArray([
+      {
+        type: 'maze_moveForward',
+        message0: 'move forward',
+        previousStatement: null,
+        nextStatement: null,
+        colour: 120, // Green color matching Blockly Maze
+        tooltip: 'Moves the player forward one space in the direction they are facing.',
+        helpUrl: ''
+      },
+      {
+        type: 'maze_turnLeft',
+        message0: 'turn left ↺',
+        previousStatement: null,
+        nextStatement: null,
+        colour: 120, // Green color matching Blockly Maze
+        tooltip: 'Turns the player left by 90 degrees.',
+        helpUrl: ''
+      },
+      {
+        type: 'maze_turnRight',
+        message0: 'turn right ↻',
+        previousStatement: null,
+        nextStatement: null,
+        colour: 120, // Green color matching Blockly Maze
+        tooltip: 'Turns the player right by 90 degrees.',
+        helpUrl: ''
       }
+    ]);
 
-      const nextMove = executionQueue.shift();
-      setIsExecuting(true);
-
-      setTimeout(() => {
-        setPlayerPosition(prev => {
-          let newX = prev.x;
-          let newY = prev.y;
-          
-          switch (nextMove) {
-            case 'up':
-              newY = Math.max(0, prev.y - 1);
-              setPlayerDirection('up');
-              break;
-            case 'down':
-              newY = Math.min(gridHeight - 1, prev.y + 1);
-              setPlayerDirection('down');
-              break;
-            case 'left':
-              newX = Math.max(0, prev.x - 1);
-              setPlayerDirection('left');
-              break;
-            case 'right':
-              newX = Math.min(gridWidth - 1, prev.x + 1);
-              setPlayerDirection('right');
-              break;
-          }
-          
-          const crystalKey = `${newX}-${newY}`;
-          if (crystals[crystalKey] && !crystals[crystalKey].collected) {
-            setCrystals(prevCrystals => ({
-              ...prevCrystals,
-              [crystalKey]: { ...prevCrystals[crystalKey], collected: true }
-            }));
-            setCollectedCrystals(prev => prev + 1);
-          }
-          
-          // Check for win condition: player reaches target after collecting all crystals
-          const allCrystalsCollected = Object.values(crystals).every(crystal => crystal.collected) || 
-                                     (crystals[crystalKey] && Object.values(crystals).filter(c => !c.collected || c === crystals[crystalKey]).length === 1);
-          const reachedTarget = newX === targetPosition.x && newY === targetPosition.y;
-          
-          if (allCrystalsCollected && reachedTarget && !gameWon) {
-            setTimeout(() => {
-              setGameWon(true);
-              setShowVictoryModal(true);
-              setScore(prev => prev + (12 - sequence.length) * 10); // Bonus points for efficiency
-            }, 500); // Small delay for smooth animation
-          }
-          
-          return { x: newX, y: newY };
-        });
-
-        setExecutionQueue(prev => prev.slice(1));
-        setTimeout(processNextMove, 300);
-      }, 800);
+    // Create toolbox matching Blockly Maze structure
+    const toolbox = {
+      kind: 'categoryToolbox',
+      contents: [
+        {
+          kind: 'category',
+          name: 'Actions',
+          colour: 120, // Green color matching Blockly Maze
+          contents: [
+            { kind: 'block', type: 'maze_moveForward' },
+            { kind: 'block', type: 'maze_turnLeft' },
+            { kind: 'block', type: 'maze_turnRight' }
+          ]
+        },
+        {
+          kind: 'category',
+          name: 'Loops',
+          colour: '%{BKY_LOOPS_HUE}',
+          contents: [
+            { 
+              kind: 'block', 
+              type: 'controls_repeat_ext',
+              inputs: {
+                TIMES: {
+                  shadow: {
+                    type: 'math_number',
+                    fields: {
+                      NUM: 10
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
     };
 
-    if (executionQueue.length > 0 && !isExecuting) {
-      processNextMove();
+    // Initialize workspace with enhanced toolbox configuration
+    if (blocklyDiv.current) {
+      workspaceRef.current = Blockly.inject(blocklyDiv.current, {
+        toolbox: toolbox,
+        trashcan: true,
+        scrollbars: true,
+        grid: {
+          spacing: 20,
+          length: 3,
+          colour: '#ccc',
+          snap: true
+        },
+        zoom: {
+          controls: true,
+          wheel: true,
+          startScale: 1.0,
+          maxScale: 3,
+          minScale: 0.3,
+          scaleSpeed: 1.2
+        },
+        // Enhanced toolbox behavior
+        toolboxPosition: 'start',
+        horizontalLayout: false,
+        // Keep flyout open during drag operations
+        move: {
+          scrollbars: true,
+          drag: true,
+          wheel: true
+        }
+      });
+
+      // More robust flyout management - prevent auto-close during drag
+      let isDragging = false;
+      let dragStartTime = 0;
+      
+      // Track drag operations more comprehensively
+      workspaceRef.current.addChangeListener((event) => {
+        const flyout = workspaceRef.current.getFlyout();
+        
+        if (event.type === Blockly.Events.BLOCK_DRAG) {
+          isDragging = true;
+          dragStartTime = Date.now();
+          console.log('Drag started - keeping flyout open');
+          
+          // Force flyout to stay visible
+          if (flyout && flyout.isVisible()) {
+            flyout.autoClose = false;
+          }
+        }
+        
+        if (event.type === Blockly.Events.BLOCK_MOVE || 
+            event.type === Blockly.Events.BLOCK_CREATE ||
+            event.type === Blockly.Events.BLOCK_DELETE) {
+          
+          // Only end drag state after a reasonable delay and if enough time has passed
+          const timeSinceDragStart = Date.now() - dragStartTime;
+          if (timeSinceDragStart > 100) {
+            setTimeout(() => {
+              isDragging = false;
+              console.log('Drag ended - allowing flyout auto-close');
+              
+              // Re-enable auto-close after drag is complete
+              if (flyout) {
+                flyout.autoClose = true;
+              }
+            }, 300);
+          }
+        }
+      });
+
+      // Override flyout hide method with more robust logic
+      const flyout = workspaceRef.current.getFlyout();
+      if (flyout) {
+        const originalHide = flyout.hide.bind(flyout);
+        flyout.hide = function() {
+          // Don't hide if we're currently dragging
+          if (isDragging) {
+            console.log('Preventing flyout hide during drag');
+            return;
+          }
+          originalHide();
+        };
+      }
     }
-  }, [executionQueue.length, isExecuting, crystals, gridHeight, gridWidth]);
+
+    console.log('Blockly workspace initialized');
+  };
+
+  // Enhanced movement processing with Blockly Maze-style movement system. Based on my analysis, I can see that the current system already has some of the right components, but needs to be refined to match the precise mechanics of Google Blockly's Maze game <mcreference link="https://blockly.games/maze?lang=en" index="0">0</mcreference>. 
+  // The key improvements needed are:
+  // 1. More precise grid-based movement with collision detection
+  // 2. Smoother transitions matching Blockly Maze timing
+  // 3. Better sequential execution that matches the reference implementation
+  // Process execution queue - fixed to prevent race conditions
+  useEffect(() => {
+    if (executionQueue.length > 0 && !isExecuting) {
+      setIsExecuting(true);
+      
+      const nextMove = executionQueue[0];
+      setCurrentStep(prev => prev + 1);
+      
+      // Blockly Maze timing: 400ms for movement, 200ms for turns
+      const moveDelay = nextMove === 'forward' ? 400 : 200;
+      
+      console.log(`Executing action: ${nextMove} with delay: ${moveDelay}ms`);
+      
+      setTimeout(() => {
+        // Handle directional movement based on action type
+        if (nextMove === 'forward') {
+          // Move forward based on current direction with collision detection
+          setPlayerPosition(prev => {
+            let newX = prev.x;
+            let newY = prev.y;
+            
+            // Calculate intended position based on current direction
+            switch (playerDirection) {
+              case 'up':
+                newY = prev.y - 1;
+                break;
+              case 'down':
+                newY = prev.y + 1;
+                break;
+              case 'left':
+                newX = prev.x - 1;
+                break;
+              case 'right':
+                newX = prev.x + 1;
+                break;
+            }
+            
+            // Collision detection - check boundaries
+            if (newX < 0 || newX >= gridWidth || newY < 0 || newY >= gridHeight) {
+              // Invalid move - stay in current position
+              console.log(`Collision detected: attempted move to (${newX}, ${newY}) blocked by boundary`);
+              return prev;
+            }
+            
+            // Valid move - update position
+            const crystalKey = `${newX}-${newY}`;
+            if (crystals[crystalKey] && !crystals[crystalKey].collected) {
+              setCrystals(prevCrystals => ({
+                ...prevCrystals,
+                [crystalKey]: { ...prevCrystals[crystalKey], collected: true }
+              }));
+              setCollectedCrystals(prev => prev + 1);
+            }
+            
+            // Check for win condition: player reaches target after collecting all crystals
+            const allCrystalsCollected = Object.values(crystals).every(crystal => crystal.collected) || 
+                                       (crystals[crystalKey] && Object.values(crystals).filter(c => !c.collected || c === crystals[crystalKey]).length === 1);
+            const reachedTarget = newX === targetPosition.x && newY === targetPosition.y;
+            
+            if (allCrystalsCollected && reachedTarget && !gameWon) {
+              setTimeout(() => {
+                setGameWon(true);
+                setShowVictoryModal(true);
+                setScore(prev => prev + (12 - sequence.length) * 10); // Bonus points for efficiency
+              }, 300);
+            }
+            
+            return { x: newX, y: newY };
+          });
+        } else if (nextMove === 'turnLeft') {
+          // Turn left (counterclockwise)
+          setPlayerDirection(prev => {
+            const directions = ['up', 'right', 'down', 'left'];
+            const currentIndex = directions.indexOf(prev);
+            const newDirection = directions[(currentIndex + 3) % 4];
+            console.log(`Turning left from ${prev} to ${newDirection}`);
+            return newDirection;
+          });
+        } else if (nextMove === 'turnRight') {
+          // Turn right (clockwise)
+          setPlayerDirection(prev => {
+            const directions = ['up', 'right', 'down', 'left'];
+            const currentIndex = directions.indexOf(prev);
+            const newDirection = directions[(currentIndex + 1) % 4];
+            console.log(`Turning right from ${prev} to ${newDirection}`);
+            return newDirection;
+          });
+        }
+  
+        // Remove the processed action and continue - this is the key fix
+        setExecutionQueue(prev => prev.slice(1));
+        setIsExecuting(false);
+      }, moveDelay);
+    }
+  }, [executionQueue, isExecuting, playerDirection, gridWidth, gridHeight, crystals, targetPosition, gameWon]);
 
   const executeProgram = () => {
-    if (sequence.length === 0 || sequence.length > maxMoves) return;
+    if (!workspaceRef.current) {
+      alert('Blockly workspace not initialized!');
+      return;
+    }
     
-    // Map ScratchJr block actions to move IDs
-    const moves = sequence.map(block => block.action || block.id);
-    setExecutionQueue([...moves]);
+    // Get all blocks from the workspace
+    const topBlocks = workspaceRef.current.getTopBlocks(true);
+    
+    console.log('Top blocks found:', topBlocks.length);
+    topBlocks.forEach((block, index) => {
+      console.log(`Top block ${index}:`, block.type, 'ID:', block.id);
+    });
+    
+    if (topBlocks.length === 0) {
+      alert('No blocks to execute! Please add some movement blocks.');
+      return;
+    }
+
+    const actions = [];
+
+    // Process blocks directly without generating JavaScript code
+    const processBlock = (block) => {
+      if (!block) return;
+      
+      console.log(`Processing block: ${block.type} (ID: ${block.id})`);
+      
+      switch (block.type) {
+        case 'maze_moveForward':
+          console.log('Processing maze_moveForward block - adding "forward" to actions');
+          actions.push('forward');
+          console.log('Actions array now has length:', actions.length);
+          break;
+        case 'maze_turnLeft':
+          console.log('Processing maze_turnLeft block - adding "turnLeft" to actions');
+          actions.push('turnLeft');
+          console.log('Actions array now has length:', actions.length);
+          break;
+        case 'maze_turnRight':
+          console.log('Processing maze_turnRight block - adding "turnRight" to actions');
+          actions.push('turnRight');
+          console.log('Actions array now has length:', actions.length);
+          break;
+        case 'controls_repeat_ext':
+          // Handle repeat blocks - fixed to properly get TIMES value
+          console.log('Processing controls_repeat_ext block');
+          
+          // Try multiple methods to get the TIMES value
+          let times = 0;
+          
+          // Method 1: Try to get from connected number block
+          const timesInput = block.getInput('TIMES');
+          if (timesInput) {
+            const timesConnection = timesInput.connection;
+            if (timesConnection && timesConnection.targetBlock()) {
+              const timesBlock = timesConnection.targetBlock();
+              console.log('Found connected times block:', timesBlock.type);
+              if (timesBlock.type === 'math_number') {
+                times = parseInt(timesBlock.getFieldValue('NUM')) || 0;
+                console.log('Got times from math_number block:', times);
+              }
+            }
+          }
+          
+          // Method 2: Fallback to getFieldValue if no connected block
+          if (times === 0) {
+            try {
+              const timesField = block.getFieldValue('TIMES');
+              times = parseInt(timesField) || 0;
+              console.log('Got times from field value:', times);
+            } catch (e) {
+              console.log('Could not get TIMES field value:', e.message);
+            }
+          }
+          
+          // Method 3: Default fallback
+          if (times === 0) {
+            times = 1; // Default to 1 if we can't get the value
+            console.log('Using default times value:', times);
+          }
+          
+          const doBlock = block.getInputTargetBlock('DO');
+          
+          console.log(`Processing repeat block: ${times} times`);
+          console.log('DoBlock exists:', !!doBlock);
+          console.log('DoBlock type:', doBlock ? doBlock.type : 'null');
+          console.log('Times value:', times);
+          
+          // Check if there are blocks connected inside the repeat
+          if (doBlock && times > 0) {
+            console.log(`Starting repeat loop with ${times} iterations`);
+            for (let i = 0; i < times; i++) {
+              console.log(`Repeat iteration ${i + 1}/${times}`);
+              processBlockSequence(doBlock);
+            }
+            console.log('Repeat loop completed');
+          } else {
+            console.log('Repeat block validation failed:');
+            console.log('- DoBlock exists:', !!doBlock);
+            console.log('- Times > 0:', times > 0);
+            if (!doBlock) {
+              console.log('ERROR: No blocks connected inside the repeat block');
+            }
+            if (times <= 0) {
+              console.log('ERROR: Invalid repeat count:', times);
+            }
+          }
+          break;
+        default:
+          console.log(`Unknown block type: ${block.type}`);
+      }
+    };
+
+    const processBlockSequence = (startBlock) => {
+      let currentBlock = startBlock;
+      while (currentBlock) {
+        console.log(`Processing block in sequence: ${currentBlock.type} (ID: ${currentBlock.id})`);
+        processBlock(currentBlock);
+        currentBlock = currentBlock.getNextBlock();
+        if (currentBlock) {
+          console.log(`Moving to next block: ${currentBlock.type} (ID: ${currentBlock.id})`);
+        } else {
+          console.log('End of block sequence reached');
+        }
+      }
+    };
+
+    try {
+      // Process all top-level blocks
+      topBlocks.forEach(block => {
+        console.log(`Starting to process top-level block: ${block.type}`);
+        processBlockSequence(block);
+      });
+      
+      console.log('Actions collected:', actions);
+      console.log('Actions array length:', actions.length);
+      
+      // Set the execution queue with the collected actions
+      if (actions.length > 0 && actions.length <= maxMoves) {
+        setExecutionQueue([...actions]);
+        setCurrentStep(0);
+        setTotalSteps(actions.length);
+      } else if (actions.length > maxMoves) {
+        alert(`Too many moves! Maximum allowed: ${maxMoves}, but got ${actions.length}`);
+      } else {
+        console.log('No actions were collected from blocks');
+        alert('No moves generated! Make sure your blocks are connected properly.');
+      }
+    } catch (err) {
+      console.error('Execution error:', err);
+      alert('Error processing blocks:\n' + (err.stack || err.message));
+    }
   };
 
   const resetGame = () => {
@@ -137,6 +492,7 @@ const ZenoGameNew = () => {
     setIsExecuting(false);
     setCollectedCrystals(0);
     setCurrentStep(0);
+    setTotalSteps(0);
     setGameWon(false);
     setShowVictoryModal(false);
     
@@ -176,15 +532,15 @@ const ZenoGameNew = () => {
       background: 'linear-gradient(135deg, #E8F4FD 0%, #B8E6B8 100%)',
       display: 'grid',
       gridTemplateRows: 'auto 1fr',
-      gridTemplateColumns: '260px 1fr',
+      gridTemplateColumns: '1fr 1fr',
       gridTemplateAreas: `
         "header header"
-        "blocks game"
+        "game blocks"
       `,
       gap: '15px',
       padding: '15px',
       fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
-      overflow: 'hidden',
+      overflow: 'visible',
       margin: 0,
       position: 'fixed',
       top: 0,
@@ -307,7 +663,7 @@ const ZenoGameNew = () => {
         </div>
       </div>
 
-      {/* Blocks Section */}
+      {/* Blocks Section (Right) */}
       <div style={{
         gridArea: 'blocks',
         background: 'white',
@@ -322,27 +678,116 @@ const ZenoGameNew = () => {
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
-          marginBottom: '15px',
-          background: '#F5F5F5',
-          padding: '8px',
-          borderRadius: '8px'
+          justifyContent: 'space-between',
+          marginBottom: '12px'
         }}>
-          <span style={{ fontSize: '16px' }}>🧩</span>
-          <h3 style={{
-            margin: 0,
-            fontSize: '14px',
-            color: '#333',
-            padding: '2px 0'
-          }}>Official Scratch Blocks (Level 1)</h3>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: '#F5F5F5',
+            padding: '8px',
+            borderRadius: '8px'
+          }}>
+            <span style={{ fontSize: '16px' }}>🧩</span>
+            <h3 style={{
+              margin: 0,
+              fontSize: '14px',
+              color: '#333',
+              padding: '2px 0'
+            }}>Official Scratch Blocks</h3>
+          </div>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button 
+              onClick={() => {
+                // Stop any ongoing execution
+                setIsExecuting(false);
+                setExecutionQueue([]);
+                setCurrentStep(0);
+                setTotalSteps(0);
+                
+                // Clear the sequence
+                setSequence([]);
+              }}
+              disabled={isExecuting}
+              style={{
+                padding: '10px 16px',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: 'bold',
+                background: '#1F2937',
+                color: 'white',
+                cursor: isExecuting ? 'not-allowed' : 'pointer',
+                opacity: isExecuting ? 0.5 : 1
+              }}
+            >Clear</button>
+          </div>
         </div>
-        
-        <OfficialScratchBlocks 
-          onAddToSequence={addToSequence}
-          sequence={sequence}
-          maxMoves={maxMoves}
-          isExecuting={isExecuting}
-        />
+
+        <div style={{
+          background: 'white',
+          borderRadius: '8px',
+          padding: '15px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+          height: '400px',
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          <h3 style={{ margin: '0 0 10px 0', color: '#333' }}>Programming Blocks</h3>
+          <div 
+            ref={blocklyDiv}
+            style={{
+              flex: 1,
+              minHeight: '300px',
+              border: '1px solid #ddd',
+              borderRadius: '4px'
+            }}
+          />
+          
+          {/* Blockly Control Buttons */}
+          <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+            <button
+              onClick={executeProgram}
+              style={{
+                backgroundColor: '#4CAF50',
+                color: 'white',
+                border: 'none',
+                padding: '10px 20px',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: 'bold'
+              }}
+            >
+              Run Program
+            </button>
+            <button
+              onClick={() => {
+                if (workspaceRef.current) {
+                  // Stop any ongoing execution
+                  setIsExecuting(false);
+                  setExecutionQueue([]);
+                  setCurrentStep(0);
+                  setTotalSteps(0);
+                  
+                  // Clear the workspace
+                  workspaceRef.current.clear();
+                }
+              }}
+              style={{
+                backgroundColor: '#666',
+                color: 'white',
+                border: 'none',
+                padding: '10px 20px',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                fontSize: '14px'
+              }}
+            >
+              Clear Blocks
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Game Area */}
@@ -365,7 +810,7 @@ const ZenoGameNew = () => {
               margin: '0 0 8px 0',
               fontSize: '14px',
               padding: '0'
-            }}>Program Sequence - Langkah yang akan dijalankan oleh karakter</p>
+            }}>Program Status - Status eksekusi program Blockly</p>
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -382,23 +827,25 @@ const ZenoGameNew = () => {
                 <div style={{
                   height: '100%',
                   background: 'white',
-                  width: `${sequence.length > 0 ? (sequence.length / maxMoves) * 100 : 0}%`,
+                  width: `${totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0}%`,
                   transition: 'width 0.3s ease'
                 }}></div>
               </div>
-              <span style={{ fontWeight: 'bold', fontSize: '14px' }}>{sequence.length}/{maxMoves}</span>
+              <span style={{ fontWeight: 'bold', fontSize: '14px' }}>
+                {isExecuting ? `${currentStep}/${totalSteps}` : 'Ready'}
+              </span>
             </div>
             <p style={{
               fontSize: '11px',
               margin: '0',
               opacity: 0.9
-            }}>🎯 {sequence.length === 0 ? 'Tambahkan gerakan untuk memulai' : `${sequence.length} gerakan telah dipilih`}</p>
+            }}>🎯 {isExecuting ? 'Program sedang berjalan...' : 'Siap menjalankan program Blockly'}</p>
             <p style={{
               fontSize: '10px',
               margin: '4px 0 0 0',
               opacity: 0.7,
               fontStyle: 'italic'
-            }}>💡 Tip: Cari kristal terdekat dulu untuk jalur yang efisien!</p>
+            }}>💡 Tip: Susun blok gerakan untuk mencapai kristal!</p>
           </div>
 
           <div style={{

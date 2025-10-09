@@ -414,9 +414,9 @@ const LandingPage = () => {
                 <Badge className="module-badge">Lanjutan</Badge>
               </div>
               
-              <h3 className="module-title">Programming Robot</h3>
+              <h3 className="module-title">Programming Knight</h3>
               <p className="module-description">
-                Belajar computational thinking dan konsep programming sambil selesaiin tantangan matematika bareng robot virtual.
+                Belajar computational thinking dan konsep programming sambil selesaiin tantangan matematika bareng ksatria.
               </p>
               
               <div className="module-features">
@@ -524,7 +524,7 @@ const LandingPage = () => {
               <div className="testimonial">
                 <div className="stars">★★★★★</div>
                 <p>"Sebagai pendidik, saya lihat peningkatan luar biasa dalam keterlibatan dan pemahaman siswa."</p>
-                <span>- Dr. James L., Guru</span>
+                <span>- Bergitta Dwi A., Ph.D, Dosen</span>
               </div>
               <div className="testimonial">
                 <div className="stars">★★★★★</div>

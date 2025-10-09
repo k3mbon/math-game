@@ -22,7 +22,9 @@ if (typeof window !== 'undefined') {
       },
       exportSymbol: function(name, obj) {
         // Mock export symbol
-      }
+      },
+      LOCALE: 'en',
+      getLocale: function() { return 'en'; }
     };
   }
 

@@ -8,6 +8,56 @@
   padding: 0 !important;
 }
 
+/* Blockly Maze-style character movement transitions */
+.character-movement-transition {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform-origin: center center;
+}
+
+/* Grid cell hover effects for better visual feedback */
+.grid-cell {
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.grid-cell:hover {
+  box-shadow: inset 0 0 0 2px rgba(76, 175, 80, 0.3);
+}
+
+/* Enhanced character animation states - removed rotation conflicts */
+.character-walking {
+  animation: characterWalk 0.4s ease-in-out;
+}
+
+@keyframes characterWalk {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05) translateY(-2px);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Blockly-style execution feedback */
+.execution-highlight {
+  animation: executionPulse 0.4s ease-in-out;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.6);
+}
+
+@keyframes executionPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(76, 175, 80, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+  }
+}
+
 /* Custom scrollbar styling for program sequence container */
 .program-sequence-container {
   /* Firefox scrollbar styling */

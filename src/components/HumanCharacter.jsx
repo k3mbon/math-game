@@ -322,9 +322,7 @@ const HumanCharacter = ({
       const swayX = Math.sin(currentFrame * 0.5) * 1.5;
       transforms.push(`translateX(${swayX}px)`);
       
-      // Slight forward lean when running
-      const leanAngle = Math.sin(currentFrame * 0.4) * 1;
-      transforms.push(`rotate(${leanAngle}deg)`);
+      // Removed rotation for running to prevent spinning
     }
     
     if (animationState === 'walkAttack' && isAnimating) {
@@ -336,9 +334,7 @@ const HumanCharacter = ({
       const thrustX = Math.sin(currentFrame * 0.8) * 2;
       transforms.push(`translateX(${thrustX}px)`);
       
-      // Slight rotation for attack swing
-      const swingAngle = Math.sin(currentFrame * 0.6) * 3;
-      transforms.push(`rotate(${swingAngle}deg)`);
+      // Removed rotation for attack swing to prevent spinning
     }
     
     if (animationState === 'runAttack' && isAnimating) {

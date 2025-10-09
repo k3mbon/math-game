@@ -1,13 +1,4 @@
 /* Official Scratch Blocks Container */
-.official-scratch-blocks-container {
-  background: transparent;
-  border-radius: 0;
-  padding: 0;
-  box-shadow: none;
-  border: none;
-  width: 100%;
-  box-sizing: border-box;
-}
 
 /* Header */
 .blocks-header {
@@ -37,6 +28,47 @@
   border-radius: 8px;
   background: #F8F9FA;
   transition: opacity 0.3s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  pointer-events: auto;
+  position: relative;
+  z-index: 100;
+  touch-action: none; /* prevent browser panning/zoom interfering with drag */
+}
+
+/* Prevent text selection in the entire container */
+.official-scratch-blocks-container {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  border: none;
+  width: 100%;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  pointer-events: auto;
+  position: relative;
+  z-index: 90;
+  transform: none !important; /* avoid transformed ancestors breaking pointer math */
+}
+
+/* Ensure Blockly elements accept pointer interactions */
+.official-scratch-blocks-container .blocklyBlockCanvas,
+.official-scratch-blocks-container .blocklyFlyout,
+.official-scratch-blocks-container .blocklyFlyoutBackground,
+.official-scratch-blocks-container .blocklySvg {
+  pointer-events: auto !important;
+  touch-action: none !important;
+}
+
+/* Ensure flyout sits above workspace and receives pointer events */
+.official-scratch-blocks-container .blocklyFlyout {
+  z-index: 200 !important;
 }
 
 /* Loading State */
@@ -137,12 +169,20 @@
 .official-scratch-blocks-container .blocklyToolboxDiv {
   background: #f0f0f0 !important;
   border-right: 1px solid #ddd !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
 }
 
 .official-scratch-blocks-container .blocklyTreeRow {
   padding: 8px !important;
   border-radius: 4px !important;
   margin: 2px !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
 }
 
 .official-scratch-blocks-container .blocklyTreeRow:hover {
@@ -172,6 +212,16 @@
 .official-scratch-blocks-container .blocklyBlockCanvas .blocklyPath[fill="#FF9800"] {
   fill: #FF9800 !important;
   stroke: #F57C00 !important;
+}
+
+/* Prevent text selection on all Blockly elements */
+.official-scratch-blocks-container .blocklyText,
+.official-scratch-blocks-container .blocklyEditableText,
+.official-scratch-blocks-container .blocklyNonEditableText {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
 }
 
 /* Responsive Design */
