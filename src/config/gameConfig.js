@@ -6,23 +6,23 @@ export const GAME_CONFIG = {
   
   // Game object sizes - Made larger for kids
   TILE_SIZE: 50,
-  PLAYER_SIZE: 50,
-  TREASURE_SIZE: 40,
-  MONSTER_SIZE: 35,
+  PLAYER_SIZE: 70, // Increased from 50 to 70 for better visibility
+  TREASURE_SIZE: 45, // Slightly increased to maintain proportion
+  MONSTER_SIZE: 40, // Slightly increased to maintain proportion
   
   // World generation
-  WORLD_SIZE: 200, // 200x200 tiles
+  WORLD_SIZE: 300, // Expanded from 200 to 300 tiles (50% increase)
   CHUNK_SIZE: 20, // Load world in chunks
   
   // Performance settings
-  MAX_VISIBLE_CHUNKS: 16, // Limit loaded chunks (reduced from 25)
-  RENDER_DISTANCE: 1, // Chunks around camera (reduced from 2)
+  MAX_VISIBLE_CHUNKS: 25, // Increased for seamless terrain coverage
+  RENDER_DISTANCE: 3, // Increased chunks around camera for seamless filling
   PATTERN_RENDER_FREQUENCY: 4, // Render patterns every N tiles (increased from 3)
   MAX_FRAME_RATE: 60, // Target FPS
   PERFORMANCE_MODE: true, // Enable performance optimizations
   
   // Game mechanics
-  PLAYER_SPEED: 3,
+  PLAYER_SPEED: 2.5, // Reduced from 3 to 2.5 for smoother movement with larger character
   MONSTER_SPEED: 1,
   INTERACTION_COOLDOWN: 1000, // ms
   
@@ -32,28 +32,29 @@ export const GAME_CONFIG = {
   CLEARANCE_ZONE_RADIUS: 40
 };
 
-// Terrain type definitions - More colorful and kid-friendly
+// Terrain type definitions - More colorful and kid-friendly with clear walkability rules
 export const TERRAIN_TYPES = {
-  GRASS: { color: '#7ED321', walkable: true, elevation: 0 }, // Bright green
-  WATER: { color: '#50E3C2', walkable: false, elevation: -1 }, // Turquoise
-  MOUNTAIN: { color: '#9013FE', walkable: false, elevation: 3 }, // Purple mountains
-  FOREST: { color: '#417505', walkable: true, elevation: 0 }, // Forest green
-  DESERT: { color: '#F5A623', walkable: true, elevation: 0 }, // Golden yellow
-  BRIDGE: { color: '#D0021B', walkable: true, elevation: 0 }, // Red bridge
-  STAIRS_DOWN: { color: '#8B572A', walkable: true, elevation: 0 }, // Brown stairs
-  STAIRS_UP: { color: '#FFD700', walkable: true, elevation: 0 }, // Gold stairs
-  // Elevated terrain types - Bright and colorful
-  CLIFF: { color: '#BD10E0', walkable: false, elevation: 2 }, // Magenta cliffs
-  HIGH_GRASS: { color: '#B8E986', walkable: true, elevation: 1 }, // Light green
-  ROCKY_GROUND: { color: '#F8E71C', walkable: true, elevation: 1 }, // Bright yellow rocks
-  CAVE_ENTRANCE: { color: '#4A4A4A', walkable: true, elevation: 0 }, // Dark gray
-  // Cave world specific terrains - More vibrant
-  CAVE_FLOOR: { color: '#7B68EE', walkable: true, elevation: 0 }, // Medium slate blue
-  CAVE_WALL: { color: '#483D8B', walkable: false, elevation: 0 }, // Dark slate blue
-  LAVA: { color: '#FF6347', walkable: false, elevation: 0 }, // Tomato red
-  CRYSTAL: { color: '#DA70D6', walkable: true, elevation: 0 }, // Orchid
-  UNDERGROUND_WATER: { color: '#00CED1', walkable: false, elevation: 0 }, // Dark turquoise
-  MUSHROOM: { color: '#FF69B4', walkable: true, elevation: 0 } // Hot pink mushrooms
+  // Walkable terrain types - Safe for character movement
+  GRASS: { color: '#7ED321', walkable: true, elevation: 0, description: 'Safe grass terrain' }, // Bright green
+  FOREST: { color: '#417505', walkable: true, elevation: 0, description: 'Forest paths' }, // Forest green
+  DESERT: { color: '#F5A623', walkable: true, elevation: 0, description: 'Sandy desert' }, // Golden yellow
+  BRIDGE: { color: '#D0021B', walkable: true, elevation: 0, description: 'Crossing bridge' }, // Red bridge
+  STAIRS_DOWN: { color: '#8B572A', walkable: true, elevation: 0, description: 'Stairs going down' }, // Brown stairs
+  STAIRS_UP: { color: '#FFD700', walkable: true, elevation: 0, description: 'Stairs going up' }, // Gold stairs
+  HIGH_GRASS: { color: '#B8E986', walkable: true, elevation: 1, description: 'Elevated grass' }, // Light green
+  ROCKY_GROUND: { color: '#F8E71C', walkable: true, elevation: 1, description: 'Rocky but passable' }, // Bright yellow rocks
+  CAVE_ENTRANCE: { color: '#4A4A4A', walkable: true, elevation: 0, description: 'Cave entrance' }, // Dark gray
+  CAVE_FLOOR: { color: '#7B68EE', walkable: true, elevation: 0, description: 'Cave floor' }, // Medium slate blue
+  CRYSTAL: { color: '#DA70D6', walkable: true, elevation: 0, description: 'Crystal formations' }, // Orchid
+  MUSHROOM: { color: '#FF69B4', walkable: true, elevation: 0, description: 'Mushroom patches' }, // Hot pink mushrooms
+  
+  // Non-walkable terrain types - Blocked for character movement
+  WATER: { color: '#50E3C2', walkable: false, elevation: -1, description: 'Deep water - impassable' }, // Turquoise
+  MOUNTAIN: { color: '#9013FE', walkable: false, elevation: 3, description: 'High mountains - impassable' }, // Purple mountains
+  CLIFF: { color: '#BD10E0', walkable: false, elevation: 2, description: 'Steep cliffs - impassable' }, // Magenta cliffs
+  CAVE_WALL: { color: '#483D8B', walkable: false, elevation: 0, description: 'Solid cave walls' }, // Dark slate blue
+  LAVA: { color: '#FF6347', walkable: false, elevation: 0, description: 'Dangerous lava - impassable' }, // Tomato red
+  UNDERGROUND_WATER: { color: '#00CED1', walkable: false, elevation: 0, description: 'Underground water - impassable' } // Dark turquoise
 };
 
 // Color schemes for different world types - Kid-friendly colors

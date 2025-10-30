@@ -187,7 +187,7 @@ const renderSproutLandsTerrain = (ctx, gameState, visibleArea, loadedImages, fra
       const chunkY = Math.floor(tileY / GAME_CONFIG.CHUNK_SIZE);
       const chunkKey = `${chunkX},${chunkY}`;
       
-      const chunk = gameState.terrain.get(chunkKey);
+      const chunk = gameState.terrain?.get(chunkKey);
       
       // Force render grass tiles if no terrain data (for testing)
       if (!chunk) {

@@ -57,7 +57,7 @@ const Navbar = () => {
         }}
       >
         <RocketLaunch sx={{ fontSize: '1.5rem', color: 'var(--primary-400)' }} />
-        BrainQuests
+        Rekurno
       </Typography>
       <List sx={{ mt: 4 }}>
         <ListItem disablePadding sx={{ mb: 2 }}>
@@ -198,7 +198,7 @@ const Navbar = () => {
                 }}
               >
                 <RocketLaunch sx={{ fontSize: '1.8rem', color: 'var(--primary-400)', filter: 'drop-shadow(0 2px 5px rgba(22, 163, 74, 0.4))' }} />
-                <span className="navbar-brand-text">BrainQuests</span>
+                <span className="navbar-brand-text">Rekurno</span>
               </Typography>
             </Link>
           </Box>

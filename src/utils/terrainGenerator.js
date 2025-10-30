@@ -1,4 +1,5 @@
 import { GAME_CONFIG, TERRAIN_TYPES } from '../config/gameConfig';
+import { terrainBoundarySystem, enhancedBushCollisionSystem } from './terrainBoundarySystem';
 
 // Seeded random function for consistent world generation
 export const seededRandom = (seed) => {
@@ -6,18 +7,51 @@ export const seededRandom = (seed) => {
   return x - Math.floor(x);
 };
 
-// Check if a position is walkable
-export const isWalkable = (x, y, terrain, customWorld = null) => {
+// Check if a position is walkable with improved collision detection
+export const isWalkable = (x, y, terrain, customWorld = null, bushObstacles = null) => {
+  // First check terrain boundary collision
+  if (terrainBoundarySystem.checkBoundaryCollision(x, y)) {
+    return false;
+  }
+
+  // Calculate player bounds for better collision detection
+  const playerSize = GAME_CONFIG.PLAYER_SIZE;
+  const halfSize = playerSize / 2;
+  
+  // Improved collision detection with more precise boundary checking
+  const checkPoints = [
+    { x: x - halfSize + 8, y: y - halfSize + 8 }, // Top-left corner (increased margin)
+    { x: x + halfSize - 8, y: y - halfSize + 8 }, // Top-right corner
+    { x: x - halfSize + 8, y: y + halfSize - 8 }, // Bottom-left corner
+    { x: x + halfSize - 8, y: y + halfSize - 8 }, // Bottom-right corner
+    { x: x, y: y - halfSize + 4 }, // Top center
+    { x: x, y: y + halfSize - 4 }, // Bottom center
+    { x: x - halfSize + 4, y: y }, // Left center
+    { x: x + halfSize - 4, y: y }, // Right center
+    { x: x, y: y } // Center point
+  ];
+  
+  // All check points must be walkable for the position to be valid
+  for (const point of checkPoints) {
+    if (!isPointWalkable(point.x, point.y, terrain, customWorld, bushObstacles)) {
+      return false;
+    }
+  }
+  
+  return true;
+};
+
+// Helper function to check if a single point is walkable
+const isPointWalkable = (x, y, terrain, customWorld = null, bushObstacles = null) => {
   const tileX = Math.floor(x / GAME_CONFIG.TILE_SIZE);
   const tileY = Math.floor(y / GAME_CONFIG.TILE_SIZE);
   const chunkX = Math.floor(tileX / GAME_CONFIG.CHUNK_SIZE);
   const chunkY = Math.floor(tileY / GAME_CONFIG.CHUNK_SIZE);
   const chunkKey = `${chunkX},${chunkY}`;
   
-  const chunk = terrain.get(chunkKey);
+  const chunk = terrain?.get(chunkKey);
   if (!chunk) {
     // Instead of blocking movement, allow it for missing chunks (they'll be generated)
-    console.log('⚠️ No chunk found, allowing movement:', { x, y, tileX, tileY, chunkX, chunkY, chunkKey });
     return true;
   }
   
@@ -27,32 +61,45 @@ export const isWalkable = (x, y, terrain, customWorld = null) => {
   
   if (!tile) {
     // Instead of blocking movement, allow it for missing tiles (default to walkable)
-    console.log('⚠️ No tile found, allowing movement:', { 
-      x, y, tileX, tileY, localX, localY, 
-      chunkSize: chunk.length
-    });
     return true;
   }
   
   const terrainWalkable = tile ? TERRAIN_TYPES[tile.type].walkable : true;
   if (!terrainWalkable) {
-    console.log('🚫 Terrain not walkable:', { tile: tile.type, walkable: terrainWalkable });
     return false;
   }
   
-  // Check for unwalkable objects like trees in custom world
+  // Enhanced bush obstacle checking with improved collision system
+  if (bushObstacles && bushObstacles.length > 0) {
+    for (const bush of bushObstacles) {
+      const bushPixelX = bush.x * GAME_CONFIG.TILE_SIZE;
+      const bushPixelY = bush.y * GAME_CONFIG.TILE_SIZE;
+      
+      // Use enhanced bush collision system for better hitbox detection
+      if (enhancedBushCollisionSystem.checkBushCollision(x, y, bushPixelX, bushPixelY)) {
+        return false;
+      }
+    }
+  }
+  
+  // Enhanced custom world object collision detection
   if (customWorld && customWorld.objects) {
     const gridSize = 32; // Default grid size for custom world objects
-    const gridX = Math.floor(x / gridSize);
-    const gridY = Math.floor(y / gridSize);
     
-    const objectAtPosition = customWorld.objects.find(obj => 
-      Math.floor(obj.x / gridSize) === gridX && Math.floor(obj.y / gridSize) === gridY
-    );
-    
-    // Make trees unwalkable
-    if (objectAtPosition && (objectAtPosition.type === 'tree' || objectAtPosition.type === 'realistic-tree')) {
-      return false;
+    for (const obj of customWorld.objects) {
+      // Only bushes block movement in custom world
+      if (obj.type === 'bush') {
+        const objPixelX = obj.x;
+        const objPixelY = obj.y;
+        const objSize = gridSize * 0.8; // Object takes up 80% of grid cell
+        const objHalfSize = objSize / 2;
+        
+        // Check if point is within object bounds
+        if (x >= objPixelX - objHalfSize && x <= objPixelX + objHalfSize &&
+            y >= objPixelY - objHalfSize && y <= objPixelY + objHalfSize) {
+          return false;
+        }
+      }
     }
   }
   

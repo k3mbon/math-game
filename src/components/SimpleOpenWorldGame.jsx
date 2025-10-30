@@ -2,11 +2,12 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import './OpenWorldGame.css';
 import { GAME_CONFIG } from '../config/gameConfig';
 import { useGameState } from '../hooks/useGameState';
-import { useGameLoop } from '../hooks/useGameLoop';
+import { useGameLoop } from '../hooks/useGameLoop.jsx';
 import { generateTerrainChunk, isWalkable } from '../utils/terrainGenerator';
 import SimpleCanvasRenderer from './SimpleCanvasRenderer';
 import TreasureQuestionModal from './TreasureQuestionModal';
 import numerationProblems from '../data/NumerationProblem.json';
+import { useInteractionSystem } from '../utils/interactionSystem';
 
 const SimpleOpenWorldGame = ({ customWorld = null }) => {
   const canvasRef = useRef(null);
@@ -41,6 +42,7 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
   const initialPlayerY = currentLevelWorld?.playerSpawn?.y || (GAME_CONFIG.WORLD_SIZE * GAME_CONFIG.TILE_SIZE) / 2;
   
   const { gameState, updateGameState } = useGameState(initialPlayerX, initialPlayerY, currentLevelWorld);
+  const { canInteract } = useInteractionSystem();
 
   // Terrain generation function
   const generateTerrain = useCallback((chunkX, chunkY, depthLevel) => {
@@ -98,21 +100,19 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
     });
   }, [gameState.player.x, gameState.player.y, currentLevelWorld, currentLevel, initialPlayerX, initialPlayerY, updateGameState]);
 
-  // Treasure box interaction check
+  // Optimized treasure box interaction check using the interaction system
   const checkTreasureBoxInteraction = useCallback(() => {
-    const playerCenterX = gameState.player.x + GAME_CONFIG.TILE_SIZE / 2;
-    const playerCenterY = gameState.player.y + GAME_CONFIG.TILE_SIZE / 2;
-    
     gameState.treasureBoxes.forEach(box => {
       if (!box.collected && !box.opened) {
-        const boxCenterX = box.x + GAME_CONFIG.TILE_SIZE * 0.4;
-        const boxCenterY = box.y + GAME_CONFIG.TILE_SIZE * 0.3;
-        const distance = Math.sqrt(
-          Math.pow(playerCenterX - boxCenterX, 2) + 
-          Math.pow(playerCenterY - boxCenterY, 2)
-        );
-        
-        if (distance < GAME_CONFIG.TILE_SIZE * 0.8) {
+        // Use the interaction system for consistent collision detection
+        if (canInteract(
+          gameState.player.x, 
+          gameState.player.y, 
+          box.x, 
+          box.y, 
+          GAME_CONFIG.TILE_SIZE, 
+          GAME_CONFIG.TILE_SIZE
+        )) {
           // Player is close to treasure box, show question
           const randomQuestion = numerationProblems[Math.floor(Math.random() * numerationProblems.length)];
           setCurrentQuestion(randomQuestion);
@@ -121,7 +121,7 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
         }
       }
     });
-  }, [gameState.player.x, gameState.player.y, gameState.treasureBoxes]);
+  }, [gameState.player.x, gameState.player.y, gameState.treasureBoxes, canInteract]);
 
   // Handle question solve
   const handleQuestionSolve = useCallback(() => {

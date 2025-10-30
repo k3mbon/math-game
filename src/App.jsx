@@ -32,6 +32,7 @@ const ZenoGameNew = lazy(() => import('./components/ZenoGameNew'));
 import OpenWorldGame from './components/OpenWorldGame';
 import SimpleOpenWorldGame from './components/SimpleOpenWorldGame';
 import CanvasRenderer from './components/CanvasRenderer';
+import SimpleRenderingTest from './components/SimpleRenderingTest';
 const GameComparison = lazy(() => import('./components/GameComparison'));
 const TestGame = lazy(() => import('./components/TestGame'));
 const GameStart = lazy(() => import('./components/GameStart'));
@@ -140,7 +141,7 @@ function AppContent() {
               {/* Test routes (temporarily public) */}
               <Route path="/test-game" element={<TestGame />} />
               <Route path="/game-start" element={<GameStart />} />
-              <Route path="/open-world-game" element={<OpenWorldGame />} />
+              <Route path="/wildrealm" element={<OpenWorldGame />} />
               <Route path="/simple-open-world" element={<SimpleOpenWorldGame />} />
               <Route path="/game-comparison" element={<GameComparison />} />
               <Route path="/character-demo" element={<CharacterDemo />} />
@@ -152,6 +153,7 @@ function AppContent() {
               <Route path="/grass-terrain-demo" element={<GrassTerrainDemo />} />
               <Route path="/terrain-demo" element={<TerrainDemo />} />
               <Route path="/horizontal-blocks-demo" element={<HorizontalBlocksDemo />} />
+              <Route path="/simple-rendering-test" element={<SimpleRenderingTest />} />
               
               {/* Protected routes shown only when authenticated */}
               {user && (

@@ -21,7 +21,7 @@
 .game-canvas {
   border: 3px solid var(--primary-800);
   border-radius: 10px;
-  cursor: crosshair;
+  cursor: url('/assets/downloaded-assets/items/UI/Pointers/01.png'), crosshair;
   background: var(--primary-400);
   /* Remove CSS width/height to use canvas element dimensions */
   display: block;
@@ -1009,6 +1009,23 @@
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.7; }
+}
+
+/* Edge warning animation */
+@keyframes edgePulse {
+  0%, 100% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+.edge-warning-overlay {
+  pointer-events: none;
+  user-select: none;
 }
 
 /* === Safe-space and palette enforcement for Open World page === */

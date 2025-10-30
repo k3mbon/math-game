@@ -2,9 +2,10 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import './OpenWorldGame.css';
 import { GAME_CONFIG } from '../config/gameConfig';
 import { useGameState } from '../hooks/useGameState';
-import { useGameLoop } from '../hooks/useGameLoop';
+import { useGameLoop } from '../hooks/useGameLoop.jsx';
 import { generateTerrainChunk, isWalkable } from '../utils/terrainGenerator';
 import { generateTerrainMap, preloadTileImages, preloadCharacterSprite, GRASS_TILES } from '../utils/grassTileMapping';
+import { terrainBoundarySystem } from '../utils/terrainBoundarySystem';
 import CanvasRenderer from './CanvasRenderer';
 import HumanCharacter from './HumanCharacter';
 import TreasureQuestionModal from './TreasureQuestionModal';
@@ -13,6 +14,18 @@ import TerrainRenderer, { getStoredTerrainData, hasStoredTerrain, getWalkableTil
 import numerationProblems from '../data/NumerationProblem.json';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
+import { gameProfiler, usePerformanceMonitor } from '../utils/performanceProfiler';
+import { useResourceManager } from '../utils/resourceManager';
+import PerformanceMonitor from './PerformanceMonitor';
+import { soundEffects } from '../utils/soundEffects';
+
+// Import testing framework in development mode
+if (process.env.NODE_ENV === 'development') {
+  import('../tests/index.js').then(tests => {
+    window.mathGameTestFramework = tests;
+    console.log('🧪 Math Game Test Framework loaded and available at window.mathGameTestFramework');
+  });
+}
 
 // Import SVG assets using Vite's asset handling
 import playerSvg from '../assets/player.svg';
@@ -48,9 +61,36 @@ import monsterOrcSvg from '/assets/monster-orc.svg';
 const OpenWorldGame = () => {
   const navigate = useNavigate();
   const canvasRef = useRef(null);
+  
+  // Initialize performance monitoring with null checks
+  const performanceMonitor = usePerformanceMonitor(true);
+  const { profiler, startTimer, endTimer, getReport, getSuggestions } = performanceMonitor || {
+    profiler: null,
+    startTimer: () => {},
+    endTimer: () => {},
+    getReport: () => null,
+    getSuggestions: () => []
+  };
+  
+  // Initialize resource management
+  const resourceManager = useResourceManager({
+    maxCacheSize: 100,
+    memoryThreshold: 0.8,
+    cleanupInterval: 30000
+  });
+  
   const [gameStarted, setGameStarted] = useState(true); // Start directly in game
   const [keys, setKeys] = useState({});
   const [playerDirection, setPlayerDirection] = useState('front'); // front, back, left, right
+  
+  // Add debug rendering state
+  const [debugMode, setDebugMode] = useState(false);
+  const [renderingStats, setRenderingStats] = useState({
+    imagesLoaded: 0,
+    totalImages: 0,
+    canvasReady: false,
+    lastRenderTime: 0
+  });
   const [forcedSafePositions, setForcedSafePositions] = useState(new Map());
   const [stairConnections, setStairConnections] = useState(new Map());
   const [isAttacking, setIsAttacking] = useState(false);
@@ -65,8 +105,9 @@ const OpenWorldGame = () => {
   const [useCustomTerrain, setUseCustomTerrain] = useState(false);
   const [terrainLevel, setTerrainLevel] = useState(0);
   const [loadedTerrainFile, setLoadedTerrainFile] = useState(null);
-  const [terrainType, setTerrainType] = useState('default'); // Options: 'default', 'grass'
+  const [terrainType, setTerrainType] = useState('grass'); // Options: 'default', 'grass' - Start with grass to show tile assignments
   const [grassTerrainMap, setGrassTerrainMap] = useState(null);
+  const [bushObstacles, setBushObstacles] = useState([]);
   const [loadedImages, setLoadedImages] = useState({
     player: useRef(null),
     playerFront: useRef(null),
@@ -116,26 +157,49 @@ const OpenWorldGame = () => {
   useEffect(() => {
     const loadGrassTiles = async () => {
       try {
-        // Preload grass tile images
-        const tileImages = await preloadTileImages();
+        // Use resource manager for optimized asset loading with correct grass tile paths
+        const tileImages = await resourceManager.preloadAssets([
+          { id: 'grassTopLeft', url: '/assets/terrain_tileset/grass1.png', type: 'image' },
+          { id: 'grassTop', url: '/assets/terrain_tileset/grass2.png', type: 'image' },
+          { id: 'grassTopRight', url: '/assets/terrain_tileset/grass3.png', type: 'image' },
+          { id: 'grassLeft', url: '/assets/terrain_tileset/grass4.png', type: 'image' },
+          { id: 'grassCenter', url: '/assets/terrain_tileset/grass5.png', type: 'image' },
+          { id: 'grassRight', url: '/assets/terrain_tileset/grass6.png', type: 'image' },
+          { id: 'grassBottomLeft', url: '/assets/terrain_tileset/grass7.png', type: 'image' },
+          { id: 'grassBottom', url: '/assets/terrain_tileset/grass8.png', type: 'image' },
+          { id: 'grassBottomRight', url: '/assets/terrain_tileset/grass9.png', type: 'image' }
+        ]);
+        
+        // Fallback to original preloading if resource manager fails
+        const fallbackTileImages = await preloadTileImages();
         
         // Map the loaded images to our state
         const updatedImages = { ...loadedImages };
-        updatedImages.grassTopLeft.current = tileImages[GRASS_TILES.TOP_LEFT];
-        updatedImages.grassTop.current = tileImages[GRASS_TILES.TOP];
-        updatedImages.grassTopRight.current = tileImages[GRASS_TILES.TOP_RIGHT];
-        updatedImages.grassLeft.current = tileImages[GRASS_TILES.LEFT];
-        updatedImages.grassCenter.current = tileImages[GRASS_TILES.CENTER];
-        updatedImages.grassRight.current = tileImages[GRASS_TILES.RIGHT];
-        updatedImages.grassBottomLeft.current = tileImages[GRASS_TILES.BOTTOM_LEFT];
-        updatedImages.grassBottom.current = tileImages[GRASS_TILES.BOTTOM];
-        updatedImages.grassBottomRight.current = tileImages[GRASS_TILES.BOTTOM_RIGHT];
+        updatedImages.grassTopLeft.current = tileImages.grassTopLeft || fallbackTileImages[GRASS_TILES.TOP_LEFT];
+        updatedImages.grassTop.current = tileImages.grassTop || fallbackTileImages[GRASS_TILES.TOP];
+        updatedImages.grassTopRight.current = tileImages.grassTopRight || fallbackTileImages[GRASS_TILES.TOP_RIGHT];
+        updatedImages.grassLeft.current = tileImages.grassLeft || fallbackTileImages[GRASS_TILES.LEFT];
+        updatedImages.grassCenter.current = tileImages.grassCenter || fallbackTileImages[GRASS_TILES.CENTER];
+        updatedImages.grassRight.current = tileImages.grassRight || fallbackTileImages[GRASS_TILES.RIGHT];
+        updatedImages.grassBottomLeft.current = tileImages.grassBottomLeft || fallbackTileImages[GRASS_TILES.BOTTOM_LEFT];
+        updatedImages.grassBottom.current = tileImages.grassBottom || fallbackTileImages[GRASS_TILES.BOTTOM];
+        updatedImages.grassBottomRight.current = tileImages.grassBottomRight || fallbackTileImages[GRASS_TILES.BOTTOM_RIGHT];
         
         setLoadedImages(updatedImages);
         
-        // Generate a default grass terrain map (20x20)
-        const grassMap = generateTerrainMap(20, 20);
-        setGrassTerrainMap(grassMap);
+        // Generate a default grass terrain map (20x20) with bush obstacles
+        const terrainData = generateTerrainMap(20, 20);
+        setGrassTerrainMap(terrainData.terrain);
+        setBushObstacles(terrainData.obstacles);
+        
+        console.log('✅ Grass terrain map generated:', terrainData.terrain);
+        console.log('📊 Grass map dimensions:', terrainData.terrain.length, 'x', terrainData.terrain[0]?.length);
+        console.log('🔍 Sample tiles:', terrainData.terrain.slice(0, 3).map(row => row.slice(0, 3)));
+        console.log('🌿 Bush obstacles:', terrainData.obstacles);
+        
+        // Initialize terrain boundary system
+        terrainBoundarySystem.initialize();
+        console.log('🛡️ Terrain boundary system initialized');
       } catch (error) {
         console.error("Error loading grass tiles:", error);
       }
@@ -282,6 +346,60 @@ const OpenWorldGame = () => {
 
     loadTerrainData();
   }, []);
+
+  // Progress saving functionality
+  useEffect(() => {
+    // Load saved progress on component mount
+    const loadSavedProgress = () => {
+      try {
+        const savedProgress = localStorage.getItem('openWorldGameProgress');
+        if (savedProgress) {
+          const progress = JSON.parse(savedProgress);
+          updateGameState(prev => ({
+            ...prev,
+            crystalsCollected: progress.crystalsCollected || 0,
+            treasureBoxes: prev.treasureBoxes.map(treasure => {
+              const savedTreasure = progress.completedTreasures?.find(t => t.id === treasure.id);
+              return savedTreasure ? { ...treasure, collected: true } : treasure;
+            }),
+            score: progress.score || 0
+          }));
+          console.log('✅ Loaded saved progress:', progress);
+        }
+      } catch (error) {
+        console.error('Failed to load saved progress:', error);
+      }
+    };
+
+    loadSavedProgress();
+  }, [updateGameState]);
+
+  // Save progress whenever game state changes
+  useEffect(() => {
+    const saveProgress = () => {
+      try {
+        const completedTreasures = gameState.treasureBoxes
+          .filter(treasure => treasure.collected)
+          .map(treasure => ({ id: treasure.id, collected: true }));
+        
+        const progress = {
+          crystalsCollected: gameState.crystalsCollected,
+          completedTreasures,
+          score: gameState.score,
+          lastSaved: Date.now()
+        };
+        
+        localStorage.setItem('openWorldGameProgress', JSON.stringify(progress));
+        console.log('💾 Progress saved:', progress);
+      } catch (error) {
+        console.error('Failed to save progress:', error);
+      }
+    };
+
+    // Debounce saving to avoid excessive localStorage writes
+    const timeoutId = setTimeout(saveProgress, 1000);
+    return () => clearTimeout(timeoutId);
+  }, [gameState.crystalsCollected, gameState.treasureBoxes, gameState.score]);
 
   // Handle terrain file upload
   const handleTerrainFileUpload = (event) => {
@@ -444,7 +562,7 @@ const OpenWorldGame = () => {
     }
     
     const terrain = []; // Use array like default terrain generation
-    const levelData = customTerrain.levels[depthLevel] || customTerrain.levels[depthLevel.toString()] || customTerrain.levels['0'];
+    const levelData = customTerrain.levels[depthLevel] || customTerrain.levels[depthLevel?.toString()] || customTerrain.levels['0'];
     console.log('📊 Custom terrain levelData:', levelData ? 'found' : 'not found', 'depthLevel:', depthLevel);
     console.log('📊 levelData type:', typeof levelData, 'isArray:', Array.isArray(levelData));
     
@@ -552,16 +670,12 @@ const OpenWorldGame = () => {
               console.log('🚧 Found obstacle:', obstaclePath);
             }
             
-            if (obstaclePath.includes('Trees')) {
-              terrainType = 'FOREST';
-            } else if (obstaclePath.includes('Rocks')) {
-              terrainType = 'ROCKY_GROUND';
-            } else if (obstaclePath.includes('Bushes')) {
+            // Check if obstacle blocks movement - only allow bushes
+            if (obstaclePath.includes('Bushes')) {
               terrainType = 'FOREST'; // Treat bushes as forest for collision
-            } else if (obstaclePath.includes('Cave_enter')) {
-              terrainType = 'CAVE_ENTRANCE';
             } else {
-              terrainType = 'ROCKY_GROUND'; // Default obstacle type
+              // Temporarily disable all other terrain objects
+              terrainType = 'GRASS'; // Convert all other obstacles to walkable grass
             }
           }
           
@@ -715,8 +829,28 @@ const OpenWorldGame = () => {
       }
     }
     
-    return isWalkable(x, y, terrain);
-  }, [useCustomTerrain, customTerrain, terrainLevel]);
+    // Enhanced collision detection for all environmental objects
+    const tileX = Math.floor(x / 32);
+    const tileY = Math.floor(y / 32);
+    
+    // Check for custom terrain obstacles first
+    if (useCustomTerrain && customTerrain) {
+      const tileData = customTerrain.levels?.[terrainLevel]?.tiles?.[`${tileX},${tileY}`];
+      if (tileData && tileData.obstacle) {
+        const obstaclePath = tileData.obstacle;
+        // Check if obstacle blocks movement - only allow bushes
+        if (obstaclePath.includes('Bushes')) {
+          return false; // Bushes block movement
+        }
+        // All other obstacles are disabled - allow movement
+        return true;
+      }
+    }
+    
+    // For grass terrain, pass bush obstacles to collision detection
+    const bushObstaclesForCollision = terrainType === 'grass' ? bushObstacles : null;
+    return isWalkable(x, y, terrain, null, bushObstaclesForCollision);
+  }, [useCustomTerrain, customTerrain, terrainLevel, terrainType, bushObstacles]);
 
   // Game loop
   useGameLoop(keys, gameState, updateGameState, checkWalkable, generateTerrain);
@@ -732,12 +866,28 @@ const OpenWorldGame = () => {
       const img = new Image();
       img.onload = () => {
         ref.current = img;
+        setRenderingStats(prev => ({
+          ...prev,
+          imagesLoaded: prev.imagesLoaded + 1
+        }));
       };
       img.onerror = () => {
         console.warn(`Failed to load image: ${src}`);
+        setRenderingStats(prev => ({
+          ...prev,
+          imagesLoaded: prev.imagesLoaded + 1
+        }));
       };
       img.src = src;
     };
+
+    // Count total images to load
+    const totalImageCount = 23; // Update this count based on actual images
+    setRenderingStats(prev => ({
+      ...prev,
+      totalImages: totalImageCount,
+      imagesLoaded: 0
+    }));
 
     // Load SVG assets
      loadImage(playerSvg, loadedImages.player);
@@ -862,6 +1012,9 @@ const OpenWorldGame = () => {
   // Handle question solve
   const handleQuestionSolve = useCallback(() => {
     if (currentTreasureBox) {
+      // Play success sound for correct answer
+      soundEffects.playSuccess();
+      
       updateGameState(prev => ({
         ...prev,
         treasureBoxes: prev.treasureBoxes.map(treasure => 
@@ -869,7 +1022,8 @@ const OpenWorldGame = () => {
             ? { ...treasure, collected: true }
             : treasure
         ),
-        score: prev.score + 100 // Add points for solving the question
+        score: prev.score + 100, // Add points for solving the question
+        crystalsCollected: prev.crystalsCollected + 1 // Award 1 crystal for correct answer
       }));
     }
     setShowQuestionModal(false);
@@ -898,11 +1052,11 @@ const OpenWorldGame = () => {
   useEffect(() => {
     console.log('🎮 Setting up keyboard event listeners, gameStarted:', gameStarted);
     const handleKeyDown = (e) => {
-      console.log('🔑 Raw key event:', e.code, e.type);
+      // Remove the raw key event console log for better performance
       
       // Handle treasure interaction with 'E' key
       if (e.code === 'KeyE') {
-        const nearbyTreasure = gameState.treasureBoxes.find(treasure => 
+        const nearbyTreasure = gameState.treasureBoxes?.find(treasure => 
           treasure.nearPlayer && !treasure.collected
         );
         if (nearbyTreasure) {
@@ -927,13 +1081,17 @@ const OpenWorldGame = () => {
         
         // Clear all movement keys first
         setKeys(prev => {
-          const newKeys = { ...prev };
+          const currentKeys = prev || {}; // Ensure prev is not undefined
+          const newKeys = { ...currentKeys };
           movementKeys.forEach(key => {
             newKeys[key] = false;
           });
           // Set only the current key to true
           newKeys[e.code] = true;
-          console.log('🔑 Key pressed:', e.code, 'Keys state:', Object.keys(newKeys).filter(k => newKeys[k]));
+          // Debug key state only in development mode
+          if (process.env.NODE_ENV === 'development') {
+            console.log('🔑 Key pressed:', e.code, 'Keys state:', Object.keys(newKeys).filter(k => newKeys[k]));
+          }
           return newKeys;
         });
         
@@ -941,11 +1099,11 @@ const OpenWorldGame = () => {
         switch(e.code) {
           case 'KeyW':
           case 'ArrowUp':
-            setPlayerDirection('back');
+            setPlayerDirection('up');
             break;
           case 'KeyS':
           case 'ArrowDown':
-            setPlayerDirection('front');
+            setPlayerDirection('down');
             break;
           case 'KeyA':
           case 'ArrowLeft':
@@ -958,7 +1116,7 @@ const OpenWorldGame = () => {
         }
       } else {
         // For non-movement keys, use normal behavior
-        setKeys(prev => ({ ...prev, [e.code]: true }));
+        setKeys(prev => ({ ...(prev || {}), [e.code]: true }));
       }
     };
 
@@ -967,10 +1125,11 @@ const OpenWorldGame = () => {
       const movementKeys = ['KeyW', 'ArrowUp', 'KeyS', 'ArrowDown', 'KeyA', 'ArrowLeft', 'KeyD', 'ArrowRight'];
       
       if (movementKeys.includes(e.code)) {
-        setKeys(prev => ({ ...prev, [e.code]: false }));
+        setKeys(prev => ({ ...(prev || {}), [e.code]: false }));
         
-        // Check if any movement keys are still pressed
-        const stillMoving = movementKeys.some(key => key !== e.code && keys[key]);
+        // Check if any movement keys are still pressed - add null check for keys
+        const currentKeys = keys || {};
+        const stillMoving = movementKeys.some(key => key !== e.code && currentKeys[key]);
         
         if (!stillMoving) {
           setIsMoving(false);
@@ -982,7 +1141,7 @@ const OpenWorldGame = () => {
         }
       } else {
         // For non-movement keys, use normal behavior
-        setKeys(prev => ({ ...prev, [e.code]: false }));
+        setKeys(prev => ({ ...(prev || {}), [e.code]: false }));
       }
     };
 
@@ -993,7 +1152,7 @@ const OpenWorldGame = () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [gameState.treasureBoxes, handleTreasureInteraction]);
+  }, [gameState.treasureBoxes, handleTreasureInteraction, keys, isAttacking]);
 
   // Mouse event handlers
   useEffect(() => {
@@ -1012,6 +1171,12 @@ const OpenWorldGame = () => {
     if (canvas) {
       canvas.width = GAME_CONFIG.CANVAS_WIDTH;
       canvas.height = GAME_CONFIG.CANVAS_HEIGHT;
+      
+      // Update canvas ready status
+      setRenderingStats(prev => ({
+        ...prev,
+        canvasReady: true
+      }));
     }
   }, []);
 
@@ -1036,6 +1201,80 @@ const OpenWorldGame = () => {
             <p>E: Interact with treasure boxes</p>
             <p>Explore the world and find treasures!</p>
           </div>
+          
+          {/* Debug Information Panel */}
+          <div className="debug-panel" style={{
+            position: 'absolute',
+            top: '10px',
+            right: '10px',
+            background: 'rgba(0,0,0,0.8)',
+            color: 'white',
+            padding: '10px',
+            borderRadius: '5px',
+            fontSize: '12px',
+            minWidth: '200px'
+          }}>
+            <h4>Rendering Debug Info</h4>
+            <p>Images Loaded: {renderingStats.imagesLoaded}/{renderingStats.totalImages}</p>
+            <p>Canvas Ready: {renderingStats.canvasReady ? 'Yes' : 'No'}</p>
+            <p>Last Render: {renderingStats.lastRenderTime}ms</p>
+            <p>Player Position: ({Math.round(gameState.player.x)}, {Math.round(gameState.player.y)})</p>
+            <p>Player Direction: {playerDirection}</p>
+            {/* Edge Detection Status */}
+            {gameState.player.atEdge && (
+              <div style={{ marginTop: '10px', padding: '5px', background: 'rgba(255,255,0,0.3)', borderRadius: '3px' }}>
+                <p style={{ color: '#ffff00', fontWeight: 'bold', margin: '0' }}>
+                  🏔️ At Map Edge: {
+                    Object.entries(gameState.player.atEdge)
+                      .filter(([_, value]) => value)
+                      .map(([key, _]) => key)
+                      .join(', ')
+                  }
+                </p>
+              </div>
+            )}
+            <button 
+              onClick={() => setDebugMode(!debugMode)}
+              style={{
+                marginTop: '5px',
+                padding: '5px 10px',
+                background: debugMode ? '#ff4444' : '#44ff44',
+                color: 'white',
+                border: 'none',
+                borderRadius: '3px',
+                cursor: 'pointer'
+              }}
+            >
+              {debugMode ? 'Disable Debug' : 'Enable Debug'}
+            </button>
+          </div>
+          
+          {/* Edge Warning Overlay */}
+          {gameState.player.atEdge && (Object.values(gameState.player.atEdge).some(edge => edge)) && (
+            <div className="edge-warning-overlay" style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              background: 'rgba(255, 165, 0, 0.9)',
+              color: 'white',
+              padding: '15px 25px',
+              borderRadius: '10px',
+              fontSize: '16px',
+              fontWeight: 'bold',
+              textAlign: 'center',
+              boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+              border: '2px solid #ff8c00',
+              zIndex: 1000,
+              animation: 'edgePulse 2s infinite'
+            }}>
+              🏔️ World Boundary Reached
+              <div style={{ fontSize: '12px', marginTop: '5px', fontWeight: 'normal' }}>
+                You are at the edge of the map
+              </div>
+            </div>
+          )}
+          
           <div className="terrain-controls">
             <select 
               value={terrainType} 
@@ -1096,6 +1335,7 @@ const OpenWorldGame = () => {
           grassBottomRightImage={loadedImages.grassBottomRight.current}
           terrainType={terrainType}
           grassTerrainMap={grassTerrainMap}
+          bushObstacles={bushObstacles}
           isAttacking={isAttacking}
           attackTarget={attackTarget}
           onTreasureInteraction={handleTreasureInteraction}
@@ -1127,6 +1367,10 @@ const OpenWorldGame = () => {
             
             <div className="score-display">
               Score: {gameState.score}
+            </div>
+            
+            <div className="crystal-display">
+              💎 Crystals: {gameState.crystalsCollected}
             </div>
             
             <div className="position-display">
@@ -1441,6 +1685,8 @@ const OpenWorldGame = () => {
         onClose={handleQuestionClose}
         onSolve={handleQuestionSolve}
       />
+      
+      <PerformanceMonitor />
     </div>
   );
 };

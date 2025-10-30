@@ -87,6 +87,7 @@ export const useGameState = (initialPlayerX, initialPlayerY) => {
     currentProblem: null,
     solvedProblems: new Set(),
     score: 0,
+    crystalsCollected: 0,
     checkpoints: [],
     lastCheckpoint: null,
     problemStartTime: null,

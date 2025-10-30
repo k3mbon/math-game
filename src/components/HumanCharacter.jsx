@@ -257,23 +257,23 @@ const HumanCharacter = ({
     let frameCount = spriteConfig.frameCount;
     let speed = 200; // Default speed
     
-    // Adjust animation parameters based on state
+    // Adjust animation parameters based on state with smoother transitions
     if (animationState === 'breathing') {
-      speed = 1000; // Slower for more natural breathing
+      speed = 1200; // Slower for more natural breathing
     } else if (animationState === 'walking') {
-      speed = 180; // Slowed down from 120ms for smoother walking
+      speed = 200; // Smoother walking animation
     } else if (animationState === 'running') {
-      speed = 80; // Faster for running
+      speed = 100; // Faster for running
     } else if (animationState === 'walkAttack') {
-      speed = 100; // Fast for walk attack
+      speed = 120; // Balanced for walk attack
     } else if (animationState === 'runAttack') {
-      speed = 70; // Very fast for run attack
+      speed = 80; // Fast for run attack
     } else if (animationState === 'idleAttack') {
-      speed = 90; // Fast for idle attack
+      speed = 110; // Smooth idle attack
     } else if (animationState === 'death') {
-      speed = 150; // Moderate speed for death animation
+      speed = 180; // Smoother death animation
     } else if (animationState === 'idle') {
-      speed = 300; // Slower for idle
+      speed = 400; // Slower for idle
     }
     
     const interval = setInterval(() => {
@@ -445,9 +445,9 @@ const HumanCharacter = ({
         transform: getAnimationTransforms(),
         transition: isAnimating 
           ? animationState === 'running'
-            ? 'left 0.6s cubic-bezier(0.4, 0, 0.2, 1), top 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
-            : 'left 0.8s cubic-bezier(0.4, 0, 0.2, 1), top 0.8s cubic-bezier(0.4, 0, 0.2, 1)'
-          : 'all 0.3s ease',
+            ? 'left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), top 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+            : 'left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), top 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+          : 'all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         transformOrigin: 'center bottom',
       }}
     >

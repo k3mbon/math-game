@@ -27,6 +27,88 @@ const drawSvgTree = (ctx, x, y, size, treeImage) => {
   );
 };
 
+// Render environment objects with pixel-style graphics
+const renderPixelEnvironmentObjects = (ctx, gameState, visibleArea) => {
+  if (!gameState.environmentObjects || gameState.environmentObjects.length === 0) return;
+  
+  gameState.environmentObjects.forEach(obj => {
+    const screenX = obj.x - gameState.camera.x;
+    const screenY = obj.y - gameState.camera.y;
+    
+    // Only render if visible
+    if (screenX >= -obj.size && screenX <= GAME_CONFIG.CANVAS_WIDTH &&
+        screenY >= -obj.size && screenY <= GAME_CONFIG.CANVAS_HEIGHT) {
+      
+      // Render based on object type with pixel art style
+      switch (obj.type) {
+        case 'tree':
+          // Pixel tree trunk
+          ctx.fillStyle = '#8B4513';
+          ctx.fillRect(screenX - 4, screenY - 4, 8, 16);
+          // Pixel tree canopy
+          ctx.fillStyle = '#228B22';
+          ctx.fillRect(screenX - 8, screenY - 16, 16, 12);
+          // Tree highlights
+          ctx.fillStyle = '#32CD32';
+          ctx.fillRect(screenX - 6, screenY - 14, 4, 4);
+          ctx.fillRect(screenX + 2, screenY - 12, 4, 4);
+          break;
+          
+        case 'rock':
+          // Pixel rock
+          ctx.fillStyle = '#696969';
+          ctx.fillRect(screenX - 6, screenY - 4, 12, 8);
+          // Rock texture
+          ctx.fillStyle = '#A9A9A9';
+          ctx.fillRect(screenX - 4, screenY - 2, 3, 3);
+          ctx.fillRect(screenX + 2, screenY + 1, 2, 2);
+          break;
+          
+        case 'bush':
+          // Pixel bush
+          ctx.fillStyle = '#32CD32';
+          ctx.fillRect(screenX - 6, screenY - 4, 12, 8);
+          // Bush clusters
+          ctx.fillStyle = '#228B22';
+          ctx.fillRect(screenX - 4, screenY - 2, 3, 3);
+          ctx.fillRect(screenX + 2, screenY, 3, 3);
+          break;
+          
+        case 'flower':
+          // Pixel flower stem
+          ctx.fillStyle = '#228B22';
+          ctx.fillRect(screenX - 1, screenY, 2, 6);
+          // Pixel flower petals
+          ctx.fillStyle = obj.color || '#FF69B4';
+          ctx.fillRect(screenX - 3, screenY - 4, 6, 4);
+          ctx.fillRect(screenX - 1, screenY - 6, 2, 2);
+          // Flower center
+          ctx.fillStyle = '#FFD700';
+          ctx.fillRect(screenX - 1, screenY - 3, 2, 2);
+          break;
+          
+        case 'mushroom':
+          // Pixel mushroom stem
+          ctx.fillStyle = '#F5F5DC';
+          ctx.fillRect(screenX - 2, screenY - 2, 4, 6);
+          // Pixel mushroom cap
+          ctx.fillStyle = obj.color || '#DC143C';
+          ctx.fillRect(screenX - 4, screenY - 6, 8, 4);
+          // Mushroom spots
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(screenX - 2, screenY - 5, 1, 1);
+          ctx.fillRect(screenX + 1, screenY - 4, 1, 1);
+          break;
+          
+        default:
+          // Generic pixel object
+          ctx.fillStyle = obj.color || '#8B4513';
+          ctx.fillRect(screenX - 4, screenY - 4, 8, 8);
+      }
+    }
+  });
+};
+
 // Render monsters with pixel-style graphics
 const renderPixelMonsters = (ctx, gameState, visibleArea) => {
   gameState.monsters.forEach(monster => {
@@ -493,6 +575,7 @@ const SimpleCanvasRenderer = ({
 
     // Render game objects with pixel-style graphics
     renderPixelTreasureBoxes(ctx, gameState, visibleArea);
+    renderPixelEnvironmentObjects(ctx, gameState, visibleArea);
     renderPixelMonsters(ctx, gameState, visibleArea);
     renderSimplePlayer(ctx, gameState);
 
@@ -1100,7 +1183,7 @@ const renderSimpleTerrain = (ctx, gameState, visibleArea, frameCount, treeImage)
       const chunkY = Math.floor(tileY / GAME_CONFIG.CHUNK_SIZE);
       const chunkKey = `${chunkX},${chunkY}`;
       
-      const chunk = gameState.terrain.get(chunkKey);
+      const chunk = gameState.terrain?.get(chunkKey);
       if (!chunk) continue;
       
       const localX = tileX % GAME_CONFIG.CHUNK_SIZE;
@@ -1409,18 +1492,11 @@ const renderSimplePlayer = (ctx, gameState) => {
   ctx.fillRect(player.x, player.y - 15, healthBarWidth * healthPercentage, healthBarHeight);
 };
 
-// World boundaries rendering
+// World boundaries rendering (invisible - terrain system handles seamless filling)
 const renderWorldBoundaries = (ctx, gameState) => {
-  const worldSize = GAME_CONFIG.WORLD_SIZE * GAME_CONFIG.TILE_SIZE;
-  
-  ctx.strokeStyle = '#FF0000';
-  ctx.lineWidth = 3;
-  ctx.setLineDash([10, 5]);
-  
-  // Draw world boundary rectangle
-  ctx.strokeRect(0, 0, worldSize, worldSize);
-  
-  ctx.setLineDash([]);
+  // Boundaries are now invisible - terrain system ensures seamless canvas filling
+  // The terrain generation system automatically extends beyond visible area
+  // to provide continuous coverage without visible borders
 };
 
 // UI rendering

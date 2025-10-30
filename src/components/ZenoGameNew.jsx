@@ -7,10 +7,11 @@ import './ZenoGameNew.css';
 import './BlocklyComponent.css';
 
 const ZenoGameNew = () => {
-  const [level] = useState(1);
+  const [level, setLevel] = useState(1);
   const [sequence, setSequence] = useState([]);
   const gridWidth = 6;
   const gridHeight = 5;
+  const cellSize = Math.min(50 + (level - 1) * 8, 80);
   
   // Blockly workspace reference
   const workspaceRef = useRef(null);
@@ -21,15 +22,19 @@ const ZenoGameNew = () => {
   };
 
   // Generate random layout on component initialization and refresh
-  const generateNewLayout = () => {
-    const crystalCount = 2 + level; // 3 for level 1, 4 for level 2, etc.
+  const generateNewLayout = (lvlOverride, movesOverride) => {
+    const effectiveLevel = typeof lvlOverride === 'number' ? lvlOverride : level;
+    const crystalCount = 2 + effectiveLevel;
+    const allowedMoves = typeof movesOverride === 'number' 
+      ? movesOverride 
+      : Math.min(12 + (effectiveLevel - 1) * 2, 18);
     return generateBalancedLayout({
       gridWidth,
       gridHeight,
       crystalCount,
-      maxMoves: 12,
+      maxMoves: allowedMoves,
       startPosition: { x: 0, y: 3 },
-      difficultyTarget: 0.75 // Target 75% of max moves for good challenge
+      difficultyTarget: 0.75
     });
   };
 
@@ -45,7 +50,8 @@ const ZenoGameNew = () => {
   const [playerPosition, setPlayerPosition] = useState({ x: 0, y: 3 }); // Changed from y: 4 to y: 3 to avoid last row
   const [playerDirection, setPlayerDirection] = useState('right');
   const [executionQueue, setExecutionQueue] = useState([]);
-  const [maxMoves] = useState(12);
+  const computeMaxMoves = (lvl) => Math.min(12 + (lvl - 1) * 2, 18);
+  const [maxMoves, setMaxMoves] = useState(computeMaxMoves(level));
   const [isExecuting, setIsExecuting] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [totalSteps, setTotalSteps] = useState(0);
@@ -69,6 +75,10 @@ const ZenoGameNew = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    setMaxMoves(computeMaxMoves(level));
+  }, [level]);
 
   // Initialize Blockly workspace and custom blocks
   const initializeBlockly = () => {
@@ -512,16 +522,40 @@ const ZenoGameNew = () => {
   };
 
   const nextLevel = () => {
-    // For now, just restart with a new layout (can be expanded for actual level progression)
+    const newLevel = level + 1;
+    setLevel(newLevel);
     setShowVictoryModal(false);
     setGameWon(false);
-    resetGame();
+    // Reset base state
+    setPlayerPosition({ x: 0, y: 3 });
+    setPlayerDirection('right');
+    setSequence([]);
+    setExecutionQueue([]);
+    setIsExecuting(false);
+    setCollectedCrystals(0);
+    setCurrentStep(0);
+    setTotalSteps(0);
+    // Regenerate layout using updated level and moves
+    const newLayout = generateNewLayout(newLevel, computeMaxMoves(newLevel));
+    setCrystals(newLayout.crystals);
+    setTargetPosition(newLayout.target);
   };
 
   const repeatLevel = () => {
     setShowVictoryModal(false);
     setGameWon(false);
-    resetGame();
+    // Keep the same level but regenerate the layout
+    setPlayerPosition({ x: 0, y: 3 });
+    setPlayerDirection('right');
+    setSequence([]);
+    setExecutionQueue([]);
+    setIsExecuting(false);
+    setCollectedCrystals(0);
+    setCurrentStep(0);
+    setTotalSteps(0);
+    const newLayout = generateNewLayout(level, computeMaxMoves(level));
+    setCrystals(newLayout.crystals);
+    setTargetPosition(newLayout.target);
   };
 
   return (
@@ -540,7 +574,8 @@ const ZenoGameNew = () => {
       gap: '15px',
       padding: '15px',
       fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
-      overflow: 'visible',
+      overflowY: 'auto',
+      overflowX: 'hidden',
       margin: 0,
       position: 'fixed',
       top: 0,
@@ -601,7 +636,7 @@ const ZenoGameNew = () => {
             borderRadius: '12px',
             fontWeight: 'bold',
             margin: 0
-          }}>Level 1</span>
+          }}>Level {level}</span>
           <span style={{
             background: '#FF9800',
             color: 'white',
@@ -609,7 +644,7 @@ const ZenoGameNew = () => {
             borderRadius: '12px',
             fontWeight: 'bold',
             margin: 0
-          }}>Langkah: {sequence.length}/12</span>
+          }}>Langkah: {sequence.length}/{maxMoves}</span>
         </div>
         
         <div style={{
@@ -659,7 +694,7 @@ const ZenoGameNew = () => {
             borderRadius: '12px',
             fontWeight: 'bold',
             margin: 0
-          }}>0</span>
+          }}>{score}</span>
         </div>
       </div>
 
@@ -857,14 +892,14 @@ const ZenoGameNew = () => {
           }}>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(6, 50px)',
-              gridTemplateRows: 'repeat(5, 50px)',
-              gap: '0px', // Removed gap to make terrain seamless
-              background: 'transparent', // Removed white background
-              padding: '0px', // Removed padding
-              borderRadius: '0px', // Removed border radius
-              border: 'none', // Removed border
-              boxShadow: 'none' // Removed shadow
+              gridTemplateColumns: `repeat(${gridWidth}, ${cellSize}px)`,
+              gridTemplateRows: `repeat(${gridHeight}, ${cellSize}px)`,
+              gap: '0px',
+              background: 'transparent',
+              padding: '0px',
+              borderRadius: '0px',
+              border: 'none',
+              boxShadow: 'none'
             }}>
               {Array.from({ length: gridWidth * gridHeight }, (_, i) => {
                 const x = i % gridWidth;
@@ -879,14 +914,14 @@ const ZenoGameNew = () => {
                   <div 
                     key={i} 
                     style={{
-                      width: '50px',
-                      height: '50px',
-                      border: 'none', // Removed border for seamless terrain
+                      width: `${cellSize}px`,
+                      height: `${cellSize}px`,
+                      border: 'none',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       position: 'relative',
-                      borderRadius: '0px', // Removed border radius for seamless look
+                      borderRadius: '0px',
                       backgroundImage: `url('${grassAsset}')`,
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
@@ -895,20 +930,20 @@ const ZenoGameNew = () => {
                   >
                     {isPlayerHere && (
                       <HumanCharacter 
-                        size={60} // Increased from 40 to 60 for better visibility
+                        size={Math.round(cellSize * 1.2)}
                         x={0}
                         y={0}
                         direction={playerDirection}
                         isAnimating={isExecuting}
-                        animationState={isExecuting ? 'walking' : 'breathing'} // Changed from 'idle' to 'breathing'
+                        animationState={isExecuting ? 'walking' : 'breathing'}
                       />
                     )}
                     {isTarget && (
                       <div style={{
-                        fontSize: '20px',
+                        fontSize: `${Math.round(cellSize * 0.4)}px`,
                         background: '#FF9800',
-                        width: '40px',
-                        height: '40px',
+                        width: `${Math.round(cellSize * 0.8)}px`,
+                        height: `${Math.round(cellSize * 0.8)}px`,
                         borderRadius: '6px',
                         display: 'flex',
                         alignItems: 'center',
@@ -918,10 +953,10 @@ const ZenoGameNew = () => {
                     )}
                     {hasCrystal && (
                       <div style={{
-                        fontSize: '18px',
+                        fontSize: `${Math.round(cellSize * 0.36)}px`,
                         background: 'linear-gradient(45deg, #9C27B0, #673AB7)',
-                        width: '30px',
-                        height: '30px',
+                        width: `${Math.round(cellSize * 0.6)}px`,
+                        height: `${Math.round(cellSize * 0.6)}px`,
                         borderRadius: '50%',
                         display: 'flex',
                         alignItems: 'center',
@@ -1195,7 +1230,7 @@ const ZenoGameNew = () => {
                   💎 Kristal dikumpulkan: {collectedCrystals}/{Object.keys(crystals).length}
                 </div>
                 <div style={{ color: 'white', fontSize: '14px', marginBottom: '5px' }}>
-                  🎯 Langkah digunakan: {sequence.length}/12
+                  🎯 Langkah digunakan: {sequence.length}/{maxMoves}
                 </div>
                 <div style={{ color: 'white', fontSize: '14px' }}>
                   ⭐ Skor: {score} poin

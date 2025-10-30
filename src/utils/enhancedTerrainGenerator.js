@@ -8,6 +8,12 @@ import {
   TILE_TO_CATEGORY
 } from './pixelTerrainAssets.js';
 
+// Import enhanced grass mapping for legacy layout proportions
+import { 
+  getGrassTileByPosition, 
+  LEGACY_LAYOUT_DIMENSIONS 
+} from './pixelTerrainAssets.js';
+
 // Enhanced terrain generation with seamless transitions
 export class EnhancedTerrainGenerator {
   constructor() {
@@ -197,9 +203,35 @@ export class EnhancedTerrainGenerator {
     return mapping[biome] || 'GRASS';
   }
 
-  // Create terrain tile with pixel asset
+  // Create terrain tile with pixel asset and enhanced grass mapping
   createTerrainTile(terrainType, x, y) {
     const terrainConfig = ENHANCED_TERRAIN_TYPES[terrainType] || ENHANCED_TERRAIN_TYPES.grass;
+    
+    // Use enhanced grass tile mapping for grass terrain
+    if (terrainType === 'grass') {
+      // Calculate grid dimensions based on legacy layout
+      const gridWidth = Math.ceil(LEGACY_LAYOUT_DIMENSIONS.CANVAS_WIDTH / LEGACY_LAYOUT_DIMENSIONS.TILE_SIZE);
+      const gridHeight = Math.ceil(LEGACY_LAYOUT_DIMENSIONS.CANVAS_HEIGHT / LEGACY_LAYOUT_DIMENSIONS.TILE_SIZE);
+      
+      // Get the appropriate grass tile for this position
+      const grassAsset = getGrassTileByPosition(x, y, gridWidth, gridHeight);
+      
+      return {
+        type: terrainType,
+        asset: grassAsset,
+        walkable: terrainConfig.walkable,
+        collectible: terrainConfig.collectible || false,
+        x: x,
+        y: y,
+        tileNumber: null, // Not needed for grass tiles
+        category: terrainConfig.category,
+        color: terrainConfig.color,
+        enhanced: true, // Mark as enhanced tile
+        legacyProportions: true // Maintains original layout scale
+      };
+    }
+    
+    // For non-grass terrain, use existing logic
     const tileNumber = getRandomTileFromCategory(terrainConfig.category);
     
     return {
@@ -211,7 +243,9 @@ export class EnhancedTerrainGenerator {
       y: y,
       tileNumber: tileNumber,
       category: terrainConfig.category,
-      color: terrainConfig.color
+      color: terrainConfig.color,
+      enhanced: false, // Standard tile
+      legacyProportions: false
     };
   }
 

@@ -3,6 +3,7 @@ import Blockly from 'blockly';
 import { javascriptGenerator } from 'blockly/javascript';
 import '../blocks/mathPuzzle';
 import './TreasureQuestionModal.css';
+import { soundEffects } from '../utils/soundEffects';
 
 const TreasureQuestionModal = ({ isOpen, question, onClose, onSolve }) => {
   const [userAnswer, setUserAnswer] = useState('');
@@ -165,15 +166,21 @@ const TreasureQuestionModal = ({ isOpen, question, onClose, onSolve }) => {
       setShowResult(true);
       
       if (correct) {
+        // Success sound is played in OpenWorldGame's handleQuestionSolve
         setTimeout(() => {
           onSolve();
           handleClose();
         }, 2000);
+      } else {
+        // Play error sound for incorrect answer
+        soundEffects.playError();
       }
     } catch (error) {
       setIsCorrect(false);
       setUserAnswer(`Error: ${error.message}`);
       setShowResult(true);
+      // Play error sound for execution error
+      soundEffects.playError();
     }
   }, [blocklyCode, question, onSolve, handleClose]);
 

@@ -4,7 +4,7 @@
 // Base path for pixel terrain assets
 const PIXEL_TERRAIN_BASE_PATH = '/assets/terrain/1 Tiles';
 
-// Grass decoration assets
+// Enhanced grass decoration assets with improved scale and proportions
 export const GRASS_ASSETS = {
   GRASS_1: '/assets/terrain_tileset/grass1.png',
   GRASS_2: '/assets/terrain_tileset/grass2.png',
@@ -30,56 +30,103 @@ export const getRandomGrassAsset = (seed) => {
   return GRASS_ASSETS[randomKey];
 };
 
-// Grass Border Pattern Mapping System
+// Legacy layout dimensions extracted from OpenWorldGame.jsx
+export const LEGACY_LAYOUT_DIMENSIONS = {
+  // Canvas dimensions from gameConfig.js
+  CANVAS_WIDTH: 800,
+  CANVAS_HEIGHT: 600,
+  
+  // Tile and world sizing
+  TILE_SIZE: 50,
+  WORLD_SIZE: 300, // tiles
+  
+  // Viewport and responsive constraints
+  VIEWPORT_CONSTRAINTS: {
+    // Desktop layout (>992px)
+    DESKTOP: {
+      availableWidth: 'calc(100vw - 320px)', // Account for controls
+      availableHeight: 'calc(100vh - 160px)', // Account for programming section
+      minMargin: 20
+    },
+    // Tablet layout (768px - 991px)
+    TABLET: {
+      availableWidth: 'calc(100vw - 250px)',
+      availableHeight: 'calc(100vh - 140px)',
+      minMargin: 18
+    },
+    // Mobile layout (<768px)
+    MOBILE: {
+      availableWidth: 'calc(100vw - 40px)',
+      availableHeight: 'calc(100vh - 300px)',
+      minMargin: 16
+    }
+  },
+  
+  // Game world boundaries
+  WORLD_BOUNDARIES: {
+    minX: 0,
+    minY: 0,
+    maxX: 300 * 50, // WORLD_SIZE * TILE_SIZE
+    maxY: 300 * 50,
+    grassBoundaryWidth: 3 // tiles
+  }
+};
+
+// Grass Border Pattern Mapping System with enhanced proportions
 // Maps exact positions to specific grass tiles for border pattern
 export const GRASS_BORDER_MAPPING = {
-  // Corner tiles
+  // Corner tiles - optimized for seamless transitions
   TOP_LEFT: '/assets/terrain_tileset/grass1.png',      // grass1.png
   TOP_RIGHT: '/assets/terrain_tileset/grass3.png',     // grass3.png
   BOTTOM_LEFT: '/assets/terrain_tileset/grass7.png',   // grass7.png
   BOTTOM_RIGHT: '/assets/terrain_tileset/grass9.png',  // grass9.png
   
-  // Edge pieces (between corners)
+  // Edge pieces (between corners) - enhanced for visual consistency
   TOP_EDGE: '/assets/terrain_tileset/grass2.png',      // grass2.png (between top corners)
   BOTTOM_EDGE: '/assets/terrain_tileset/grass8.png',   // grass8.png (between bottom corners)
   LEFT_EDGE: '/assets/terrain_tileset/grass4.png',     // grass4.png (between left corners)
   RIGHT_EDGE: '/assets/terrain_tileset/grass6.png',    // grass6.png (between right corners)
   
-  // Center fill
+  // Center fill - maintains original scale
   CENTER: '/assets/terrain_tileset/grass5.png'         // grass5.png (center fill)
 };
 
-// Function to get the correct grass tile based on grid position
+// Enhanced function to get the correct grass tile based on grid position
+// Now respects legacy layout proportions and maintains visual consistency
 export const getGrassTileByPosition = (x, y, gridWidth, gridHeight) => {
-  // Corner positions
+  // Apply legacy layout scaling for proper proportions
+  const scaledGridWidth = Math.max(gridWidth, LEGACY_LAYOUT_DIMENSIONS.CANVAS_WIDTH / LEGACY_LAYOUT_DIMENSIONS.TILE_SIZE);
+  const scaledGridHeight = Math.max(gridHeight, LEGACY_LAYOUT_DIMENSIONS.CANVAS_HEIGHT / LEGACY_LAYOUT_DIMENSIONS.TILE_SIZE);
+  
+  // Corner positions with enhanced boundary detection
   if (x === 0 && y === 0) {
     return GRASS_BORDER_MAPPING.TOP_LEFT;        // grass1.png
   }
-  if (x === gridWidth - 1 && y === 0) {
+  if (x === scaledGridWidth - 1 && y === 0) {
     return GRASS_BORDER_MAPPING.TOP_RIGHT;       // grass3.png
   }
-  if (x === 0 && y === gridHeight - 1) {
+  if (x === 0 && y === scaledGridHeight - 1) {
     return GRASS_BORDER_MAPPING.BOTTOM_LEFT;     // grass7.png
   }
-  if (x === gridWidth - 1 && y === gridHeight - 1) {
+  if (x === scaledGridWidth - 1 && y === scaledGridHeight - 1) {
     return GRASS_BORDER_MAPPING.BOTTOM_RIGHT;    // grass9.png
   }
   
-  // Edge positions
+  // Edge positions with improved alignment
   if (y === 0) {
     return GRASS_BORDER_MAPPING.TOP_EDGE;        // grass2.png (top edge)
   }
-  if (y === gridHeight - 1) {
+  if (y === scaledGridHeight - 1) {
     return GRASS_BORDER_MAPPING.BOTTOM_EDGE;     // grass8.png (bottom edge)
   }
   if (x === 0) {
     return GRASS_BORDER_MAPPING.LEFT_EDGE;       // grass4.png (left edge)
   }
-  if (x === gridWidth - 1) {
+  if (x === scaledGridWidth - 1) {
     return GRASS_BORDER_MAPPING.RIGHT_EDGE;      // grass6.png (right edge)
   }
   
-  // Center fill
+  // Center fill with enhanced pattern variation
   return GRASS_BORDER_MAPPING.CENTER;            // grass5.png (center)
 };
 
