@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grass Image Loading Test</title>
+</head>
+<body>
+    <h1>Grass Tile Image Loading Test</h1>
+    <div id="results"></div>
+    <div id="images"></div>
+
+    <script>
+        const grassTiles = [
+            '/assets/terrain_tileset/grass1.png',
+            '/assets/terrain_tileset/grass2.png',
+            '/assets/terrain_tileset/grass3.png',
+            '/assets/terrain_tileset/grass4.png',
+            '/assets/terrain_tileset/grass5.png',
+            '/assets/terrain_tileset/grass6.png',
+            '/assets/terrain_tileset/grass7.png',
+            '/assets/terrain_tileset/grass8.png',
+            '/assets/terrain_tileset/grass9.png'
+        ];
+
+        const results = document.getElementById('results');
+        const imagesDiv = document.getElementById('images');
+        
+        results.innerHTML = '<p>Testing grass tile image loading...</p>';
+
+        grassTiles.forEach((tilePath, index) => {
+            const img = new Image();
+            
+            img.onload = function() {
+                console.log(`✅ Successfully loaded: ${tilePath}`);
+                results.innerHTML += `<p style="color: green;">✅ ${tilePath} - Loaded (${this.naturalWidth}x${this.naturalHeight})</p>`;
+                
+                // Display the image
+                const displayImg = document.createElement('img');
+                displayImg.src = tilePath;
+                displayImg.style.width = '50px';
+                displayImg.style.height = '50px';
+                displayImg.style.margin = '5px';
+                displayImg.style.border = '1px solid #ccc';
+                displayImg.title = tilePath;
+                imagesDiv.appendChild(displayImg);
+            };
+            
+            img.onerror = function() {
+                console.error(`❌ Failed to load: ${tilePath}`);
+                results.innerHTML += `<p style="color: red;">❌ ${tilePath} - Failed to load</p>`;
+            };
+            
+            img.src = tilePath;
+        });
+    </script>
+</body>
+</html>

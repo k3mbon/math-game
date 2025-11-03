@@ -97,6 +97,27 @@ const interpolateColor = (color1, color2, factor) => {
 const renderGrassTerrain = (ctx, grassTerrainMap, visibleArea, tileImages) => {
   const tileSize = GAME_CONFIG.TILE_SIZE; // Use configured tile size for alignment
   
+  // Debug: Force log on first render
+  if (!window.grassDebugLogged) {
+    console.log('🌱 GRASS TERRAIN DEBUG:');
+    console.log('📊 Terrain map:', grassTerrainMap?.length, 'x', grassTerrainMap?.[0]?.length);
+    console.log('🔍 Sample tiles:', grassTerrainMap?.slice(0, 2).map(row => row.slice(0, 2)));
+    console.log('🖼️ Available images:', Object.keys(tileImages).filter(k => k.includes('grass')));
+    console.log('🔍 Image check:', {
+      grassCenterImage: !!tileImages.grassCenterImage,
+      grassTopLeftImage: !!tileImages.grassTopLeftImage,
+      centerComplete: tileImages.grassCenterImage?.complete,
+      centerNaturalWidth: tileImages.grassCenterImage?.naturalWidth
+    });
+    
+    // Force an alert to make sure we see this
+    if (typeof alert !== 'undefined') {
+      alert(`Debug: Terrain ${grassTerrainMap?.length}x${grassTerrainMap?.[0]?.length}, Images: ${Object.keys(tileImages).filter(k => k.includes('grass')).length}`);
+    }
+    
+    window.grassDebugLogged = true;
+  }
+  
   // Removed console.log to improve performance - this was called every frame
   
   // Calculate visible area for grass terrain
@@ -113,7 +134,14 @@ const renderGrassTerrain = (ctx, grassTerrainMap, visibleArea, tileImages) => {
       const tileType = grassTerrainMap[y][x];
       const tileImage = getTileImageByType(tileType, tileImages);
       
-      if (tileImage) {
+      // Debug: Log first few tiles to understand what's happening
+      if (!window.debugTileCount) window.debugTileCount = 0;
+      if (window.debugTileCount < 5) {
+        console.log(`🔍 Tile ${window.debugTileCount}: type="${tileType}", hasImage=${!!tileImage}, complete=${tileImage?.complete}, naturalWidth=${tileImage?.naturalWidth}`);
+        window.debugTileCount++;
+      }
+      
+      if (tileImage && tileImage.complete && tileImage.naturalWidth > 0) {
         ctx.drawImage(
           tileImage,
           x * tileSize, 
@@ -122,9 +150,14 @@ const renderGrassTerrain = (ctx, grassTerrainMap, visibleArea, tileImages) => {
           tileSize
         );
       } else {
-        // Only warn about missing tiles occasionally to prevent spam
-        if (Math.random() < 0.001) { // 0.1% chance to log missing tiles
-          console.warn('⚠️ Missing tile image for type:', tileType, 'at position', `(${x},${y})`);
+        // Debug: Log why we're falling back
+        if (window.debugTileCount < 10) {
+          console.warn('🚨 Fallback reason:', {
+            tileType,
+            hasImage: !!tileImage,
+            complete: tileImage?.complete,
+            naturalWidth: tileImage?.naturalWidth
+          });
         }
         // Draw a colored rectangle as fallback
         ctx.fillStyle = '#4CAF50';
@@ -136,6 +169,16 @@ const renderGrassTerrain = (ctx, grassTerrainMap, visibleArea, tileImages) => {
 
 // Helper function to get the correct tile image based on tile type
 const getTileImageByType = (tileType, tileImages) => {
+  // Debug: Log what we're looking for and what we have
+  if (Math.random() < 0.01) { // Only log occasionally to avoid spam
+    console.log('🔍 getTileImageByType debug:', {
+      tileType,
+      availableImages: Object.keys(tileImages),
+      grassCenterImage: !!tileImages.grassCenterImage,
+      grassTopLeftImage: !!tileImages.grassTopLeftImage
+    });
+  }
+  
   switch (tileType) {
     case '/assets/terrain_tileset/grass1.png':
       return tileImages.grassTopLeftImage;
@@ -156,6 +199,7 @@ const getTileImageByType = (tileType, tileImages) => {
     case '/assets/terrain_tileset/grass9.png':
       return tileImages.grassBottomRightImage;
     default:
+      console.warn('🚨 Unknown tile type:', tileType);
       return tileImages.grassCenterImage; // Default to center tile
   }
 };
@@ -211,6 +255,12 @@ const CanvasRenderer = ({
   const frameCountRef = useRef(0);
   const grassTilesInitialized = useRef(false);
   
+  // DEBUG: Check if CanvasRenderer is being called
+  console.log(`🔍 CanvasRenderer called: terrainType=${terrainType}, grassTerrainMap exists=${!!grassTerrainMap}, grassTerrainMap length=${grassTerrainMap?.length || 'N/A'}`);
+  if (frameCountRef.current === 0) {
+    console.log('🔍 First render of CanvasRenderer');
+  }
+  
   // Initialize rendering optimization
   const renderingOptimizer = useRenderingOptimization(canvasRef);
 
@@ -253,8 +303,13 @@ const CanvasRenderer = ({
 
       // Render terrain based on selected terrain type
       if (terrainType === 'grass' && grassTerrainMap) {
-        // Performance: Removed console.log to prevent lag
-        renderGrassTerrain(ctx, grassTerrainMap, visibleArea, {
+        // Debug: Force alert to see if we reach this point
+        if (!window.grassConditionLogged) {
+          alert(`Grass terrain condition met! terrainType: ${terrainType}, grassTerrainMap: ${!!grassTerrainMap}`);
+          window.grassConditionLogged = true;
+        }
+        
+        const tileImages = {
           grassTopLeftImage,
           grassTopImage,
           grassTopRightImage,
@@ -264,7 +319,24 @@ const CanvasRenderer = ({
           grassBottomLeftImage,
           grassBottomImage,
           grassBottomRightImage
-        });
+        };
+        
+        // Debug: Log tile image availability (only once per second to avoid spam)
+        if (Math.random() < 0.016) { // ~1/60 chance per frame = ~1 per second at 60fps
+          console.log('🖼️ Grass tile images status:', {
+            grassTopLeftImage: !!grassTopLeftImage,
+            grassTopImage: !!grassTopImage,
+            grassTopRightImage: !!grassTopRightImage,
+            grassLeftImage: !!grassLeftImage,
+            grassCenterImage: !!grassCenterImage,
+            grassRightImage: !!grassRightImage,
+            grassBottomLeftImage: !!grassBottomLeftImage,
+            grassBottomImage: !!grassBottomImage,
+            grassBottomRightImage: !!grassBottomRightImage
+          });
+        }
+        
+        renderGrassTerrain(ctx, grassTerrainMap, visibleArea, tileImages);
         
         // Render bush obstacles on top of grass terrain
         if (bushObstacles && bushObstacles.length > 0) {

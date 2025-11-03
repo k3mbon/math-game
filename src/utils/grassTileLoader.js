@@ -3,24 +3,28 @@
 
 import { GRASS_BORDER_MAPPING } from './pixelTerrainAssets';
 
-// Cache for loaded grass tile images
+// Cache for loaded grass tile images (stores actual Image objects)
 const grassTileCache = new Map();
+const grassTilePromises = new Map();
 
 // Load a single grass tile image
 export const loadGrassTile = (tilePath) => {
-  if (grassTileCache.has(tilePath)) {
-    return grassTileCache.get(tilePath);
+  if (grassTilePromises.has(tilePath)) {
+    return grassTilePromises.get(tilePath);
   }
   
   const img = new Image();
   img.src = tilePath;
   
   const promise = new Promise((resolve, reject) => {
-    img.onload = () => resolve(img);
+    img.onload = () => {
+      grassTileCache.set(tilePath, img);
+      resolve(img);
+    };
     img.onerror = () => reject(new Error(`Failed to load grass tile: ${tilePath}`));
   });
   
-  grassTileCache.set(tilePath, promise);
+  grassTilePromises.set(tilePath, promise);
   return promise;
 };
 
@@ -40,16 +44,17 @@ export const loadAllGrassTiles = async () => {
 
 // Get a loaded grass tile image synchronously (returns null if not loaded)
 export const getGrassTileImage = (tilePath) => {
-  const cached = grassTileCache.get(tilePath);
-  if (cached && cached instanceof Image && cached.complete) {
-    return cached;
+  // Check if image is already loaded in cache
+  if (grassTileCache.has(tilePath)) {
+    const img = grassTileCache.get(tilePath);
+    if (img.complete && img.naturalWidth !== 0) {
+      return img;
+    }
   }
   
   // If not cached, start loading it now for future use
-  if (!grassTileCache.has(tilePath)) {
-    const img = new Image();
-    img.src = tilePath;
-    grassTileCache.set(tilePath, img);
+  if (!grassTilePromises.has(tilePath)) {
+    loadGrassTile(tilePath);
   }
   
   return null;

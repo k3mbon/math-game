@@ -5,11 +5,13 @@ import { useGameState } from '../hooks/useGameState';
 import { useGameLoop } from '../hooks/useGameLoop.jsx';
 import { generateTerrainChunk, isWalkable } from '../utils/terrainGenerator';
 import { generateTerrainMap, preloadTileImages, preloadCharacterSprite, GRASS_TILES } from '../utils/grassTileMapping';
+import { loadAllGrassTiles } from '../utils/grassTileLoader';
 import { terrainBoundarySystem } from '../utils/terrainBoundarySystem';
 import CanvasRenderer from './CanvasRenderer';
 import HumanCharacter from './HumanCharacter';
 import TreasureQuestionModal from './TreasureQuestionModal';
 import GameStartMenu from './GameStartMenu';
+import GameMenu from './GameMenu';
 import TerrainRenderer, { getStoredTerrainData, hasStoredTerrain, getWalkableTiles, getCollisionTiles } from './TerrainRenderer';
 import numerationProblems from '../data/NumerationProblem.json';
 import { useNavigate } from 'react-router-dom';
@@ -59,6 +61,8 @@ import monsterDragonSvg from '/assets/monster-dragon.svg';
 import monsterOrcSvg from '/assets/monster-orc.svg';
 
 const OpenWorldGame = () => {
+  console.log('🔍 OpenWorldGame component is rendering');
+  
   const navigate = useNavigate();
   const canvasRef = useRef(null);
   
@@ -73,15 +77,13 @@ const OpenWorldGame = () => {
   };
   
   // Initialize resource management
-  const resourceManager = useResourceManager({
-    maxCacheSize: 100,
-    memoryThreshold: 0.8,
-    cleanupInterval: 30000
-  });
+  const resourceManager = useResourceManager();
   
   const [gameStarted, setGameStarted] = useState(true); // Start directly in game
+  const [gamePaused, setGamePaused] = useState(false); // Game pause state
   const [keys, setKeys] = useState({});
   const [playerDirection, setPlayerDirection] = useState('front'); // front, back, left, right
+  const [grassTilesLoaded, setGrassTilesLoaded] = useState(false); // Track grass tile loading
   
   // Add debug rendering state
   const [debugMode, setDebugMode] = useState(false);
@@ -108,6 +110,17 @@ const OpenWorldGame = () => {
   const [terrainType, setTerrainType] = useState('grass'); // Options: 'default', 'grass' - Start with grass to show tile assignments
   const [grassTerrainMap, setGrassTerrainMap] = useState(null);
   const [bushObstacles, setBushObstacles] = useState([]);
+  const [grassTileImages, setGrassTileImages] = useState({
+    grassTopLeft: null,
+    grassTop: null,
+    grassTopRight: null,
+    grassLeft: null,
+    grassCenter: null,
+    grassRight: null,
+    grassBottomLeft: null,
+    grassBottom: null,
+    grassBottomRight: null
+  });
   const [loadedImages, setLoadedImages] = useState({
     player: useRef(null),
     playerFront: useRef(null),
@@ -157,45 +170,25 @@ const OpenWorldGame = () => {
   useEffect(() => {
     const loadGrassTiles = async () => {
       try {
-        // Use resource manager for optimized asset loading with correct grass tile paths
-        const tileImages = await resourceManager.preloadAssets([
-          { id: 'grassTopLeft', url: '/assets/terrain_tileset/grass1.png', type: 'image' },
-          { id: 'grassTop', url: '/assets/terrain_tileset/grass2.png', type: 'image' },
-          { id: 'grassTopRight', url: '/assets/terrain_tileset/grass3.png', type: 'image' },
-          { id: 'grassLeft', url: '/assets/terrain_tileset/grass4.png', type: 'image' },
-          { id: 'grassCenter', url: '/assets/terrain_tileset/grass5.png', type: 'image' },
-          { id: 'grassRight', url: '/assets/terrain_tileset/grass6.png', type: 'image' },
-          { id: 'grassBottomLeft', url: '/assets/terrain_tileset/grass7.png', type: 'image' },
-          { id: 'grassBottom', url: '/assets/terrain_tileset/grass8.png', type: 'image' },
-          { id: 'grassBottomRight', url: '/assets/terrain_tileset/grass9.png', type: 'image' }
-        ]);
+        console.log('🌱 Loading grass tiles for border pattern system...');
         
-        // Fallback to original preloading if resource manager fails
-        const fallbackTileImages = await preloadTileImages();
+        // Use the new grass tile loader for proper border pattern support
+        await loadAllGrassTiles();
         
-        // Map the loaded images to our state
-        const updatedImages = { ...loadedImages };
-        updatedImages.grassTopLeft.current = tileImages.grassTopLeft || fallbackTileImages[GRASS_TILES.TOP_LEFT];
-        updatedImages.grassTop.current = tileImages.grassTop || fallbackTileImages[GRASS_TILES.TOP];
-        updatedImages.grassTopRight.current = tileImages.grassTopRight || fallbackTileImages[GRASS_TILES.TOP_RIGHT];
-        updatedImages.grassLeft.current = tileImages.grassLeft || fallbackTileImages[GRASS_TILES.LEFT];
-        updatedImages.grassCenter.current = tileImages.grassCenter || fallbackTileImages[GRASS_TILES.CENTER];
-        updatedImages.grassRight.current = tileImages.grassRight || fallbackTileImages[GRASS_TILES.RIGHT];
-        updatedImages.grassBottomLeft.current = tileImages.grassBottomLeft || fallbackTileImages[GRASS_TILES.BOTTOM_LEFT];
-        updatedImages.grassBottom.current = tileImages.grassBottom || fallbackTileImages[GRASS_TILES.BOTTOM];
-        updatedImages.grassBottomRight.current = tileImages.grassBottomRight || fallbackTileImages[GRASS_TILES.BOTTOM_RIGHT];
+        console.log('✅ All grass tile images loaded via grass tile loader');
         
-        setLoadedImages(updatedImages);
+        // Set grass tiles loaded state to trigger re-render
+        setGrassTilesLoaded(true);
+        console.log('🔄 Grass tiles loaded state set to true - triggering re-render');
         
         // Generate a default grass terrain map (20x20) with bush obstacles
         const terrainData = generateTerrainMap(20, 20);
-        setGrassTerrainMap(terrainData.terrain);
-        setBushObstacles(terrainData.obstacles);
+        setGrassTerrainMap(terrainData.map);
+        setBushObstacles(terrainData.bushObstacles);
         
-        console.log('✅ Grass terrain map generated:', terrainData.terrain);
-        console.log('📊 Grass map dimensions:', terrainData.terrain.length, 'x', terrainData.terrain[0]?.length);
-        console.log('🔍 Sample tiles:', terrainData.terrain.slice(0, 3).map(row => row.slice(0, 3)));
-        console.log('🌿 Bush obstacles:', terrainData.obstacles);
+        console.log('✅ Grass terrain map generated:', terrainData.map);
+        console.log('📊 Grass map dimensions:', terrainData.dimensions);
+        console.log('🌿 Bush obstacles:', terrainData.bushObstacles.length);
         
         // Initialize terrain boundary system
         terrainBoundarySystem.initialize();
@@ -207,6 +200,29 @@ const OpenWorldGame = () => {
     
     loadGrassTiles();
   }, []);
+
+  // Monitor grass tile loading status
+  useEffect(() => {
+    const allImagesLoaded = Object.values(grassTileImages).every(img => img !== null);
+    if (allImagesLoaded && grassTileImages.grassCenter) {
+      console.log('🎉 All grass tile images loaded in state:', {
+        grassTopLeft: !!grassTileImages.grassTopLeft,
+        grassTop: !!grassTileImages.grassTop,
+        grassTopRight: !!grassTileImages.grassTopRight,
+        grassLeft: !!grassTileImages.grassLeft,
+        grassCenter: !!grassTileImages.grassCenter,
+        grassRight: !!grassTileImages.grassRight,
+        grassBottomLeft: !!grassTileImages.grassBottomLeft,
+        grassBottom: !!grassTileImages.grassBottom,
+        grassBottomRight: !!grassTileImages.grassBottomRight
+      });
+      console.log('🔍 Sample grass image properties:', {
+        centerComplete: grassTileImages.grassCenter?.complete,
+        centerNaturalWidth: grassTileImages.grassCenter?.naturalWidth,
+        centerNaturalHeight: grassTileImages.grassCenter?.naturalHeight
+      });
+    }
+  }, [grassTileImages]);
 
   // Load custom terrain data on component mount
   useEffect(() => {
@@ -1048,11 +1064,62 @@ const OpenWorldGame = () => {
     navigate('/');
   }, [navigate]);
 
+  // GameMenu handlers
+  const handleResumeGame = useCallback(() => {
+    soundEffects.playResume();
+    setGamePaused(false);
+  }, []);
+
+  const handleRestartGame = useCallback(() => {
+    soundEffects.playMenuClick();
+    setGamePaused(false);
+    // Reset game state
+    updateGameState(prevState => ({
+      ...prevState,
+      player: {
+        ...prevState.player,
+        x: 500,
+        y: 500
+      },
+      camera: {
+        x: 500 - GAME_CONFIG.CANVAS_WIDTH / 2,
+        y: 500 - GAME_CONFIG.CANVAS_HEIGHT / 2
+      },
+      treasureBoxes: [],
+      score: 0
+    }));
+  }, [updateGameState]);
+
+  const handleQuitToMenu = useCallback(() => {
+    soundEffects.playMenuClick();
+    setGamePaused(false);
+    setGameStarted(false);
+  }, []);
+
   // Keyboard event handlers
   useEffect(() => {
     console.log('🎮 Setting up keyboard event listeners, gameStarted:', gameStarted);
     const handleKeyDown = (e) => {
       // Remove the raw key event console log for better performance
+      
+      // Handle ESC key for pause menu
+      if (e.code === 'Escape') {
+        setGamePaused(prev => {
+          const newPaused = !prev;
+          if (newPaused) {
+            soundEffects.playPause();
+          } else {
+            soundEffects.playResume();
+          }
+          return newPaused;
+        });
+        return;
+      }
+      
+      // Don't process other keys if game is paused
+      if (gamePaused) {
+        return;
+      }
       
       // Handle treasure interaction with 'E' key
       if (e.code === 'KeyE') {
@@ -1121,6 +1188,11 @@ const OpenWorldGame = () => {
     };
 
     const handleKeyUp = (e) => {
+      // Don't process key releases if game is paused (except ESC)
+      if (gamePaused && e.code !== 'Escape') {
+        return;
+      }
+      
       // Handle movement keys - clear the specific key
       const movementKeys = ['KeyW', 'ArrowUp', 'KeyS', 'ArrowDown', 'KeyA', 'ArrowLeft', 'KeyD', 'ArrowRight'];
       
@@ -1152,7 +1224,7 @@ const OpenWorldGame = () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [gameState.treasureBoxes, handleTreasureInteraction, keys, isAttacking]);
+  }, [gameState.treasureBoxes, handleTreasureInteraction, keys, isAttacking, gamePaused]);
 
   // Mouse event handlers
   useEffect(() => {
@@ -1324,15 +1396,15 @@ const OpenWorldGame = () => {
           realisticGrassImage={loadedImages.realisticGrass}
           grassWaterShorelineCornerImage={loadedImages.grassWaterShorelineCorner}
           // Grass terrain props
-          grassTopLeftImage={loadedImages.grassTopLeft.current}
-          grassTopImage={loadedImages.grassTop.current}
-          grassTopRightImage={loadedImages.grassTopRight.current}
-          grassLeftImage={loadedImages.grassLeft.current}
-          grassCenterImage={loadedImages.grassCenter.current}
-          grassRightImage={loadedImages.grassRight.current}
-          grassBottomLeftImage={loadedImages.grassBottomLeft.current}
-          grassBottomImage={loadedImages.grassBottom.current}
-          grassBottomRightImage={loadedImages.grassBottomRight.current}
+          grassTopLeftImage={grassTileImages.grassTopLeft}
+          grassTopImage={grassTileImages.grassTop}
+          grassTopRightImage={grassTileImages.grassTopRight}
+          grassLeftImage={grassTileImages.grassLeft}
+          grassCenterImage={grassTileImages.grassCenter}
+          grassRightImage={grassTileImages.grassRight}
+          grassBottomLeftImage={grassTileImages.grassBottomLeft}
+          grassBottomImage={grassTileImages.grassBottom}
+          grassBottomRightImage={grassTileImages.grassBottomRight}
           terrainType={terrainType}
           grassTerrainMap={grassTerrainMap}
           bushObstacles={bushObstacles}
@@ -1685,6 +1757,14 @@ const OpenWorldGame = () => {
         onClose={handleQuestionClose}
         onSolve={handleQuestionSolve}
       />
+      
+      {gamePaused && (
+        <GameMenu
+          onResume={handleResumeGame}
+          onRestart={handleRestartGame}
+          onQuit={handleQuitToMenu}
+        />
+      )}
       
       <PerformanceMonitor />
     </div>

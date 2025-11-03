@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grass Tile Loading Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tile-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 64px);
+            gap: 2px;
+            margin: 20px 0;
+        }
+        .tile {
+            width: 64px;
+            height: 64px;
+            border: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f9f9f9;
+        }
+        .tile img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        .log {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Grass Tile Loading Test</h1>
+        <p>Testing if grass tiles load correctly from the terrain_tileset directory.</p>
+        
+        <div class="tile-grid">
+            <div class="tile" id="tile-1"><span>1</span></div>
+            <div class="tile" id="tile-2"><span>2</span></div>
+            <div class="tile" id="tile-3"><span>3</span></div>
+            <div class="tile" id="tile-4"><span>4</span></div>
+            <div class="tile" id="tile-5"><span>5</span></div>
+            <div class="tile" id="tile-6"><span>6</span></div>
+            <div class="tile" id="tile-7"><span>7</span></div>
+            <div class="tile" id="tile-8"><span>8</span></div>
+            <div class="tile" id="tile-9"><span>9</span></div>
+        </div>
+        
+        <div class="log" id="log"></div>
+    </div>
+
+    <script>
+        // Grass tile mapping
+        const GRASS_BORDER_MAPPING = {
+            TOP_LEFT: '/assets/terrain_tileset/grass1.png',
+            TOP_EDGE: '/assets/terrain_tileset/grass2.png',
+            TOP_RIGHT: '/assets/terrain_tileset/grass3.png',
+            LEFT_EDGE: '/assets/terrain_tileset/grass4.png',
+            CENTER: '/assets/terrain_tileset/grass5.png',
+            RIGHT_EDGE: '/assets/terrain_tileset/grass6.png',
+            BOTTOM_LEFT: '/assets/terrain_tileset/grass7.png',
+            BOTTOM_EDGE: '/assets/terrain_tileset/grass8.png',
+            BOTTOM_RIGHT: '/assets/terrain_tileset/grass9.png'
+        };
+
+        const GRASS_TILES = {
+            TOP_LEFT: GRASS_BORDER_MAPPING.TOP_LEFT,
+            TOP: GRASS_BORDER_MAPPING.TOP_EDGE,
+            TOP_RIGHT: GRASS_BORDER_MAPPING.TOP_RIGHT,
+            LEFT: GRASS_BORDER_MAPPING.LEFT_EDGE,
+            CENTER: GRASS_BORDER_MAPPING.CENTER,
+            RIGHT: GRASS_BORDER_MAPPING.RIGHT_EDGE,
+            BOTTOM_LEFT: GRASS_BORDER_MAPPING.BOTTOM_LEFT,
+            BOTTOM: GRASS_BORDER_MAPPING.BOTTOM_EDGE,
+            BOTTOM_RIGHT: GRASS_BORDER_MAPPING.BOTTOM_RIGHT
+        };
+
+        function log(message) {
+            const logElement = document.getElementById('log');
+            logElement.innerHTML += message + '\n';
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+
+        // Preload tile images function (similar to grassTileMapping.js)
+        function preloadTileImages() {
+            const tileImages = {};
+            const imagePromises = [];
+            
+            Object.entries(GRASS_TILES).forEach(([key, src]) => {
+                const img = new Image();
+                const promise = new Promise((resolve) => {
+                    img.onload = () => {
+                        log(`✅ Loaded: ${src}`);
+                        resolve();
+                    };
+                    img.onerror = () => {
+                        log(`❌ Failed to load: ${src}`);
+                        resolve(); // Continue even if one image fails
+                    };
+                    img.src = src;
+                });
+                tileImages[src] = img;
+                imagePromises.push(promise);
+            });
+            
+            log(`🖼️ Preloading ${Object.keys(GRASS_TILES).length} grass tile images`);
+            
+            return Promise.all(imagePromises).then(() => {
+                log(`✅ Successfully loaded ${Object.keys(tileImages).length} grass tile images`);
+                return tileImages;
+            });
+        }
+
+        // Test the loading
+        async function testGrassLoading() {
+            log('🌱 Starting grass tile loading test...');
+            
+            try {
+                const fallbackTileImages = await preloadTileImages();
+                log('🔄 Fallback tiles loaded: ' + Object.keys(fallbackTileImages).join(', '));
+                log('🔍 GRASS_TILES constants: ' + JSON.stringify(GRASS_TILES, null, 2));
+                
+                // Test accessing images
+                const testAccess = {
+                    'TOP_LEFT path': GRASS_TILES.TOP_LEFT,
+                    'TOP_LEFT image': !!fallbackTileImages[GRASS_TILES.TOP_LEFT],
+                    'CENTER path': GRASS_TILES.CENTER,
+                    'CENTER image': !!fallbackTileImages[GRASS_TILES.CENTER]
+                };
+                log('🔍 Checking fallback access: ' + JSON.stringify(testAccess, null, 2));
+                
+                // Display images in grid
+                const tileOrder = [
+                    GRASS_TILES.TOP_LEFT, GRASS_TILES.TOP, GRASS_TILES.TOP_RIGHT,
+                    GRASS_TILES.LEFT, GRASS_TILES.CENTER, GRASS_TILES.RIGHT,
+                    GRASS_TILES.BOTTOM_LEFT, GRASS_TILES.BOTTOM, GRASS_TILES.BOTTOM_RIGHT
+                ];
+                
+                tileOrder.forEach((tilePath, index) => {
+                    const tileElement = document.getElementById(`tile-${index + 1}`);
+                    const img = fallbackTileImages[tilePath];
+                    if (img && img.complete) {
+                        tileElement.innerHTML = '';
+                        tileElement.appendChild(img.cloneNode());
+                        log(`✅ Displayed tile ${index + 1}: ${tilePath}`);
+                    } else {
+                        log(`❌ Failed to display tile ${index + 1}: ${tilePath}`);
+                    }
+                });
+                
+            } catch (error) {
+                log('❌ Error loading grass tiles: ' + error.message);
+            }
+        }
+
+        // Start the test when page loads
+        window.addEventListener('load', testGrassLoading);
+    </script>
+</body>
+</html>

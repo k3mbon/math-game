@@ -114,6 +114,128 @@ class SoundEffects {
       console.warn('Failed to play error sound:', error);
     }
   }
+
+  // Play a menu hover sound (soft beep)
+  playMenuHover() {
+    if (!this.initialized || !this.audioContext) {
+      this.initialize().then(() => this.playMenuHover());
+      return;
+    }
+
+    try {
+      const now = this.audioContext.currentTime;
+      
+      const oscillator = this.audioContext.createOscillator();
+      const gainNode = this.audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(this.audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(800, now); // G5
+      oscillator.type = 'sine';
+      
+      gainNode.gain.setValueAtTime(0, now);
+      gainNode.gain.linearRampToValueAtTime(0.05, now + 0.01);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      
+      oscillator.start(now);
+      oscillator.stop(now + 0.15);
+    } catch (error) {
+      console.warn('Failed to play menu hover sound:', error);
+    }
+  }
+
+  // Play a menu click sound (crisp click)
+  playMenuClick() {
+    if (!this.initialized || !this.audioContext) {
+      this.initialize().then(() => this.playMenuClick());
+      return;
+    }
+
+    try {
+      const now = this.audioContext.currentTime;
+      
+      const oscillator = this.audioContext.createOscillator();
+      const gainNode = this.audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(this.audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(1200, now); // D6
+      oscillator.type = 'square';
+      
+      gainNode.gain.setValueAtTime(0, now);
+      gainNode.gain.linearRampToValueAtTime(0.08, now + 0.005);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+      
+      oscillator.start(now);
+      oscillator.stop(now + 0.1);
+    } catch (error) {
+      console.warn('Failed to play menu click sound:', error);
+    }
+  }
+
+  // Play a pause sound (descending tone)
+  playPause() {
+    if (!this.initialized || !this.audioContext) {
+      this.initialize().then(() => this.playPause());
+      return;
+    }
+
+    try {
+      const now = this.audioContext.currentTime;
+      
+      const oscillator = this.audioContext.createOscillator();
+      const gainNode = this.audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(this.audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(600, now); // D5
+      oscillator.frequency.exponentialRampToValueAtTime(300, now + 0.3); // D4
+      oscillator.type = 'sine';
+      
+      gainNode.gain.setValueAtTime(0, now);
+      gainNode.gain.linearRampToValueAtTime(0.1, now + 0.01);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+      
+      oscillator.start(now);
+      oscillator.stop(now + 0.3);
+    } catch (error) {
+      console.warn('Failed to play pause sound:', error);
+    }
+  }
+
+  // Play a resume sound (ascending tone)
+  playResume() {
+    if (!this.initialized || !this.audioContext) {
+      this.initialize().then(() => this.playResume());
+      return;
+    }
+
+    try {
+      const now = this.audioContext.currentTime;
+      
+      const oscillator = this.audioContext.createOscillator();
+      const gainNode = this.audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(this.audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(300, now); // D4
+      oscillator.frequency.exponentialRampToValueAtTime(600, now + 0.3); // D5
+      oscillator.type = 'sine';
+      
+      gainNode.gain.setValueAtTime(0, now);
+      gainNode.gain.linearRampToValueAtTime(0.1, now + 0.01);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+      
+      oscillator.start(now);
+      oscillator.stop(now + 0.3);
+    } catch (error) {
+      console.warn('Failed to play resume sound:', error);
+    }
+  }
 }
 
 // Create a singleton instance

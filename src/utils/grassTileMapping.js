@@ -28,11 +28,12 @@ export const GRASS_TILES = {
 };
 
 // Bush obstacle assets
-export const BUSH_OBSTACLES = [
-  '/assets/characters/terrain-object/Bushes/1.png',
-  '/assets/characters/terrain-object/Bushes/2.png',
-  '/assets/characters/terrain-object/Bushes/3.png'
-];
+// Enhanced bush obstacles from the specified directory
+export const BUSH_OBSTACLES = {
+  BUSH_1: '/assets/characters/terrain-object/Bushes/1.png',
+  BUSH_2: '/assets/characters/terrain-object/Bushes/2.png',
+  BUSH_3: '/assets/characters/terrain-object/Bushes/3.png'
+};
 
 // Character sprite
 export const SWORDSMAN_SPRITE = '/assets/characters/swordsman.png';
@@ -61,40 +62,89 @@ export const generateTerrainMap = (width, height) => {
     map.push(row);
   }
   
-  // Generate bush obstacles with enhanced scattering based on legacy proportions
-  const bushDensity = 0.15; // Adjusted for better gameplay
-  const minBushDistance = 3; // Minimum distance between bushes
-  const placedBushes = [];
+  // Enhanced bush obstacle generation with even distribution and minimum spacing
+  const minSpacing = 3; // Minimum tiles between bushes
+  const bushDensity = 0.08; // 8% coverage for balanced gameplay
+  const maxAttempts = 1000; // Prevent infinite loops
   
-  for (let attempts = 0; attempts < scaledWidth * scaledHeight * bushDensity; attempts++) {
-    const x = Math.floor(Math.random() * (scaledWidth - 2)) + 1; // Avoid edges
-    const y = Math.floor(Math.random() * (scaledHeight - 2)) + 1; // Avoid edges
+  // Calculate target number of bushes based on map size and density
+  const targetBushCount = Math.floor(scaledWidth * scaledHeight * bushDensity);
+  
+  // Grid-based placement to ensure even distribution
+  const gridSize = minSpacing + 1;
+  const gridWidth = Math.floor(scaledWidth / gridSize);
+  const gridHeight = Math.floor(scaledHeight / gridSize);
+  
+  // Create placement grid to track occupied areas
+  const placementGrid = Array(gridHeight).fill(null).map(() => Array(gridWidth).fill(false));
+  
+  let attempts = 0;
+  let placedBushes = 0;
+  
+  while (placedBushes < targetBushCount && attempts < maxAttempts) {
+    attempts++;
     
-    // Check minimum distance from other bushes
-    const tooClose = placedBushes.some(bush => {
-      const distance = Math.sqrt((bush.x - x) ** 2 + (bush.y - y) ** 2);
-      return distance < minBushDistance;
-    });
+    // Random grid cell selection
+    const gridX = Math.floor(Math.random() * gridWidth);
+    const gridY = Math.floor(Math.random() * gridHeight);
     
-    if (!tooClose) {
-      const bush = {
-        x: x * LEGACY_LAYOUT_DIMENSIONS.TILE_SIZE,
-        y: y * LEGACY_LAYOUT_DIMENSIONS.TILE_SIZE,
-        width: LEGACY_LAYOUT_DIMENSIONS.TILE_SIZE,
-        height: LEGACY_LAYOUT_DIMENSIONS.TILE_SIZE,
-        type: 'bush',
-        walkable: false,
-        enhanced: true, // Mark as enhanced obstacle
-        legacyProportions: true
-      };
-      
-      bushObstacles.push(bush);
-      placedBushes.push({ x, y });
+    // Skip if grid cell already occupied
+    if (placementGrid[gridY][gridX]) {
+      continue;
     }
+    
+    // Convert grid position to map coordinates with random offset within cell
+    const baseX = gridX * gridSize;
+    const baseY = gridY * gridSize;
+    const offsetX = Math.floor(Math.random() * (gridSize - 1));
+    const offsetY = Math.floor(Math.random() * (gridSize - 1));
+    
+    const x = Math.min(baseX + offsetX, scaledWidth - 1);
+    const y = Math.min(baseY + offsetY, scaledHeight - 1);
+    
+    // Avoid placing bushes too close to map edges (maintain 2-tile border)
+    if (x < 2 || x >= scaledWidth - 2 || y < 2 || y >= scaledHeight - 2) {
+      continue;
+    }
+    
+    // Avoid blocking critical path points (corners and center areas)
+    const centerX = Math.floor(scaledWidth / 2);
+    const centerY = Math.floor(scaledHeight / 2);
+    const distanceFromCenter = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+    
+    // Keep center area relatively clear for movement
+    if (distanceFromCenter < Math.min(scaledWidth, scaledHeight) * 0.15) {
+      continue;
+    }
+    
+    // Select random bush type for visual variety
+    const bushTypes = Object.values(BUSH_OBSTACLES);
+    const selectedBush = bushTypes[Math.floor(Math.random() * bushTypes.length)];
+    
+    const bush = {
+      x: x * LEGACY_LAYOUT_DIMENSIONS.TILE_SIZE,
+      y: y * LEGACY_LAYOUT_DIMENSIONS.TILE_SIZE,
+      width: LEGACY_LAYOUT_DIMENSIONS.TILE_SIZE,
+      height: LEGACY_LAYOUT_DIMENSIONS.TILE_SIZE,
+      type: 'bush',
+      asset: selectedBush,
+      walkable: false,
+      collidable: true, // All bushes are impassable
+      enhanced: true, // Mark as enhanced obstacle
+      legacyProportions: true,
+      id: `bush_${x}_${y}_${placedBushes}`
+    };
+    
+    bushObstacles.push(bush);
+    
+    // Mark grid cell as occupied
+    placementGrid[gridY][gridX] = true;
+    placedBushes++;
   }
   
-  console.log(`🌿 Generated enhanced terrain map: ${scaledWidth}x${scaledHeight} with ${bushObstacles.length} bush obstacles`);
+  console.log(`🌿 Generated enhanced terrain map: ${scaledWidth}x${scaledHeight} with ${placedBushes} bush obstacles (${bushDensity * 100}% coverage)`);
   console.log(`📐 Legacy layout proportions applied: ${LEGACY_LAYOUT_DIMENSIONS.CANVAS_WIDTH}x${LEGACY_LAYOUT_DIMENSIONS.CANVAS_HEIGHT}`);
+  console.log(`🎯 Bush placement: ${attempts} attempts, ${placedBushes}/${targetBushCount} bushes placed with ${minSpacing}-tile spacing`);
   
   return {
     map,

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grass Image Loading Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .image-container { margin: 10px 0; }
+        .image-container img { max-width: 100px; margin: 5px; border: 1px solid #ccc; }
+        .status { font-weight: bold; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Grass Tile Image Loading Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        const grassImages = [
+            '/assets/terrain_tileset/grass1.png',
+            '/assets/terrain_tileset/grass2.png',
+            '/assets/terrain_tileset/grass3.png',
+            '/assets/terrain_tileset/grass4.png',
+            '/assets/terrain_tileset/grass5.png',
+            '/assets/terrain_tileset/grass6.png',
+            '/assets/terrain_tileset/grass7.png',
+            '/assets/terrain_tileset/grass8.png',
+            '/assets/terrain_tileset/grass9.png'
+        ];
+        
+        const resultsDiv = document.getElementById('results');
+        
+        grassImages.forEach((imagePath, index) => {
+            const container = document.createElement('div');
+            container.className = 'image-container';
+            
+            const img = new Image();
+            const statusSpan = document.createElement('span');
+            statusSpan.className = 'status';
+            statusSpan.textContent = `Loading ${imagePath}...`;
+            
+            img.onload = function() {
+                statusSpan.textContent = `✅ SUCCESS: ${imagePath}`;
+                statusSpan.className = 'status success';
+                container.appendChild(img);
+                console.log(`✅ Successfully loaded: ${imagePath}`);
+            };
+            
+            img.onerror = function() {
+                statusSpan.textContent = `❌ FAILED: ${imagePath}`;
+                statusSpan.className = 'status error';
+                console.error(`❌ Failed to load: ${imagePath}`);
+            };
+            
+            img.src = imagePath;
+            img.alt = `Grass tile ${index + 1}`;
+            
+            container.appendChild(statusSpan);
+            resultsDiv.appendChild(container);
+        });
+        
+        // Also test direct browser access
+        console.log('🔍 Testing grass image paths:');
+        grassImages.forEach(path => {
+            console.log(`Direct URL: ${window.location.origin}${path}`);
+        });
+    </script>
+</body>
+</html>
