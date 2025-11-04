@@ -94,31 +94,10 @@ const interpolateColor = (color1, color2, factor) => {
 };
 
 // Render grass terrain
-const renderGrassTerrain = (ctx, grassTerrainMap, visibleArea, tileImages) => {
+const renderGrassTerrain = (ctx, grassTerrainMap, visibleArea, tileImages, gameState, assets = {}) => {
   const tileSize = GAME_CONFIG.TILE_SIZE; // Use configured tile size for alignment
   
-  // Debug: Force log on first render
-  if (!window.grassDebugLogged) {
-    console.log('🌱 GRASS TERRAIN DEBUG:');
-    console.log('📊 Terrain map:', grassTerrainMap?.length, 'x', grassTerrainMap?.[0]?.length);
-    console.log('🔍 Sample tiles:', grassTerrainMap?.slice(0, 2).map(row => row.slice(0, 2)));
-    console.log('🖼️ Available images:', Object.keys(tileImages).filter(k => k.includes('grass')));
-    console.log('🔍 Image check:', {
-      grassCenterImage: !!tileImages.grassCenterImage,
-      grassTopLeftImage: !!tileImages.grassTopLeftImage,
-      centerComplete: tileImages.grassCenterImage?.complete,
-      centerNaturalWidth: tileImages.grassCenterImage?.naturalWidth
-    });
-    
-    // Force an alert to make sure we see this
-    if (typeof alert !== 'undefined') {
-      alert(`Debug: Terrain ${grassTerrainMap?.length}x${grassTerrainMap?.[0]?.length}, Images: ${Object.keys(tileImages).filter(k => k.includes('grass')).length}`);
-    }
-    
-    window.grassDebugLogged = true;
-  }
-  
-  // Removed console.log to improve performance - this was called every frame
+  // Debug removed for performance
   
   // Calculate visible area for grass terrain
   const startX = Math.max(0, Math.floor(visibleArea.startTileX));
@@ -126,20 +105,19 @@ const renderGrassTerrain = (ctx, grassTerrainMap, visibleArea, tileImages) => {
   const startY = Math.max(0, Math.floor(visibleArea.startTileY));
   const endY = Math.min(grassTerrainMap.length, Math.ceil(visibleArea.endTileY));
   
-  // Removed console.log to improve performance - this was called every frame
+  // Debug removed for performance
   
   // Render only visible tiles
+  const terrainBounds = {
+    minX: startX,
+    maxX: endX - 1,
+    minY: startY,
+    maxY: endY - 1
+  };
   for (let y = startY; y < endY; y++) {
     for (let x = startX; x < endX; x++) {
       const tileType = grassTerrainMap[y][x];
       const tileImage = getTileImageByType(tileType, tileImages);
-      
-      // Debug: Log first few tiles to understand what's happening
-      if (!window.debugTileCount) window.debugTileCount = 0;
-      if (window.debugTileCount < 5) {
-        console.log(`🔍 Tile ${window.debugTileCount}: type="${tileType}", hasImage=${!!tileImage}, complete=${tileImage?.complete}, naturalWidth=${tileImage?.naturalWidth}`);
-        window.debugTileCount++;
-      }
       
       if (tileImage && tileImage.complete && tileImage.naturalWidth > 0) {
         ctx.drawImage(
@@ -150,18 +128,21 @@ const renderGrassTerrain = (ctx, grassTerrainMap, visibleArea, tileImages) => {
           tileSize
         );
       } else {
-        // Debug: Log why we're falling back
-        if (window.debugTileCount < 10) {
-          console.warn('🚨 Fallback reason:', {
-            tileType,
-            hasImage: !!tileImage,
-            complete: tileImage?.complete,
-            naturalWidth: tileImage?.naturalWidth
-          });
+        // Hardened fallback: use seamless grass tile renderer when available
+        const didRender = renderSeamlessGrassTile(
+          ctx,
+          { type: 'GRASS' },
+          x,
+          y,
+          gameState,
+          assets,
+          terrainBounds
+        );
+        if (!didRender) {
+          // Final fallback: solid grass tile
+          ctx.fillStyle = '#4CAF50';
+          ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
         }
-        // Draw a colored rectangle as fallback
-        ctx.fillStyle = '#4CAF50';
-        ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
       }
     }
   }
@@ -169,16 +150,6 @@ const renderGrassTerrain = (ctx, grassTerrainMap, visibleArea, tileImages) => {
 
 // Helper function to get the correct tile image based on tile type
 const getTileImageByType = (tileType, tileImages) => {
-  // Debug: Log what we're looking for and what we have
-  if (Math.random() < 0.01) { // Only log occasionally to avoid spam
-    console.log('🔍 getTileImageByType debug:', {
-      tileType,
-      availableImages: Object.keys(tileImages),
-      grassCenterImage: !!tileImages.grassCenterImage,
-      grassTopLeftImage: !!tileImages.grassTopLeftImage
-    });
-  }
-  
   switch (tileType) {
     case '/assets/terrain_tileset/grass1.png':
       return tileImages.grassTopLeftImage;
@@ -199,14 +170,15 @@ const getTileImageByType = (tileType, tileImages) => {
     case '/assets/terrain_tileset/grass9.png':
       return tileImages.grassBottomRightImage;
     default:
-      console.warn('🚨 Unknown tile type:', tileType);
-      return tileImages.grassCenterImage; // Default to center tile
+      // Default to center tile to avoid noisy warnings in production
+      return tileImages.grassCenterImage;
   }
 };
 
 const CanvasRenderer = ({ 
   gameState, 
   canvasRef, 
+  hoveredTreasureId,
   playerImage,
   playerSpriteImage,
   playerFrontImage,
@@ -252,15 +224,18 @@ const CanvasRenderer = ({
   attackTarget,
   onTreasureInteraction,
   skipPlayerRendering = false,
-  debugMode = false
+  debugMode = false,
+  isWildrealm = false
 }) => {
   const frameCountRef = useRef(0);
   const grassTilesInitialized = useRef(false);
   
   // DEBUG: Check if CanvasRenderer is being called
-  console.log(`🔍 CanvasRenderer called: terrainType=${terrainType}, grassTerrainMap exists=${!!grassTerrainMap}, grassTerrainMap length=${grassTerrainMap?.length || 'N/A'}`);
-  if (frameCountRef.current === 0) {
-    console.log('🔍 First render of CanvasRenderer');
+  if (import.meta.env?.DEV && !isWildrealm) {
+    console.log(`🔍 CanvasRenderer called: terrainType=${terrainType}, grassTerrainMap exists=${!!grassTerrainMap}, grassTerrainMap length=${grassTerrainMap?.length || 'N/A'}`);
+    if (frameCountRef.current === 0) {
+      console.log('🔍 First render of CanvasRenderer');
+    }
   }
   
   // Initialize rendering optimization
@@ -279,6 +254,17 @@ const CanvasRenderer = ({
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
+    // Adjust for device pixel ratio to improve clarity and scaling
+    const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+    // Ensure the canvas internal resolution matches CSS size times DPR
+    if (canvas.width !== GAME_CONFIG.CANVAS_WIDTH * dpr || canvas.height !== GAME_CONFIG.CANVAS_HEIGHT * dpr) {
+      canvas.width = GAME_CONFIG.CANVAS_WIDTH * dpr;
+      canvas.height = GAME_CONFIG.CANVAS_HEIGHT * dpr;
+      // Keep CSS size consistent with logical game dimensions
+      canvas.style.width = `${GAME_CONFIG.CANVAS_WIDTH}px`;
+      canvas.style.height = `${GAME_CONFIG.CANVAS_HEIGHT}px`;
+    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     frameCountRef.current++;
 
     // Start render profiling
@@ -305,12 +291,6 @@ const CanvasRenderer = ({
 
       // Render terrain based on selected terrain type
       if (terrainType === 'grass' && grassTerrainMap) {
-        // Debug: Force alert to see if we reach this point
-        if (!window.grassConditionLogged) {
-          alert(`Grass terrain condition met! terrainType: ${terrainType}, grassTerrainMap: ${!!grassTerrainMap}`);
-          window.grassConditionLogged = true;
-        }
-        
         const tileImages = {
           grassTopLeftImage,
           grassTopImage,
@@ -322,23 +302,9 @@ const CanvasRenderer = ({
           grassBottomImage,
           grassBottomRightImage
         };
+        const minimalAssets = { sproutPlayerImage, sproutCoinImage };
         
-        // Debug: Log tile image availability (only once per second to avoid spam)
-        if (Math.random() < 0.016) { // ~1/60 chance per frame = ~1 per second at 60fps
-          console.log('🖼️ Grass tile images status:', {
-            grassTopLeftImage: !!grassTopLeftImage,
-            grassTopImage: !!grassTopImage,
-            grassTopRightImage: !!grassTopRightImage,
-            grassLeftImage: !!grassLeftImage,
-            grassCenterImage: !!grassCenterImage,
-            grassRightImage: !!grassRightImage,
-            grassBottomLeftImage: !!grassBottomLeftImage,
-            grassBottomImage: !!grassBottomImage,
-            grassBottomRightImage: !!grassBottomRightImage
-          });
-        }
-        
-        renderGrassTerrain(ctx, grassTerrainMap, visibleArea, tileImages);
+        renderGrassTerrain(ctx, grassTerrainMap, visibleArea, tileImages, gameState, minimalAssets);
         
         // Render bush obstacles on top of grass terrain
         if (bushObstacles && bushObstacles.length > 0) {
@@ -372,7 +338,7 @@ const CanvasRenderer = ({
     renderWorldBoundaries(ctx, gameState);
 
     // Render game objects
-    renderTreasureBoxes(ctx, gameState, visibleArea, realisticTreasureImage, treasureOpenedImage, playerDirection);
+    renderTreasureBoxes(ctx, gameState, visibleArea, realisticTreasureImage, treasureOpenedImage, playerDirection, isWildrealm, hoveredTreasureId);
     renderEnvironmentObjects(ctx, gameState, visibleArea);
     renderMonsters(ctx, gameState, visibleArea, {
       goblin: monsterGoblinImage,
@@ -386,7 +352,7 @@ const CanvasRenderer = ({
     }
 
     // Visual movement debug markers (world-space)
-    if (typeof window !== 'undefined' && debugMode) {
+    if (typeof window !== 'undefined' && debugMode && !isWildrealm) {
       renderDebugMovement(ctx, gameState);
     }
 
@@ -1347,7 +1313,7 @@ const renderWorldBoundaries = (ctx, gameState) => {
 };
 
 // Render treasure boxes with viewport culling
-const renderTreasureBoxes = (ctx, gameState, visibleArea, treasureImage, treasureOpenedImage, playerDirection) => {
+const renderTreasureBoxes = (ctx, gameState, visibleArea, treasureImage, treasureOpenedImage, playerDirection, isWildrealm = false, hoveredTreasureId = null) => {
   const { startTileX, endTileX, startTileY, endTileY } = visibleArea;
   const startX = startTileX * GAME_CONFIG.TILE_SIZE;
   const endX = endTileX * GAME_CONFIG.TILE_SIZE;
@@ -1366,7 +1332,147 @@ const renderTreasureBoxes = (ctx, gameState, visibleArea, treasureImage, treasur
       const treasureScreenX = treasure.x - gameState.camera.x;
       const treasureScreenY = treasure.y - gameState.camera.y;
       
-      if (treasure.collected) {
+      const isOpening = !!treasure.opening && typeof treasure.openStartTime === 'number';
+      const isClosing = !!treasure.closing && typeof treasure.closeStartTime === 'number';
+
+      if (isOpening) {
+        const duration = 600;
+        const elapsed = Math.max(0, Date.now() - treasure.openStartTime);
+        const progress = Math.min(1, elapsed / duration);
+        ctx.save();
+        // Draw closed chest fading out
+        const closedAlpha = 1 - progress;
+        if (treasureImage.current && treasureImage.current.complete && treasureImage.current.naturalWidth !== 0) {
+          ctx.globalAlpha = closedAlpha;
+          ctx.drawImage(
+            treasureImage.current,
+            treasureScreenX - GAME_CONFIG.TREASURE_SIZE / 2,
+            treasureScreenY - GAME_CONFIG.TREASURE_SIZE / 2,
+            GAME_CONFIG.TREASURE_SIZE,
+            GAME_CONFIG.TREASURE_SIZE
+          );
+        } else {
+          ctx.globalAlpha = closedAlpha;
+          ctx.fillStyle = '#FFD700';
+          ctx.fillRect(
+            treasureScreenX - GAME_CONFIG.TREASURE_SIZE / 2, 
+            treasureScreenY - GAME_CONFIG.TREASURE_SIZE / 2, 
+            GAME_CONFIG.TREASURE_SIZE, 
+            GAME_CONFIG.TREASURE_SIZE
+          );
+          ctx.fillStyle = '#FFA500';
+          ctx.fillRect(
+            treasureScreenX - GAME_CONFIG.TREASURE_SIZE / 2 + 5, 
+            treasureScreenY - GAME_CONFIG.TREASURE_SIZE / 2 + 5, 
+            GAME_CONFIG.TREASURE_SIZE - 10, 
+            GAME_CONFIG.TREASURE_SIZE - 10
+          );
+        }
+
+        // Draw opened chest fading in
+        const openedAlpha = progress;
+        if (treasureOpenedImage.current && treasureOpenedImage.current.complete && treasureOpenedImage.current.naturalWidth !== 0) {
+          ctx.globalAlpha = openedAlpha;
+          ctx.drawImage(
+            treasureOpenedImage.current,
+            treasureScreenX - GAME_CONFIG.TREASURE_SIZE / 2,
+            treasureScreenY - GAME_CONFIG.TREASURE_SIZE / 2,
+            GAME_CONFIG.TREASURE_SIZE,
+            GAME_CONFIG.TREASURE_SIZE
+          );
+        } else {
+          ctx.globalAlpha = openedAlpha;
+          ctx.fillStyle = '#8B4513';
+          ctx.fillRect(
+            treasureScreenX - GAME_CONFIG.TREASURE_SIZE / 2, 
+            treasureScreenY - GAME_CONFIG.TREASURE_SIZE / 2 + GAME_CONFIG.TREASURE_SIZE * 0.3, 
+            GAME_CONFIG.TREASURE_SIZE, 
+            GAME_CONFIG.TREASURE_SIZE * 0.7
+          );
+          ctx.fillStyle = '#FFD700';
+          ctx.beginPath();
+          ctx.arc(treasureScreenX - GAME_CONFIG.TREASURE_SIZE * 0.2, treasureScreenY + GAME_CONFIG.TREASURE_SIZE * 0.1, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(treasureScreenX + GAME_CONFIG.TREASURE_SIZE * 0.2, treasureScreenY + GAME_CONFIG.TREASURE_SIZE * 0.1, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        
+        // Subtle glow ramping up
+        const glowIntensity = Math.sin(Date.now() * 0.01) * 0.2 + 0.8 * progress;
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = `rgba(255, 255, 0, ${Math.max(0, Math.min(0.25, glowIntensity * 0.25))})`;
+        ctx.fillRect(
+          treasureScreenX - GAME_CONFIG.TREASURE_SIZE / 2 + 2, 
+          treasureScreenY - GAME_CONFIG.TREASURE_SIZE / 2 + GAME_CONFIG.TREASURE_SIZE * 0.4, 
+          GAME_CONFIG.TREASURE_SIZE - 4, 
+          GAME_CONFIG.TREASURE_SIZE * 0.5
+        );
+        ctx.restore();
+      } else if (isClosing) {
+        const duration = 600;
+        const elapsed = Math.max(0, Date.now() - treasure.closeStartTime);
+        const progress = Math.min(1, elapsed / duration);
+        ctx.save();
+        // Draw opened chest fading out
+        const openedAlpha = 1 - progress;
+        if (treasureOpenedImage.current && treasureOpenedImage.current.complete && treasureOpenedImage.current.naturalWidth !== 0) {
+          ctx.globalAlpha = openedAlpha;
+          ctx.drawImage(
+            treasureOpenedImage.current,
+            treasureScreenX - GAME_CONFIG.TREASURE_SIZE / 2,
+            treasureScreenY - GAME_CONFIG.TREASURE_SIZE / 2,
+            GAME_CONFIG.TREASURE_SIZE,
+            GAME_CONFIG.TREASURE_SIZE
+          );
+        } else {
+          ctx.globalAlpha = openedAlpha;
+          ctx.fillStyle = '#8B4513';
+          ctx.fillRect(
+            treasureScreenX - GAME_CONFIG.TREASURE_SIZE / 2, 
+            treasureScreenY - GAME_CONFIG.TREASURE_SIZE / 2 + GAME_CONFIG.TREASURE_SIZE * 0.3, 
+            GAME_CONFIG.TREASURE_SIZE, 
+            GAME_CONFIG.TREASURE_SIZE * 0.7
+          );
+          ctx.fillStyle = '#FFD700';
+          ctx.beginPath();
+          ctx.arc(treasureScreenX - GAME_CONFIG.TREASURE_SIZE * 0.2, treasureScreenY + GAME_CONFIG.TREASURE_SIZE * 0.1, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(treasureScreenX + GAME_CONFIG.TREASURE_SIZE * 0.2, treasureScreenY + GAME_CONFIG.TREASURE_SIZE * 0.1, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Draw closed chest fading in
+        const closedAlpha = progress;
+        if (treasureImage.current && treasureImage.current.complete && treasureImage.current.naturalWidth !== 0) {
+          ctx.globalAlpha = closedAlpha;
+          ctx.drawImage(
+            treasureImage.current,
+            treasureScreenX - GAME_CONFIG.TREASURE_SIZE / 2,
+            treasureScreenY - GAME_CONFIG.TREASURE_SIZE / 2,
+            GAME_CONFIG.TREASURE_SIZE,
+            GAME_CONFIG.TREASURE_SIZE
+          );
+        } else {
+          ctx.globalAlpha = closedAlpha;
+          ctx.fillStyle = '#FFD700';
+          ctx.fillRect(
+            treasureScreenX - GAME_CONFIG.TREASURE_SIZE / 2, 
+            treasureScreenY - GAME_CONFIG.TREASURE_SIZE / 2, 
+            GAME_CONFIG.TREASURE_SIZE, 
+            GAME_CONFIG.TREASURE_SIZE
+          );
+          ctx.fillStyle = '#FFA500';
+          ctx.fillRect(
+            treasureScreenX - GAME_CONFIG.TREASURE_SIZE / 2 + 5, 
+            treasureScreenY - GAME_CONFIG.TREASURE_SIZE / 2 + 5, 
+            GAME_CONFIG.TREASURE_SIZE - 10, 
+            GAME_CONFIG.TREASURE_SIZE - 10
+          );
+        }
+        ctx.restore();
+      } else if (treasure.collected) {
         // Use opened treasure box SVG if available
         if (treasureOpenedImage.current && treasureOpenedImage.current.complete && treasureOpenedImage.current.naturalWidth !== 0) {
           ctx.drawImage(
@@ -1434,8 +1540,8 @@ const renderTreasureBoxes = (ctx, gameState, visibleArea, treasureImage, treasur
           );
         }
         
-        // Sparkles for unopened boxes
-        if (!treasure.collected) {
+        // Sparkles for unopened boxes (disable during wildrealm opening)
+        if (!treasure.collected && !isWildrealm) {
           const sparkleCount = 2;
           ctx.fillStyle = '#FFFF00';
           for (let i = 0; i < sparkleCount; i++) {
@@ -1449,8 +1555,40 @@ const renderTreasureBoxes = (ctx, gameState, visibleArea, treasureImage, treasur
         }
       }
       
+      // Hover highlight on nearest chest under cursor
+      if (!treasure.collected && hoveredTreasureId && treasure.id === hoveredTreasureId) {
+        const pulse = Math.sin(Date.now() * 0.01) * 0.3 + 0.7;
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 255, 255, 0.8)';
+        ctx.shadowBlur = 15;
+        ctx.strokeStyle = `rgba(0, 255, 255, ${pulse})`;
+        ctx.lineWidth = 3;
+        ctx.strokeRect(
+          treasureScreenX - GAME_CONFIG.TREASURE_SIZE / 2 - 6,
+          treasureScreenY - GAME_CONFIG.TREASURE_SIZE / 2 - 6,
+          GAME_CONFIG.TREASURE_SIZE + 12,
+          GAME_CONFIG.TREASURE_SIZE + 12
+        );
+        // Simple tooltip above chest
+        const label = isWildrealm ? 'Open' : 'Inspect';
+        ctx.font = '12px Arial';
+        const metrics = ctx.measureText(label);
+        const w = metrics.width + 10;
+        const h = 18;
+        const lx = treasureScreenX - w / 2;
+        const ly = treasureScreenY - GAME_CONFIG.TREASURE_SIZE / 2 - h - 8;
+        ctx.fillStyle = 'rgba(0,0,0,0.6)';
+        ctx.fillRect(lx, ly, w, h);
+        ctx.strokeStyle = 'rgba(0,255,255,0.8)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(lx, ly, w, h);
+        ctx.fillStyle = '#ccffff';
+        ctx.fillText(label, lx + 5, ly + h - 6);
+        ctx.restore();
+      }
+
       // Interaction glow for nearby treasures (green when facing, yellow otherwise)
-      if (treasure.nearPlayer && !treasure.collected) {
+      if (!isWildrealm && treasure.nearPlayer && !treasure.collected) {
         const playerX = gameState.player.x;
         const playerY = gameState.player.y;
         const dx = treasure.x - playerX;
@@ -1490,7 +1628,7 @@ const renderTreasureBoxes = (ctx, gameState, visibleArea, treasureImage, treasur
       }
       
   // Visual debug overlay for chest spacing
-  if (GAME_CONFIG.SHOW_TREASURE_DEBUG) {
+  if (!isWildrealm && GAME_CONFIG.SHOW_TREASURE_DEBUG) {
         // Compute nearest-neighbor distance across all treasure boxes
         let nearest = Infinity;
         for (const other of gameState.treasureBoxes) {
@@ -1516,7 +1654,7 @@ const renderTreasureBoxes = (ctx, gameState, visibleArea, treasureImage, treasur
 });
 
   // Optional grid overlay for visualizing world spacing
-  if (GAME_CONFIG.SHOW_TREASURE_DEBUG_GRID) {
+  if (!isWildrealm && GAME_CONFIG.SHOW_TREASURE_DEBUG_GRID) {
     const target = GAME_CONFIG.TREASURE_TARGET_COUNT || 1;
     const worldAreaPx = (GAME_CONFIG.WORLD_SIZE * GAME_CONFIG.TILE_SIZE) ** 2;
     const perChestArea = worldAreaPx / Math.max(1, target);

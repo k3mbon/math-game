@@ -124,7 +124,7 @@ function AppContent() {
 
   return (
     <div className="app-container">
-      {user && location.pathname !== '/login' && location.pathname !== '/signup' && (
+      {location.pathname !== '/login' && location.pathname !== '/signup' && (
         <Navbar />
       )}
       <Suspense fallback={<div className="loading-screen">Loading...</div>}>

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import './OpenWorldGame.css';
 import { GAME_CONFIG } from '../config/gameConfig';
 import { useGameState } from '../hooks/useGameState';
@@ -10,17 +10,18 @@ import { terrainBoundarySystem } from '../utils/terrainBoundarySystem';
 import CanvasRenderer from './CanvasRenderer';
 import HumanCharacter from './HumanCharacter';
 import TreasureQuestionModal from './TreasureQuestionModal';
+import TreasureLootModal from './TreasureLootModal';
 import GameStartMenu from './GameStartMenu';
 import GameMenu from './GameMenu';
 import TerrainRenderer, { getStoredTerrainData, hasStoredTerrain, getWalkableTiles, getCollisionTiles } from './TerrainRenderer';
 // Load NumerationProblem.json dynamically to support loading states and errors
 import { useNavigate } from 'react-router-dom';
-import Navbar from './Navbar';
 import { gameProfiler, usePerformanceMonitor } from '../utils/performanceProfiler';
 import { useResourceManager } from '../utils/resourceManager';
 import PerformanceMonitor from './PerformanceMonitor';
 import { soundEffects } from '../utils/soundEffects';
 import { useInteractionSystem } from '../utils/interactionSystem';
+import { generateLootForTreasure, applyLoot } from '../utils/lootSystem';
 
 // Import testing framework in development mode
 if (import.meta.env?.DEV) {
@@ -68,18 +69,11 @@ const OpenWorldGame = () => {
   const navigate = useNavigate();
   const canvasRef = useRef(null);
   
-  // Initialize performance monitoring with null checks
-  const performanceMonitor = usePerformanceMonitor(true);
-  const { profiler, startTimer, endTimer, getReport, getSuggestions } = performanceMonitor || {
-    profiler: null,
-    startTimer: () => {},
-    endTimer: () => {},
-    getReport: () => null,
-    getSuggestions: () => []
-  };
-  
   // Initialize resource management
   const resourceManager = useResourceManager();
+  
+  // Initialize resource management (moved above, keep hook order consistent)
+  // Already initialized above
 
   // Interaction helpers (distance + facing)
   const { canInteractFacing, isFacing } = useInteractionSystem();
@@ -106,10 +100,14 @@ const OpenWorldGame = () => {
   const [showQuestionModal, setShowQuestionModal] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [currentTreasureBox, setCurrentTreasureBox] = useState(null);
+  const [showLootModal, setShowLootModal] = useState(false);
+  const [currentLoot, setCurrentLoot] = useState(null);
   const [questions, setQuestions] = useState(null);
   const [questionsLoading, setQuestionsLoading] = useState(true);
   const [questionsError, setQuestionsError] = useState(null);
   const [showCoinAnimation, setShowCoinAnimation] = useState(false);
+  const [hoveredTreasureId, setHoveredTreasureId] = useState(null);
+  const lastHoverSoundRef = useRef(0);
   const [isMoving, setIsMoving] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [animationState, setAnimationState] = useState('idle');
@@ -176,6 +174,29 @@ const OpenWorldGame = () => {
   const initialPlayerY = 500;
   
   const { gameState, updateGameState } = useGameState(initialPlayerX, initialPlayerY);
+
+  // Wildrealm-specific debug cleanup: derived flag
+  const isWildrealm = useMemo(() => (
+    !!(gameState.worldSeed && gameState.worldSeed.toString().includes('wildrealm'))
+  ), [gameState.worldSeed]);
+
+  // Initialize performance monitoring with null checks; disable in wildrealm
+  const performanceMonitor = usePerformanceMonitor(!isWildrealm);
+  const { profiler, startTimer, endTimer, getReport, getSuggestions } = performanceMonitor || {
+    profiler: null,
+    startTimer: () => {},
+    endTimer: () => {},
+    getReport: () => null,
+    getSuggestions: () => []
+  };
+
+  // Clear console and in-memory debug logs when in wildrealm
+  useEffect(() => {
+    if (isWildrealm) {
+      try { console.clear(); } catch (e) {}
+      updateGameState(prev => ({ ...prev, debugLogs: [] }));
+    }
+  }, [isWildrealm, updateGameState]);
 
   // Load grass terrain tiles
   useEffect(() => {
@@ -1004,13 +1025,26 @@ const OpenWorldGame = () => {
     const clickX = e.clientX - rect.left + gameState.camera.x;
     const clickY = e.clientY - rect.top + gameState.camera.y;
 
-    // Check treasure boxes near click
+    // Check treasure boxes near click with proper collision + facing gating
+    const playerX = gameState.player?.x ?? 0;
+    const playerY = gameState.player?.y ?? 0;
     const clickableTreasure = gameState.treasureBoxes?.find(treasure => {
       if (treasure.collected) return false;
       const dx = clickX - treasure.x;
       const dy = clickY - treasure.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
-      return distance <= GAME_CONFIG.TILE_SIZE * 0.9; // allow small radius click
+      const withinClickRadius = distance <= GAME_CONFIG.TILE_SIZE * 0.9;
+      const canFace = canInteractFacing(
+        playerX,
+        playerY,
+        playerDirection,
+        treasure.x,
+        treasure.y,
+        GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE,
+        GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE,
+        0.5
+      );
+      return withinClickRadius && canFace;
     });
     if (clickableTreasure) {
       handleTreasureInteraction(clickableTreasure.id);
@@ -1041,27 +1075,38 @@ const OpenWorldGame = () => {
   const handleTreasureInteraction = useCallback((treasureId) => {
     const treasureBox = gameState.treasureBoxes.find(t => t.id === treasureId);
     if (treasureBox && !treasureBox.collected) {
-      // Skip popup for wildrealm level - directly collect treasure
+      try { soundEffects.playMenuClick(); } catch {}
+      // Trigger opening animation state immediately
+      updateGameState(prev => ({
+        ...prev,
+        treasureBoxes: prev.treasureBoxes.map(treasure => 
+          treasure.id === treasureId 
+            ? { ...treasure, opening: true, openStartTime: Date.now() }
+            : treasure
+        )
+      }));
+      // Wildrealm: show loot modal after opening animation
       if (gameState.worldSeed && gameState.worldSeed.toString().includes('wildrealm')) {
-        // Play success sound for wildrealm level
-        soundEffects.playSuccess();
-        
-        updateGameState(prev => ({
-          ...prev,
-          treasureBoxes: prev.treasureBoxes.map(treasure => 
-            treasure.id === treasureId 
-              ? { ...treasure, collected: true, opened: false }
-              : treasure
-          ),
-          score: prev.score + 100, // Add points for collecting treasure
-          crystalsCollected: prev.crystalsCollected + 1 // Award 1 crystal
-        }));
-        
-        // Trigger coin animation overlay
-        setShowCoinAnimation(true);
-        setTimeout(() => setShowCoinAnimation(false), 1200);
-        
-        return; // Skip the modal entirely
+        const loot = generateLootForTreasure({
+          chestId: treasureId,
+          depthLevel: gameState.depthLevel || 0,
+          worldSeed: gameState.worldSeed || ''
+        });
+        // After short opening animation, mark chest visually open and show loot modal
+        setTimeout(() => {
+          updateGameState(prev => ({
+            ...prev,
+            treasureBoxes: prev.treasureBoxes.map(treasure => 
+              treasure.id === treasureId 
+                ? { ...treasure, opened: true, opening: false }
+                : treasure
+            )
+          }));
+          setCurrentTreasureBox({ ...treasureBox });
+          setCurrentLoot(loot);
+          setShowLootModal(true);
+        }, 600);
+        return;
       }
 
       // Mark chest as opened for visual feedback while modal is shown
@@ -1095,6 +1140,39 @@ const OpenWorldGame = () => {
     }
   }, [gameState.treasureBoxes, gameState.depthLevel, gameState.worldSeed, updateGameState, questionsLoading, questions, questionsError]);
 
+  // Handle loot modal actions (wildrealm)
+  const handleLootCollect = useCallback(() => {
+    if (!currentTreasureBox || !currentLoot) {
+      setShowLootModal(false);
+      return;
+    }
+    // Apply loot and mark chest collected
+    updateGameState(prev => {
+      const withLoot = applyLoot(prev, currentLoot);
+      return {
+        ...withLoot,
+        treasureBoxes: withLoot.treasureBoxes.map(treasure => 
+          treasure.id === currentTreasureBox.id 
+            ? { ...treasure, collected: true, opened: true }
+            : treasure
+        )
+      };
+    });
+    setShowLootModal(false);
+    setCurrentLoot(null);
+    setCurrentTreasureBox(null);
+    // Success feedback
+    try { soundEffects.playSuccess(); } catch {}
+    setShowCoinAnimation(true);
+    setTimeout(() => setShowCoinAnimation(false), 1200);
+  }, [currentTreasureBox, currentLoot, updateGameState]);
+
+  const handleLootClose = useCallback(() => {
+    // Just close modal, keep chest open for now
+    setShowLootModal(false);
+    setCurrentLoot(null);
+  }, []);
+
   // Handle question solve
   const handleQuestionSolve = useCallback(() => {
     if (currentTreasureBox) {
@@ -1124,14 +1202,28 @@ const OpenWorldGame = () => {
   const handleQuestionClose = useCallback(() => {
     // Close modal and reset chest open state if any
     if (currentTreasureBox) {
+      const closeId = currentTreasureBox.id;
+      try { soundEffects.playMenuClick(); } catch {}
+      // Trigger closing animation
       updateGameState(prev => ({
         ...prev,
         treasureBoxes: prev.treasureBoxes.map(treasure => 
-          treasure.id === currentTreasureBox.id 
-            ? { ...treasure, opened: false } 
+          treasure.id === closeId 
+            ? { ...treasure, closing: true, closeStartTime: Date.now() } 
             : treasure
         )
       }));
+      // Clear closing state after animation
+      setTimeout(() => {
+        updateGameState(prev => ({
+          ...prev,
+          treasureBoxes: prev.treasureBoxes.map(treasure => 
+            treasure.id === closeId 
+              ? { ...treasure, closing: false, opened: false } 
+              : treasure
+          )
+        }));
+      }, 600);
     }
     setShowQuestionModal(false);
     setCurrentQuestion(null);
@@ -1141,14 +1233,28 @@ const OpenWorldGame = () => {
   // Provide a Skip handler: close popup without rewards and reset chest to interactable state
   const handleQuestionSkip = useCallback(() => {
     if (currentTreasureBox) {
+      const closeId = currentTreasureBox.id;
+      try { soundEffects.playMenuClick(); } catch {}
+      // Trigger closing animation
       updateGameState(prev => ({
         ...prev,
         treasureBoxes: prev.treasureBoxes.map(treasure => 
-          treasure.id === currentTreasureBox.id 
-            ? { ...treasure, opened: false } 
+          treasure.id === closeId 
+            ? { ...treasure, closing: true, closeStartTime: Date.now() } 
             : treasure
         )
       }));
+      // Clear closing state after animation
+      setTimeout(() => {
+        updateGameState(prev => ({
+          ...prev,
+          treasureBoxes: prev.treasureBoxes.map(treasure => 
+            treasure.id === closeId 
+              ? { ...treasure, closing: false, opened: false } 
+              : treasure
+          )
+        }));
+      }, 600);
     }
     setShowQuestionModal(false);
     setCurrentQuestion(null);
@@ -1402,11 +1508,48 @@ const OpenWorldGame = () => {
     const canvas = canvasRef.current;
     if (canvas) {
       canvas.addEventListener('click', handleCanvasClick);
+      const handleCanvasMouseMove = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left + (gameState?.camera?.x || 0);
+        const mouseY = e.clientY - rect.top + (gameState?.camera?.y || 0);
+
+        let closestId = null;
+        let closestDist2 = Infinity;
+        const hoverRadius = (GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE) * 0.6;
+        const hoverRadius2 = hoverRadius * hoverRadius;
+
+        const treasures = Array.isArray(gameState?.treasureBoxes) ? gameState.treasureBoxes : [];
+        for (const t of treasures) {
+          if (!t || t.collected) continue;
+          const dx = mouseX - t.x;
+          const dy = mouseY - t.y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 <= hoverRadius2 && d2 < closestDist2) {
+            closestDist2 = d2;
+            closestId = t.id;
+          }
+        }
+
+        setHoveredTreasureId(prev => {
+          if (prev !== closestId) {
+            const now = Date.now();
+            if (closestId && now - (lastHoverSoundRef.current || 0) > 200) {
+              try { soundEffects.playMenuHover(); } catch {}
+              lastHoverSoundRef.current = now;
+            }
+          }
+          return closestId;
+        });
+
+        canvas.style.cursor = closestId ? 'pointer' : '';
+      };
+      canvas.addEventListener('mousemove', handleCanvasMouseMove);
       return () => {
         canvas.removeEventListener('click', handleCanvasClick);
+        canvas.removeEventListener('mousemove', handleCanvasMouseMove);
       };
     }
-  }, [handleCanvasClick]);
+  }, [handleCanvasClick, gameState?.camera, gameState?.treasureBoxes]);
 
   // Initialize canvas
   useEffect(() => {
@@ -1461,7 +1604,6 @@ const OpenWorldGame = () => {
 
   return (
     <div className="open-world-game">
-      <Navbar />
       <div className="game-container">
         <div className="game-ui">
           <div className="controls-info">
@@ -1491,72 +1633,74 @@ const OpenWorldGame = () => {
             </button>
           </div>
           
-          {/* Debug Information Panel */}
-          <div className="debug-panel" style={{
-            position: 'absolute',
-            top: '10px',
-            right: '10px',
-            background: 'rgba(0,0,0,0.8)',
-            color: 'white',
-            padding: '10px',
-            borderRadius: '5px',
-            fontSize: '12px',
-            minWidth: '200px'
-          }}>
-            <h4>Rendering Debug Info</h4>
-            <p>Images Loaded: {renderingStats.imagesLoaded}/{renderingStats.totalImages}</p>
-            <p>Canvas Ready: {renderingStats.canvasReady ? 'Yes' : 'No'}</p>
-            <p>Last Render: {renderingStats.lastRenderTime}ms</p>
-            <p>Player Position: ({Math.round(gameState.player.x)}, {Math.round(gameState.player.y)})</p>
-            <p>Player Direction: {playerDirection}</p>
-            <p>Moving: {gameState.player?.isMoving ? 'Yes' : 'No'}</p>
-            <p>Paused: {gamePaused ? 'Yes' : 'No'} | Menu: {showStartMenu ? 'Shown' : 'Hidden'}</p>
-            <p>Keys: {Array.isArray(gameState.lastKeys) ? gameState.lastKeys.join(', ') : 'None'}</p>
-            {gameState.player?.lastMoveDebug && (
-              <div style={{ marginTop: '8px' }}>
-                <p>Proposed: ({Math.round(gameState.player.lastMoveDebug.proposed.x)}, {Math.round(gameState.player.lastMoveDebug.proposed.y)})</p>
-                <p>Final: ({Math.round(gameState.player.lastMoveDebug.final.x)}, {Math.round(gameState.player.lastMoveDebug.final.y)})</p>
-                <p>Blocked: {gameState.player.lastMoveDebug.blocked ? 'Yes' : 'No'}{gameState.player.lastMoveDebug.reason ? ` (${gameState.player.lastMoveDebug.reason})` : ''}</p>
-              </div>
-            )}
-            {/* Edge Detection Status */}
-            {gameState.player.atEdge && (
-              <div style={{ marginTop: '10px', padding: '5px', background: 'rgba(255,255,0,0.3)', borderRadius: '3px' }}>
-              <p style={{ color: '#ffff00', fontWeight: 'bold', margin: '0' }}>
-                  🏔️ At Map Edge: {
-                    Object.entries(gameState.player.atEdge)
-                      .filter(([_, value]) => value)
-                      .map(([key, _]) => key)
-                      .join(', ')
-                  }
-                </p>
-              </div>
-            )}
-            {/* Recent Debug Logs */}
-            <div style={{ marginTop: '8px', maxHeight: '160px', overflowY: 'auto', borderTop: '1px solid rgba(255,255,255,0.2)' }}>
-              {Array.isArray(gameState.debugLogs) && gameState.debugLogs.slice(-6).map((log, idx) => (
-                <div key={idx} style={{ opacity: 0.9 }}>
-                  <span>[{new Date(log.t).toLocaleTimeString()}] </span>
-                  <span>{log.type}: {log.msg}</span>
-                  {log.reason && <span> · {log.reason}</span>}
+          {/* Debug Information Panel - hidden in wildrealm */}
+          {!isWildrealm && (
+            <div className="debug-panel" style={{
+              position: 'absolute',
+              top: '10px',
+              right: '10px',
+              background: 'rgba(0,0,0,0.8)',
+              color: 'white',
+              padding: '10px',
+              borderRadius: '5px',
+              fontSize: '12px',
+              minWidth: '200px'
+            }}>
+              <h4>Rendering Debug Info</h4>
+              <p>Images Loaded: {renderingStats.imagesLoaded}/{renderingStats.totalImages}</p>
+              <p>Canvas Ready: {renderingStats.canvasReady ? 'Yes' : 'No'}</p>
+              <p>Last Render: {renderingStats.lastRenderTime}ms</p>
+              <p>Player Position: ({Math.round(gameState.player.x)}, {Math.round(gameState.player.y)})</p>
+              <p>Player Direction: {playerDirection}</p>
+              <p>Moving: {gameState.player?.isMoving ? 'Yes' : 'No'}</p>
+              <p>Paused: {gamePaused ? 'Yes' : 'No'} | Menu: {showStartMenu ? 'Shown' : 'Hidden'}</p>
+              <p>Keys: {Array.isArray(gameState.lastKeys) ? gameState.lastKeys.join(', ') : 'None'}</p>
+              {gameState.player?.lastMoveDebug && (
+                <div style={{ marginTop: '8px' }}>
+                  <p>Proposed: ({Math.round(gameState.player.lastMoveDebug.proposed.x)}, {Math.round(gameState.player.lastMoveDebug.proposed.y)})</p>
+                  <p>Final: ({Math.round(gameState.player.lastMoveDebug.final.x)}, {Math.round(gameState.player.lastMoveDebug.final.y)})</p>
+                  <p>Blocked: {gameState.player.lastMoveDebug.blocked ? 'Yes' : 'No'}{gameState.player.lastMoveDebug.reason ? ` (${gameState.player.lastMoveDebug.reason})` : ''}</p>
                 </div>
-              ))}
+              )}
+              {/* Edge Detection Status */}
+              {gameState.player.atEdge && (
+                <div style={{ marginTop: '10px', padding: '5px', background: 'rgba(255,255,0,0.3)', borderRadius: '3px' }}>
+                <p style={{ color: '#ffff00', fontWeight: 'bold', margin: '0' }}>
+                    🏔️ At Map Edge: {
+                      Object.entries(gameState.player.atEdge)
+                        .filter(([_, value]) => value)
+                        .map(([key, _]) => key)
+                        .join(', ')
+                    }
+                  </p>
+                </div>
+              )}
+              {/* Recent Debug Logs */}
+              <div style={{ marginTop: '8px', maxHeight: '160px', overflowY: 'auto', borderTop: '1px solid rgba(255,255,255,0.2)' }}>
+                {Array.isArray(gameState.debugLogs) && gameState.debugLogs.slice(-6).map((log, idx) => (
+                  <div key={idx} style={{ opacity: 0.9 }}>
+                    <span>[{new Date(log.t).toLocaleTimeString()}] </span>
+                    <span>{log.type}: {log.msg}</span>
+                    {log.reason && <span> · {log.reason}</span>}
+                  </div>
+                ))}
+              </div>
+              <button 
+                onClick={() => setDebugMode(!debugMode)}
+                style={{
+                  marginTop: '5px',
+                  padding: '5px 10px',
+                  background: debugMode ? '#ff4444' : '#44ff44',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '3px',
+                  cursor: 'pointer'
+                }}
+              >
+                {debugMode ? 'Disable Debug' : 'Enable Debug'}
+              </button>
             </div>
-            <button 
-              onClick={() => setDebugMode(!debugMode)}
-              style={{
-                marginTop: '5px',
-                padding: '5px 10px',
-                background: debugMode ? '#ff4444' : '#44ff44',
-                color: 'white',
-                border: 'none',
-                borderRadius: '3px',
-                cursor: 'pointer'
-              }}
-            >
-              {debugMode ? 'Disable Debug' : 'Enable Debug'}
-            </button>
-          </div>
+          )}
           
           {/* Edge Warning Overlay */}
           {gameState.player.atEdge && (Object.values(gameState.player.atEdge).some(edge => edge)) && (
@@ -1605,6 +1749,7 @@ const OpenWorldGame = () => {
         <CanvasRenderer 
           gameState={gameState}
           canvasRef={canvasRef}
+          hoveredTreasureId={hoveredTreasureId}
           playerImage={loadedImages.player}
           playerFrontImage={loadedImages.playerFront}
           playerBackImage={loadedImages.playerBack}
@@ -1651,6 +1796,7 @@ const OpenWorldGame = () => {
           onTreasureInteraction={handleTreasureInteraction}
           skipPlayerRendering={true}
           debugMode={debugMode}
+          isWildrealm={isWildrealm}
         />
         
         {/* Kubo Character Overlay - positioned relative to canvas */}
@@ -2007,6 +2153,13 @@ const OpenWorldGame = () => {
         onSkip={handleQuestionSkip}
         isLoading={questionsLoading}
         error={questionsError}
+      />
+
+      <TreasureLootModal
+        isOpen={showLootModal}
+        loot={currentLoot}
+        onCollect={handleLootCollect}
+        onClose={handleLootClose}
       />
 
       {showCoinAnimation && (

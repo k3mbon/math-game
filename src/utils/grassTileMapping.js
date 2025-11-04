@@ -122,15 +122,16 @@ export const generateTerrainMap = (width, height) => {
     const selectedBush = bushTypes[Math.floor(Math.random() * bushTypes.length)];
     
     const bush = {
-      x: x * LEGACY_LAYOUT_DIMENSIONS.TILE_SIZE,
-      y: y * LEGACY_LAYOUT_DIMENSIONS.TILE_SIZE,
+      // Store bush coordinates in TILE units to align with renderer and collision systems
+      x: x,
+      y: y,
       width: LEGACY_LAYOUT_DIMENSIONS.TILE_SIZE,
       height: LEGACY_LAYOUT_DIMENSIONS.TILE_SIZE,
       type: 'bush',
       asset: selectedBush,
       walkable: false,
-      collidable: true, // All bushes are impassable
-      enhanced: true, // Mark as enhanced obstacle
+      collidable: true,
+      enhanced: true,
       legacyProportions: true,
       id: `bush_${x}_${y}_${placedBushes}`
     };
@@ -145,6 +146,7 @@ export const generateTerrainMap = (width, height) => {
   console.log(`🌿 Generated enhanced terrain map: ${scaledWidth}x${scaledHeight} with ${placedBushes} bush obstacles (${bushDensity * 100}% coverage)`);
   console.log(`📐 Legacy layout proportions applied: ${LEGACY_LAYOUT_DIMENSIONS.CANVAS_WIDTH}x${LEGACY_LAYOUT_DIMENSIONS.CANVAS_HEIGHT}`);
   console.log(`🎯 Bush placement: ${attempts} attempts, ${placedBushes}/${targetBushCount} bushes placed with ${minSpacing}-tile spacing`);
+  console.log('🧭 Bush obstacle coordinates stored in TILE units (renderer multiplies by TILE_SIZE)');
   
   return {
     map,

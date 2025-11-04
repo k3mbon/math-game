@@ -109,6 +109,23 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
         // Apply movement with enhanced collision detection
         const proposedX = newX + inputX * moveSpeed;
         const proposedY = newY + inputY * moveSpeed;
+
+        // Helper: check collision against treasure chests (block if not collected)
+        const isChestBlockingAtPosition = (px, py, treasure) => {
+          if (!treasure || treasure.collected) return false;
+          const playerHalf = GAME_CONFIG.PLAYER_SIZE / 2;
+          const chestHalf = GAME_CONFIG.TREASURE_SIZE / 2;
+          const intersectsX = Math.abs(px - treasure.x) < (playerHalf + chestHalf);
+          const intersectsY = Math.abs(py - treasure.y) < (playerHalf + chestHalf);
+          return intersectsX && intersectsY;
+        };
+        const isAnyChestBlocking = (px, py, treasures) => {
+          if (!Array.isArray(treasures)) return false;
+          for (const t of treasures) {
+            if (isChestBlockingAtPosition(px, py, t)) return true;
+          }
+          return false;
+        };
         
         // Calculate world boundaries in pixels - allow precise edge movement
         const worldPixelSize = GAME_CONFIG.WORLD_SIZE * GAME_CONFIG.TILE_SIZE;
@@ -125,19 +142,23 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
         let movementBlocked = false;
         let blockedReason = '';
         
-        // First attempt: Check the proposed position
-        if (!checkWalkable(proposedX, proposedY)) {
+        // First attempt: Check the proposed position for terrain or chest collision
+        const terrainBlocked = !checkWalkable(proposedX, proposedY);
+        const chestBlocked = isAnyChestBlocking(proposedX, proposedY, prev.treasureBoxes);
+        if (terrainBlocked || chestBlocked) {
           movementBlocked = true;
-          blockedReason = 'proposed_position_blocked';
+          blockedReason = terrainBlocked ? 'proposed_position_blocked' : 'treasure_collision';
           if (import.meta.env?.DEV) {
-            console.log('⛔ Movement blocked at proposed position:', { proposedX, proposedY });
+            console.log('⛔ Movement blocked at proposed position:', { proposedX, proposedY, terrainBlocked, chestBlocked });
           }
           
           // Second attempt: Try horizontal movement only
           if (inputX !== 0) {
             const testX = newX + inputX * moveSpeed;
             const clampedTestX = Math.max(minBoundary, Math.min(maxBoundaryX, testX));
-            if (checkWalkable(clampedTestX, newY)) {
+            const terrainOK = checkWalkable(clampedTestX, newY);
+            const chestOK = !isAnyChestBlocking(clampedTestX, newY, prev.treasureBoxes);
+            if (terrainOK && chestOK) {
               finalX = clampedTestX;
               finalY = newY;
               movementBlocked = false;
@@ -152,7 +173,9 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
           if (movementBlocked && inputY !== 0) {
             const testY = newY + inputY * moveSpeed;
             const clampedTestY = Math.max(minBoundary, Math.min(maxBoundaryY, testY));
-            if (checkWalkable(newX, clampedTestY)) {
+            const terrainOK = checkWalkable(newX, clampedTestY);
+            const chestOK = !isAnyChestBlocking(newX, clampedTestY, prev.treasureBoxes);
+            if (terrainOK && chestOK) {
               finalX = newX;
               finalY = clampedTestY;
               movementBlocked = false;
@@ -168,8 +191,9 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
             const reducedSpeed = moveSpeed * 0.5;
             const reducedX = newX + inputX * reducedSpeed;
             const reducedY = newY + inputY * reducedSpeed;
-            
-            if (checkWalkable(reducedX, reducedY)) {
+            const terrainOK = checkWalkable(reducedX, reducedY);
+            const chestOK = !isAnyChestBlocking(reducedX, reducedY, prev.treasureBoxes);
+            if (terrainOK && chestOK) {
               finalX = reducedX;
               finalY = reducedY;
               movementBlocked = false;
@@ -228,22 +252,19 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
           }
         }
         
-        // Update treasure box proximity detection
+        // Update treasure box proximity detection (fix: use center positions)
         const proximityDistance = 2 * GAME_CONFIG.TILE_SIZE;
         const updatedTreasureBoxes = prev.treasureBoxes.map(treasure => {
           if (treasure.collected) {
             return { ...treasure, nearPlayer: false };
           }
-          
-          const playerCenterX = finalX + GAME_CONFIG.PLAYER_SIZE / 2;
-          const playerCenterY = finalY + GAME_CONFIG.PLAYER_SIZE / 2;
-          const treasureCenterX = treasure.x + GAME_CONFIG.TREASURE_SIZE / 2;
-          const treasureCenterY = treasure.y + GAME_CONFIG.TREASURE_SIZE / 2;
-          
-          const distance = Math.sqrt(
-            Math.pow(playerCenterX - treasureCenterX, 2) + 
-            Math.pow(playerCenterY - treasureCenterY, 2)
-          );
+          const playerCenterX = finalX;
+          const playerCenterY = finalY;
+          const treasureCenterX = treasure.x;
+          const treasureCenterY = treasure.y;
+          const dx = playerCenterX - treasureCenterX;
+          const dy = playerCenterY - treasureCenterY;
+          const distance = Math.sqrt(dx * dx + dy * dy);
           
           return {
             ...treasure,

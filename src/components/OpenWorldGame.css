@@ -1,16 +1,15 @@
 .open-world-game {
-  position: fixed;
-  top: 64px; /* Height of the navbar */
-  left: 0;
+  position: relative;
   width: 100%;
-  height: calc(100vh - 64px); /* Adjust height to account for navbar */
+  margin-top: var(--navbar-height, 64px);
+  height: calc(100vh - var(--navbar-height, 64px)); /* account for navbar */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center; /* Center the canvas vertically */
   background: linear-gradient(135deg, var(--primary-200) 0%, var(--secondary-300) 50%, var(--accent-400) 100%);
   font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  overflow: hidden;
+  overflow: visible; /* allow overlays without clipping */
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -26,8 +25,9 @@
   /* Remove CSS width/height to use canvas element dimensions */
   display: block;
   margin: 0 auto; /* Center the canvas horizontally */
-  max-height: calc(100vh - 150px); /* Ensure it fits within the available space with padding */
+  max-height: calc(100vh - var(--navbar-height, 64px) - 120px); /* fit within viewport below navbar */
   max-width: calc(100vw - 40px); /* Ensure it fits within viewport width */
+  box-sizing: border-box;
 }
 
 /* Remove empty ruleset */
