@@ -1,5 +1,5 @@
 // Resource management utilities for optimized memory usage and asset loading
-import { GAME_CONFIG } from '../config/gameConfig';
+import { GAME_CONFIG } from '../config/gameConfig.js';
 
 // Asset cache with LRU eviction policy
 export class AssetCache {

@@ -4,17 +4,19 @@
  */
 
 // Import all test suites
-import { PerformanceTestSuite } from './performanceTests';
-import { CollisionTestSuite } from './collisionTests';
-import { GameSystemTestSuite } from './gameSystemTests';
-import { TestRunner } from './testRunner';
+import { PerformanceTestSuite } from './performanceTests.js';
+import { CollisionTestSuite } from './collisionTests.js';
+import { GameSystemTestSuite } from './gameSystemTests.js';
+import { TestRunner } from './testRunner.js';
+import * as MovementTests from './movementTest.js';
 
 // Export all test suites and runner
 export {
   PerformanceTestSuite,
   CollisionTestSuite,
   GameSystemTestSuite,
-  TestRunner
+  TestRunner,
+  MovementTests
 };
 
 // Convenience functions for quick testing
@@ -36,6 +38,10 @@ export const runCollisionTests = async () => {
 export const runGameSystemTests = async () => {
   const suite = new GameSystemTestSuite();
   return await suite.runAllTests();
+};
+
+export const runMovementTests = async () => {
+  return await MovementTests.runAllTests?.();
 };
 
 export const runBenchmarks = async () => {
@@ -76,11 +82,13 @@ if (process.env.NODE_ENV === 'development') {
     runPerformanceTests,
     runCollisionTests,
     runGameSystemTests,
+    runMovementTests,
     runBenchmarks,
     TestRunner,
     PerformanceTestSuite,
     CollisionTestSuite,
-    GameSystemTestSuite
+    GameSystemTestSuite,
+    MovementTests
   };
 
   // Add console commands
@@ -90,5 +98,6 @@ if (process.env.NODE_ENV === 'development') {
   console.log('  - mathGameTests.runPerformanceTests()');
   console.log('  - mathGameTests.runCollisionTests()');
   console.log('  - mathGameTests.runGameSystemTests()');
+  console.log('  - mathGameTests.runMovementTests()');
   console.log('  - mathGameTests.runBenchmarks()');
 }

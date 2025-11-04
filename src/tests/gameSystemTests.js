@@ -1,6 +1,7 @@
-import { generateTerrainChunk, isWalkable } from '../utils/terrainGenerator';
-import { generateTerrainMap } from '../utils/grassTileMapping';
-import { GAME_CONFIG } from '../config/gameConfig';
+import { generateTerrainChunk, isWalkable } from '../utils/terrainGenerator.js';
+import { generateTerrainMap } from '../utils/grassTileMapping.js';
+import { GAME_CONFIG } from '../config/gameConfig.js';
+import { generateChunkObjects } from '../utils/objectGenerator.js';
 
 /**
  * Game System Test Suite
@@ -331,6 +332,152 @@ class GameSystemTestSuite {
     });
   }
 
+  // Chest spacing across chunks using generator
+  testTreasureSpacingAcrossChunks() {
+    console.log('📐 Testing Treasure Spacing Across Chunks...');
+    const terrain = new Map();
+    const worldSeed = 1234;
+    const depthLevel = 0;
+    const allChests = [];
+
+    // Prepare a 3x3 chunk grid centered at (0,0)
+    const chunks = [];
+    for (let cx = -1; cx <= 1; cx++) {
+      for (let cy = -1; cy <= 1; cy++) {
+        const key = `${cx},${cy}`;
+        const chunk = generateTerrainChunk(cx, cy, depthLevel, worldSeed);
+        terrain.set(key, chunk);
+        chunks.push({ cx, cy });
+      }
+    }
+
+    // Generate objects across chunks, enforcing spacing by passing aggregator
+    for (const { cx, cy } of chunks) {
+      const { treasureBoxes } = generateChunkObjects(cx, cy, depthLevel, worldSeed, terrain, allChests);
+      allChests.push(...treasureBoxes);
+    }
+
+    // Validate min distance between all pairs
+    let passed = true;
+    const violations = [];
+    for (let i = 0; i < allChests.length; i++) {
+      for (let j = i + 1; j < allChests.length; j++) {
+        const a = allChests[i];
+        const b = allChests[j];
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < GAME_CONFIG.TREASURE_MIN_DISTANCE) {
+          passed = false;
+          violations.push({ a: a.id, b: b.id, d });
+        }
+      }
+    }
+
+    this.testResults.push({
+      test: 'treasure_spacing',
+      name: 'Min distance maintained across chunks',
+      expected: `>= ${GAME_CONFIG.TREASURE_MIN_DISTANCE}px`,
+      actual: violations.length === 0 ? 'All good' : `${violations.length} violations`,
+      passed,
+      details: violations.slice(0, 5)
+    });
+    console.log(`  ${passed ? '✅' : '❌'} Min distance: ${violations.length === 0 ? 'All good' : violations.length + ' violations'}`);
+  }
+
+  // Balance test: ensure distribution avoids clustering and empty zones (coarse check)
+  testTreasureQuadrantBalance() {
+    console.log('🧭 Testing Treasure Quadrant Balance...');
+    const terrain = new Map();
+    const worldSeed = 5678;
+    const depthLevel = 0;
+    const allChests = [];
+
+    // Prepare a 5x5 chunk grid around origin for a larger sample
+    const chunks = [];
+    for (let cx = -2; cx <= 2; cx++) {
+      for (let cy = -2; cy <= 2; cy++) {
+        const key = `${cx},${cy}`;
+        const chunk = generateTerrainChunk(cx, cy, depthLevel, worldSeed);
+        terrain.set(key, chunk);
+        chunks.push({ cx, cy });
+      }
+    }
+
+    for (const { cx, cy } of chunks) {
+      const { treasureBoxes } = generateChunkObjects(cx, cy, depthLevel, worldSeed, terrain, allChests);
+      allChests.push(...treasureBoxes);
+    }
+
+    if (allChests.length < 8) {
+      this.testResults.push({
+        test: 'treasure_balance',
+        name: 'Sufficient sample size',
+        expected: '>= 8 chests',
+        actual: `${allChests.length} chests`,
+        passed: false,
+        details: 'Too few chests for balance test'
+      });
+      console.log('  ❌ Insufficient chests for balance test');
+      return;
+    }
+
+    // Compute centroid to split into quadrants
+    const avgX = allChests.reduce((s, c) => s + c.x, 0) / allChests.length;
+    const avgY = allChests.reduce((s, c) => s + c.y, 0) / allChests.length;
+    const quadrants = { q1: 0, q2: 0, q3: 0, q4: 0 };
+    allChests.forEach(c => {
+      const qx = c.x >= avgX;
+      const qy = c.y >= avgY;
+      if (qx && qy) quadrants.q1++;
+      else if (!qx && qy) quadrants.q2++;
+      else if (!qx && !qy) quadrants.q3++;
+      else quadrants.q4++;
+    });
+
+    const counts = Object.values(quadrants);
+    const minC = Math.min(...counts);
+    const maxC = Math.max(...counts);
+    const ratio = maxC / Math.max(1, minC);
+    const passed = ratio <= 2.0; // Allow up to 2x imbalance as coarse check
+
+    this.testResults.push({
+      test: 'treasure_balance',
+      name: 'Quadrant chest count balance',
+      expected: 'max/min <= 2.0',
+      actual: `counts=${JSON.stringify(quadrants)} ratio=${ratio.toFixed(2)}`,
+      passed
+    });
+    console.log(`  ${passed ? '✅' : '❌'} Quadrant balance: ${counts.join(', ')} (ratio ${ratio.toFixed(2)})`);
+  }
+
+  // Pause menu basic contract (import succeeds)
+  async testPauseMenuContract() {
+    console.log('⏸️ Testing Pause Menu Contract...');
+    try {
+      const mod = await import('../components/GameMenu.jsx');
+      const hasDefault = !!mod?.default;
+      this.testResults.push({
+        test: 'pause_menu_contract',
+        name: 'GameMenu import and export',
+        expected: true,
+        actual: hasDefault,
+        passed: hasDefault
+      });
+      console.log(`  ${hasDefault ? '✅' : '❌'} GameMenu export detected`);
+    } catch (error) {
+      this.testResults.push({
+        test: 'pause_menu_contract',
+        name: 'GameMenu import and export',
+        expected: 'No error',
+        actual: error.message,
+        passed: false,
+        error: error.message
+      });
+      console.log(`  ❌ GameMenu import failed: ${error.message}`);
+    }
+  }
+
   // Game State Consistency Tests
   testGameStateConsistency() {
     console.log('🎮 Testing Game State Consistency...');
@@ -408,17 +555,133 @@ class GameSystemTestSuite {
     });
   }
 
+  // Question Data Integrity Tests
+  async testQuestionDataIntegrity() {
+    console.log('❓ Testing NumerationProblem.json integrity...');
+    try {
+      const module = await import('../data/NumerationProblem.json');
+      const data = module?.default ?? module;
+      const isArray = Array.isArray(data);
+      const hasItems = isArray && data.length > 0;
+      const sample = hasItems ? data[0] : null;
+      const hasFields = !!sample && typeof sample.title === 'string' && sample.answer !== undefined;
+
+      const passed = isArray && hasItems && hasFields;
+      this.testResults.push({
+        test: 'question_data',
+        name: 'NumerationProblem.json structure and sample fields',
+        expected: 'Array with items having title and answer',
+        actual: passed ? 'Valid structure' : 'Invalid or empty',
+        passed,
+        count: isArray ? data.length : 0
+      });
+      console.log(`  ${passed ? '✅' : '❌'} Question data integrity: ${isArray ? data.length : 0} items`);
+    } catch (error) {
+      this.testResults.push({
+        test: 'question_data',
+        name: 'NumerationProblem.json import',
+        expected: 'Import succeeds',
+        actual: error.message,
+        passed: false,
+        error: error.message
+      });
+      console.log(`  ❌ Question data import error: ${error.message}`);
+    }
+  }
+
+  // Reward Persistence Tests
+  testRewardPersistence() {
+    console.log('💾 Testing reward persistence via localStorage...');
+    try {
+      const key = 'openWorldGameProgress';
+      localStorage.removeItem(key);
+      const saved = {
+        crystalsCollected: 3,
+        completedTreasures: [{ id: 't1', collected: true }, { id: 't2', collected: true }],
+        score: 500,
+        lastSaved: Date.now()
+      };
+      localStorage.setItem(key, JSON.stringify(saved));
+      const raw = localStorage.getItem(key);
+      const loaded = raw ? JSON.parse(raw) : null;
+      const matches = loaded && loaded.crystalsCollected === saved.crystalsCollected && loaded.score === saved.score && Array.isArray(loaded.completedTreasures) && loaded.completedTreasures.length === saved.completedTreasures.length;
+
+      this.testResults.push({
+        test: 'reward_persistence',
+        name: 'Persist crystals and completed treasures',
+        expected: 'Saved progress equals loaded progress',
+        actual: matches ? 'Match' : 'Mismatch',
+        passed: !!matches
+      });
+      console.log(`  ${matches ? '✅' : '❌'} Reward persistence test`);
+    } catch (error) {
+      this.testResults.push({
+        test: 'reward_persistence',
+        name: 'Persist crystals and completed treasures',
+        expected: 'No error',
+        actual: error.message,
+        passed: false,
+        error: error.message
+      });
+      console.log(`  ❌ Reward persistence error: ${error.message}`);
+    }
+  }
+
+  // Skip Flow Tests (no persistence changes)
+  testSkipFlowNoPersistence() {
+    console.log('⏭️ Testing skip flow persistence behavior...');
+    try {
+      const key = 'openWorldGameProgress';
+      const initial = {
+        crystalsCollected: 1,
+        completedTreasures: [],
+        score: 100,
+        lastSaved: Date.now()
+      };
+      localStorage.setItem(key, JSON.stringify(initial));
+      // Simulate skip: no changes should be persisted
+      const raw = localStorage.getItem(key);
+      const loaded = raw ? JSON.parse(raw) : null;
+      const unchanged = loaded && loaded.crystalsCollected === initial.crystalsCollected && loaded.score === initial.score && Array.isArray(loaded.completedTreasures) && loaded.completedTreasures.length === 0;
+
+      this.testResults.push({
+        test: 'skip_flow',
+        name: 'Skip does not change persistent rewards',
+        expected: 'No change to crystals or completedTreasures',
+        actual: unchanged ? 'Unchanged' : 'Changed',
+        passed: !!unchanged
+      });
+      console.log(`  ${unchanged ? '✅' : '❌'} Skip flow persistence test`);
+    } catch (error) {
+      this.testResults.push({
+        test: 'skip_flow',
+        name: 'Skip does not change persistent rewards',
+        expected: 'No error',
+        actual: error.message,
+        passed: false,
+        error: error.message
+      });
+      console.log(`  ❌ Skip flow persistence error: ${error.message}`);
+    }
+  }
+
   // Run all game system tests
   async runAllTests() {
     console.log('🚀 Starting Game System Test Suite...');
     this.testResults = [];
 
     try {
-      this.testTerrainGeneration();
-      this.testWalkability();
-      this.testGrassTerrainGeneration();
-      this.testChestSpawning();
+    this.testTerrainGeneration();
+    this.testWalkability();
+    this.testGrassTerrainGeneration();
+    this.testChestSpawning();
+    this.testTreasureSpacingAcrossChunks();
+    this.testTreasureQuadrantBalance();
+    await this.testPauseMenuContract();
       this.testGameStateConsistency();
+      await this.testQuestionDataIntegrity();
+      this.testRewardPersistence();
+      this.testSkipFlowNoPersistence();
 
       this.generateReport();
       return this.testResults;

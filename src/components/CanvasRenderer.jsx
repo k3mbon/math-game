@@ -216,6 +216,7 @@ const CanvasRenderer = ({
   playerDirection,
   treeImage,
   realisticTreeImage,
+  downloadedTreeImage,
   bridgeImage,
   cliffImage,
   highGrassImage,
@@ -250,7 +251,8 @@ const CanvasRenderer = ({
   isAttacking,
   attackTarget,
   onTreasureInteraction,
-  skipPlayerRendering = false
+  skipPlayerRendering = false,
+  debugMode = false
 }) => {
   const frameCountRef = useRef(0);
   const grassTilesInitialized = useRef(false);
@@ -283,7 +285,7 @@ const CanvasRenderer = ({
     gameProfiler.startTimer('render');
 
     // Use optimized rendering
-    renderingOptimizer.optimizedRender(gameState, (optimizer) => {
+  renderingOptimizer.optimizedRender(gameState, (optimizer) => {
       // Clear canvas with appropriate background
       const bgColor = gameState.depthLevel === 0 ? WORLD_COLORS.surface : WORLD_COLORS.cave;
       ctx.fillStyle = bgColor;
@@ -348,6 +350,7 @@ const CanvasRenderer = ({
         renderTerrain(ctx, gameState, visibleArea, {
           treeImage,
           realisticTreeImage,
+          downloadedTreeImage,
           bridgeImage,
           cliffImage,
           highGrassImage,
@@ -369,7 +372,7 @@ const CanvasRenderer = ({
     renderWorldBoundaries(ctx, gameState);
 
     // Render game objects
-    renderTreasureBoxes(ctx, gameState, visibleArea, realisticTreasureImage, treasureOpenedImage);
+    renderTreasureBoxes(ctx, gameState, visibleArea, realisticTreasureImage, treasureOpenedImage, playerDirection);
     renderEnvironmentObjects(ctx, gameState, visibleArea);
     renderMonsters(ctx, gameState, visibleArea, {
       goblin: monsterGoblinImage,
@@ -380,6 +383,11 @@ const CanvasRenderer = ({
     // Only render player if not using external character component
     if (!skipPlayerRendering) {
       renderPlayer(ctx, gameState, playerImage, playerSpriteImage, playerFrontImage, playerBackImage, playerLeftImage, playerRightImage, playerDirection);
+    }
+
+    // Visual movement debug markers (world-space)
+    if (typeof window !== 'undefined' && debugMode) {
+      renderDebugMovement(ctx, gameState);
     }
 
     // Restore context
@@ -393,7 +401,7 @@ const CanvasRenderer = ({
     // End render profiling
     gameProfiler.endTimer('render');
 
-  }, [gameState, playerImage, playerSpriteImage, playerFrontImage, playerBackImage, playerLeftImage, playerRightImage, playerDirection, treeImage, realisticTreeImage, bridgeImage, cliffImage, highGrassImage, rockyGroundImage, caveEntranceImage, realisticWaterImage, realisticRockImage, realisticTreasureImage, treasureOpenedImage, sproutPlayerImage, sproutCoinImage, monsterGoblinImage, monsterDragonImage, monsterOrcImage, waterGrassShorelineVerticalImage, waterGrassShorelineImage, realisticGrassImage, grassWaterShorelineCornerImage, isAttacking, attackTarget]);
+  }, [gameState, playerImage, playerSpriteImage, playerFrontImage, playerBackImage, playerLeftImage, playerRightImage, playerDirection, treeImage, realisticTreeImage, downloadedTreeImage, bridgeImage, cliffImage, highGrassImage, rockyGroundImage, caveEntranceImage, realisticWaterImage, realisticRockImage, realisticTreasureImage, treasureOpenedImage, sproutPlayerImage, sproutCoinImage, monsterGoblinImage, monsterDragonImage, monsterOrcImage, waterGrassShorelineVerticalImage, waterGrassShorelineImage, realisticGrassImage, grassWaterShorelineCornerImage, isAttacking, attackTarget]);
 
   return null; // This component only handles rendering
 };
@@ -898,8 +906,10 @@ const renderTerrainPattern = (ctx, tile, tileX, tileY, gameState, assets) => {
       break;
       
     case 'FOREST':
-      // Try to use realistic tree asset first, fallback to original SVG
-      const activeTreeImage = (realisticTreeImage.current && realisticTreeImage.current.complete && realisticTreeImage.current.naturalWidth !== 0) 
+      // Try to use downloaded tree PNG first, then realistic tree asset, fallback to original SVG
+      const activeTreeImage = (downloadedTreeImage.current && downloadedTreeImage.current.complete && downloadedTreeImage.current.naturalWidth !== 0) 
+        ? downloadedTreeImage
+        : (realisticTreeImage.current && realisticTreeImage.current.complete && realisticTreeImage.current.naturalWidth !== 0) 
         ? realisticTreeImage 
         : treeImage;
         
@@ -1337,7 +1347,7 @@ const renderWorldBoundaries = (ctx, gameState) => {
 };
 
 // Render treasure boxes with viewport culling
-const renderTreasureBoxes = (ctx, gameState, visibleArea, treasureImage, treasureOpenedImage) => {
+const renderTreasureBoxes = (ctx, gameState, visibleArea, treasureImage, treasureOpenedImage, playerDirection) => {
   const { startTileX, endTileX, startTileY, endTileY } = visibleArea;
   const startX = startTileX * GAME_CONFIG.TILE_SIZE;
   const endX = endTileX * GAME_CONFIG.TILE_SIZE;
@@ -1439,13 +1449,36 @@ const renderTreasureBoxes = (ctx, gameState, visibleArea, treasureImage, treasur
         }
       }
       
-      // Interaction glow for nearby treasures
+      // Interaction glow for nearby treasures (green when facing, yellow otherwise)
       if (treasure.nearPlayer && !treasure.collected) {
+        const playerX = gameState.player.x;
+        const playerY = gameState.player.y;
+        const dx = treasure.x - playerX;
+        const dy = treasure.y - playerY;
+        const mag = Math.max(1, Math.hypot(dx, dy));
+        const dir = (() => {
+          switch (playerDirection) {
+            case 'up':
+            case 'back':
+              return { x: 0, y: -1 };
+            case 'down':
+            case 'front':
+              return { x: 0, y: 1 };
+            case 'left':
+              return { x: -1, y: 0 };
+            case 'right':
+              return { x: 1, y: 0 };
+            default:
+              return { x: 0, y: 1 };
+          }
+        })();
+        const cosAngle = (dx / mag) * dir.x + (dy / mag) * dir.y;
+        const facing = cosAngle >= 0.5; // 60° cone
         const glowIntensity = Math.sin(Date.now() * 0.01) * 0.3 + 0.7;
         ctx.save();
-        ctx.shadowColor = '#00FF00';
+        ctx.shadowColor = facing ? '#00FF00' : '#FFFF00';
         ctx.shadowBlur = 20;
-        ctx.strokeStyle = `rgba(0, 255, 0, ${glowIntensity})`;
+        ctx.strokeStyle = facing ? `rgba(0, 255, 0, ${glowIntensity})` : `rgba(255, 255, 0, ${glowIntensity})`;
         ctx.lineWidth = 3;
         ctx.strokeRect(
           treasure.x - GAME_CONFIG.TREASURE_SIZE / 2 - 5,
@@ -1455,8 +1488,68 @@ const renderTreasureBoxes = (ctx, gameState, visibleArea, treasureImage, treasur
         );
         ctx.restore();
       }
+      
+  // Visual debug overlay for chest spacing
+  if (GAME_CONFIG.SHOW_TREASURE_DEBUG) {
+        // Compute nearest-neighbor distance across all treasure boxes
+        let nearest = Infinity;
+        for (const other of gameState.treasureBoxes) {
+          if (!other || other.id === treasure.id) continue;
+          const dx = treasure.x - other.x;
+          const dy = treasure.y - other.y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < nearest) nearest = d;
+        }
+        const color = nearest < GAME_CONFIG.TREASURE_MIN_DISTANCE ? 'rgba(255,0,0,0.8)' : 'rgba(0,255,0,0.8)';
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(treasureScreenX, treasureScreenY, GAME_CONFIG.TREASURE_MIN_DISTANCE / 2, 0, Math.PI * 2);
+        ctx.stroke();
+        // Label measured nearest distance
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '10px Arial';
+        const label = isFinite(nearest) ? `${Math.round(nearest)}px` : 'n/a';
+      ctx.fillText(label, treasureScreenX + 8, treasureScreenY - 8);
     }
-  });
+  }
+});
+
+  // Optional grid overlay for visualizing world spacing
+  if (GAME_CONFIG.SHOW_TREASURE_DEBUG_GRID) {
+    const target = GAME_CONFIG.TREASURE_TARGET_COUNT || 1;
+    const worldAreaPx = (GAME_CONFIG.WORLD_SIZE * GAME_CONFIG.TILE_SIZE) ** 2;
+    const perChestArea = worldAreaPx / Math.max(1, target);
+    const gridSpacing = Math.max(120, Math.min(600, Math.sqrt(perChestArea) * 0.7));
+
+    const startX = visibleArea.startTileX * GAME_CONFIG.TILE_SIZE;
+    const endX = visibleArea.endTileX * GAME_CONFIG.TILE_SIZE;
+    const startY = visibleArea.startTileY * GAME_CONFIG.TILE_SIZE;
+    const endY = visibleArea.endTileY * GAME_CONFIG.TILE_SIZE;
+
+    const firstX = Math.floor(startX / gridSpacing) * gridSpacing;
+    const firstY = Math.floor(startY / gridSpacing) * gridSpacing;
+
+    ctx.save();
+    ctx.strokeStyle = 'rgba(0, 200, 255, 0.25)';
+    ctx.lineWidth = 1;
+
+    for (let gx = firstX; gx <= endX; gx += gridSpacing) {
+      const screenX = gx - gameState.camera.x;
+      ctx.beginPath();
+      ctx.moveTo(screenX, 0);
+      ctx.lineTo(screenX, GAME_CONFIG.CANVAS_HEIGHT);
+      ctx.stroke();
+    }
+    for (let gy = firstY; gy <= endY; gy += gridSpacing) {
+      const screenY = gy - gameState.camera.y;
+      ctx.beginPath();
+      ctx.moveTo(0, screenY);
+      ctx.lineTo(GAME_CONFIG.CANVAS_WIDTH, screenY);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
 };
 
 // Render monsters with viewport culling
@@ -1592,7 +1685,9 @@ const renderPlayer = (ctx, gameState, playerImage, playerSpriteImage, playerFron
     right: playerRightImage
   };
   
-  const selectedDirectionalImage = directionalImages[playerDirection];
+  // Support synonyms where logic uses 'up'/'down'
+  const normalizedDirection = (playerDirection === 'up') ? 'back' : (playerDirection === 'down') ? 'front' : playerDirection;
+  const selectedDirectionalImage = directionalImages[normalizedDirection];
   
   if (selectedDirectionalImage?.current && selectedDirectionalImage.current.complete && selectedDirectionalImage.current.naturalWidth !== 0) {
     activePlayerImage = selectedDirectionalImage;
@@ -1731,6 +1826,66 @@ const renderMinimap = (ctx, gameState) => {
   ctx.strokeStyle = '#ffffff';
   ctx.lineWidth = 2;
   ctx.strokeRect(minimapX, minimapY, minimapSize, minimapSize);
+};
+
+// Debug movement visualization
+const renderDebugMovement = (ctx, gameState) => {
+  const dbg = gameState?.player?.lastMoveDebug;
+  if (!dbg) return;
+  // Line from source to proposed
+  ctx.save();
+  ctx.strokeStyle = '#3399ff';
+  ctx.setLineDash([6, 4]);
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(dbg.from.x, dbg.from.y);
+  ctx.lineTo(dbg.proposed.x, dbg.proposed.y);
+  ctx.stroke();
+
+  // Line from proposed to final
+  ctx.setLineDash([]);
+  ctx.strokeStyle = dbg.blocked ? '#ff4444' : '#44dd44';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(dbg.proposed.x, dbg.proposed.y);
+  ctx.lineTo(dbg.final.x, dbg.final.y);
+  ctx.stroke();
+
+  // Draw checkpoints around final position (approximate 9-point collision checks)
+  const r = GAME_CONFIG.PLAYER_SIZE / 2;
+  const pts = [
+    { x: dbg.final.x, y: dbg.final.y }, // center
+    { x: dbg.final.x - r, y: dbg.final.y },
+    { x: dbg.final.x + r, y: dbg.final.y },
+    { x: dbg.final.x, y: dbg.final.y - r },
+    { x: dbg.final.x, y: dbg.final.y + r },
+    { x: dbg.final.x - r, y: dbg.final.y - r },
+    { x: dbg.final.x + r, y: dbg.final.y - r },
+    { x: dbg.final.x - r, y: dbg.final.y + r },
+    { x: dbg.final.x + r, y: dbg.final.y + r }
+  ];
+  ctx.fillStyle = dbg.blocked ? 'rgba(255,68,68,0.8)' : 'rgba(68,221,68,0.8)';
+  pts.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // Draw recent position path
+  if (Array.isArray(gameState?.player?.positionHistory) && gameState.player.positionHistory.length > 1) {
+    ctx.strokeStyle = '#ffff00';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([2, 2]);
+    ctx.beginPath();
+    const hist = gameState.player.positionHistory;
+    ctx.moveTo(hist[0].x, hist[0].y);
+    for (let i = 1; i < hist.length; i++) {
+      ctx.lineTo(hist[i].x, hist[i].y);
+    }
+    ctx.stroke();
+  }
+
+  ctx.restore();
 };
 
 export default CanvasRenderer;

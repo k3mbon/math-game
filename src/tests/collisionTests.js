@@ -1,5 +1,5 @@
-import { PhysicsWorld, SpatialHashGrid, CollisionSystem } from '../utils/physicsOptimizer';
-import { GAME_CONFIG } from '../config/gameConfig';
+import { PhysicsWorld, SpatialHashGrid, CollisionSystem } from '../utils/physicsOptimizer.js';
+import { GAME_CONFIG } from '../config/gameConfig.js';
 
 /**
  * Collision System Test Suite

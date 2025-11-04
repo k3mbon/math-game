@@ -1,5 +1,5 @@
 // Rendering optimization utilities for improved game performance
-import { GAME_CONFIG } from '../config/gameConfig';
+import { GAME_CONFIG } from '../config/gameConfig.js';
 
 // Object Pool for reusable objects to reduce garbage collection
 export class ObjectPool {

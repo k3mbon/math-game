@@ -1,5 +1,5 @@
 // Physics optimization utilities for improved game performance
-import { GAME_CONFIG } from '../config/gameConfig';
+import { GAME_CONFIG } from '../config/gameConfig.js';
 
 // Spatial hash grid for efficient collision detection
 export class SpatialHashGrid {

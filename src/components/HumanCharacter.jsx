@@ -37,6 +37,9 @@ const HumanCharacter = ({
     idleAttack: false,
     death: false
   });
+  const [previousDirection, setPreviousDirection] = useState(direction);
+  const [directionTransitionProgress, setDirectionTransitionProgress] = useState(1);
+  const [isDirectionTransitioning, setIsDirectionTransitioning] = useState(false);
 
   // Sprite sheet configurations for different animation states
   const SPRITE_CONFIGS = {
@@ -146,13 +149,13 @@ const HumanCharacter = ({
     };
     
     // Helper function to draw a sprite frame
-    const drawSpriteFrame = (spriteType, opacity = 1) => {
+    const drawSpriteFrame = (spriteType, opacity = 1, dirOverride = direction) => {
       const image = spriteImages.current[spriteType];
       const config = SPRITE_CONFIGS[spriteType];
       
       if (!image || !imagesLoaded[spriteType]) return;
       
-      const directionRow = DIRECTION_MAP[direction] || 0;
+      const directionRow = DIRECTION_MAP[dirOverride] || 0;
       const frameColumn = currentFrame % config.columns;
       const srcX = frameColumn * config.spriteWidth;
       const srcY = directionRow * config.spriteHeight;
@@ -177,6 +180,11 @@ const HumanCharacter = ({
       
       // Draw current state with increasing opacity
       drawSpriteFrame(currentSpriteType, transitionProgress);
+    } else if (isDirectionTransitioning && directionTransitionProgress < 1) {
+      // Blend between previous and current directions within the same animation state
+      const currentSpriteType = getSpriteType(animationState);
+      drawSpriteFrame(currentSpriteType, 1 - directionTransitionProgress, previousDirection);
+      drawSpriteFrame(currentSpriteType, directionTransitionProgress, direction);
     } else {
       // Normal rendering without transition
       const currentSpriteType = getSpriteType(animationState);
@@ -190,7 +198,7 @@ const HumanCharacter = ({
   // Update canvas when frame, direction, or transition state changes
   useEffect(() => {
     renderSprite();
-  }, [currentFrame, direction, imagesLoaded, animationState, isTransitioning, transitionProgress, previousAnimationState]);
+  }, [currentFrame, direction, imagesLoaded, animationState, isTransitioning, transitionProgress, previousAnimationState, isDirectionTransitioning, directionTransitionProgress, previousDirection]);
 
   // Handle animation state transitions
   useEffect(() => {
@@ -232,6 +240,31 @@ const HumanCharacter = ({
     // Default movement transitions
     return 250; // 250ms for normal transitions
   };
+
+  // Handle direction change transitions
+  useEffect(() => {
+    if (direction !== previousDirection) {
+      setIsDirectionTransitioning(true);
+      setDirectionTransitionProgress(0);
+      const oldDirection = direction; // capture new direction in closure
+      setPreviousDirection(prev => prev); // keep existing previousDirection
+      // Run transition
+      const duration = 180; // 180ms for direction turns
+      const interval = setInterval(() => {
+        setDirectionTransitionProgress(prev => {
+          const next = prev + (16 / duration);
+          if (next >= 1) {
+            clearInterval(interval);
+            setIsDirectionTransitioning(false);
+            setPreviousDirection(direction);
+            return 1;
+          }
+          return next;
+        });
+      }, 16);
+      return () => clearInterval(interval);
+    }
+  }, [direction, previousDirection]);
 
   // Enhanced animation timing and state management with smooth transitions
   useEffect(() => {

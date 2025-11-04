@@ -6,6 +6,9 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
   const animationIdRef = useRef(null);
   const lastFrameTimeRef = useRef(0);
   const frameIntervalRef = useRef(1000 / GAME_CONFIG.MAX_FRAME_RATE); // Target frame interval
+  const lastPositionRef = useRef({ x: 0, y: 0 });
+  const positionHistoryRef = useRef([]);
+  const lastDebugLogRef = useRef(0);
 
   useEffect(() => {
     const gameLoop = (currentTime) => {
@@ -24,31 +27,77 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
       lastFrameTimeRef.current = currentTime;
       
       if (!keys || Object.keys(keys).length === 0) {
+        // Debug: no keys registered
+        const now = performance.now();
+        if (import.meta.env?.DEV && now - lastDebugLogRef.current > 500) {
+          console.log('⌨️ No input keys registered');
+          lastDebugLogRef.current = now;
+        }
+        // Record UI-visible debug when keys are missing
+        updateGameState(prev => {
+          const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+          logs.push({
+            t: Date.now(),
+            type: 'input',
+            msg: 'No input keys registered',
+            keys: [],
+          });
+          return { ...prev, debugLogs: logs, status: { ...(prev.status||{}), inputActive: false } };
+        });
         animationIdRef.current = requestAnimationFrame(gameLoop);
         return;
       }
       
-      // Handle movement input with simple smooth movement
+      // Handle movement input with enhanced position tracking
       updateGameState(prev => {
         let newX = prev.player.x;
         let newY = prev.player.y;
         const moveSpeed = GAME_CONFIG.PLAYER_SPEED * frameMultiplier;
         
-        // Movement input detection
+        // Movement input detection with improved key handling
         let inputX = 0;
         let inputY = 0;
+        let hasInput = false;
         
         if (keys['ArrowUp'] || keys['KeyW']) {
           inputY = -1;
+          hasInput = true;
         }
         if (keys['ArrowDown'] || keys['KeyS']) {
           inputY = 1;
+          hasInput = true;
         }
         if (keys['ArrowLeft'] || keys['KeyA']) {
           inputX = -1;
+          hasInput = true;
         }
         if (keys['ArrowRight'] || keys['KeyD']) {
           inputX = 1;
+          hasInput = true;
+        }
+        
+        // Skip movement if no input
+        if (!hasInput) {
+          const now = performance.now();
+          if (import.meta.env?.DEV && now - lastDebugLogRef.current > 500) {
+            const pressed = Object.keys(keys).filter(k => keys[k]);
+            console.log('🕹️ No movement input detected. Pressed keys:', pressed);
+            lastDebugLogRef.current = now;
+          }
+          const pressed = Object.keys(keys).filter(k => keys[k]);
+          return {
+            ...prev,
+            player: {
+              ...prev.player,
+              isMoving: false
+            },
+            status: { ...(prev.status||{}), inputActive: false },
+            debugLogs: (() => {
+              const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+              logs.push({ t: Date.now(), type: 'movement', msg: 'No movement input detected', keys: pressed });
+              return logs;
+            })()
+          };
         }
         
         // Normalize diagonal movement
@@ -57,103 +106,113 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
           inputY *= 0.707;
         }
         
-        // Apply movement directly
-        newX += inputX * moveSpeed;
-        newY += inputY * moveSpeed;
+        // Apply movement with enhanced collision detection
+        const proposedX = newX + inputX * moveSpeed;
+        const proposedY = newY + inputY * moveSpeed;
         
         // Calculate world boundaries in pixels - allow precise edge movement
         const worldPixelSize = GAME_CONFIG.WORLD_SIZE * GAME_CONFIG.TILE_SIZE;
         const playerHalfSize = GAME_CONFIG.PLAYER_SIZE / 2;
         
         // Precise boundary checking - allow movement exactly to the visible map edges
-        // Remove the additional margin to enable walking on border edges
-        const minBoundary = playerHalfSize; // Exact edge of the world
-        const maxBoundaryX = worldPixelSize - playerHalfSize; // Exact opposite edge
-        const maxBoundaryY = worldPixelSize - playerHalfSize; // Exact opposite edge
+        const minBoundary = playerHalfSize;
+        const maxBoundaryX = worldPixelSize - playerHalfSize;
+        const maxBoundaryY = worldPixelSize - playerHalfSize;
         
-        // Store original position for edge detection
-        const wasAtEdge = {
-          left: prev.player.x <= minBoundary + 5,
-          right: prev.player.x >= maxBoundaryX - 5,
-          top: prev.player.y <= minBoundary + 5,
-          bottom: prev.player.y >= maxBoundaryY - 5
-        };
+        // Enhanced collision detection with multiple fallback strategies
+        let finalX = proposedX;
+        let finalY = proposedY;
+        let movementBlocked = false;
+        let blockedReason = '';
         
-        newX = Math.max(minBoundary, Math.min(maxBoundaryX, newX));
-        newY = Math.max(minBoundary, Math.min(maxBoundaryY, newY));
-        
-        // Check if player is now at the exact edge
-        const isAtEdge = {
-          left: newX <= minBoundary + 1,
-          right: newX >= maxBoundaryX - 1,
-          top: newY <= minBoundary + 1,
-          bottom: newY >= maxBoundaryY - 1
-        };
-
-        // Collision detection - simplified walkable check with enhanced edge handling
-        if (!checkWalkable(newX, newY)) {
-          // Enhanced collision handling for edge cases
-          let horizontalMovePossible = false;
-          let verticalMovePossible = false;
+        // First attempt: Check the proposed position
+        if (!checkWalkable(proposedX, proposedY)) {
+          movementBlocked = true;
+          blockedReason = 'proposed_position_blocked';
+          if (import.meta.env?.DEV) {
+            console.log('⛔ Movement blocked at proposed position:', { proposedX, proposedY });
+          }
           
-          // Try horizontal movement only
+          // Second attempt: Try horizontal movement only
           if (inputX !== 0) {
-            const testX = prev.player.x + inputX * moveSpeed;
+            const testX = newX + inputX * moveSpeed;
             const clampedTestX = Math.max(minBoundary, Math.min(maxBoundaryX, testX));
-            if (checkWalkable(clampedTestX, prev.player.y)) {
-              newX = clampedTestX;
-              newY = prev.player.y;
-              horizontalMovePossible = true;
+            if (checkWalkable(clampedTestX, newY)) {
+              finalX = clampedTestX;
+              finalY = newY;
+              movementBlocked = false;
+              blockedReason = '';
+              if (import.meta.env?.DEV) {
+                console.log('➡️ Horizontal move succeeds at:', { finalX, finalY });
+              }
             }
           }
           
-          // Try vertical movement only
-          if (inputY !== 0 && !horizontalMovePossible) {
-            const testY = prev.player.y + inputY * moveSpeed;
+          // Third attempt: Try vertical movement only (if horizontal failed)
+          if (movementBlocked && inputY !== 0) {
+            const testY = newY + inputY * moveSpeed;
             const clampedTestY = Math.max(minBoundary, Math.min(maxBoundaryY, testY));
-            if (checkWalkable(prev.player.x, clampedTestY)) {
-              newX = prev.player.x;
-              newY = clampedTestY;
-              verticalMovePossible = true;
+            if (checkWalkable(newX, clampedTestY)) {
+              finalX = newX;
+              finalY = clampedTestY;
+              movementBlocked = false;
+              blockedReason = '';
+              if (import.meta.env?.DEV) {
+                console.log('⬇️ Vertical move succeeds at:', { finalX, finalY });
+              }
             }
           }
           
-          // If no movement is possible, stay in place
-          if (!horizontalMovePossible && !verticalMovePossible) {
-            newX = prev.player.x;
-            newY = prev.player.y;
+          // Fourth attempt: Try smaller steps (reduced movement)
+          if (movementBlocked) {
+            const reducedSpeed = moveSpeed * 0.5;
+            const reducedX = newX + inputX * reducedSpeed;
+            const reducedY = newY + inputY * reducedSpeed;
+            
+            if (checkWalkable(reducedX, reducedY)) {
+              finalX = reducedX;
+              finalY = reducedY;
+              movementBlocked = false;
+              blockedReason = '';
+              if (import.meta.env?.DEV) {
+                console.log('🐢 Reduced-step move succeeds at:', { finalX, finalY });
+              }
+            }
+          }
+        }
+        
+        // Apply boundary constraints
+        finalX = Math.max(minBoundary, Math.min(maxBoundaryX, finalX));
+        finalY = Math.max(minBoundary, Math.min(maxBoundaryY, finalY));
+        
+        // Enhanced position tracking and validation
+        const positionChanged = Math.abs(finalX - newX) > 0.1 || Math.abs(finalY - newY) > 0.1;
+        const pressedKeys = Object.keys(keys).filter(k => keys[k]);
+        
+        // Track position history for debugging
+        if (positionChanged) {
+          positionHistoryRef.current.push({
+            x: finalX,
+            y: finalY,
+            timestamp: currentTime,
+            inputX,
+            inputY
+          });
+          
+          // Keep only last 10 positions for performance
+          if (positionHistoryRef.current.length > 10) {
+            positionHistoryRef.current.shift();
           }
         }
         
         // Simple camera follow
-        const cameraX = Math.max(0, Math.min(newX - GAME_CONFIG.CANVAS_WIDTH / 2, worldPixelSize - GAME_CONFIG.CANVAS_WIDTH));
-        const cameraY = Math.max(0, Math.min(newY - GAME_CONFIG.CANVAS_HEIGHT / 2, worldPixelSize - GAME_CONFIG.CANVAS_HEIGHT));
+        const cameraX = Math.max(0, Math.min(finalX - GAME_CONFIG.CANVAS_WIDTH / 2, worldPixelSize - GAME_CONFIG.CANVAS_WIDTH));
+        const cameraY = Math.max(0, Math.min(finalY - GAME_CONFIG.CANVAS_HEIGHT / 2, worldPixelSize - GAME_CONFIG.CANVAS_HEIGHT));
         
-        const newCamera = {
-          x: cameraX,
-          y: cameraY
-        };
-
-
-
-        // Load terrain chunks around camera - use tile-based coordinates for chunk calculation
-        const cameraChunkX = Math.floor((newCamera.x + GAME_CONFIG.CANVAS_WIDTH / 2) / (GAME_CONFIG.CHUNK_SIZE * GAME_CONFIG.TILE_SIZE));
-        const cameraChunkY = Math.floor((newCamera.y + GAME_CONFIG.CANVAS_HEIGHT / 2) / (GAME_CONFIG.CHUNK_SIZE * GAME_CONFIG.TILE_SIZE));
-        const updatedTerrain = new Map(prev.terrain);
-        let newTreasureBoxes = [...prev.treasureBoxes];
-        let newMonsters = [...prev.monsters];
-
-        // Update procedural environment system performance
-        globalEnvironmentSystem.updatePerformance(deltaTime);
+        // Load terrain chunks around camera
+        const cameraChunkX = Math.floor((cameraX + GAME_CONFIG.CANVAS_WIDTH / 2) / (GAME_CONFIG.CHUNK_SIZE * GAME_CONFIG.TILE_SIZE));
+        const cameraChunkY = Math.floor((cameraY + GAME_CONFIG.CANVAS_HEIGHT / 2) / (GAME_CONFIG.CHUNK_SIZE * GAME_CONFIG.TILE_SIZE));
         
-        // Get procedural environment objects in view
-        const environmentObjects = globalEnvironmentSystem.getObjectsInView(
-          newCamera.x,
-          newCamera.y,
-          GAME_CONFIG.CANVAS_WIDTH,
-          GAME_CONFIG.CANVAS_HEIGHT
-        );
-
         // Generate terrain chunks in a 3x3 grid around the camera
         const renderDistance = 1;
         for (let dx = -renderDistance; dx <= renderDistance; dx++) {
@@ -168,17 +227,16 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
             }
           }
         }
-
-        // Update treasure box proximity detection (2 units = 2 * TILE_SIZE pixels)
+        
+        // Update treasure box proximity detection
         const proximityDistance = 2 * GAME_CONFIG.TILE_SIZE;
         const updatedTreasureBoxes = prev.treasureBoxes.map(treasure => {
           if (treasure.collected) {
             return { ...treasure, nearPlayer: false };
           }
           
-          // Calculate distance between player center and treasure center
-          const playerCenterX = newX + GAME_CONFIG.PLAYER_SIZE / 2;
-          const playerCenterY = newY + GAME_CONFIG.PLAYER_SIZE / 2;
+          const playerCenterX = finalX + GAME_CONFIG.PLAYER_SIZE / 2;
+          const playerCenterY = finalY + GAME_CONFIG.PLAYER_SIZE / 2;
           const treasureCenterX = treasure.x + GAME_CONFIG.TREASURE_SIZE / 2;
           const treasureCenterY = treasure.y + GAME_CONFIG.TREASURE_SIZE / 2;
           
@@ -193,19 +251,57 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
           };
         });
         
+        // Edge status for UI reporting
+        const atEdge = {
+          left: finalX <= minBoundary + 0.1,
+          right: finalX >= maxBoundaryX - 0.1,
+          top: finalY <= minBoundary + 0.1,
+          bottom: finalY >= maxBoundaryY - 0.1
+        };
+
+        // Build UI-visible debug logs (limited)
+        const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+        logs.push({
+          t: Date.now(),
+          type: 'movement',
+          msg: movementBlocked ? 'Movement blocked' : (positionChanged ? 'Movement applied' : 'No position change'),
+          from: { x: newX, y: newY },
+          proposed: { x: proposedX, y: proposedY },
+          final: { x: finalX, y: finalY },
+          input: { x: inputX, y: inputY },
+          keys: pressedKeys,
+          reason: blockedReason
+        });
+
         return {
           ...prev,
           player: {
             ...prev.player,
-            x: newX,
-            y: newY,
-            isMoving: inputX !== 0 || inputY !== 0,
-            // Add edge detection state for visual feedback
-            atEdge: isAtEdge,
-            wasAtEdge: wasAtEdge
+            x: finalX,
+            y: finalY,
+            isMoving: positionChanged,
+            lastMovement: positionChanged ? { inputX, inputY } : null,
+            positionHistory: positionHistoryRef.current,
+            lastMoveDebug: {
+              from: { x: newX, y: newY },
+              proposed: { x: proposedX, y: proposedY },
+              final: { x: finalX, y: finalY },
+              input: { x: inputX, y: inputY },
+              keys: pressedKeys,
+              blocked: movementBlocked,
+              reason: blockedReason,
+              timestamp: Date.now(),
+              atEdge
+            },
+            atEdge
           },
-          camera: newCamera,
-          treasureBoxes: updatedTreasureBoxes
+          camera: {
+            x: cameraX,
+            y: cameraY
+          },
+          treasureBoxes: updatedTreasureBoxes,
+          status: { inputActive: true, movementBlocked, positionChanged },
+          debugLogs: logs
         };
       });
       
@@ -220,7 +316,7 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
         cancelAnimationFrame(animationIdRef.current);
       }
     };
-  }, [keys, gameState, updateGameState, checkWalkable, generateTerrain]);
+  }, [keys, updateGameState, checkWalkable, generateTerrain]);
 
   return animationIdRef;
 };

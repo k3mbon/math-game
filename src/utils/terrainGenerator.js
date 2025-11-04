@@ -1,5 +1,5 @@
-import { GAME_CONFIG, TERRAIN_TYPES } from '../config/gameConfig';
-import { terrainBoundarySystem, enhancedBushCollisionSystem } from './terrainBoundarySystem';
+import { GAME_CONFIG, TERRAIN_TYPES } from '../config/gameConfig.js';
+import { terrainBoundarySystem, enhancedBushCollisionSystem } from './terrainBoundarySystem.js';
 
 // Seeded random function for consistent world generation
 export const seededRandom = (seed) => {
@@ -69,6 +69,35 @@ const isPointWalkable = (x, y, terrain, customWorld = null, bushObstacles = null
     return false;
   }
   
+  // Check for tree collision on FOREST tiles
+  if (tile.type === 'FOREST') {
+    // Use the same seeded random logic as the renderer to determine if there's a tree
+    const seedValue = (tileX * 73 + tileY * 37) % 1000;
+    const hasTree = seedValue > 600; // 40% chance of tree (same as renderer)
+    
+    if (hasTree) {
+      // Calculate tree position and size (matching renderer logic)
+      const treeWorldX = tileX * GAME_CONFIG.TILE_SIZE;
+      const treeWorldY = tileY * GAME_CONFIG.TILE_SIZE;
+      const sizeVariation = 0.7 + (seedValue / 1000) * 0.5;
+      const treeSize = Math.floor(GAME_CONFIG.TILE_SIZE * 1.3 * sizeVariation);
+      
+      // Center the tree with slight random offset (matching renderer)
+      const offsetVariationX = ((seedValue * 7) % 100 - 50) / 8;
+      const offsetVariationY = ((seedValue * 11) % 100 - 50) / 8;
+      const treeCenterX = treeWorldX + (GAME_CONFIG.TILE_SIZE - treeSize) / 2 + offsetVariationX + treeSize / 2;
+      const treeCenterY = treeWorldY + (GAME_CONFIG.TILE_SIZE - treeSize) / 2 + offsetVariationY + treeSize / 2;
+      
+      // Check if player point collides with tree (using circular collision for more natural feel)
+      const distanceToTree = Math.sqrt((x - treeCenterX) ** 2 + (y - treeCenterY) ** 2);
+      const collisionRadius = treeSize * 0.4; // 40% of tree size for collision
+      
+      if (distanceToTree <= collisionRadius) {
+        return false; // Tree blocks movement
+      }
+    }
+  }
+
   // Enhanced bush obstacle checking with improved collision system
   if (bushObstacles && bushObstacles.length > 0) {
     for (const bush of bushObstacles) {
@@ -108,15 +137,38 @@ const isPointWalkable = (x, y, terrain, customWorld = null, bushObstacles = null
 
 // Check if position is accessible for treasure placement
 export const isAccessibleForTreasure = (x, y, terrain) => {
-  const radius = GAME_CONFIG.TREASURE_SIZE;
-  const positions = [
-    { x: x - radius, y: y - radius },
-    { x: x + radius, y: y - radius },
-    { x: x - radius, y: y + radius },
-    { x: x + radius, y: y + radius }
+  // Check if there's enough clearance around the treasure position
+  // Treasure boxes are typically 32x32 pixels, so we need clearance around that
+  const treasureSize = 32; // pixels
+  const clearance = treasureSize / 2; // Half the treasure size for clearance
+  
+  // Check multiple points around the treasure position for better coverage
+  const checkPoints = [
+    // Center point
+    { x, y },
+    // Cardinal directions
+    { x: x - clearance, y },
+    { x: x + clearance, y },
+    { x, y: y - clearance },
+    { x, y: y + clearance },
+    // Diagonal directions
+    { x: x - clearance * 0.7, y: y - clearance * 0.7 },
+    { x: x + clearance * 0.7, y: y - clearance * 0.7 },
+    { x: x - clearance * 0.7, y: y + clearance * 0.7 },
+    { x: x + clearance * 0.7, y: y + clearance * 0.7 }
   ];
   
-  return positions.every(pos => isWalkable(pos.x, pos.y, terrain));
+  // Count how many points are walkable
+  let walkablePoints = 0;
+  for (const point of checkPoints) {
+    if (isWalkable(point.x, point.y, terrain)) {
+      walkablePoints++;
+    }
+  }
+  
+  // Require at least 60% of points to be walkable for good accessibility
+  const requiredWalkableRatio = 0.6;
+  return walkablePoints >= checkPoints.length * requiredWalkableRatio;
 };
 
 // Force safe walkable terrain around spawn and stairs

@@ -12,6 +12,7 @@
   backdrop-filter: blur(5px);
   padding: 20px;
   box-sizing: border-box;
+  animation: overlayFadeIn 200ms ease-out;
 }
 
 .treasure-modal {
@@ -29,6 +30,7 @@
   flex-direction: column;
   overflow: hidden;
   position: relative;
+  animation: popupEnter 220ms ease-out;
 }
 
 .treasure-modal::before {
@@ -253,7 +255,7 @@
   gap: 10px;
 }
 
-.run-btn, .reset-btn {
+.run-btn, .reset-btn, .skip-btn {
   padding: 10px 20px;
   border: none;
   border-radius: 8px;
@@ -293,6 +295,18 @@
   box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
 }
 
+.skip-btn {
+  background: linear-gradient(135deg, #607D8B 0%, #546E7A 100%);
+  color: white;
+  flex: 0.5;
+}
+
+.skip-btn:hover {
+  background: linear-gradient(135deg, #546E7A 0%, #455A64 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(96, 125, 139, 0.3);
+}
+
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -302,6 +316,76 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes popupEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.loading-banner {
+  background: rgba(255, 215, 0, 0.15);
+  color: #FFD700;
+  padding: 10px;
+  border: 1px dashed #DAA520;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.error-banner {
+  background: rgba(255, 107, 107, 0.15);
+  color: #FF6B6B;
+  padding: 10px;
+  border: 1px dashed #FF6B6B;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.workspace-error {
+  background: rgba(255, 107, 107, 0.15);
+  color: #FF6B6B;
+  padding: 12px;
+  border: 1px solid #FF6B6B;
+  border-radius: 8px;
+}
+
+/* coin collection overlay */
+.coin-collect-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1200;
+}
+
+.coin-collect-burst {
+  background: rgba(255, 215, 0, 0.85);
+  color: #2C1810;
+  font-weight: 800;
+  border: 2px solid #DAA520;
+  border-radius: 999px;
+  padding: 10px 16px;
+  box-shadow: 0 8px 20px rgba(255,215,0,0.5);
+  animation: coinPop 800ms ease-out forwards;
+}
+
+@keyframes coinPop {
+  0% { transform: translateY(10px) scale(0.9); opacity: 0; }
+  40% { transform: translateY(-6px) scale(1.08); opacity: 1; }
+  100% { transform: translateY(-10px) scale(1); opacity: 0; }
 }
 
 /* Responsive design */

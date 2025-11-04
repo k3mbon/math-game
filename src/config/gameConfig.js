@@ -25,6 +25,26 @@ export const GAME_CONFIG = {
   PLAYER_SPEED: 2.5, // Reduced from 3 to 2.5 for smoother movement with larger character
   MONSTER_SPEED: 1,
   INTERACTION_COOLDOWN: 1000, // ms
+
+  // Treasure distribution and debugging
+  TREASURE_MIN_DISTANCE: 160, // Minimum distance between chests (pixels)
+  TREASURE_MAX_DISTANCE: 600, // Maximum preferred distance to nearest chest (pixels)
+  TREASURE_TARGET_COUNT: 120, // Target number of chests across the whole world (surface level)
+  TREASURE_MAX_PER_CHUNK_SURFACE: 1, // Surface max per chunk
+  TREASURE_MAX_PER_CHUNK_CAVE: 2, // Cave max per chunk
+  TREASURE_JITTER_PX: 20, // Random jitter applied around grid sampling centers
+  TREASURE_TERRAIN_WEIGHTS: {
+    GRASS: 1.0,
+    FOREST: 0.9,
+    HIGH_GRASS: 0.8,
+    ROCKY_GROUND: 0.7,
+    DESERT: 0.7,
+    CAVE_FLOOR: 0.9
+  },
+  TREASURE_AVOID_NEAR_SPAWN_RADIUS_TILES: 10, // Avoid placing too close to world spawn
+  TREASURE_WEIGHTED_SAMPLING: true, // Use farthest-point sampling to avoid clustering
+  SHOW_TREASURE_DEBUG: false, // Enable visual spacing overlay for chests
+  SHOW_TREASURE_DEBUG_GRID: false, // Show grid overlay based on optimal world spacing
   
   // World generation seeds
   MAX_DEPTH_LEVEL: 5,

@@ -1,4 +1,4 @@
-import { GAME_CONFIG } from '../config/gameConfig';
+import { GAME_CONFIG } from '../config/gameConfig.js';
 
 /**
  * Terrain Boundary System

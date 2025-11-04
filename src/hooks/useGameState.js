@@ -44,13 +44,14 @@ export const useGameState = (initialPlayerX, initialPlayerY) => {
         );
         terrain.set(chunkKey, chunkTerrain);
         
-        // Generate objects for this chunk
+        // Generate objects for this chunk (pass existing chests to enforce spacing)
         const chunkObjects = generateChunkObjects(
           chunkX,
           chunkY,
           0, // Initial depth level
           worldSeed,
-          terrain
+          terrain,
+          allTreasureBoxes
         );
         
         allTreasureBoxes.push(...chunkObjects.treasureBoxes);

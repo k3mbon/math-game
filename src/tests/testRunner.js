@@ -1,6 +1,6 @@
-import { PerformanceTestSuite } from './performanceTests';
-import { CollisionTestSuite } from './collisionTests';
-import { GameSystemTestSuite } from './gameSystemTests';
+import { PerformanceTestSuite } from './performanceTests.js';
+import { CollisionTestSuite } from './collisionTests.js';
+import { GameSystemTestSuite } from './gameSystemTests.js';
 
 /**
  * Comprehensive Test Runner

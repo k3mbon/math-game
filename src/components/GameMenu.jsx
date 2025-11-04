@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './GameMenu.css';
 import { soundEffects } from '../utils/soundEffects';
 
@@ -19,14 +19,20 @@ const GameMenu = ({
 
   // Handle menu visibility animations
   useEffect(() => {
-    if (isVisible) {
-      setIsAnimating(true);
-      // Play menu open sound
-      soundEffects.playMenuOpen?.();
-    } else {
-      // Delay hiding to allow exit animation
-      const timer = setTimeout(() => setIsAnimating(false), 300);
-      return () => clearTimeout(timer);
+    try {
+      if (isVisible) {
+        setIsAnimating(true);
+        // Play menu open sound
+        soundEffects.playMenuOpen?.();
+        console.log('GameMenu: visible, starting animation');
+      } else {
+        // Delay hiding to allow exit animation
+        const timer = setTimeout(() => setIsAnimating(false), 300);
+        console.log('GameMenu: hidden, ending animation');
+        return () => clearTimeout(timer);
+      }
+    } catch (err) {
+      console.error('GameMenu initialization error:', err);
     }
   }, [isVisible]);
 
@@ -62,7 +68,7 @@ const GameMenu = ({
     handleButtonInteraction('resume', 'pressed');
     setTimeout(() => {
       onResume();
-      onClose();
+      if (onClose) onClose();
     }, 150);
   };
 
@@ -70,7 +76,7 @@ const GameMenu = ({
     handleButtonInteraction('restart', 'pressed');
     setTimeout(() => {
       onRestart();
-      onClose();
+      if (onClose) onClose();
     }, 150);
   };
 
@@ -87,8 +93,8 @@ const GameMenu = ({
   }
 
   return (
-    <div className={`game-menu-overlay ${isVisible ? 'visible' : 'hidden'}`}>
-      <div className={`game-menu-container ${isVisible ? 'slide-in' : 'slide-out'}`}>
+    <div className={`game-menu-overlay ${isVisible ? 'visible' : 'hidden'}`} style={{ background: 'rgba(0,0,0,0.8)' }}>
+      <div className={`game-menu-container ${isVisible ? 'slide-in' : 'slide-out'}`} style={{ color: '#fff' }}>
         <div className="menu-header">
           <h1 className="menu-title">⏸️ Game Paused</h1>
           <p className="menu-subtitle">Choose an option to continue</p>

@@ -13,16 +13,17 @@ import TreasureQuestionModal from './TreasureQuestionModal';
 import GameStartMenu from './GameStartMenu';
 import GameMenu from './GameMenu';
 import TerrainRenderer, { getStoredTerrainData, hasStoredTerrain, getWalkableTiles, getCollisionTiles } from './TerrainRenderer';
-import numerationProblems from '../data/NumerationProblem.json';
+// Load NumerationProblem.json dynamically to support loading states and errors
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import { gameProfiler, usePerformanceMonitor } from '../utils/performanceProfiler';
 import { useResourceManager } from '../utils/resourceManager';
 import PerformanceMonitor from './PerformanceMonitor';
 import { soundEffects } from '../utils/soundEffects';
+import { useInteractionSystem } from '../utils/interactionSystem';
 
 // Import testing framework in development mode
-if (process.env.NODE_ENV === 'development') {
+if (import.meta.env?.DEV) {
   import('../tests/index.js').then(tests => {
     window.mathGameTestFramework = tests;
     console.log('🧪 Math Game Test Framework loaded and available at window.mathGameTestFramework');
@@ -37,6 +38,7 @@ import playerLeftSvg from '../assets/player-left.svg';
 import playerRightSvg from '../assets/player-right.svg';
 import treeSvg from '../assets/forest-tree.svg';
 import realisticTreeSvg from '../assets/realistic-tree.svg';
+import downloadedTreePng from '/assets/downloaded-assets/items/Resources/Trees/Tree.png';
 import bridgeSvg from '../assets/wooden-bridge.svg';
 import cliffSvg from '../assets/cliff.svg';
 import highGrassSvg from '../assets/high-grass.svg';
@@ -78,9 +80,13 @@ const OpenWorldGame = () => {
   
   // Initialize resource management
   const resourceManager = useResourceManager();
+
+  // Interaction helpers (distance + facing)
+  const { canInteractFacing, isFacing } = useInteractionSystem();
   
-  const [gameStarted, setGameStarted] = useState(true); // Start directly in game
+  const [gameStarted, setGameStarted] = useState(false); // Start with menu visible
   const [gamePaused, setGamePaused] = useState(false); // Game pause state
+  const [showStartMenu, setShowStartMenu] = useState(true); // Start menu visibility
   const [keys, setKeys] = useState({});
   const [playerDirection, setPlayerDirection] = useState('front'); // front, back, left, right
   const [grassTilesLoaded, setGrassTilesLoaded] = useState(false); // Track grass tile loading
@@ -100,6 +106,10 @@ const OpenWorldGame = () => {
   const [showQuestionModal, setShowQuestionModal] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [currentTreasureBox, setCurrentTreasureBox] = useState(null);
+  const [questions, setQuestions] = useState(null);
+  const [questionsLoading, setQuestionsLoading] = useState(true);
+  const [questionsError, setQuestionsError] = useState(null);
+  const [showCoinAnimation, setShowCoinAnimation] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [animationState, setAnimationState] = useState('idle');
@@ -130,6 +140,7 @@ const OpenWorldGame = () => {
     playerSprite: useRef(null),
     tree: useRef(null),
     realisticTree: useRef(null),
+    downloadedTree: useRef(null),
     bridge: useRef(null),
     cliff: useRef(null),
     highGrass: useRef(null),
@@ -913,7 +924,8 @@ const OpenWorldGame = () => {
      loadImage(playerRightSvg, loadedImages.playerRight);
      loadImage(sproutPlayerSvg, loadedImages.playerSprite);
      loadImage(treeSvg, loadedImages.tree);
-     loadImage(realisticTreeSvg, loadedImages.realisticTree);
+    loadImage(realisticTreeSvg, loadedImages.realisticTree);
+    loadImage(downloadedTreePng, loadedImages.downloadedTree);
      loadImage(bridgeSvg, loadedImages.bridge);
      loadImage(cliffSvg, loadedImages.cliff);
      loadImage(highGrassSvg, loadedImages.highGrass);
@@ -983,7 +995,7 @@ const OpenWorldGame = () => {
     }
   }, [gameState.player, updateGameState, isMoving, isRunning]);
 
-  // Handle mouse click for attacks
+  // Handle mouse click for treasure interaction and attacks
   const handleCanvasClick = useCallback((e) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -991,6 +1003,19 @@ const OpenWorldGame = () => {
     const rect = canvas.getBoundingClientRect();
     const clickX = e.clientX - rect.left + gameState.camera.x;
     const clickY = e.clientY - rect.top + gameState.camera.y;
+
+    // Check treasure boxes near click
+    const clickableTreasure = gameState.treasureBoxes?.find(treasure => {
+      if (treasure.collected) return false;
+      const dx = clickX - treasure.x;
+      const dy = clickY - treasure.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      return distance <= GAME_CONFIG.TILE_SIZE * 0.9; // allow small radius click
+    });
+    if (clickableTreasure) {
+      handleTreasureInteraction(clickableTreasure.id);
+      return; // prioritize chest interaction over attacks
+    }
     
     // Find closest monster to click position
     let closestMonster = null;
@@ -1010,20 +1035,65 @@ const OpenWorldGame = () => {
     if (closestMonster) {
       attackMonster(closestMonster);
     }
-  }, [gameState.camera, gameState.monsters, attackMonster]);
+  }, [gameState.camera, gameState.monsters, gameState.treasureBoxes, attackMonster]);
 
   // Handle treasure box interaction
   const handleTreasureInteraction = useCallback((treasureId) => {
     const treasureBox = gameState.treasureBoxes.find(t => t.id === treasureId);
     if (treasureBox && !treasureBox.collected) {
-      // Use problems from NumerationProblem.json based on depth level
-      const levelProblems = numerationProblems.filter(p => p.level <= Math.max(1, gameState.depthLevel + 1));
-      const randomQuestion = levelProblems[Math.floor(Math.random() * levelProblems.length)];
-      setCurrentQuestion(randomQuestion);
+      // Skip popup for wildrealm level - directly collect treasure
+      if (gameState.worldSeed && gameState.worldSeed.toString().includes('wildrealm')) {
+        // Play success sound for wildrealm level
+        soundEffects.playSuccess();
+        
+        updateGameState(prev => ({
+          ...prev,
+          treasureBoxes: prev.treasureBoxes.map(treasure => 
+            treasure.id === treasureId 
+              ? { ...treasure, collected: true, opened: false }
+              : treasure
+          ),
+          score: prev.score + 100, // Add points for collecting treasure
+          crystalsCollected: prev.crystalsCollected + 1 // Award 1 crystal
+        }));
+        
+        // Trigger coin animation overlay
+        setShowCoinAnimation(true);
+        setTimeout(() => setShowCoinAnimation(false), 1200);
+        
+        return; // Skip the modal entirely
+      }
+
+      // Mark chest as opened for visual feedback while modal is shown
+      updateGameState(prev => ({
+        ...prev,
+        treasureBoxes: prev.treasureBoxes.map(treasure => 
+          treasure.id === treasureId ? { ...treasure, opened: true } : treasure
+        )
+      }));
+
+      // Use problems loaded dynamically based on depth level
+      if (questionsError) {
+        console.error('❌ Failed to load questions:', questionsError);
+        setCurrentQuestion(null);
+        setCurrentTreasureBox(treasureBox);
+        setShowQuestionModal(true);
+        return;
+      }
+
+      if (!questionsLoading && Array.isArray(questions) && questions.length > 0) {
+        const levelProblems = questions.filter(p => p.level <= Math.max(1, gameState.depthLevel + 1));
+        const pool = levelProblems.length > 0 ? levelProblems : questions;
+        const randomQuestion = pool[Math.floor(Math.random() * pool.length)];
+        setCurrentQuestion(randomQuestion);
+      } else {
+        // Fallback: no questions available
+        setCurrentQuestion(null);
+      }
       setCurrentTreasureBox(treasureBox);
       setShowQuestionModal(true);
     }
-  }, [gameState.treasureBoxes, gameState.depthLevel]);
+  }, [gameState.treasureBoxes, gameState.depthLevel, gameState.worldSeed, updateGameState, questionsLoading, questions, questionsError]);
 
   // Handle question solve
   const handleQuestionSolve = useCallback(() => {
@@ -1035,12 +1105,15 @@ const OpenWorldGame = () => {
         ...prev,
         treasureBoxes: prev.treasureBoxes.map(treasure => 
           treasure.id === currentTreasureBox.id 
-            ? { ...treasure, collected: true }
+            ? { ...treasure, collected: true, opened: false }
             : treasure
         ),
         score: prev.score + 100, // Add points for solving the question
         crystalsCollected: prev.crystalsCollected + 1 // Award 1 crystal for correct answer
       }));
+      // Trigger coin animation overlay
+      setShowCoinAnimation(true);
+      setTimeout(() => setShowCoinAnimation(false), 1200);
     }
     setShowQuestionModal(false);
     setCurrentQuestion(null);
@@ -1049,14 +1122,53 @@ const OpenWorldGame = () => {
 
   // Handle question modal close
   const handleQuestionClose = useCallback(() => {
+    // Close modal and reset chest open state if any
+    if (currentTreasureBox) {
+      updateGameState(prev => ({
+        ...prev,
+        treasureBoxes: prev.treasureBoxes.map(treasure => 
+          treasure.id === currentTreasureBox.id 
+            ? { ...treasure, opened: false } 
+            : treasure
+        )
+      }));
+    }
     setShowQuestionModal(false);
     setCurrentQuestion(null);
     setCurrentTreasureBox(null);
   }, []);
 
+  // Provide a Skip handler: close popup without rewards and reset chest to interactable state
+  const handleQuestionSkip = useCallback(() => {
+    if (currentTreasureBox) {
+      updateGameState(prev => ({
+        ...prev,
+        treasureBoxes: prev.treasureBoxes.map(treasure => 
+          treasure.id === currentTreasureBox.id 
+            ? { ...treasure, opened: false } 
+            : treasure
+        )
+      }));
+    }
+    setShowQuestionModal(false);
+    setCurrentQuestion(null);
+    setCurrentTreasureBox(null);
+  }, [currentTreasureBox, updateGameState]);
+
   // Handle start game
   const handleStartGame = useCallback(() => {
     setGameStarted(true);
+    setShowStartMenu(false);
+  }, []);
+
+  // Handle toggle start menu
+  const handleToggleStartMenu = useCallback(() => {
+    setShowStartMenu(prev => !prev);
+  }, []);
+
+  // Handle close start menu
+  const handleCloseStartMenu = useCallback(() => {
+    setShowStartMenu(false);
   }, []);
 
   // Handle back to home
@@ -1100,34 +1212,68 @@ const OpenWorldGame = () => {
   useEffect(() => {
     console.log('🎮 Setting up keyboard event listeners, gameStarted:', gameStarted);
     const handleKeyDown = (e) => {
-      // Remove the raw key event console log for better performance
-      
-      // Handle ESC key for pause menu
+      // Debug: log raw keydown events
+      if (import.meta.env?.DEV) {
+        console.log('🔑 keydown:', e.code, 'paused:', gamePaused, 'startMenu:', showStartMenu);
+      }
+      // Handle ESC key for start menu or pause menu
       if (e.code === 'Escape') {
-        setGamePaused(prev => {
-          const newPaused = !prev;
-          if (newPaused) {
-            soundEffects.playPause();
-          } else {
-            soundEffects.playResume();
-          }
-          return newPaused;
+        if (gameStarted) {
+          // If game is started, handle pause menu
+          setGamePaused(prev => {
+            const newPaused = !prev;
+            if (newPaused) {
+              soundEffects.playPause();
+            } else {
+              soundEffects.playResume();
+            }
+            return newPaused;
+          });
+        } else {
+          // If game hasn't started, toggle start menu visibility
+          handleToggleStartMenu();
+        }
+        return;
+      }
+      
+      // Don't process other keys if game is paused or start menu is visible
+      if (gamePaused || showStartMenu) {
+        if (import.meta.env?.DEV) {
+          console.log('⏸️ Input ignored: gamePaused or showStartMenu active');
+        }
+        // Record UI-visible gating status
+        updateGameState(prev => {
+          const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+          logs.push({ t: Date.now(), type: 'input', msg: 'Input gated', reason: gamePaused ? 'paused' : 'start_menu', key: e.code });
+          return { ...prev, debugLogs: logs, status: { ...(prev.status||{}), gated: true, gatedBy: gamePaused ? 'paused' : 'start_menu' } };
         });
         return;
       }
       
-      // Don't process other keys if game is paused
-      if (gamePaused) {
-        return;
-      }
-      
-      // Handle treasure interaction with 'E' key
+      // Handle treasure interaction with 'E' key (requires facing)
       if (e.code === 'KeyE') {
-        const nearbyTreasure = gameState.treasureBoxes?.find(treasure => 
-          treasure.nearPlayer && !treasure.collected
-        );
-        if (nearbyTreasure) {
-          handleTreasureInteraction(nearbyTreasure.id);
+        const playerX = gameState.player?.x ?? 0;
+        const playerY = gameState.player?.y ?? 0;
+        let bestTreasure = null;
+        let bestDist2 = Infinity;
+
+        for (const treasure of (gameState.treasureBoxes || [])) {
+          if (treasure.collected) continue;
+          const w = GAME_CONFIG.TILE_SIZE;
+          const h = GAME_CONFIG.TILE_SIZE;
+          if (canInteractFacing(playerX, playerY, playerDirection, treasure.x, treasure.y, w, h, 0.5)) {
+            const dx = (playerX + w / 2) - (treasure.x + w / 2);
+            const dy = (playerY + h / 2) - (treasure.y + h / 2);
+            const d2 = dx * dx + dy * dy;
+            if (d2 < bestDist2) {
+              bestDist2 = d2;
+              bestTreasure = treasure;
+            }
+          }
+        }
+
+        if (bestTreasure) {
+          handleTreasureInteraction(bestTreasure.id);
         }
         return;
       }
@@ -1146,20 +1292,21 @@ const OpenWorldGame = () => {
           setAnimationState(isShiftHeld ? 'running' : 'walking');
         }
         
-        // Clear all movement keys first
-        setKeys(prev => {
-          const currentKeys = prev || {}; // Ensure prev is not undefined
-          const newKeys = { ...currentKeys };
-          movementKeys.forEach(key => {
-            newKeys[key] = false;
-          });
-          // Set only the current key to true
-          newKeys[e.code] = true;
-          // Debug key state only in development mode
-          if (process.env.NODE_ENV === 'development') {
-            console.log('🔑 Key pressed:', e.code, 'Keys state:', Object.keys(newKeys).filter(k => newKeys[k]));
-          }
-          return newKeys;
+        // Clear all movement keys first and set only current
+        const currentKeys = keys || {};
+        const newKeys = { ...currentKeys };
+        movementKeys.forEach(key => { newKeys[key] = false; });
+        newKeys[e.code] = true;
+        setKeys(newKeys);
+        const pressed = Object.keys(newKeys).filter(k => newKeys[k]);
+        if (import.meta.env?.DEV) {
+          console.log('🔑 Key pressed:', e.code, 'Keys state:', pressed);
+        }
+        // Mirror keys into gameState for UI debug
+        updateGameState(prev => {
+          const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+          logs.push({ t: Date.now(), type: 'keydown', key: e.code, msg: 'Key down', keys: pressed });
+          return { ...prev, lastKeys: pressed, debugLogs: logs, status: { ...(prev.status||{}), inputActive: true } };
         });
         
         // Update player direction based on movement keys
@@ -1183,13 +1330,23 @@ const OpenWorldGame = () => {
         }
       } else {
         // For non-movement keys, use normal behavior
-        setKeys(prev => ({ ...(prev || {}), [e.code]: true }));
+        const newKeys = { ...(keys || {}), [e.code]: true };
+        setKeys(newKeys);
+        const pressed = Object.keys(newKeys).filter(k => newKeys[k]);
+        updateGameState(prev => {
+          const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+          logs.push({ t: Date.now(), type: 'keydown', key: e.code, msg: 'Key down (non-movement)', keys: pressed });
+          return { ...prev, lastKeys: pressed, debugLogs: logs };
+        });
       }
     };
 
     const handleKeyUp = (e) => {
-      // Don't process key releases if game is paused (except ESC)
-      if (gamePaused && e.code !== 'Escape') {
+      if (import.meta.env?.DEV) {
+        console.log('🔑 keyup:', e.code);
+      }
+      // Don't process key releases if game is paused or start menu is visible (except ESC)
+      if ((gamePaused || showStartMenu) && e.code !== 'Escape') {
         return;
       }
       
@@ -1197,11 +1354,17 @@ const OpenWorldGame = () => {
       const movementKeys = ['KeyW', 'ArrowUp', 'KeyS', 'ArrowDown', 'KeyA', 'ArrowLeft', 'KeyD', 'ArrowRight'];
       
       if (movementKeys.includes(e.code)) {
-        setKeys(prev => ({ ...(prev || {}), [e.code]: false }));
+        const newKeys = { ...(keys || {}), [e.code]: false };
+        setKeys(newKeys);
+        const pressed = Object.keys(newKeys).filter(k => newKeys[k]);
+        updateGameState(prev => {
+          const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+          logs.push({ t: Date.now(), type: 'keyup', key: e.code, msg: 'Key up', keys: pressed });
+          return { ...prev, lastKeys: pressed, debugLogs: logs };
+        });
         
-        // Check if any movement keys are still pressed - add null check for keys
-        const currentKeys = keys || {};
-        const stillMoving = movementKeys.some(key => key !== e.code && currentKeys[key]);
+        // Check if any movement keys are still pressed using updated keys
+        const stillMoving = movementKeys.some(key => newKeys[key]);
         
         if (!stillMoving) {
           setIsMoving(false);
@@ -1210,10 +1373,18 @@ const OpenWorldGame = () => {
           if (!isAttacking) {
             setAnimationState('idle');
           }
+          updateGameState(prev => ({ ...prev, status: { ...(prev.status||{}), inputActive: pressed.length > 0 } }));
         }
       } else {
         // For non-movement keys, use normal behavior
-        setKeys(prev => ({ ...(prev || {}), [e.code]: false }));
+        const newKeys = { ...(keys || {}), [e.code]: false };
+        setKeys(newKeys);
+        const pressed = Object.keys(newKeys).filter(k => newKeys[k]);
+        updateGameState(prev => {
+          const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+          logs.push({ t: Date.now(), type: 'keyup', key: e.code, msg: 'Key up (non-movement)', keys: pressed });
+          return { ...prev, lastKeys: pressed, debugLogs: logs };
+        });
       }
     };
 
@@ -1224,7 +1395,7 @@ const OpenWorldGame = () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [gameState.treasureBoxes, handleTreasureInteraction, keys, isAttacking, gamePaused]);
+  }, [gameState.treasureBoxes, handleTreasureInteraction, keys, isAttacking, gamePaused, showStartMenu, gameStarted, handleToggleStartMenu]);
 
   // Mouse event handlers
   useEffect(() => {
@@ -1252,12 +1423,38 @@ const OpenWorldGame = () => {
     }
   }, []);
 
-  // Show start menu if game hasn't started
-  if (!gameStarted) {
+  // Dynamically load questions with loading and error states
+  useEffect(() => {
+    let isMounted = true;
+    setQuestionsLoading(true);
+    setQuestionsError(null);
+    import('../data/NumerationProblem.json')
+      .then(module => {
+        if (!isMounted) return;
+        const data = module?.default ?? module;
+        if (!Array.isArray(data)) {
+          throw new Error('NumerationProblem.json format invalid: expected array');
+        }
+        setQuestions(data);
+        setQuestionsLoading(false);
+      })
+      .catch(err => {
+        if (!isMounted) return;
+        console.error('Failed to load NumerationProblem.json', err);
+        setQuestionsError(err);
+        setQuestionsLoading(false);
+      });
+    return () => { isMounted = false; };
+  }, []);
+
+  // Show start menu if game hasn't started or if menu is toggled visible
+  if (!gameStarted || showStartMenu) {
     return (
       <GameStartMenu 
         onPlay={handleStartGame}
         onBack={handleBackToHome}
+        onClose={handleCloseStartMenu}
+        isVisible={true}
       />
     );
   }
@@ -1272,6 +1469,26 @@ const OpenWorldGame = () => {
             <p>WASD or Arrow Keys: Move</p>
             <p>E: Interact with treasure boxes</p>
             <p>Explore the world and find treasures!</p>
+            <button 
+              onClick={handleToggleStartMenu}
+              style={{
+                marginTop: '10px',
+                padding: '8px 16px',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 10px rgba(0,0,0,0.3)'
+              }}
+              onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+              onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+            >
+              🎮 Menu (ESC)
+            </button>
           </div>
           
           {/* Debug Information Panel */}
@@ -1292,10 +1509,20 @@ const OpenWorldGame = () => {
             <p>Last Render: {renderingStats.lastRenderTime}ms</p>
             <p>Player Position: ({Math.round(gameState.player.x)}, {Math.round(gameState.player.y)})</p>
             <p>Player Direction: {playerDirection}</p>
+            <p>Moving: {gameState.player?.isMoving ? 'Yes' : 'No'}</p>
+            <p>Paused: {gamePaused ? 'Yes' : 'No'} | Menu: {showStartMenu ? 'Shown' : 'Hidden'}</p>
+            <p>Keys: {Array.isArray(gameState.lastKeys) ? gameState.lastKeys.join(', ') : 'None'}</p>
+            {gameState.player?.lastMoveDebug && (
+              <div style={{ marginTop: '8px' }}>
+                <p>Proposed: ({Math.round(gameState.player.lastMoveDebug.proposed.x)}, {Math.round(gameState.player.lastMoveDebug.proposed.y)})</p>
+                <p>Final: ({Math.round(gameState.player.lastMoveDebug.final.x)}, {Math.round(gameState.player.lastMoveDebug.final.y)})</p>
+                <p>Blocked: {gameState.player.lastMoveDebug.blocked ? 'Yes' : 'No'}{gameState.player.lastMoveDebug.reason ? ` (${gameState.player.lastMoveDebug.reason})` : ''}</p>
+              </div>
+            )}
             {/* Edge Detection Status */}
             {gameState.player.atEdge && (
               <div style={{ marginTop: '10px', padding: '5px', background: 'rgba(255,255,0,0.3)', borderRadius: '3px' }}>
-                <p style={{ color: '#ffff00', fontWeight: 'bold', margin: '0' }}>
+              <p style={{ color: '#ffff00', fontWeight: 'bold', margin: '0' }}>
                   🏔️ At Map Edge: {
                     Object.entries(gameState.player.atEdge)
                       .filter(([_, value]) => value)
@@ -1305,6 +1532,16 @@ const OpenWorldGame = () => {
                 </p>
               </div>
             )}
+            {/* Recent Debug Logs */}
+            <div style={{ marginTop: '8px', maxHeight: '160px', overflowY: 'auto', borderTop: '1px solid rgba(255,255,255,0.2)' }}>
+              {Array.isArray(gameState.debugLogs) && gameState.debugLogs.slice(-6).map((log, idx) => (
+                <div key={idx} style={{ opacity: 0.9 }}>
+                  <span>[{new Date(log.t).toLocaleTimeString()}] </span>
+                  <span>{log.type}: {log.msg}</span>
+                  {log.reason && <span> · {log.reason}</span>}
+                </div>
+              ))}
+            </div>
             <button 
               onClick={() => setDebugMode(!debugMode)}
               style={{
@@ -1377,6 +1614,7 @@ const OpenWorldGame = () => {
           playerSpriteImage={loadedImages.playerSprite}
           treeImage={loadedImages.tree}
           realisticTreeImage={loadedImages.realisticTree}
+          downloadedTreeImage={loadedImages.downloadedTree}
           bridgeImage={loadedImages.bridge}
           cliffImage={loadedImages.cliff}
           highGrassImage={loadedImages.highGrass}
@@ -1412,6 +1650,7 @@ const OpenWorldGame = () => {
           attackTarget={attackTarget}
           onTreasureInteraction={handleTreasureInteraction}
           skipPlayerRendering={true}
+          debugMode={debugMode}
         />
         
         {/* Kubo Character Overlay - positioned relative to canvas */}
@@ -1459,9 +1698,18 @@ const OpenWorldGame = () => {
             <p>WASD or Arrow Keys: Move</p>
             <p>E: Interact with treasure boxes</p>
             <p>Explore the world and find treasures!</p>
-            {gameState.treasureBoxes.some(treasure => treasure.nearPlayer && !treasure.collected) && (
+            {gameState.treasureBoxes.some(treasure => (
+              treasure.nearPlayer && !treasure.collected && isFacing(gameState.player.x, gameState.player.y, playerDirection, treasure.x, treasure.y, GAME_CONFIG.TILE_SIZE, GAME_CONFIG.TILE_SIZE)
+            )) && (
               <div className="interaction-prompt">
                 <p style={{color: '#ffff00', fontWeight: 'bold'}}>Press E to open treasure box!</p>
+              </div>
+            )}
+            {gameState.treasureBoxes.some(treasure => (
+              treasure.nearPlayer && !treasure.collected && !isFacing(gameState.player.x, gameState.player.y, playerDirection, treasure.x, treasure.y, GAME_CONFIG.TILE_SIZE, GAME_CONFIG.TILE_SIZE)
+            )) && (
+              <div className="interaction-prompt" aria-live="polite">
+                <p style={{color: '#ffa500', fontWeight: 'bold'}}>Face the chest to interact</p>
               </div>
             )}
           </div>
@@ -1756,13 +2004,25 @@ const OpenWorldGame = () => {
         question={currentQuestion}
         onClose={handleQuestionClose}
         onSolve={handleQuestionSolve}
+        onSkip={handleQuestionSkip}
+        isLoading={questionsLoading}
+        error={questionsError}
       />
+
+      {showCoinAnimation && (
+        <div className="coin-collect-overlay">
+          <div className="coin-collect-burst">+1 Coin</div>
+        </div>
+      )}
       
       {gamePaused && (
         <GameMenu
+          isVisible={true}
+          gameState={gameState}
           onResume={handleResumeGame}
           onRestart={handleRestartGame}
           onQuit={handleQuitToMenu}
+          onClose={() => setGamePaused(false)}
         />
       )}
       

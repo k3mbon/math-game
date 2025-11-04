@@ -9,6 +9,24 @@ export class InteractionSystem {
     this.interactionCooldown = 100; // ms to prevent spam
   }
 
+  // Map direction string to forward unit vector
+  getDirectionVector(direction) {
+    switch (direction) {
+      case 'up':
+      case 'back':
+        return { x: 0, y: -1 };
+      case 'down':
+      case 'front':
+        return { x: 0, y: 1 };
+      case 'left':
+        return { x: -1, y: 0 };
+      case 'right':
+        return { x: 1, y: 0 };
+      default:
+        return { x: 0, y: 1 }; // default face down/front
+    }
+  }
+
   // Check if player can interact with an object using optimized collision detection
   canInteract(playerX, playerY, objectX, objectY, objectWidth = GAME_CONFIG.TILE_SIZE, objectHeight = GAME_CONFIG.TILE_SIZE) {
     // Use center-to-center distance for accurate collision detection
@@ -74,6 +92,30 @@ export class InteractionSystem {
     return closest;
   }
 
+  // Check if object lies within player's facing cone
+  isFacing(playerX, playerY, playerDirection, objectX, objectY, objectWidth = GAME_CONFIG.TILE_SIZE, objectHeight = GAME_CONFIG.TILE_SIZE, facingToleranceCos = 0.5) {
+    const playerCenterX = playerX + GAME_CONFIG.TILE_SIZE / 2;
+    const playerCenterY = playerY + GAME_CONFIG.TILE_SIZE / 2;
+    const objectCenterX = objectX + objectWidth / 2;
+    const objectCenterY = objectY + objectHeight / 2;
+
+    const dx = objectCenterX - playerCenterX;
+    const dy = objectCenterY - playerCenterY;
+    const mag = Math.hypot(dx, dy) || 1; // avoid divide by zero
+    const dir = this.getDirectionVector(playerDirection);
+    const dot = (dx / mag) * dir.x + (dy / mag) * dir.y; // cos(angle)
+
+    return dot >= facingToleranceCos; // within cone (e.g., 60° => cos ~ 0.5)
+  }
+
+  // Combined check: within interaction range AND within facing cone
+  canInteractFacing(playerX, playerY, playerDirection, objectX, objectY, objectWidth = GAME_CONFIG.TILE_SIZE, objectHeight = GAME_CONFIG.TILE_SIZE, facingToleranceCos = 0.5) {
+    return (
+      this.canInteract(playerX, playerY, objectX, objectY, objectWidth, objectHeight) &&
+      this.isFacing(playerX, playerY, playerDirection, objectX, objectY, objectWidth, objectHeight, facingToleranceCos)
+    );
+  }
+
   // Update interaction radius (useful for different interaction types)
   setInteractionRadius(radius) {
     this.interactionRadius = radius;
@@ -97,6 +139,8 @@ export const useInteractionSystem = () => {
     markInteraction: globalInteractionSystem.markInteraction.bind(globalInteractionSystem),
     getInteractableObjects: globalInteractionSystem.getInteractableObjects.bind(globalInteractionSystem),
     getClosestInteractable: globalInteractionSystem.getClosestInteractable.bind(globalInteractionSystem),
+    isFacing: globalInteractionSystem.isFacing.bind(globalInteractionSystem),
+    canInteractFacing: globalInteractionSystem.canInteractFacing.bind(globalInteractionSystem),
     setInteractionRadius: globalInteractionSystem.setInteractionRadius.bind(globalInteractionSystem),
     getInteractionRadius: globalInteractionSystem.getInteractionRadius.bind(globalInteractionSystem)
   };

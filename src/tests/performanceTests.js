@@ -1,8 +1,8 @@
-import { gameProfiler } from '../utils/performanceProfiler';
-import { PhysicsWorld } from '../utils/physicsOptimizer';
-import { RenderingOptimizer } from '../utils/renderingOptimizer';
-import { ResourceManager } from '../utils/resourceManager';
-import { GAME_CONFIG } from '../config/gameConfig';
+import { gameProfiler } from '../utils/performanceProfiler.js';
+import { PhysicsWorld } from '../utils/physicsOptimizer.js';
+import { RenderingOptimizer } from '../utils/renderingOptimizer.js';
+import { ResourceManager } from '../utils/resourceManager.js';
+import { GAME_CONFIG } from '../config/gameConfig.js';
 
 /**
  * Performance Testing Suite
