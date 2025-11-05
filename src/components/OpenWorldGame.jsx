@@ -8,14 +8,13 @@ import { generateTerrainMap, preloadTileImages, preloadCharacterSprite, GRASS_TI
 import { loadAllGrassTiles } from '../utils/grassTileLoader';
 import { terrainBoundarySystem } from '../utils/terrainBoundarySystem';
 import CanvasRenderer from './CanvasRenderer';
-import HumanCharacter from './HumanCharacter';
 import TreasureQuestionModal from './TreasureQuestionModal';
 import TreasureLootModal from './TreasureLootModal';
 import GameStartMenu from './GameStartMenu';
 import GameMenu from './GameMenu';
 import TerrainRenderer, { getStoredTerrainData, hasStoredTerrain, getWalkableTiles, getCollisionTiles } from './TerrainRenderer';
 // Load NumerationProblem.json dynamically to support loading states and errors
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { gameProfiler, usePerformanceMonitor } from '../utils/performanceProfiler';
 import { useResourceManager } from '../utils/resourceManager';
 import PerformanceMonitor from './PerformanceMonitor';
@@ -62,6 +61,7 @@ import grassWaterShorelineCornerSvg from '../assets/realistic-grass-water-shorel
 import monsterGoblinSvg from '/assets/monster-goblin.svg';
 import monsterDragonSvg from '/assets/monster-dragon.svg';
 import monsterOrcSvg from '/assets/monster-orc.svg';
+import { SPRITE_CONFIGS } from '../utils/spriteAnimator';
 
 const OpenWorldGame = () => {
   console.log('🔍 OpenWorldGame component is rendering');
@@ -108,6 +108,7 @@ const OpenWorldGame = () => {
   const [showCoinAnimation, setShowCoinAnimation] = useState(false);
   const [hoveredTreasureId, setHoveredTreasureId] = useState(null);
   const lastHoverSoundRef = useRef(0);
+  const lastInteractTimeRef = useRef(0);
   const [isMoving, setIsMoving] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [animationState, setAnimationState] = useState('idle');
@@ -136,6 +137,10 @@ const OpenWorldGame = () => {
     playerLeft: useRef(null),
     playerRight: useRef(null),
     playerSprite: useRef(null),
+    // Animated character sheets
+    playerIdleSheet: useRef(null),
+    playerWalkSheet: useRef(null),
+    playerRunSheet: useRef(null),
     tree: useRef(null),
     realisticTree: useRef(null),
     downloadedTree: useRef(null),
@@ -175,10 +180,11 @@ const OpenWorldGame = () => {
   
   const { gameState, updateGameState } = useGameState(initialPlayerX, initialPlayerY);
 
-  // Wildrealm-specific debug cleanup: derived flag
+  // Wildrealm detection based on route path
+  const location = useLocation();
   const isWildrealm = useMemo(() => (
-    !!(gameState.worldSeed && gameState.worldSeed.toString().includes('wildrealm'))
-  ), [gameState.worldSeed]);
+    location.pathname.includes('/wildrealm')
+  ), [location.pathname]);
 
   // Initialize performance monitoring with null checks; disable in wildrealm
   const performanceMonitor = usePerformanceMonitor(!isWildrealm);
@@ -581,13 +587,8 @@ const OpenWorldGame = () => {
       stairConnections
     );
     
-    // TEMPORARY FIX: Force all terrain to be walkable
-    return defaultTerrain.map(tile => ({
-      ...tile,
-      type: tile.type === 'WATER' || tile.type === 'MOUNTAIN' || tile.type === 'CLIFF' || tile.type === 'LAVA' || tile.type === 'CAVE_WALL' 
-        ? (depthLevel === 0 ? 'GRASS' : 'CAVE_FLOOR')
-        : tile.type
-    }));
+    // Return the generated terrain without overriding walkability
+    return defaultTerrain;
   }, [gameState.worldSeed, forcedSafePositions, stairConnections, useCustomTerrain, customTerrain]);
 
   // Generate terrain from custom design
@@ -709,21 +710,23 @@ const OpenWorldGame = () => {
             terrainType = mapCustomTerrainType(customType, depthLevel);
           }
           
-          // Check for obstacles that should override terrain type
+          // Check for obstacles overlaying this tile
           if (customTile.obstacle && customTile.obstacle !== null) {
-            const obstaclePath = customTile.obstacle;
+            const obstaclePath = customTile.obstacle.toLowerCase();
             
-            // Debug obstacle detection for first few tiles
             if (tileX < 2 && tileY < 2) {
               console.log('🚧 Found obstacle:', obstaclePath);
             }
             
-            // Check if obstacle blocks movement - only allow bushes
-            if (obstaclePath.includes('Bushes')) {
-              terrainType = 'FOREST'; // Treat bushes as forest for collision
-            } else {
-              // Temporarily disable all other terrain objects
-              terrainType = 'GRASS'; // Convert all other obstacles to walkable grass
+            // Map common obstacle overlays to terrain types without forcing walkability
+            if (obstaclePath.includes('bridge')) {
+              terrainType = 'BRIDGE';
+            } else if (obstaclePath.includes('water')) {
+              terrainType = terrainLevel === 0 ? 'WATER' : 'UNDERGROUND_WATER';
+            } else if (obstaclePath.includes('bush')) {
+              terrainType = 'FOREST';
+            } else if (obstaclePath.includes('rock') || obstaclePath.includes('stone')) {
+              terrainType = terrainLevel === 0 ? 'ROCKY_GROUND' : 'CAVE_WALL';
             }
           }
           
@@ -847,15 +850,8 @@ const OpenWorldGame = () => {
       }
     };
     
-    // Map custom terrain types to game terrain types - FORCE ALL TO BE WALKABLE for debugging
+    // Map custom terrain types to game terrain types
     const result = mappings[level]?.[customType] || (level === 0 ? 'GRASS' : 'CAVE_FLOOR');
-    
-    // TEMPORARY FIX: Convert non-walkable terrain to walkable alternatives
-    if (result === 'MOUNTAIN' || result === 'CLIFF' || result === 'WATER' || result === 'LAVA' || result === 'CAVE_WALL') {
-      const walkableAlternative = level === 0 ? 'GRASS' : 'CAVE_FLOOR';
-      console.log('🔧 Converting non-walkable terrain:', result, '→', walkableAlternative);
-      return walkableAlternative;
-    }
     
     console.log('Final mapped terrain type:', result);
     return result;
@@ -885,13 +881,10 @@ const OpenWorldGame = () => {
     if (useCustomTerrain && customTerrain) {
       const tileData = customTerrain.levels?.[terrainLevel]?.tiles?.[`${tileX},${tileY}`];
       if (tileData && tileData.obstacle) {
-        const obstaclePath = tileData.obstacle;
-        // Check if obstacle blocks movement - only allow bushes
-        if (obstaclePath.includes('Bushes')) {
-          return false; // Bushes block movement
-        }
-        // All other obstacles are disabled - allow movement
-        return true;
+        const path = String(tileData.obstacle).toLowerCase();
+        const walkableOverlays = ['bridge', 'path', 'flower', 'grass'];
+        const isWalkableOverlay = walkableOverlays.some(w => path.includes(w));
+        return isWalkableOverlay ? true : false;
       }
     }
     
@@ -930,7 +923,7 @@ const OpenWorldGame = () => {
     };
 
     // Count total images to load
-    const totalImageCount = 23; // Update this count based on actual images
+    const totalImageCount = 26; // +3 for idle/walk/run sheets
     setRenderingStats(prev => ({
       ...prev,
       totalImages: totalImageCount,
@@ -964,6 +957,11 @@ const OpenWorldGame = () => {
      loadImage(waterGrassShorelineSvg, loadedImages.waterGrassShoreline);
      loadImage(realisticGrassSvg, loadedImages.realisticGrass);
      loadImage(grassWaterShorelineCornerSvg, loadedImages.grassWaterShorelineCorner);
+
+     // Load animated swordsman sheets (idle/walk/run)
+     loadImage(SPRITE_CONFIGS.idle.src, loadedImages.playerIdleSheet);
+     loadImage(SPRITE_CONFIGS.walk.src, loadedImages.playerWalkSheet);
+     loadImage(SPRITE_CONFIGS.run.src, loadedImages.playerRunSheet);
   }, []);
 
   // Attack function
@@ -1315,9 +1313,9 @@ const OpenWorldGame = () => {
   }, []);
 
   // Keyboard event handlers
-  useEffect(() => {
-    console.log('🎮 Setting up keyboard event listeners, gameStarted:', gameStarted);
-    const handleKeyDown = (e) => {
+    useEffect(() => {
+      console.log('🎮 Setting up keyboard event listeners, gameStarted:', gameStarted);
+      const handleKeyDown = (e) => {
       // Debug: log raw keydown events
       if (import.meta.env?.DEV) {
         console.log('🔑 keydown:', e.code, 'paused:', gamePaused, 'startMenu:', showStartMenu);
@@ -1356,8 +1354,13 @@ const OpenWorldGame = () => {
         return;
       }
       
-      // Handle treasure interaction with 'E' key (requires facing)
+      // Handle treasure interaction with 'E' key (requires facing) with cooldown
       if (e.code === 'KeyE') {
+        const now = Date.now();
+        if (now - (lastInteractTimeRef.current || 0) < GAME_CONFIG.INTERACTION_COOLDOWN) {
+          try { soundEffects.playError(); } catch {}
+          return;
+        }
         const playerX = gameState.player?.x ?? 0;
         const playerY = gameState.player?.y ?? 0;
         let bestTreasure = null;
@@ -1380,11 +1383,12 @@ const OpenWorldGame = () => {
 
         if (bestTreasure) {
           handleTreasureInteraction(bestTreasure.id);
+          lastInteractTimeRef.current = now;
         }
         return;
       }
       
-      // Handle movement keys - only allow one direction at a time
+      // Handle movement keys - allow multiple keys simultaneously for diagonal movement
       const movementKeys = ['KeyW', 'ArrowUp', 'KeyS', 'ArrowDown', 'KeyA', 'ArrowLeft', 'KeyD', 'ArrowRight'];
       
       if (movementKeys.includes(e.code)) {
@@ -1398,11 +1402,9 @@ const OpenWorldGame = () => {
           setAnimationState(isShiftHeld ? 'running' : 'walking');
         }
         
-        // Clear all movement keys first and set only current
+        // Do not clear other movement keys; enable diagonal movement
         const currentKeys = keys || {};
-        const newKeys = { ...currentKeys };
-        movementKeys.forEach(key => { newKeys[key] = false; });
-        newKeys[e.code] = true;
+        const newKeys = { ...currentKeys, [e.code]: true };
         setKeys(newKeys);
         const pressed = Object.keys(newKeys).filter(k => newKeys[k]);
         if (import.meta.env?.DEV) {
@@ -1606,102 +1608,6 @@ const OpenWorldGame = () => {
     <div className="open-world-game">
       <div className="game-container">
         <div className="game-ui">
-          <div className="controls-info">
-            <h3>Controls</h3>
-            <p>WASD or Arrow Keys: Move</p>
-            <p>E: Interact with treasure boxes</p>
-            <p>Explore the world and find treasures!</p>
-            <button 
-              onClick={handleToggleStartMenu}
-              style={{
-                marginTop: '10px',
-                padding: '8px 16px',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: 'bold',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 2px 10px rgba(0,0,0,0.3)'
-              }}
-              onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
-              onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
-            >
-              🎮 Menu (ESC)
-            </button>
-          </div>
-          
-          {/* Debug Information Panel - hidden in wildrealm */}
-          {!isWildrealm && (
-            <div className="debug-panel" style={{
-              position: 'absolute',
-              top: '10px',
-              right: '10px',
-              background: 'rgba(0,0,0,0.8)',
-              color: 'white',
-              padding: '10px',
-              borderRadius: '5px',
-              fontSize: '12px',
-              minWidth: '200px'
-            }}>
-              <h4>Rendering Debug Info</h4>
-              <p>Images Loaded: {renderingStats.imagesLoaded}/{renderingStats.totalImages}</p>
-              <p>Canvas Ready: {renderingStats.canvasReady ? 'Yes' : 'No'}</p>
-              <p>Last Render: {renderingStats.lastRenderTime}ms</p>
-              <p>Player Position: ({Math.round(gameState.player.x)}, {Math.round(gameState.player.y)})</p>
-              <p>Player Direction: {playerDirection}</p>
-              <p>Moving: {gameState.player?.isMoving ? 'Yes' : 'No'}</p>
-              <p>Paused: {gamePaused ? 'Yes' : 'No'} | Menu: {showStartMenu ? 'Shown' : 'Hidden'}</p>
-              <p>Keys: {Array.isArray(gameState.lastKeys) ? gameState.lastKeys.join(', ') : 'None'}</p>
-              {gameState.player?.lastMoveDebug && (
-                <div style={{ marginTop: '8px' }}>
-                  <p>Proposed: ({Math.round(gameState.player.lastMoveDebug.proposed.x)}, {Math.round(gameState.player.lastMoveDebug.proposed.y)})</p>
-                  <p>Final: ({Math.round(gameState.player.lastMoveDebug.final.x)}, {Math.round(gameState.player.lastMoveDebug.final.y)})</p>
-                  <p>Blocked: {gameState.player.lastMoveDebug.blocked ? 'Yes' : 'No'}{gameState.player.lastMoveDebug.reason ? ` (${gameState.player.lastMoveDebug.reason})` : ''}</p>
-                </div>
-              )}
-              {/* Edge Detection Status */}
-              {gameState.player.atEdge && (
-                <div style={{ marginTop: '10px', padding: '5px', background: 'rgba(255,255,0,0.3)', borderRadius: '3px' }}>
-                <p style={{ color: '#ffff00', fontWeight: 'bold', margin: '0' }}>
-                    🏔️ At Map Edge: {
-                      Object.entries(gameState.player.atEdge)
-                        .filter(([_, value]) => value)
-                        .map(([key, _]) => key)
-                        .join(', ')
-                    }
-                  </p>
-                </div>
-              )}
-              {/* Recent Debug Logs */}
-              <div style={{ marginTop: '8px', maxHeight: '160px', overflowY: 'auto', borderTop: '1px solid rgba(255,255,255,0.2)' }}>
-                {Array.isArray(gameState.debugLogs) && gameState.debugLogs.slice(-6).map((log, idx) => (
-                  <div key={idx} style={{ opacity: 0.9 }}>
-                    <span>[{new Date(log.t).toLocaleTimeString()}] </span>
-                    <span>{log.type}: {log.msg}</span>
-                    {log.reason && <span> · {log.reason}</span>}
-                  </div>
-                ))}
-              </div>
-              <button 
-                onClick={() => setDebugMode(!debugMode)}
-                style={{
-                  marginTop: '5px',
-                  padding: '5px 10px',
-                  background: debugMode ? '#ff4444' : '#44ff44',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '3px',
-                  cursor: 'pointer'
-                }}
-              >
-                {debugMode ? 'Disable Debug' : 'Enable Debug'}
-              </button>
-            </div>
-          )}
-          
           {/* Edge Warning Overlay */}
           {gameState.player.atEdge && (Object.values(gameState.player.atEdge).some(edge => edge)) && (
             <div className="edge-warning-overlay" style={{
@@ -1727,17 +1633,6 @@ const OpenWorldGame = () => {
               </div>
             </div>
           )}
-          
-          <div className="terrain-controls">
-            <select 
-              value={terrainType} 
-              onChange={(e) => setTerrainType(e.target.value)}
-              className="terrain-type-selector"
-            >
-              <option value="default">Default Terrain</option>
-              <option value="grass">Grass Terrain</option>
-            </select>
-          </div>
         </div>
         <canvas 
           ref={canvasRef}
@@ -1750,6 +1645,11 @@ const OpenWorldGame = () => {
           gameState={gameState}
           canvasRef={canvasRef}
           hoveredTreasureId={hoveredTreasureId}
+          // Animated sprite sheets
+          playerIdleSheetImage={loadedImages.playerIdleSheet}
+          playerWalkSheetImage={loadedImages.playerWalkSheet}
+          playerRunSheetImage={loadedImages.playerRunSheet}
+          animationState={animationState}
           playerImage={loadedImages.player}
           playerFrontImage={loadedImages.playerFront}
           playerBackImage={loadedImages.playerBack}
@@ -1794,21 +1694,11 @@ const OpenWorldGame = () => {
           isAttacking={isAttacking}
           attackTarget={attackTarget}
           onTreasureInteraction={handleTreasureInteraction}
-          skipPlayerRendering={true}
-          debugMode={debugMode}
+          debugMode={isWildrealm ? false : debugMode}
           isWildrealm={isWildrealm}
         />
         
-        {/* Kubo Character Overlay - positioned relative to canvas */}
-        <HumanCharacter
-          x={GAME_CONFIG.CANVAS_WIDTH / 2 - GAME_CONFIG.PLAYER_SIZE / 2}
-          y={GAME_CONFIG.CANVAS_HEIGHT / 2 - GAME_CONFIG.PLAYER_SIZE / 2}
-          size={GAME_CONFIG.PLAYER_SIZE}
-          animationState={animationState}
-          direction={playerDirection}
-          isAnimating={gameState.player.isMoving}
-        />
-        
+        {!isWildrealm && (
         <div className="game-ui">
           <div className="player-stats">
             <div className="health-bar">
@@ -1839,311 +1729,11 @@ const OpenWorldGame = () => {
             </div>
           </div>
           
-          <div className="controls-info">
-            <h3>Controls</h3>
-            <p>WASD or Arrow Keys: Move</p>
-            <p>E: Interact with treasure boxes</p>
-            <p>Explore the world and find treasures!</p>
-            {gameState.treasureBoxes.some(treasure => (
-              treasure.nearPlayer && !treasure.collected && isFacing(gameState.player.x, gameState.player.y, playerDirection, treasure.x, treasure.y, GAME_CONFIG.TILE_SIZE, GAME_CONFIG.TILE_SIZE)
-            )) && (
-              <div className="interaction-prompt">
-                <p style={{color: '#ffff00', fontWeight: 'bold'}}>Press E to open treasure box!</p>
-              </div>
-            )}
-            {gameState.treasureBoxes.some(treasure => (
-              treasure.nearPlayer && !treasure.collected && !isFacing(gameState.player.x, gameState.player.y, playerDirection, treasure.x, treasure.y, GAME_CONFIG.TILE_SIZE, GAME_CONFIG.TILE_SIZE)
-            )) && (
-              <div className="interaction-prompt" aria-live="polite">
-                <p style={{color: '#ffa500', fontWeight: 'bold'}}>Face the chest to interact</p>
-              </div>
-            )}
-          </div>
           
-          <div className="terrain-controls">
-            <h3>Terrain</h3>
-            
-            {loadedTerrainFile && (
-              <div className="loaded-terrain-info">
-                <small>Loaded: {loadedTerrainFile}</small>
-              </div>
-            )}
-            
-            {loadedTerrainFile && (
-              <div className="terrain-status" style={{
-                background: 'rgba(40, 167, 69, 0.8)',
-                color: 'white',
-                padding: '5px 10px',
-                borderRadius: '4px',
-                fontSize: '12px',
-                marginBottom: '10px'
-              }}>
-                ✅ Loaded: {loadedTerrainFile}
-              </div>
-            )}
-            
-            <div className="terrain-mode-status" style={{
-              background: useCustomTerrain ? 'rgba(40, 167, 69, 0.8)' : 'rgba(220, 53, 69, 0.8)',
-              color: 'white',
-              padding: '5px 10px',
-              borderRadius: '4px',
-              fontSize: '12px',
-              marginBottom: '10px'
-            }}>
-              {useCustomTerrain ? '🎯 Custom Terrain Active' : '🌱 Default Terrain Active'}
-            </div>
-            
-            <div className="terrain-upload">
-              <label htmlFor="terrain-file-input" className="terrain-upload-btn">
-                📁 Load Terrain File
-              </label>
-              <input
-                id="terrain-file-input"
-                type="file"
-                accept=".json"
-                onChange={handleTerrainFileUpload}
-                style={{ display: 'none' }}
-              />
-            </div>
-            
-            <div className="terrain-controls">
-              <button 
-                onClick={() => {
-                  // Force reload terrain data
-                  setCustomTerrain(null);
-                  setUseCustomTerrain(false);
-                  updateGameState(prevState => ({
-                    ...prevState,
-                    terrainChunks: new Map(),
-                    currentTerrain: null,
-                    worldSeed: Math.random() + Date.now()
-                  }));
-                  
-                  // Reload terrain after a brief delay
-                  setTimeout(() => {
-                    window.location.reload();
-                  }, 100);
-                }}
-                className="reload-btn"
-                style={{
-                  background: '#ff6b35',
-                  color: 'white',
-                  border: 'none',
-                  padding: '8px 16px',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  marginBottom: '10px'
-                }}
-              >
-                🔄 Force Reload Terrain
-              </button>
-              
-              <button 
-                onClick={() => {
-                  // Force custom terrain to be used
-                  console.log('🔧 Forcing custom terrain usage');
-                  console.log('Current state:', { useCustomTerrain, customTerrain: !!customTerrain });
-                  
-                  // Try to reload from localStorage if needed
-                  const storedTerrain = localStorage.getItem('terrainDesign');
-                  if (storedTerrain && !customTerrain) {
-                    try {
-                      const parsedTerrain = JSON.parse(storedTerrain);
-                      setCustomTerrain(parsedTerrain);
-                      console.log('🔄 Restored terrain from localStorage');
-                    } catch (e) {
-                      console.error('Failed to parse stored terrain:', e);
-                    }
-                  }
-                  
-                  setUseCustomTerrain(true);
-                  localStorage.setItem('useCustomTerrain', 'true');
-                  
-                  // Clear terrain cache and regenerate
-                  updateGameState(prevState => ({
-                    ...prevState,
-                    terrainChunks: new Map(),
-                    currentTerrain: null,
-                    worldSeed: Math.random() + Date.now(),
-                    player: {
-                      ...prevState.player,
-                      x: Math.floor(prevState.player.x) + 0.5,
-                      y: Math.floor(prevState.player.y) + 0.5
-                    }
-                  }));
-                  
-                  console.log('✅ Custom terrain should now be active');
-                }}
-                className="custom-terrain-btn"
-                style={{
-                  background: '#28a745',
-                  color: 'white',
-                  border: 'none',
-                  padding: '8px 16px',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  marginBottom: '10px',
-                  marginLeft: '10px'
-                }}
-              >
-                🎯 Force Custom Terrain
-              </button>
-              
-              <button 
-                onClick={() => {
-                  console.log('🔍 === TERRAIN DEBUG INFO ===');
-                  console.log('useCustomTerrain:', useCustomTerrain);
-                  console.log('customTerrain available:', !!customTerrain);
-                  console.log('loadedTerrainFile:', loadedTerrainFile);
-                  console.log('localStorage terrainDesign:', !!localStorage.getItem('terrainDesign'));
-                  console.log('localStorage useCustomTerrain:', localStorage.getItem('useCustomTerrain'));
-                  console.log('gameState.terrainChunks size:', gameState.terrainChunks?.size || 0);
-                  console.log('gameState.player position:', gameState.player);
-                  if (customTerrain) {
-                    console.log('customTerrain structure:', Object.keys(customTerrain));
-                    console.log('customTerrain.levels:', Object.keys(customTerrain.levels || {}));
-                    console.log('Level 0 sample data:', customTerrain.levels?.[0]?.[0]?.[0]);
-                  }
-                  
-                  // Test terrain generation for current player position
-                  const chunkX = Math.floor(gameState.player.x / GAME_CONFIG.CHUNK_SIZE);
-                  const chunkY = Math.floor(gameState.player.y / GAME_CONFIG.CHUNK_SIZE);
-                  console.log('Player chunk position:', { chunkX, chunkY });
-                  
-                  const testTerrain = generateTerrain(chunkX, chunkY, 0);
-                  console.log('Test terrain generation result:', testTerrain?.size, 'tiles');
-                  if (testTerrain?.size > 0) {
-                    const sampleEntries = Array.from(testTerrain.entries()).slice(0, 5);
-                    console.log('Sample terrain tiles:', sampleEntries);
-                  }
-                }}
-                className="debug-btn"
-                style={{
-                  background: '#17a2b8',
-                  color: 'white',
-                  border: 'none',
-                  padding: '8px 16px',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  marginBottom: '10px',
-                  marginLeft: '10px'
-                }}
-              >
-                🔍 Debug Terrain
-              </button>
-            </div>
-            
-            <div className="terrain-presets">
-              <button 
-                onClick={() => loadPresetTerrain('sample-terrain.json')}
-                className="preset-btn"
-              >
-                Load Sample Terrain
-              </button>
-              
-              <button 
-                onClick={() => {
-                  // Clear stored terrain to force reload from folder
-                  localStorage.removeItem('terrainDesign');
-                  localStorage.removeItem('customTerrainData');
-                  
-                  // Clear all terrain state
-                  setCustomTerrain(null);
-                  setUseCustomTerrain(false);
-                  setLoadedTerrainFile(null);
-                  
-                  // Force immediate terrain regeneration
-                  updateGameState(prevState => ({
-                    ...prevState,
-                    terrainChunks: new Map(),
-                    currentTerrain: null,
-                    worldSeed: Math.random() + Date.now()
-                  }));
-                  
-                  // Reload the page to restart the auto-loading process
-                  setTimeout(() => {
-                    window.location.reload();
-                  }, 100);
-                }}
-                className="preset-btn"
-                style={{ backgroundColor: '#f44336', marginTop: '0.5rem' }}
-              >
-                🔄 Reload from Folder
-              </button>
-            </div>
-            
-            <div className="terrain-buttons">
-              <button 
-                className={`terrain-toggle ${useCustomTerrain ? 'active' : ''}`}
-                onClick={() => {
-                  setUseCustomTerrain(!useCustomTerrain);
-                  // Reload terrain when toggling
-                  window.location.reload();
-                }}
-                disabled={!customTerrain}
-              >
-                {useCustomTerrain ? 'Using Custom' : 'Using Default'}
-              </button>
-              
-              <button 
-                className="terrain-designer-btn"
-                onClick={() => navigate('/terrain-designer')}
-              >
-                Design Terrain
-              </button>
-              
-              <button 
-                className="reset-player-btn"
-                onClick={() => {
-                  console.log('🔄 Manually resetting player position and terrain...');
-                  updateGameState(prevState => ({
-                    ...prevState,
-                    player: {
-                      ...prevState.player,
-                      x: 500,
-                      y: 500
-                    },
-                    camera: {
-                      x: 500 - GAME_CONFIG.CANVAS_WIDTH / 2,
-                      y: 500 - GAME_CONFIG.CANVAS_HEIGHT / 2
-                    },
-                    terrain: new Map(), // Clear all terrain
-                    currentTerrain: null // Force regeneration
-                  }));
-                }}
-                style={{ backgroundColor: '#FF9800', margin: '2px' }}
-              >
-                📍 Reset Position & Terrain
-              </button>
-              
-              {customTerrain && (
-                <button 
-                  className="terrain-reload-btn"
-                  onClick={() => {
-                    const storedTerrain = getStoredTerrainData();
-                    if (storedTerrain) {
-                      setCustomTerrain(storedTerrain);
-                      window.location.reload();
-                    }
-                  }}
-                >
-                  Reload Design
-                </button>
-              )}
-            </div>
-            
-            {customTerrain && (
-              <div className="terrain-info">
-                <p>Custom terrain loaded!</p>
-                <p>Levels: {Object.keys(customTerrain.levels || {}).length}</p>
-              </div>
-            )}
-          </div>
+          
+          
         </div>
-      </div>
+      )}
       
       <TreasureQuestionModal 
         isOpen={showQuestionModal}
@@ -2181,6 +1771,7 @@ const OpenWorldGame = () => {
       
       <PerformanceMonitor />
     </div>
+  </div>
   );
 };
 

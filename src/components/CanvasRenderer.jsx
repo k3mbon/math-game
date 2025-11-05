@@ -4,6 +4,7 @@ import { GRASS_BORDER_MAPPING } from '../utils/pixelTerrainAssets';
 import { getGrassTileByPosition, getGrassTileImage, preloadGrassTiles } from '../utils/grassTileLoader';
 import { useRenderingOptimization } from '../utils/renderingOptimizer';
 import { gameProfiler } from '../utils/performanceProfiler';
+import { DIRECTION_MAP, SPRITE_CONFIGS, getSpriteType, nextFrameIndex, getSrcRect } from '../utils/spriteAnimator';
 
 // Render bush obstacles on top of grass terrain
 const renderBushObstacles = (ctx, bushObstacles, visibleArea, gameState) => {
@@ -186,6 +187,10 @@ const CanvasRenderer = ({
   playerLeftImage,
   playerRightImage,
   playerDirection,
+  playerIdleSheet,
+  playerWalkSheet,
+  playerRunSheet,
+  animationState,
   treeImage,
   realisticTreeImage,
   downloadedTreeImage,
@@ -228,6 +233,8 @@ const CanvasRenderer = ({
   isWildrealm = false
 }) => {
   const frameCountRef = useRef(0);
+  const playerFrameIndexRef = useRef(0);
+  const playerLastFrameTimeRef = useRef(0);
   const grassTilesInitialized = useRef(false);
   
   // DEBUG: Check if CanvasRenderer is being called
@@ -348,7 +355,23 @@ const CanvasRenderer = ({
     
     // Only render player if not using external character component
     if (!skipPlayerRendering) {
-      renderPlayer(ctx, gameState, playerImage, playerSpriteImage, playerFrontImage, playerBackImage, playerLeftImage, playerRightImage, playerDirection);
+      renderPlayer(
+        ctx,
+        gameState,
+        playerImage,
+        playerSpriteImage,
+        playerFrontImage,
+        playerBackImage,
+        playerLeftImage,
+        playerRightImage,
+        playerDirection,
+        playerIdleSheet,
+        playerWalkSheet,
+        playerRunSheet,
+        animationState,
+        playerFrameIndexRef,
+        playerLastFrameTimeRef
+      );
     }
 
     // Visual movement debug markers (world-space)
@@ -367,7 +390,7 @@ const CanvasRenderer = ({
     // End render profiling
     gameProfiler.endTimer('render');
 
-  }, [gameState, playerImage, playerSpriteImage, playerFrontImage, playerBackImage, playerLeftImage, playerRightImage, playerDirection, treeImage, realisticTreeImage, downloadedTreeImage, bridgeImage, cliffImage, highGrassImage, rockyGroundImage, caveEntranceImage, realisticWaterImage, realisticRockImage, realisticTreasureImage, treasureOpenedImage, sproutPlayerImage, sproutCoinImage, monsterGoblinImage, monsterDragonImage, monsterOrcImage, waterGrassShorelineVerticalImage, waterGrassShorelineImage, realisticGrassImage, grassWaterShorelineCornerImage, isAttacking, attackTarget]);
+  }, [gameState, playerImage, playerSpriteImage, playerFrontImage, playerBackImage, playerLeftImage, playerRightImage, playerDirection, playerIdleSheet, playerWalkSheet, playerRunSheet, animationState, treeImage, realisticTreeImage, downloadedTreeImage, bridgeImage, cliffImage, highGrassImage, rockyGroundImage, caveEntranceImage, realisticWaterImage, realisticRockImage, realisticTreasureImage, treasureOpenedImage, sproutPlayerImage, sproutCoinImage, monsterGoblinImage, monsterDragonImage, monsterOrcImage, waterGrassShorelineVerticalImage, waterGrassShorelineImage, realisticGrassImage, grassWaterShorelineCornerImage, isAttacking, attackTarget]);
 
   return null; // This component only handles rendering
 };
@@ -1809,92 +1832,121 @@ const renderMonsters = (ctx, gameState, visibleArea, monsterImages, isAttacking,
   });
 };
 
-// Render player
-const renderPlayer = (ctx, gameState, playerImage, playerSpriteImage, playerFrontImage, playerBackImage, playerLeftImage, playerRightImage, playerDirection) => {
-  // Priority: directional sprites > character sprite > original SVG
-  let activePlayerImage = null;
-  let renderType = 'fallback';
-  
-  // Select directional sprite based on player direction
+// Render player with animated directional sheets and robust fallbacks
+const renderPlayer = (
+  ctx,
+  gameState,
+  playerImage,
+  playerSpriteImage,
+  playerFrontImage,
+  playerBackImage,
+  playerLeftImage,
+  playerRightImage,
+  playerDirection,
+  playerIdleSheet,
+  playerWalkSheet,
+  playerRunSheet,
+  animationState,
+  playerFrameIndexRef,
+  playerLastFrameTimeRef
+) => {
+  // Normalize direction synonyms
+  const normalizedDirection = (playerDirection === 'up') ? 'back' : (playerDirection === 'down') ? 'front' : playerDirection;
+
+  // Attempt animated sheet rendering first
+  const spriteType = getSpriteType(animationState);
+  const sheetMap = { idle: playerIdleSheet, walk: playerWalkSheet, run: playerRunSheet };
+  const activeSheetRef = sheetMap[spriteType];
+  const hasActiveSheet = !!(activeSheetRef?.current && activeSheetRef.current.complete && activeSheetRef.current.naturalWidth !== 0);
+
+  if (hasActiveSheet) {
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    if (!playerLastFrameTimeRef.current) playerLastFrameTimeRef.current = now;
+    const { index, updatedTime } = nextFrameIndex(animationState, playerLastFrameTimeRef.current, now, playerFrameIndexRef.current || 0);
+    playerFrameIndexRef.current = index;
+    playerLastFrameTimeRef.current = updatedTime;
+
+    const src = getSrcRect(animationState, normalizedDirection, playerFrameIndexRef.current);
+    ctx.drawImage(
+      activeSheetRef.current,
+      src.sx,
+      src.sy,
+      src.sw,
+      src.sh,
+      gameState.player.x - GAME_CONFIG.PLAYER_SIZE / 2,
+      gameState.player.y - GAME_CONFIG.PLAYER_SIZE / 2,
+      GAME_CONFIG.PLAYER_SIZE,
+      GAME_CONFIG.PLAYER_SIZE
+    );
+    return;
+  }
+
+  // Fallbacks: directional SVG > single spritesheet frame > base SVG
   const directionalImages = {
     front: playerFrontImage,
     back: playerBackImage,
     left: playerLeftImage,
     right: playerRightImage
   };
-  
-  // Support synonyms where logic uses 'up'/'down'
-  const normalizedDirection = (playerDirection === 'up') ? 'back' : (playerDirection === 'down') ? 'front' : playerDirection;
   const selectedDirectionalImage = directionalImages[normalizedDirection];
-  
+
   if (selectedDirectionalImage?.current && selectedDirectionalImage.current.complete && selectedDirectionalImage.current.naturalWidth !== 0) {
-    activePlayerImage = selectedDirectionalImage;
-    renderType = 'directional';
-  } else if (playerSpriteImage.current && playerSpriteImage.current.complete && playerSpriteImage.current.naturalWidth !== 0) {
-    activePlayerImage = playerSpriteImage;
-    renderType = 'sprite';
-  } else if (playerImage.current && playerImage.current.complete && playerImage.current.naturalWidth !== 0) {
-    activePlayerImage = playerImage;
-    renderType = 'svg';
-  }
-    
-  if (activePlayerImage) {
-    if (renderType === 'directional') {
-      // Use directional SVG sprite
-      ctx.drawImage(
-        activePlayerImage.current,
-        gameState.player.x - GAME_CONFIG.PLAYER_SIZE / 2,
-        gameState.player.y - GAME_CONFIG.PLAYER_SIZE / 2,
-        GAME_CONFIG.PLAYER_SIZE,
-        GAME_CONFIG.PLAYER_SIZE
-      );
-    } else if (renderType === 'sprite') {
-      // Use character spritesheet - extract idle frame
-      const frameWidth = 78; // Assuming character sprite frame width
-      const frameHeight = 58; // Assuming character sprite frame height
-      const idleFrame = 0; // Use first frame for idle
-      
-      ctx.drawImage(
-        activePlayerImage.current,
-        idleFrame * frameWidth, 0, frameWidth, frameHeight,
-        gameState.player.x - GAME_CONFIG.PLAYER_SIZE / 2,
-        gameState.player.y - GAME_CONFIG.PLAYER_SIZE / 2,
-        GAME_CONFIG.PLAYER_SIZE,
-        GAME_CONFIG.PLAYER_SIZE
-      );
-    } else {
-      // Use original SVG player image
-      ctx.drawImage(
-        activePlayerImage.current,
-        gameState.player.x - GAME_CONFIG.PLAYER_SIZE / 2,
-        gameState.player.y - GAME_CONFIG.PLAYER_SIZE / 2,
-        GAME_CONFIG.PLAYER_SIZE,
-        GAME_CONFIG.PLAYER_SIZE
-      );
-    }
-  } else {
-    // Fallback player representation - make it more visible
-    ctx.fillStyle = '#ff0000'; // Red for visibility
-    ctx.beginPath();
-    ctx.arc(
-      gameState.player.x, 
-      gameState.player.y, 
-      GAME_CONFIG.PLAYER_SIZE / 2, 
-      0, 
-      Math.PI * 2
+    ctx.drawImage(
+      selectedDirectionalImage.current,
+      gameState.player.x - GAME_CONFIG.PLAYER_SIZE / 2,
+      gameState.player.y - GAME_CONFIG.PLAYER_SIZE / 2,
+      GAME_CONFIG.PLAYER_SIZE,
+      GAME_CONFIG.PLAYER_SIZE
     );
-    ctx.fill();
-    
-    // Add a border
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    
-    // Add debug text
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '12px Arial';
-    ctx.fillText('PLAYER', gameState.player.x - 20, gameState.player.y - 20);
+    return;
   }
+
+  if (playerSpriteImage?.current && playerSpriteImage.current.complete && playerSpriteImage.current.naturalWidth !== 0) {
+    const frameWidth = 78; // legacy frame width assumption
+    const frameHeight = 58; // legacy frame height assumption
+    const idleFrame = 0;
+    ctx.drawImage(
+      playerSpriteImage.current,
+      idleFrame * frameWidth,
+      0,
+      frameWidth,
+      frameHeight,
+      gameState.player.x - GAME_CONFIG.PLAYER_SIZE / 2,
+      gameState.player.y - GAME_CONFIG.PLAYER_SIZE / 2,
+      GAME_CONFIG.PLAYER_SIZE,
+      GAME_CONFIG.PLAYER_SIZE
+    );
+    return;
+  }
+
+  if (playerImage?.current && playerImage.current.complete && playerImage.current.naturalWidth !== 0) {
+    ctx.drawImage(
+      playerImage.current,
+      gameState.player.x - GAME_CONFIG.PLAYER_SIZE / 2,
+      gameState.player.y - GAME_CONFIG.PLAYER_SIZE / 2,
+      GAME_CONFIG.PLAYER_SIZE,
+      GAME_CONFIG.PLAYER_SIZE
+    );
+    return;
+  }
+
+  // Final fallback: visible marker
+  ctx.fillStyle = '#ff0000';
+  ctx.beginPath();
+  ctx.arc(
+    gameState.player.x,
+    gameState.player.y,
+    GAME_CONFIG.PLAYER_SIZE / 2,
+    0,
+    Math.PI * 2
+  );
+  ctx.fill();
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '12px Arial';
+  ctx.fillText('PLAYER', gameState.player.x - 20, gameState.player.y - 20);
 };
 
 // Render UI elements

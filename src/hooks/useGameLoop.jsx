@@ -52,7 +52,10 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
       updateGameState(prev => {
         let newX = prev.player.x;
         let newY = prev.player.y;
-        const moveSpeed = GAME_CONFIG.PLAYER_SPEED * frameMultiplier;
+        const baseSpeed = GAME_CONFIG.PLAYER_SPEED * frameMultiplier;
+        const running = keys['ShiftLeft'] || keys['ShiftRight'];
+        const runMultiplier = (GAME_CONFIG.RUN_MULTIPLIER ?? 1.5);
+        const moveSpeed = baseSpeed * (running ? runMultiplier : 1);
         
         // Movement input detection with improved key handling
         let inputX = 0;

@@ -1,5 +1,5 @@
 // Enhanced interaction system for game objects
-import { GAME_CONFIG } from '../config/gameConfig';
+import { GAME_CONFIG } from '../config/gameConfig.js';
 
 export class InteractionSystem {
   constructor() {

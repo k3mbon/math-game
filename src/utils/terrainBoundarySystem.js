@@ -302,6 +302,9 @@ export class EnhancedBushCollisionSystem {
   constructor() {
     this.bushHitboxScale = 0.7; // Bushes use 70% of their visual size for collision
     this.playerHitboxScale = 0.8; // Player uses 80% of their visual size for collision
+    // Align collision hitbox with renderer's ground alignment offset
+    // CanvasRenderer draws bushes with a slight downward offset (~10% of tile size)
+    this.bushGroundOffsetFactor = 0.1;
   }
 
   /**
@@ -314,20 +317,25 @@ export class EnhancedBushCollisionSystem {
    * @returns {boolean} True if collision detected
    */
   checkBushCollision(playerX, playerY, bushX, bushY, bushSize = GAME_CONFIG.TILE_SIZE) {
+    // Inputs bushX/bushY are the bush's TILE origin (top-left) in world pixels.
+    // Convert to visual center and apply renderer's ground alignment offset.
+    const bushCenterX = bushX + bushSize / 2;
+    const bushCenterY = bushY + bushSize / 2 + (bushSize * this.bushGroundOffsetFactor);
+
     // Calculate adjusted hitbox sizes
     const playerHitboxSize = GAME_CONFIG.PLAYER_SIZE * this.playerHitboxScale;
     const bushHitboxSize = bushSize * this.bushHitboxScale;
 
-    // Calculate hitbox bounds
+    // Calculate hitbox bounds (AABB around centers)
     const playerLeft = playerX - playerHitboxSize / 2;
     const playerRight = playerX + playerHitboxSize / 2;
     const playerTop = playerY - playerHitboxSize / 2;
     const playerBottom = playerY + playerHitboxSize / 2;
 
-    const bushLeft = bushX - bushHitboxSize / 2;
-    const bushRight = bushX + bushHitboxSize / 2;
-    const bushTop = bushY - bushHitboxSize / 2;
-    const bushBottom = bushY + bushHitboxSize / 2;
+    const bushLeft = bushCenterX - bushHitboxSize / 2;
+    const bushRight = bushCenterX + bushHitboxSize / 2;
+    const bushTop = bushCenterY - bushHitboxSize / 2;
+    const bushBottom = bushCenterY + bushHitboxSize / 2;
 
     // AABB collision detection
     return !(playerRight <= bushLeft || 
@@ -350,24 +358,28 @@ export class EnhancedBushCollisionSystem {
       return { x: playerX, y: playerY, blocked: false };
     }
 
+    // Use bush visual center with ground offset for response vector
+    const bushCenterX = bushX + bushSize / 2;
+    const bushCenterY = bushY + bushSize / 2 + (bushSize * this.bushGroundOffsetFactor);
+
     // Calculate separation vector
-    const dx = playerX - bushX;
-    const dy = playerY - bushY;
+    const dx = playerX - bushCenterX;
+    const dy = playerY - bushCenterY;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
     if (distance === 0) {
-      // Players are exactly on top of bush, push them away
+      // Player exactly on bush center, nudge diagonally
       return { x: playerX + 10, y: playerY + 10, blocked: true };
     }
 
     // Calculate minimum separation distance
     const playerHitboxRadius = (GAME_CONFIG.PLAYER_SIZE * this.playerHitboxScale) / 2;
     const bushHitboxRadius = (bushSize * this.bushHitboxScale) / 2;
-    const minDistance = playerHitboxRadius + bushHitboxRadius + 2; // +2 for small buffer
+    const minDistance = playerHitboxRadius + bushHitboxRadius + 2; // small buffer
 
     // Calculate push-back position
-    const pushX = bushX + (dx / distance) * minDistance;
-    const pushY = bushY + (dy / distance) * minDistance;
+    const pushX = bushCenterX + (dx / distance) * minDistance;
+    const pushY = bushCenterY + (dy / distance) * minDistance;
 
     return { x: pushX, y: pushY, blocked: true };
   }
