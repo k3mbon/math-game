@@ -18,6 +18,7 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [currentTreasureBox, setCurrentTreasureBox] = useState(null);
   const [currentLevel, setCurrentLevel] = useState(customWorld?.currentLevel || 0);
+  const [playerDirection, setPlayerDirection] = useState('right');
 
   // Get current level world data
   const getCurrentLevelWorld = () => {
@@ -42,7 +43,8 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
   const initialPlayerY = currentLevelWorld?.playerSpawn?.y || (GAME_CONFIG.WORLD_SIZE * GAME_CONFIG.TILE_SIZE) / 2;
   
   const { gameState, updateGameState } = useGameState(initialPlayerX, initialPlayerY, currentLevelWorld);
-  const { canInteract } = useInteractionSystem();
+  const [bushObstacles, setBushObstacles] = useState([]);
+  const { canInteractFacing } = useInteractionSystem();
 
   // Terrain generation function
   const generateTerrain = useCallback((chunkX, chunkY, depthLevel) => {
@@ -58,15 +60,15 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
 
   // Walkable check function
   const checkWalkable = useCallback((x, y, terrain) => {
-    return isWalkable(x, y, terrain);
-  }, []);
+    return isWalkable(x, y, terrain, null, bushObstacles);
+  }, [bushObstacles]);
 
   // Cave entrance interaction check
   const checkCaveEntranceInteraction = useCallback(() => {
     if (!currentLevelWorld?.objects) return;
     
-    const playerCenterX = gameState.player.x + GAME_CONFIG.TILE_SIZE / 2;
-    const playerCenterY = gameState.player.y + GAME_CONFIG.TILE_SIZE / 2;
+    const playerCenterX = gameState.player.x + GAME_CONFIG.PLAYER_SIZE / 2;
+    const playerCenterY = gameState.player.y + GAME_CONFIG.PLAYER_SIZE / 2;
     
     currentLevelWorld.objects.forEach(obj => {
       if (obj.assetId === 'cave-entrance' && obj.properties?.hasLevelConnection) {
@@ -105,13 +107,20 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
     gameState.treasureBoxes.forEach(box => {
       if (!box.collected && !box.opened) {
         // Use the interaction system for consistent collision detection
-        if (canInteract(
-          gameState.player.x, 
-          gameState.player.y, 
-          box.x, 
-          box.y, 
-          GAME_CONFIG.TILE_SIZE, 
-          GAME_CONFIG.TILE_SIZE
+        const playerTopLeftX = gameState.player.x - GAME_CONFIG.PLAYER_SIZE / 2;
+        const playerTopLeftY = gameState.player.y - GAME_CONFIG.PLAYER_SIZE / 2;
+        const chestSize = GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE;
+        const chestTopLeftX = box.x - chestSize / 2;
+        const chestTopLeftY = box.y - chestSize / 2;
+        if (canInteractFacing(
+          playerTopLeftX,
+          playerTopLeftY,
+          playerDirection,
+          chestTopLeftX,
+          chestTopLeftY,
+          chestSize,
+          chestSize,
+          0.5
         )) {
           // Player is close to treasure box, show question
           const randomQuestion = numerationProblems[Math.floor(Math.random() * numerationProblems.length)];
@@ -121,7 +130,7 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
         }
       }
     });
-  }, [gameState.player.x, gameState.player.y, gameState.treasureBoxes, canInteract]);
+  }, [gameState.player.x, gameState.player.y, gameState.treasureBoxes, playerDirection, canInteractFacing]);
 
   // Handle question solve
   const handleQuestionSolve = useCallback(() => {
@@ -159,6 +168,25 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
   useEffect(() => {
     const handleKeyDown = (e) => {
       setKeys(prev => ({ ...prev, [e.code]: true }));
+      // Update player direction based on movement keys
+      switch (e.code) {
+        case 'KeyW':
+        case 'ArrowUp':
+          setPlayerDirection('up');
+          break;
+        case 'KeyS':
+        case 'ArrowDown':
+          setPlayerDirection('down');
+          break;
+        case 'KeyA':
+        case 'ArrowLeft':
+          setPlayerDirection('left');
+          break;
+        case 'KeyD':
+        case 'ArrowRight':
+          setPlayerDirection('right');
+          break;
+      }
     };
 
     const handleKeyUp = (e) => {
@@ -183,6 +211,26 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
     }
   }, []);
 
+  // Generate a small cluster of bush obstacles near spawn (tile units)
+  useEffect(() => {
+    const spawnTileX = Math.floor(initialPlayerX / GAME_CONFIG.TILE_SIZE);
+    const spawnTileY = Math.floor(initialPlayerY / GAME_CONFIG.TILE_SIZE);
+    const offsets = [
+      { dx: -3, dy: 0 }, { dx: 3, dy: 0 }, { dx: 0, dy: -3 }, { dx: 0, dy: 3 },
+      { dx: -2, dy: -2 }, { dx: 2, dy: -2 }, { dx: -2, dy: 2 }, { dx: 2, dy: 2 }
+    ];
+    const bushes = offsets.map((o, i) => ({
+      x: spawnTileX + o.dx,
+      y: spawnTileY + o.dy,
+      width: GAME_CONFIG.TILE_SIZE,
+      height: GAME_CONFIG.TILE_SIZE,
+      type: 'bush',
+      asset: '/assets/characters/terrain-object/Bushes/2.png',
+      id: `spawn_bush_${i}`
+    }));
+    setBushObstacles(bushes);
+  }, [initialPlayerX, initialPlayerY]);
+
   return (
     <div className="open-world-game">
       <div className="game-container">
@@ -198,68 +246,8 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
           gameState={gameState}
           canvasRef={canvasRef}
           customWorld={currentLevelWorld}
+          bushObstacles={bushObstacles}
         />
-        
-        <div className="game-ui">
-          <div className="player-stats">
-            <div className="health-bar">
-              <div className="health-label">Health</div>
-              <div className="health-bar-container">
-                <div 
-                  className="health-bar-fill"
-                  style={{ width: `${(gameState.player.health / gameState.player.maxHealth) * 100}%` }}
-                />
-              </div>
-              <div className="health-text">{gameState.player.health}/{gameState.player.maxHealth}</div>
-            </div>
-            
-            <div className="score-display">
-              Score: {gameState.score}
-            </div>
-            
-            <div className="position-display">
-              Position: ({Math.floor(gameState.player.x)}, {Math.floor(gameState.player.y)})
-            </div>
-            
-            <div className="depth-display">
-              Depth Level: {gameState.depthLevel}
-            </div>
-            
-            {customWorld?.levels && (
-              <div className="current-level-display">
-                Current Level: {currentLevel === 0 ? 'Surface' : `Cave Level ${currentLevel}`}
-              </div>
-            )}
-            
-            <div className="performance-info">
-              <div style={{ color: '#00FF00', fontSize: '12px', marginTop: '10px' }}>
-                ⚡ Optimized Mode: Simple Assets
-              </div>
-              <div style={{ color: '#00BFFF', fontSize: '11px' }}>
-                🎮 Better Performance
-              </div>
-              <div style={{ color: '#FFD700', fontSize: '11px' }}>
-                📦 No External Assets
-              </div>
-            </div>
-          </div>
-          
-          <div className="controls-info">
-            <h3>Controls</h3>
-            <p>WASD or Arrow Keys: Move</p>
-            <p>Explore the world and find treasures!</p>
-            <div style={{ marginTop: '10px', fontSize: '12px', color: '#90EE90' }}>
-              <strong>Optimized Features:</strong>
-              <ul style={{ fontSize: '11px', marginTop: '5px' }}>
-                <li>✓ Simple geometric shapes</li>
-                <li>✓ No image loading delays</li>
-                <li>✓ Reduced memory usage</li>
-                <li>✓ Faster rendering</li>
-                <li>✓ Animated effects</li>
-              </ul>
-            </div>
-          </div>
-        </div>
       </div>
       
       {/* Treasure Question Modal */}

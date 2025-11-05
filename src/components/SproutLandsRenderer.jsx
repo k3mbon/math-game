@@ -461,19 +461,23 @@ const renderSproutLandsObjects = (ctx, gameState, visibleArea, loadedImages) => 
     }
   };
   
-  // Render treasure boxes as gems
+  // Render treasure boxes as gems (use pixel units + camera offset)
   gameState.treasureBoxes.forEach(box => {
-    const boxX = box.x * GAME_CONFIG.TILE_SIZE;
-    const boxY = box.y * GAME_CONFIG.TILE_SIZE;
-    
-    // Check if in visible area
-    if (boxX < (visibleArea.startTileX - 1) * GAME_CONFIG.TILE_SIZE || 
-        boxX > (visibleArea.endTileX + 1) * GAME_CONFIG.TILE_SIZE ||
-        boxY < (visibleArea.startTileY - 1) * GAME_CONFIG.TILE_SIZE || 
-        boxY > (visibleArea.endTileY + 1) * GAME_CONFIG.TILE_SIZE) {
+    // Compute pixel bounds for viewport culling from tile indices
+    const startX = (visibleArea.startTileX - 1) * GAME_CONFIG.TILE_SIZE;
+    const endX = (visibleArea.endTileX + 1) * GAME_CONFIG.TILE_SIZE;
+    const startY = (visibleArea.startTileY - 1) * GAME_CONFIG.TILE_SIZE;
+    const endY = (visibleArea.endTileY + 1) * GAME_CONFIG.TILE_SIZE;
+
+    // Only render if in viewport (box.x/y are in world pixels)
+    if (box.x < startX || box.x > endX || box.y < startY || box.y > endY) {
       return;
     }
-    
+
+    // Convert to screen coordinates by subtracting camera
+    const boxScreenX = box.x - gameState.camera.x;
+    const boxScreenY = box.y - gameState.camera.y;
+
     // Render items with enhanced assets
     const renderItem = (item, x, y) => {
       if (!item) return;
@@ -541,15 +545,15 @@ const renderSproutLandsObjects = (ctx, gameState, visibleArea, loadedImages) => 
     };
     
     if (loadedImages.item_big_diamond) {
-      ctx.drawImage(loadedImages.item_big_diamond, boxX + 8, boxY + 8, 24, 24);
+      ctx.drawImage(loadedImages.item_big_diamond, boxScreenX + 8, boxScreenY + 8, 24, 24);
     } else {
       // Fallback gem rendering
       ctx.fillStyle = '#9C27B0';
       ctx.beginPath();
-      ctx.moveTo(boxX + 20, boxY + 8);
-      ctx.lineTo(boxX + 12, boxY + 16);
-      ctx.lineTo(boxX + 20, boxY + 32);
-      ctx.lineTo(boxX + 28, boxY + 16);
+      ctx.moveTo(boxScreenX + 20, boxScreenY + 8);
+      ctx.lineTo(boxScreenX + 12, boxScreenY + 16);
+      ctx.lineTo(boxScreenX + 20, boxScreenY + 32);
+      ctx.lineTo(boxScreenX + 28, boxScreenY + 16);
       ctx.closePath();
       ctx.fill();
     }

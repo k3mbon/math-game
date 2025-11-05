@@ -190,6 +190,10 @@ const CanvasRenderer = ({
   playerIdleSheet,
   playerWalkSheet,
   playerRunSheet,
+  playerAttackSheet,
+  playerRunAttackSheet,
+  playerHurtSheet,
+  playerDeathSheet,
   animationState,
   treeImage,
   realisticTreeImage,
@@ -230,7 +234,9 @@ const CanvasRenderer = ({
   onTreasureInteraction,
   skipPlayerRendering = false,
   debugMode = false,
-  isWildrealm = false
+  isWildrealm = false,
+  showOverlayMenu = false,
+  performanceReport = null
 }) => {
   const frameCountRef = useRef(0);
   const playerFrameIndexRef = useRef(0);
@@ -368,6 +374,10 @@ const CanvasRenderer = ({
         playerIdleSheet,
         playerWalkSheet,
         playerRunSheet,
+        playerAttackSheet,
+        playerRunAttackSheet,
+        playerHurtSheet,
+        playerDeathSheet,
         animationState,
         playerFrameIndexRef,
         playerLastFrameTimeRef
@@ -383,14 +393,14 @@ const CanvasRenderer = ({
     ctx.restore();
 
     // Render UI elements (not affected by camera)
-    renderUI(ctx, gameState);
+    renderUI(ctx, gameState, { showOverlayMenu, performanceReport });
     
     }); // End optimized rendering
     
     // End render profiling
     gameProfiler.endTimer('render');
 
-  }, [gameState, playerImage, playerSpriteImage, playerFrontImage, playerBackImage, playerLeftImage, playerRightImage, playerDirection, playerIdleSheet, playerWalkSheet, playerRunSheet, animationState, treeImage, realisticTreeImage, downloadedTreeImage, bridgeImage, cliffImage, highGrassImage, rockyGroundImage, caveEntranceImage, realisticWaterImage, realisticRockImage, realisticTreasureImage, treasureOpenedImage, sproutPlayerImage, sproutCoinImage, monsterGoblinImage, monsterDragonImage, monsterOrcImage, waterGrassShorelineVerticalImage, waterGrassShorelineImage, realisticGrassImage, grassWaterShorelineCornerImage, isAttacking, attackTarget]);
+  }, [gameState, playerImage, playerSpriteImage, playerFrontImage, playerBackImage, playerLeftImage, playerRightImage, playerDirection, playerIdleSheet, playerWalkSheet, playerRunSheet, playerAttackSheet, playerRunAttackSheet, playerHurtSheet, playerDeathSheet, animationState, treeImage, realisticTreeImage, downloadedTreeImage, bridgeImage, cliffImage, highGrassImage, rockyGroundImage, caveEntranceImage, realisticWaterImage, realisticRockImage, realisticTreasureImage, treasureOpenedImage, sproutPlayerImage, sproutCoinImage, monsterGoblinImage, monsterDragonImage, monsterOrcImage, waterGrassShorelineVerticalImage, waterGrassShorelineImage, realisticGrassImage, grassWaterShorelineCornerImage, isAttacking, attackTarget]);
 
   return null; // This component only handles rendering
 };
@@ -1846,6 +1856,10 @@ const renderPlayer = (
   playerIdleSheet,
   playerWalkSheet,
   playerRunSheet,
+  playerAttackSheet,
+  playerRunAttackSheet,
+  playerHurtSheet,
+  playerDeathSheet,
   animationState,
   playerFrameIndexRef,
   playerLastFrameTimeRef
@@ -1855,7 +1869,15 @@ const renderPlayer = (
 
   // Attempt animated sheet rendering first
   const spriteType = getSpriteType(animationState);
-  const sheetMap = { idle: playerIdleSheet, walk: playerWalkSheet, run: playerRunSheet };
+  const sheetMap = { 
+    idle: playerIdleSheet, 
+    walk: playerWalkSheet, 
+    run: playerRunSheet,
+    attack: playerAttackSheet,
+    runAttack: playerRunAttackSheet,
+    hurt: playerHurtSheet,
+    death: playerDeathSheet
+  };
   const activeSheetRef = sheetMap[spriteType];
   const hasActiveSheet = !!(activeSheetRef?.current && activeSheetRef.current.complete && activeSheetRef.current.naturalWidth !== 0);
 
@@ -1950,7 +1972,8 @@ const renderPlayer = (
 };
 
 // Render UI elements
-const renderUI = (ctx, gameState) => {
+const renderUI = (ctx, gameState, uiOptions = {}) => {
+  const { showOverlayMenu = false, performanceReport = null } = uiOptions;
   // Health bar
   const healthBarWidth = 200;
   const healthBarHeight = 20;
@@ -1977,9 +2000,31 @@ const renderUI = (ctx, gameState) => {
   // Depth level
   const levelText = gameState.depthLevel === 0 ? 'Surface' : `Cave Level ${gameState.depthLevel}`;
   ctx.fillText(`Level: ${levelText}`, 15, 75);
+
+  // Menu button
+  const menuButtonX = GAME_CONFIG.CANVAS_WIDTH - 100;
+  const menuButtonY = 10;
+  const menuButtonWidth = 80;
+  const menuButtonHeight = 30;
+  
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.fillRect(menuButtonX, menuButtonY, menuButtonWidth, menuButtonHeight);
+  
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(menuButtonX, menuButtonY, menuButtonWidth, menuButtonHeight);
+  
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '14px Arial';
+  ctx.fillText('Menu', menuButtonX + 20, menuButtonY + 20);
   
   // Minimap
   renderMinimap(ctx, gameState);
+
+  // Overlay menu
+  if (showOverlayMenu) {
+    renderOverlayMenu(ctx, performanceReport);
+  }
 };
 
 // Render minimap
@@ -2016,6 +2061,44 @@ const renderMinimap = (ctx, gameState) => {
   ctx.strokeStyle = '#ffffff';
   ctx.lineWidth = 2;
   ctx.strokeRect(minimapX, minimapY, minimapSize, minimapSize);
+};
+
+// Render overlay menu
+const renderOverlayMenu = (ctx, performanceReport) => {
+  const menuWidth = 300;
+  const menuHeight = 200;
+  const menuX = (GAME_CONFIG.CANVAS_WIDTH - menuWidth) / 2;
+  const menuY = (GAME_CONFIG.CANVAS_HEIGHT - menuHeight) / 2;
+
+  // Semi-transparent background
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+  ctx.fillRect(menuX, menuY, menuWidth, menuHeight);
+
+  // Border
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(menuX, menuY, menuWidth, menuHeight);
+
+  // Title
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 18px Arial';
+  ctx.fillText('Game Menu', menuX + 10, menuY + 30);
+
+  // Performance Stats
+  ctx.font = '14px Arial';
+  if (performanceReport) {
+    ctx.fillText(`FPS: ${performanceReport.fps || 'N/A'}`, menuX + 10, menuY + 60);
+    ctx.fillText(`Frame Time: ${performanceReport.frameTime || 'N/A'} ms`, menuX + 10, menuY + 80);
+    ctx.fillText(`Memory Usage: ${performanceReport.memoryUsage || 'N/A'} MB`, menuX + 10, menuY + 100);
+    ctx.fillText(`Lag Spikes: ${performanceReport.lagSpikes || 0}`, menuX + 10, menuY + 120);
+  } else {
+    ctx.fillText('Performance data not available', menuX + 10, menuY + 60);
+  }
+
+  // Controls info
+  ctx.fillText('Controls:', menuX + 10, menuY + 150);
+  ctx.fillText('W/A/S/D - Move', menuX + 20, menuY + 170);
+  ctx.fillText('Click - Interact', menuX + 20, menuY + 190);
 };
 
 // Debug movement visualization

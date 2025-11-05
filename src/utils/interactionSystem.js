@@ -28,10 +28,10 @@ export class InteractionSystem {
   }
 
   // Check if player can interact with an object using optimized collision detection
-  canInteract(playerX, playerY, objectX, objectY, objectWidth = GAME_CONFIG.TILE_SIZE, objectHeight = GAME_CONFIG.TILE_SIZE) {
+  canInteract(playerX, playerY, objectX, objectY, objectWidth = (GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE), objectHeight = (GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE)) {
     // Use center-to-center distance for accurate collision detection
-    const playerCenterX = playerX + GAME_CONFIG.TILE_SIZE / 2;
-    const playerCenterY = playerY + GAME_CONFIG.TILE_SIZE / 2;
+    const playerCenterX = playerX + GAME_CONFIG.PLAYER_SIZE / 2;
+    const playerCenterY = playerY + GAME_CONFIG.PLAYER_SIZE / 2;
     const objectCenterX = objectX + objectWidth / 2;
     const objectCenterY = objectY + objectHeight / 2;
     
@@ -70,8 +70,8 @@ export class InteractionSystem {
     let closest = null;
     let closestDistanceSquared = Infinity;
     
-    const playerCenterX = playerX + GAME_CONFIG.TILE_SIZE / 2;
-    const playerCenterY = playerY + GAME_CONFIG.TILE_SIZE / 2;
+    const playerCenterX = playerX + GAME_CONFIG.PLAYER_SIZE / 2;
+    const playerCenterY = playerY + GAME_CONFIG.PLAYER_SIZE / 2;
     
     for (const obj of objects) {
       if (obj.collected) continue;
@@ -93,9 +93,9 @@ export class InteractionSystem {
   }
 
   // Check if object lies within player's facing cone
-  isFacing(playerX, playerY, playerDirection, objectX, objectY, objectWidth = GAME_CONFIG.TILE_SIZE, objectHeight = GAME_CONFIG.TILE_SIZE, facingToleranceCos = 0.5) {
-    const playerCenterX = playerX + GAME_CONFIG.TILE_SIZE / 2;
-    const playerCenterY = playerY + GAME_CONFIG.TILE_SIZE / 2;
+  isFacing(playerX, playerY, playerDirection, objectX, objectY, objectWidth = (GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE), objectHeight = (GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE), facingToleranceCos = 0.5) {
+    const playerCenterX = playerX + GAME_CONFIG.PLAYER_SIZE / 2;
+    const playerCenterY = playerY + GAME_CONFIG.PLAYER_SIZE / 2;
     const objectCenterX = objectX + objectWidth / 2;
     const objectCenterY = objectY + objectHeight / 2;
 
@@ -109,7 +109,7 @@ export class InteractionSystem {
   }
 
   // Combined check: within interaction range AND within facing cone
-  canInteractFacing(playerX, playerY, playerDirection, objectX, objectY, objectWidth = GAME_CONFIG.TILE_SIZE, objectHeight = GAME_CONFIG.TILE_SIZE, facingToleranceCos = 0.5) {
+  canInteractFacing(playerX, playerY, playerDirection, objectX, objectY, objectWidth = (GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE), objectHeight = (GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE), facingToleranceCos = 0.5) {
     return (
       this.canInteract(playerX, playerY, objectX, objectY, objectWidth, objectHeight) &&
       this.isFacing(playerX, playerY, playerDirection, objectX, objectY, objectWidth, objectHeight, facingToleranceCos)

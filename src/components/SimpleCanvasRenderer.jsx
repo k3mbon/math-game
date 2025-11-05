@@ -109,6 +109,50 @@ const renderPixelEnvironmentObjects = (ctx, gameState, visibleArea) => {
   });
 };
 
+// Render simple bush obstacles passed from game (tile-based positions)
+const renderSimpleBushObstacles = (ctx, bushObstacles, gameState) => {
+  if (!bushObstacles || bushObstacles.length === 0) return;
+
+  const size = GAME_CONFIG.TILE_SIZE;
+  const groundOffset = Math.floor(size * 0.1); // align with collision system
+
+  for (const bush of bushObstacles) {
+    const worldX = bush.x * size;
+    const worldY = bush.y * size;
+    const screenX = worldX - gameState.camera.x;
+    const screenY = worldY - gameState.camera.y + groundOffset;
+
+    // Culling
+    if (
+      screenX < -size || screenX > GAME_CONFIG.CANVAS_WIDTH ||
+      screenY < -size || screenY > GAME_CONFIG.CANVAS_HEIGHT
+    ) {
+      continue;
+    }
+
+    // Base bush body
+    ctx.fillStyle = '#2E7D32';
+    ctx.beginPath();
+    ctx.arc(screenX + size * 0.5, screenY + size * 0.5, size * 0.32, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Cluster lobes for a bushy look
+    ctx.fillStyle = '#388E3C';
+    ctx.beginPath();
+    ctx.arc(screenX + size * 0.35, screenY + size * 0.45, size * 0.18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(screenX + size * 0.65, screenY + size * 0.55, size * 0.18, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Highlights
+    ctx.fillStyle = '#66BB6A';
+    ctx.beginPath();
+    ctx.arc(screenX + size * 0.52, screenY + size * 0.42, size * 0.08, 0, Math.PI * 2);
+    ctx.fill();
+  }
+};
+
 // Render monsters with pixel-style graphics
 const renderPixelMonsters = (ctx, gameState, visibleArea) => {
   gameState.monsters.forEach(monster => {
@@ -489,7 +533,8 @@ const drawPixelBridge = (ctx, x, y, size) => {
 const SimpleCanvasRenderer = ({ 
   gameState, 
   canvasRef,
-  customWorld = null
+  customWorld = null,
+  bushObstacles = []
 }) => {
   const frameCountRef = useRef(0);
   const lastRenderTimeRef = useRef(0);
@@ -576,6 +621,8 @@ const SimpleCanvasRenderer = ({
     // Render game objects with pixel-style graphics
     renderPixelTreasureBoxes(ctx, gameState, visibleArea);
     renderPixelEnvironmentObjects(ctx, gameState, visibleArea);
+    // Render bush obstacles passed from game (tile-based positions)
+    renderSimpleBushObstacles(ctx, bushObstacles, gameState);
     renderPixelMonsters(ctx, gameState, visibleArea);
     renderSimplePlayer(ctx, gameState);
 
@@ -585,7 +632,7 @@ const SimpleCanvasRenderer = ({
     // Render UI elements (not affected by camera)
     renderUI(ctx, gameState);
 
-  }, [gameState]);
+  }, [gameState, bushObstacles]);
 
   // This component doesn't render anything - it just handles canvas drawing
   return null;
@@ -1324,46 +1371,48 @@ const renderPixelTreasureBoxes = (ctx, gameState, visibleArea) => {
     if (screenX >= -GAME_CONFIG.TILE_SIZE && screenX <= GAME_CONFIG.CANVAS_WIDTH &&
         screenY >= -GAME_CONFIG.TILE_SIZE && screenY <= GAME_CONFIG.CANVAS_HEIGHT) {
       
-      const boxSize = GAME_CONFIG.TILE_SIZE;
-      const boxHeight = GAME_CONFIG.TILE_SIZE * 0.8;
+      const boxSize = GAME_CONFIG.TREASURE_SIZE;
+      const boxHeight = GAME_CONFIG.TREASURE_SIZE * 0.8;
+      const left = screenX - boxSize / 2;
+      const top = screenY - boxHeight / 2;
       
       // Debug: Draw a bright outline to make treasure boxes more visible
       ctx.strokeStyle = '#FF00FF'; // Magenta outline for debugging
       ctx.lineWidth = 2;
-      ctx.strokeRect(screenX - 2, screenY - 2, boxSize + 4, boxHeight + 4);
+      ctx.strokeRect(left - 2, top - 2, boxSize + 4, boxHeight + 4);
       
       if (!box.collected && !box.opened) {
         // Animated glow effect for unopened boxes
         const glowIntensity = Math.sin(Date.now() * 0.005) * 0.3 + 0.7;
         ctx.fillStyle = `rgba(255, 215, 0, ${glowIntensity * 0.5})`;
-        ctx.fillRect(screenX - 6, screenY - 6, boxSize + 12, boxHeight + 12);
+        ctx.fillRect(left - 6, top - 6, boxSize + 12, boxHeight + 12);
       }
       
       // Main treasure box body
       ctx.fillStyle = (box.collected || box.opened) ? '#8B4513' : '#B8860B'; // Dark gold
-      ctx.fillRect(screenX, screenY + boxHeight * 0.3, boxSize, boxHeight * 0.7);
+      ctx.fillRect(left, top + boxHeight * 0.3, boxSize, boxHeight * 0.7);
       
       // Box body details
       if (!box.collected) {
         // Gold highlights
         ctx.fillStyle = '#FFD700';
-        ctx.fillRect(screenX + 2, screenY + boxHeight * 0.3 + 2, boxSize - 4, boxHeight * 0.7 - 4);
+        ctx.fillRect(left + 2, top + boxHeight * 0.3 + 2, boxSize - 4, boxHeight * 0.7 - 4);
         
         // Corner reinforcements
         ctx.fillStyle = '#DAA520';
         const cornerSize = 4;
         // Top corners
-        ctx.fillRect(screenX, screenY + boxHeight * 0.3, cornerSize, cornerSize);
-        ctx.fillRect(screenX + boxSize - cornerSize, screenY + boxHeight * 0.3, cornerSize, cornerSize);
+        ctx.fillRect(left, top + boxHeight * 0.3, cornerSize, cornerSize);
+        ctx.fillRect(left + boxSize - cornerSize, top + boxHeight * 0.3, cornerSize, cornerSize);
         // Bottom corners
-        ctx.fillRect(screenX, screenY + boxHeight - cornerSize, cornerSize, cornerSize);
-        ctx.fillRect(screenX + boxSize - cornerSize, screenY + boxHeight - cornerSize, cornerSize, cornerSize);
+        ctx.fillRect(left, top + boxHeight - cornerSize, cornerSize, cornerSize);
+        ctx.fillRect(left + boxSize - cornerSize, top + boxHeight - cornerSize, cornerSize, cornerSize);
       }
       
       if (box.opened) {
         // Opened treasure box - lid is rotated back
         ctx.save();
-        ctx.translate(screenX + boxSize * 0.5, screenY + boxHeight * 0.2);
+        ctx.translate(left + boxSize * 0.5, top + boxHeight * 0.2);
         ctx.rotate(-Math.PI * 0.3); // Rotate lid back
         ctx.fillStyle = '#FF8C00';
         ctx.fillRect(-boxSize * 0.5, -boxHeight * 0.2, boxSize, boxHeight * 0.4);
@@ -1375,40 +1424,40 @@ const renderPixelTreasureBoxes = (ctx, gameState, visibleArea) => {
         // Gold coins
         ctx.fillStyle = '#FFD700';
         ctx.beginPath();
-        ctx.arc(screenX + boxSize * 0.3, screenY + boxHeight * 0.6, 3, 0, Math.PI * 2);
+        ctx.arc(left + boxSize * 0.3, top + boxHeight * 0.6, 3, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(screenX + boxSize * 0.5, screenY + boxHeight * 0.7, 2.5, 0, Math.PI * 2);
+        ctx.arc(left + boxSize * 0.5, top + boxHeight * 0.7, 2.5, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(screenX + boxSize * 0.7, screenY + boxHeight * 0.6, 3, 0, Math.PI * 2);
+        ctx.arc(left + boxSize * 0.7, top + boxHeight * 0.6, 3, 0, Math.PI * 2);
         ctx.fill();
         
         // Gems
         ctx.fillStyle = '#FF0000';
-        ctx.fillRect(screenX + boxSize * 0.4, screenY + boxHeight * 0.5, 3, 3);
+        ctx.fillRect(left + boxSize * 0.4, top + boxHeight * 0.5, 3, 3);
         ctx.fillStyle = '#0000FF';
-        ctx.fillRect(screenX + boxSize * 0.6, screenY + boxHeight * 0.5, 3, 3);
+        ctx.fillRect(left + boxSize * 0.6, top + boxHeight * 0.5, 3, 3);
         
         // Magical glow from opened treasure
         const glowIntensity = Math.sin(Date.now() * 0.008) * 0.4 + 0.6;
         ctx.fillStyle = `rgba(255, 255, 0, ${glowIntensity * 0.3})`;
-        ctx.fillRect(screenX + 4, screenY + boxHeight * 0.4, boxSize - 8, boxHeight * 0.5);
+        ctx.fillRect(left + 4, top + boxHeight * 0.4, boxSize - 8, boxHeight * 0.5);
         
       } else {
         // Closed treasure box lid
         ctx.fillStyle = box.collected ? '#654321' : '#FF8C00'; // Orange lid
-        ctx.fillRect(screenX, screenY, boxSize, boxHeight * 0.4);
+        ctx.fillRect(left, top, boxSize, boxHeight * 0.4);
         
         if (!box.collected) {
           // Lid highlight
           ctx.fillStyle = '#FFA500';
-          ctx.fillRect(screenX + 2, screenY + 2, boxSize - 4, boxHeight * 0.4 - 4);
+          ctx.fillRect(left + 2, top + 2, boxSize - 4, boxHeight * 0.4 - 4);
           
           // Lid handle/lock
           ctx.fillStyle = '#8B4513';
-          const handleX = screenX + boxSize * 0.4;
-          const handleY = screenY + boxHeight * 0.1;
+          const handleX = left + boxSize * 0.4;
+          const handleY = top + boxHeight * 0.1;
           ctx.fillRect(handleX, handleY, boxSize * 0.2, boxHeight * 0.2);
           
           // Lock keyhole
@@ -1420,8 +1469,8 @@ const renderPixelTreasureBoxes = (ctx, gameState, visibleArea) => {
           ctx.fillStyle = '#FFFF00';
           for (let i = 0; i < sparkleCount; i++) {
             const angle = (Date.now() * 0.01 + i * Math.PI * 2 / sparkleCount) % (Math.PI * 2);
-            const sparkleX = screenX + boxSize * 0.5 + Math.cos(angle) * (boxSize * 0.6);
-            const sparkleY = screenY + boxHeight * 0.5 + Math.sin(angle) * (boxHeight * 0.6);
+            const sparkleX = left + boxSize * 0.5 + Math.cos(angle) * (boxSize * 0.6);
+            const sparkleY = top + boxHeight * 0.5 + Math.sin(angle) * (boxHeight * 0.6);
             if (Math.sin(Date.now() * 0.01 + i) > 0.3) {
               ctx.fillRect(sparkleX, sparkleY, 2, 2);
               ctx.fillRect(sparkleX - 1, sparkleY, 1, 2);
@@ -1478,18 +1527,23 @@ const renderSimpleMonsters = (ctx, gameState, visibleArea) => {
 
 const renderSimplePlayer = (ctx, gameState) => {
   const player = gameState.player;
-  drawSimplePlayer(ctx, player.x, player.y, GAME_CONFIG.TILE_SIZE);
+  const size = GAME_CONFIG.PLAYER_SIZE;
+  const topLeftX = player.x - size / 2;
+  const topLeftY = player.y - size / 2;
+
+  // Draw player centered using PLAYER_SIZE
+  drawSimplePlayer(ctx, topLeftX, topLeftY, size);
   
-  // Player health bar
-  const healthBarWidth = GAME_CONFIG.TILE_SIZE;
+  // Player health bar (scaled to player size, positioned above)
+  const healthBarWidth = size;
   const healthBarHeight = 6;
   const healthPercentage = player.health / player.maxHealth;
   
   ctx.fillStyle = '#000000';
-  ctx.fillRect(player.x, player.y - 15, healthBarWidth, healthBarHeight);
+  ctx.fillRect(topLeftX, topLeftY - 15, healthBarWidth, healthBarHeight);
   
   ctx.fillStyle = healthPercentage > 0.5 ? '#00FF00' : healthPercentage > 0.25 ? '#FFFF00' : '#FF0000';
-  ctx.fillRect(player.x, player.y - 15, healthBarWidth * healthPercentage, healthBarHeight);
+  ctx.fillRect(topLeftX, topLeftY - 15, healthBarWidth * healthPercentage, healthBarHeight);
 };
 
 // World boundaries rendering (invisible - terrain system handles seamless filling)

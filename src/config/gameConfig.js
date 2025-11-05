@@ -6,8 +6,8 @@ export const GAME_CONFIG = {
   
   // Game object sizes - Made larger for kids
   TILE_SIZE: 50,
-  PLAYER_SIZE: 70, // Increased from 50 to 70 for better visibility
-  TREASURE_SIZE: 45, // Slightly increased to maintain proportion
+  PLAYER_SIZE: 140, // 2x bigger character for clearer visuals
+  TREASURE_SIZE: 50, // Align chest size with tile for consistent collision
   MONSTER_SIZE: 40, // Slightly increased to maintain proportion
   
   // World generation

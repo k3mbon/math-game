@@ -16,15 +16,16 @@ export const SPRITE_CONFIGS = {
     columns: 4,
     rows: 4,
     frameCount: 4,
-    src: '/assets/characters/char-zeno/Swordsman_lvl3_Idle.png'
+    src: '/assets/characters/char-open-world/Swordsman_lvl3_Idle_with_shadow.png'
   },
+  // Per request: use "Run" sheet for walking animation
   walk: {
     spriteWidth: 64,
     spriteHeight: 64,
     columns: 6,
     rows: 4,
     frameCount: 6,
-    src: '/assets/characters/char-zeno/Swordsman_lvl3_Walk_with_shadow.png'
+    src: '/assets/characters/char-open-world/Swordsman_lvl3_Run_with_shadow.png'
   },
   run: {
     spriteWidth: 64,
@@ -32,7 +33,43 @@ export const SPRITE_CONFIGS = {
     columns: 6,
     rows: 4,
     frameCount: 6,
-    src: '/assets/characters/char-zeno/Swordsman_lvl3_Run_with_shadow.png'
+    src: '/assets/characters/char-open-world/Swordsman_lvl3_Run_with_shadow.png'
+  },
+  // Attack in place
+  attack: {
+    spriteWidth: 64,
+    spriteHeight: 64,
+    columns: 6,
+    rows: 4,
+    frameCount: 6,
+    src: '/assets/characters/char-open-world/Swordsman_lvl3_attack_with_shadow.png'
+  },
+  // Run attack
+  runAttack: {
+    spriteWidth: 64,
+    spriteHeight: 64,
+    columns: 6,
+    rows: 4,
+    frameCount: 6,
+    src: '/assets/characters/char-open-world/Swordsman_lvl3_Run_Attack_with_shadow.png'
+  },
+  // Hurt
+  hurt: {
+    spriteWidth: 64,
+    spriteHeight: 64,
+    columns: 4,
+    rows: 4,
+    frameCount: 4,
+    src: '/assets/characters/char-open-world/Swordsman_lvl3_Hurt_with_shadow.png'
+  },
+  // Death
+  death: {
+    spriteWidth: 64,
+    spriteHeight: 64,
+    columns: 6,
+    rows: 4,
+    frameCount: 6,
+    src: '/assets/characters/char-open-world/Swordsman_lvl3_Death_with_shadow.png'
   }
 };
 
@@ -40,13 +77,22 @@ export const SPRITE_CONFIGS = {
 export const FRAME_RATES = {
   idle: 6,
   walking: 10,
-  running: 14
+  running: 14,
+  attack: 12,
+  runAttack: 14,
+  hurt: 8,
+  death: 6
 };
 
 // Given animationState, return canonical sprite key used by sheets
 export function getSpriteType(state) {
   if (state === 'walking') return 'walk';
   if (state === 'running') return 'run';
+  if (state === 'runAttack') return 'runAttack';
+  // Map both idleAttack and walkAttack to the standing attack sheet
+  if (state === 'idleAttack' || state === 'walkAttack') return 'attack';
+  if (state === 'hurt') return 'hurt';
+  if (state === 'death') return 'death';
   return 'idle';
 }
 

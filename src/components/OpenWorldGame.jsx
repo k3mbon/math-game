@@ -46,8 +46,6 @@ import rockyGroundSvg from '../assets/rocky-ground.svg';
 import caveEntranceSvg from '../assets/cave-entrance.svg';
 import realisticWaterSvg from '../assets/realistic-water.svg';
 import realisticRockSvg from '../assets/realistic-rock.svg';
-import realisticTreasureSvg from '../assets/realistic-treasure.svg';
-import realisticTreasureOpenedSvg from '../assets/realistic-treasure-opened.svg';
 import sproutPlayerSvg from '../assets/sprout-lands/character-player.svg';
 import sproutCoinSvg from '../assets/sprout-lands/item-coin.svg';
 
@@ -85,8 +83,10 @@ const OpenWorldGame = () => {
   const [playerDirection, setPlayerDirection] = useState('front'); // front, back, left, right
   const [grassTilesLoaded, setGrassTilesLoaded] = useState(false); // Track grass tile loading
   
-  // Add debug rendering state
+  // Debug and overlay state
   const [debugMode, setDebugMode] = useState(false);
+  const [showOverlayMenu, setShowOverlayMenu] = useState(false);
+  const [performanceReport, setPerformanceReport] = useState(null);
   const [renderingStats, setRenderingStats] = useState({
     imagesLoaded: 0,
     totalImages: 0,
@@ -109,6 +109,7 @@ const OpenWorldGame = () => {
   const [hoveredTreasureId, setHoveredTreasureId] = useState(null);
   const lastHoverSoundRef = useRef(0);
   const lastInteractTimeRef = useRef(0);
+  const gamepadStateRef = useRef({ prevButtons: {} });
   const [isMoving, setIsMoving] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [animationState, setAnimationState] = useState('idle');
@@ -141,6 +142,10 @@ const OpenWorldGame = () => {
     playerIdleSheet: useRef(null),
     playerWalkSheet: useRef(null),
     playerRunSheet: useRef(null),
+    playerAttackSheet: useRef(null),
+    playerRunAttackSheet: useRef(null),
+    playerHurtSheet: useRef(null),
+    playerDeathSheet: useRef(null),
     tree: useRef(null),
     realisticTree: useRef(null),
     downloadedTree: useRef(null),
@@ -557,6 +562,15 @@ const OpenWorldGame = () => {
     }
   }, [useCustomTerrain, customTerrain, updateGameState]);
 
+  // Update performance report periodically
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const report = getReport();
+      setPerformanceReport(report);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [getReport]);
+
   // Terrain generation function
   const generateTerrain = useCallback((chunkX, chunkY, depthLevel) => {
     // Debug logging
@@ -923,7 +937,7 @@ const OpenWorldGame = () => {
     };
 
     // Count total images to load
-    const totalImageCount = 26; // +3 for idle/walk/run sheets
+    const totalImageCount = 33; // base 26 + 7 animated sheets (idle, walk, run, attack, runAttack, hurt, death)
     setRenderingStats(prev => ({
       ...prev,
       totalImages: totalImageCount,
@@ -947,8 +961,9 @@ const OpenWorldGame = () => {
      loadImage(caveEntranceSvg, loadedImages.caveEntrance);
      loadImage(realisticWaterSvg, loadedImages.realisticWater);
      loadImage(realisticRockSvg, loadedImages.realisticRock);
-     loadImage(realisticTreasureSvg, loadedImages.realisticTreasure);
-     loadImage(realisticTreasureOpenedSvg, loadedImages.treasureOpened);
+    // Use requested chest box PNG assets from public folder
+    loadImage('/assets/characters/kings-and-pigs/08-Box/Idle.png', loadedImages.realisticTreasure);
+    loadImage('/assets/characters/kings-and-pigs/08-Box/Box Pieces 1.png', loadedImages.treasureOpened);
      loadImage(sproutCoinSvg, loadedImages.sproutCoin);
      loadImage(monsterGoblinSvg, loadedImages.monsterGoblin);
      loadImage(monsterDragonSvg, loadedImages.monsterDragon);
@@ -958,10 +973,14 @@ const OpenWorldGame = () => {
      loadImage(realisticGrassSvg, loadedImages.realisticGrass);
      loadImage(grassWaterShorelineCornerSvg, loadedImages.grassWaterShorelineCorner);
 
-     // Load animated swordsman sheets (idle/walk/run)
+     // Load animated swordsman sheets (idle/walk/run + attack variants)
      loadImage(SPRITE_CONFIGS.idle.src, loadedImages.playerIdleSheet);
      loadImage(SPRITE_CONFIGS.walk.src, loadedImages.playerWalkSheet);
      loadImage(SPRITE_CONFIGS.run.src, loadedImages.playerRunSheet);
+     loadImage(SPRITE_CONFIGS.attack.src, loadedImages.playerAttackSheet);
+     loadImage(SPRITE_CONFIGS.runAttack.src, loadedImages.playerRunAttackSheet);
+     loadImage(SPRITE_CONFIGS.hurt.src, loadedImages.playerHurtSheet);
+     loadImage(SPRITE_CONFIGS.death.src, loadedImages.playerDeathSheet);
   }, []);
 
   // Attack function
@@ -1020,8 +1039,45 @@ const OpenWorldGame = () => {
     if (!canvas) return;
     
     const rect = canvas.getBoundingClientRect();
-    const clickX = e.clientX - rect.left + gameState.camera.x;
-    const clickY = e.clientY - rect.top + gameState.camera.y;
+    const screenX = e.clientX - rect.left;
+    const screenY = e.clientY - rect.top;
+
+    // Menu button position (matches renderUI)
+    const menuButtonX = GAME_CONFIG.CANVAS_WIDTH - 100;
+    const menuButtonY = 10;
+    const menuButtonWidth = 80;
+    const menuButtonHeight = 30;
+
+    // Check menu button click when menu is hidden
+    if (!showOverlayMenu && 
+        screenX >= menuButtonX && screenX <= menuButtonX + menuButtonWidth &&
+        screenY >= menuButtonY && screenY <= menuButtonY + menuButtonHeight) {
+      setShowOverlayMenu(true);
+      return;
+    }
+
+    // If menu is shown, check for clicks inside/outside
+    if (showOverlayMenu) {
+      // Menu position (matches renderOverlayMenu)
+      const menuWidth = 300;
+      const menuHeight = 200;
+      const menuX = (GAME_CONFIG.CANVAS_WIDTH - menuWidth) / 2;
+      const menuY = (GAME_CONFIG.CANVAS_HEIGHT - menuHeight) / 2;
+
+      const isClickInsideMenu = 
+        screenX >= menuX && screenX <= menuX + menuWidth &&
+        screenY >= menuY && screenY <= menuY + menuHeight;
+
+      if (!isClickInsideMenu) {
+        setShowOverlayMenu(false);
+      }
+      // For now, no interactive elements in menu, so return to prevent world interactions
+      return;
+    }
+
+    // World space coordinates for game interactions
+    const clickX = screenX + gameState.camera.x;
+    const clickY = screenY + gameState.camera.y;
 
     // Check treasure boxes near click with proper collision + facing gating
     const playerX = gameState.player?.x ?? 0;
@@ -1162,6 +1218,7 @@ const OpenWorldGame = () => {
     // Success feedback
     try { soundEffects.playSuccess(); } catch {}
     setShowCoinAnimation(true);
+    try { soundEffects.playCollect(); } catch {}
     setTimeout(() => setShowCoinAnimation(false), 1200);
   }, [currentTreasureBox, currentLoot, updateGameState]);
 
@@ -1176,7 +1233,7 @@ const OpenWorldGame = () => {
     if (currentTreasureBox) {
       // Play success sound for correct answer
       soundEffects.playSuccess();
-      
+
       updateGameState(prev => ({
         ...prev,
         treasureBoxes: prev.treasureBoxes.map(treasure => 
@@ -1189,6 +1246,7 @@ const OpenWorldGame = () => {
       }));
       // Trigger coin animation overlay
       setShowCoinAnimation(true);
+      try { soundEffects.playCollect(); } catch {}
       setTimeout(() => setShowCoinAnimation(false), 1200);
     }
     setShowQuestionModal(false);
@@ -1505,6 +1563,119 @@ const OpenWorldGame = () => {
     };
   }, [gameState.treasureBoxes, handleTreasureInteraction, keys, isAttacking, gamePaused, showStartMenu, gameStarted, handleToggleStartMenu]);
 
+  // Gamepad input handling (movement + chest interaction on "A" button)
+  useEffect(() => {
+    const THRESHOLD = 0.3;
+    let rafId = null;
+
+    const pollGamepad = () => {
+      try {
+        const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+        const pad = pads && pads[0];
+        if (!pad) {
+          rafId = requestAnimationFrame(pollGamepad);
+          return;
+        }
+
+        const axX = pad.axes?.[0] ?? 0;
+        const axY = pad.axes?.[1] ?? 0;
+        const leftTrigger = pad.buttons?.[6]?.value ?? 0;
+        const rightTrigger = pad.buttons?.[7]?.value ?? 0;
+        const btnA = !!pad.buttons?.[0]?.pressed;
+        const btnB = !!pad.buttons?.[1]?.pressed;
+
+        const newKeys = {
+          ArrowUp: axY < -THRESHOLD,
+          ArrowDown: axY > THRESHOLD,
+          ArrowLeft: axX < -THRESHOLD,
+          ArrowRight: axX > THRESHOLD,
+          ShiftRight: (leftTrigger > 0.5) || (rightTrigger > 0.5) || btnB,
+        };
+
+        const anyMovement = newKeys.ArrowUp || newKeys.ArrowDown || newKeys.ArrowLeft || newKeys.ArrowRight;
+        const running = newKeys.ShiftRight;
+
+        // Update player direction based on dominant axis
+        if (anyMovement) {
+          const absX = Math.abs(axX);
+          const absY = Math.abs(axY);
+          if (absX > absY) {
+            setPlayerDirection(axX < 0 ? 'left' : 'right');
+          } else {
+            setPlayerDirection(axY < 0 ? 'up' : 'down');
+          }
+        }
+
+        // Update animation states when not attacking
+        if (!isAttacking) {
+          if (anyMovement) {
+            setIsMoving(true);
+            setIsRunning(running);
+            setAnimationState(running ? 'running' : 'walking');
+          } else {
+            setIsMoving(false);
+            setIsRunning(false);
+            setAnimationState('idle');
+          }
+        }
+
+        // Only update keys if changed to avoid churn
+        const prevKeys = keys || {};
+        let changed = false;
+        for (const k of ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','ShiftRight']) {
+          if (!!prevKeys[k] !== !!newKeys[k]) { changed = true; break; }
+        }
+        if (changed) {
+          setKeys(newKeys);
+        }
+
+        // Chest interaction on A button (rising edge), respects cooldown and gating
+        const prevA = !!gamepadStateRef.current.prevButtons[0];
+        if (btnA && !prevA && !gamePaused && !showStartMenu && gameStarted) {
+          const now = Date.now();
+          if (now - (lastInteractTimeRef.current || 0) >= (GAME_CONFIG.INTERACTION_COOLDOWN || 500)) {
+            const playerX = gameState.player?.x ?? 0;
+            const playerY = gameState.player?.y ?? 0;
+            let bestTreasure = null;
+            let bestDist2 = Infinity;
+            const w = GAME_CONFIG.TILE_SIZE;
+            const h = GAME_CONFIG.TILE_SIZE;
+            const treasures = Array.isArray(gameState.treasureBoxes) ? gameState.treasureBoxes : [];
+            for (const t of treasures) {
+              if (!t || t.collected) continue;
+              if (canInteractFacing(playerX, playerY, playerDirection, t.x, t.y, w, h, 0.5)) {
+                const dx = (playerX + w / 2) - (t.x + w / 2);
+                const dy = (playerY + h / 2) - (t.y + h / 2);
+                const d2 = dx * dx + dy * dy;
+                if (d2 < bestDist2) {
+                  bestDist2 = d2;
+                  bestTreasure = t;
+                }
+              }
+            }
+            if (bestTreasure) {
+              try { soundEffects.playMenuClick(); } catch {}
+              handleTreasureInteraction(bestTreasure.id);
+              lastInteractTimeRef.current = now;
+            } else {
+              try { soundEffects.playError(); } catch {}
+            }
+          }
+        }
+        gamepadStateRef.current.prevButtons[0] = btnA;
+
+      } catch (err) {
+        // Swallow errors to keep polling resilient
+      }
+      rafId = requestAnimationFrame(pollGamepad);
+    };
+
+    rafId = requestAnimationFrame(pollGamepad);
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [keys, isAttacking, gamePaused, showStartMenu, gameStarted, gameState.player, gameState.treasureBoxes, playerDirection, handleTreasureInteraction]);
+
   // Mouse event handlers
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -1646,9 +1817,13 @@ const OpenWorldGame = () => {
           canvasRef={canvasRef}
           hoveredTreasureId={hoveredTreasureId}
           // Animated sprite sheets
-          playerIdleSheetImage={loadedImages.playerIdleSheet}
-          playerWalkSheetImage={loadedImages.playerWalkSheet}
-          playerRunSheetImage={loadedImages.playerRunSheet}
+          playerIdleSheet={loadedImages.playerIdleSheet}
+          playerWalkSheet={loadedImages.playerWalkSheet}
+          playerRunSheet={loadedImages.playerRunSheet}
+          playerAttackSheet={loadedImages.playerAttackSheet}
+          playerRunAttackSheet={loadedImages.playerRunAttackSheet}
+          playerHurtSheet={loadedImages.playerHurtSheet}
+          playerDeathSheet={loadedImages.playerDeathSheet}
           animationState={animationState}
           playerImage={loadedImages.player}
           playerFrontImage={loadedImages.playerFront}
@@ -1696,6 +1871,8 @@ const OpenWorldGame = () => {
           onTreasureInteraction={handleTreasureInteraction}
           debugMode={isWildrealm ? false : debugMode}
           isWildrealm={isWildrealm}
+          showOverlayMenu={showOverlayMenu}
+          performanceReport={performanceReport}
         />
         
         {!isWildrealm && (
