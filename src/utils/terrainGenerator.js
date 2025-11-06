@@ -14,6 +14,23 @@ export const isWalkable = (x, y, terrain, customWorld = null, bushObstacles = nu
     return false;
   }
 
+  // Immediate bush collision guard using player center
+  // Ensures bushes from the Bushes directory are always non-walkable
+  if (bushObstacles && bushObstacles.length > 0) {
+    for (const bush of bushObstacles) {
+      const assetPath = String(bush.asset || '').toLowerCase();
+      const isBushesDir = assetPath.includes('/assets/characters/terrain-object/bushes/');
+      if (!isBushesDir) continue;
+
+      const bushPixelX = bush.x * GAME_CONFIG.TILE_SIZE;
+      const bushPixelY = bush.y * GAME_CONFIG.TILE_SIZE;
+
+      if (enhancedBushCollisionSystem.checkBushCollision(x, y, bushPixelX, bushPixelY)) {
+        return false;
+      }
+    }
+  }
+
   // Calculate player bounds for better collision detection
   const playerSize = GAME_CONFIG.PLAYER_SIZE;
   const halfSize = playerSize / 2;
@@ -99,11 +116,17 @@ const isPointWalkable = (x, y, terrain, customWorld = null, bushObstacles = null
   }
 
   // Enhanced bush obstacle checking with improved collision system
+  // Only block bushes from the specific Bushes directory
   if (bushObstacles && bushObstacles.length > 0) {
     for (const bush of bushObstacles) {
+      // Filter to only bushes coming from the Bushes asset directory
+      const assetPath = String(bush.asset || '').toLowerCase();
+      const isBushesDir = assetPath.includes('/assets/characters/terrain-object/bushes/');
+      if (!isBushesDir) continue;
+
       const bushPixelX = bush.x * GAME_CONFIG.TILE_SIZE;
       const bushPixelY = bush.y * GAME_CONFIG.TILE_SIZE;
-      
+
       // Use enhanced bush collision system for better hitbox detection
       if (enhancedBushCollisionSystem.checkBushCollision(x, y, bushPixelX, bushPixelY)) {
         return false;
@@ -112,22 +135,35 @@ const isPointWalkable = (x, y, terrain, customWorld = null, bushObstacles = null
   }
   
   // Enhanced custom world object collision detection
+  // Restrict blocking strictly to Bushes directory assets and the Box Idle chest asset
   if (customWorld && customWorld.objects) {
-    const gridSize = 32; // Default grid size for custom world objects
-    
+    const gridSize = 32;
+
     for (const obj of customWorld.objects) {
-      // Only bushes block movement in custom world
-      if (obj.type === 'bush') {
-        const objPixelX = obj.x;
-        const objPixelY = obj.y;
-        const objSize = gridSize * 0.8; // Object takes up 80% of grid cell
-        const objHalfSize = objSize / 2;
-        
-        // Check if point is within object bounds
-        if (x >= objPixelX - objHalfSize && x <= objPixelX + objHalfSize &&
-            y >= objPixelY - objHalfSize && y <= objPixelY + objHalfSize) {
-          return false;
-        }
+      if (!obj) continue;
+
+      const idLower = String(obj.assetId || obj.type || '').toLowerCase();
+      const pathLower = String(obj.asset || obj.icon || obj.properties?.asset || '').toLowerCase();
+
+      // Only block if the object is a bush from Bushes directory
+      const isBushByPath = pathLower.includes('/assets/characters/terrain-object/bushes/');
+      const isBushById = idLower === 'bush' || idLower === 'bushes';
+
+      // Or if it’s the specific kings-and-pigs Box Idle asset
+      const isBoxIdle = pathLower.includes('/assets/characters/kings-and-pigs/08-box/idle.png');
+
+      // If none of the above, do not block this custom object
+      if (!(isBushByPath || isBushById || isBoxIdle)) continue;
+
+      const w = obj.width || gridSize;
+      const h = obj.height || gridSize;
+      const left = obj.x;
+      const top = obj.y;
+      const right = left + w;
+      const bottom = top + h;
+
+      if (x >= left && x <= right && y >= top && y <= bottom) {
+        return false;
       }
     }
   }

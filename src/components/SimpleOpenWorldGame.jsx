@@ -44,7 +44,7 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
   
   const { gameState, updateGameState } = useGameState(initialPlayerX, initialPlayerY, currentLevelWorld);
   const [bushObstacles, setBushObstacles] = useState([]);
-  const { canInteractFacing } = useInteractionSystem();
+  const { canInteractFacing, canInteractWithCooldown, markInteraction, getClosestInteractable } = useInteractionSystem();
 
   // Terrain generation function
   const generateTerrain = useCallback((chunkX, chunkY, depthLevel) => {
@@ -58,10 +58,10 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
     );
   }, [gameState.worldSeed, forcedSafePositions, stairConnections]);
 
-  // Walkable check function
-  const checkWalkable = useCallback((x, y, terrain) => {
-    return isWalkable(x, y, terrain, null, bushObstacles);
-  }, [bushObstacles]);
+  // Walkable check function: always use current game terrain + custom world + obstacles
+  const checkWalkable = useCallback((x, y) => {
+    return isWalkable(x, y, gameState.terrain, currentLevelWorld, bushObstacles);
+  }, [gameState.terrain, currentLevelWorld, bushObstacles]);
 
   // Cave entrance interaction check
   const checkCaveEntranceInteraction = useCallback(() => {
@@ -102,44 +102,38 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
     });
   }, [gameState.player.x, gameState.player.y, currentLevelWorld, currentLevel, initialPlayerX, initialPlayerY, updateGameState]);
 
-  // Optimized treasure box interaction check using the interaction system
-  const checkTreasureBoxInteraction = useCallback(() => {
-    gameState.treasureBoxes.forEach(box => {
-      if (!box.collected && !box.opened) {
-        // Use the interaction system for consistent collision detection
-        const playerTopLeftX = gameState.player.x - GAME_CONFIG.PLAYER_SIZE / 2;
-        const playerTopLeftY = gameState.player.y - GAME_CONFIG.PLAYER_SIZE / 2;
-        const chestSize = GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE;
-        const chestTopLeftX = box.x - chestSize / 2;
-        const chestTopLeftY = box.y - chestSize / 2;
-        if (canInteractFacing(
-          playerTopLeftX,
-          playerTopLeftY,
-          playerDirection,
-          chestTopLeftX,
-          chestTopLeftY,
-          chestSize,
-          chestSize,
-          0.5
-        )) {
-          // Player is close to treasure box, show question
-          const randomQuestion = numerationProblems[Math.floor(Math.random() * numerationProblems.length)];
-          setCurrentQuestion(randomQuestion);
-          setCurrentTreasureBox(box);
-          setShowQuestionModal(true);
-        }
-      }
-    });
-  }, [gameState.player.x, gameState.player.y, gameState.treasureBoxes, playerDirection, canInteractFacing]);
+  // Interaction: attempt to open nearest chest when KeyE/Enter pressed
+  const attemptInteractWithNearestChest = useCallback(() => {
+    const available = gameState.treasureBoxes.filter(b => !b.collected && !b.opened);
+    if (available.length === 0) return;
+
+    const playerTopLeftX = gameState.player.x - GAME_CONFIG.PLAYER_SIZE / 2;
+    const playerTopLeftY = gameState.player.y - GAME_CONFIG.PLAYER_SIZE / 2;
+    const nearest = getClosestInteractable(playerTopLeftX, playerTopLeftY, available);
+    if (!nearest) return;
+
+    const chestSize = GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE;
+    const chestTopLeftX = nearest.x - chestSize / 2;
+    const chestTopLeftY = nearest.y - chestSize / 2;
+
+    if (canInteractWithCooldown(playerTopLeftX, playerTopLeftY, chestTopLeftX, chestTopLeftY, chestSize, chestSize) &&
+        canInteractFacing(playerTopLeftX, playerTopLeftY, playerDirection, chestTopLeftX, chestTopLeftY, chestSize, chestSize, 0.5)) {
+      markInteraction();
+      const randomQuestion = numerationProblems[Math.floor(Math.random() * numerationProblems.length)];
+      setCurrentQuestion(randomQuestion);
+      setCurrentTreasureBox(nearest);
+      setShowQuestionModal(true);
+    }
+  }, [gameState.player.x, gameState.player.y, gameState.treasureBoxes, playerDirection, getClosestInteractable, canInteractWithCooldown, canInteractFacing, markInteraction]);
 
   // Handle question solve
   const handleQuestionSolve = useCallback(() => {
     if (currentTreasureBox) {
-      // Mark treasure box as opened (not collected, so it stays visible but opened)
+      // Mark treasure box as opened and collected so it stops blocking
       updateGameState(prevState => ({
         ...prevState,
         treasureBoxes: prevState.treasureBoxes.map(box => 
-          box === currentTreasureBox ? { ...box, opened: true } : box
+          box === currentTreasureBox ? { ...box, opened: true, collected: true } : box
         ),
         score: prevState.score + 100
       }));
@@ -156,13 +150,12 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
   // Game loop
   useGameLoop(keys, gameState, updateGameState, checkWalkable, generateTerrain, currentLevelWorld);
   
-  // Check for interactions
+  // Check for non-chest interactions (e.g., cave entrances) while moving
   useEffect(() => {
     if (!showQuestionModal) {
-      checkTreasureBoxInteraction();
       checkCaveEntranceInteraction();
     }
-  }, [gameState.player.x, gameState.player.y, showQuestionModal, checkTreasureBoxInteraction, checkCaveEntranceInteraction]);
+  }, [gameState.player.x, gameState.player.y, showQuestionModal, checkCaveEntranceInteraction]);
 
   // Keyboard event handlers
   useEffect(() => {
@@ -186,6 +179,13 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
         case 'ArrowRight':
           setPlayerDirection('right');
           break;
+        case 'KeyE':
+        case 'Enter':
+          // Attempt interaction with nearest chest when user presses KeyE/Enter
+          if (!showQuestionModal) {
+            attemptInteractWithNearestChest();
+          }
+          break;
       }
     };
 
@@ -200,7 +200,7 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, []);
+  }, [attemptInteractWithNearestChest, showQuestionModal]);
 
   // Initialize canvas
   useEffect(() => {

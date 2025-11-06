@@ -1079,26 +1079,34 @@ const OpenWorldGame = () => {
     const clickX = screenX + gameState.camera.x;
     const clickY = screenY + gameState.camera.y;
 
-    // Check treasure boxes near click with proper collision + facing gating
+    // Check treasure boxes near click with a forgiving bounding-box hit test
     const playerX = gameState.player?.x ?? 0;
     const playerY = gameState.player?.y ?? 0;
+    const treasureW = GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE;
+    const treasureH = treasureW;
+    const fudge = Math.max(8, Math.floor(treasureW * 0.15));
     const clickableTreasure = gameState.treasureBoxes?.find(treasure => {
-      if (treasure.collected) return false;
-      const dx = clickX - treasure.x;
-      const dy = clickY - treasure.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      const withinClickRadius = distance <= GAME_CONFIG.TILE_SIZE * 0.9;
-      const canFace = canInteractFacing(
+      if (!treasure || treasure.collected) return false;
+      const withinBounds = (
+        clickX >= treasure.x - fudge &&
+        clickX <= treasure.x + treasureW + fudge &&
+        clickY >= treasure.y - fudge &&
+        clickY <= treasure.y + treasureH + fudge
+      );
+
+      // In wildrealm, do not require facing; elsewhere keep facing gating
+      const canFace = isWildrealm ? true : canInteractFacing(
         playerX,
         playerY,
         playerDirection,
         treasure.x,
         treasure.y,
-        GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE,
-        GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE,
+        treasureW,
+        treasureH,
         0.5
       );
-      return withinClickRadius && canFace;
+
+      return withinBounds && canFace;
     });
     if (clickableTreasure) {
       handleTreasureInteraction(clickableTreasure.id);
@@ -1123,7 +1131,7 @@ const OpenWorldGame = () => {
     if (closestMonster) {
       attackMonster(closestMonster);
     }
-  }, [gameState.camera, gameState.monsters, gameState.treasureBoxes, attackMonster]);
+  }, [gameState.camera, gameState.monsters, gameState.treasureBoxes, attackMonster, isWildrealm, playerDirection]);
 
   // Handle treasure box interaction
   const handleTreasureInteraction = useCallback((treasureId) => {
@@ -1412,7 +1420,7 @@ const OpenWorldGame = () => {
         return;
       }
       
-      // Handle treasure interaction with 'E' key (requires facing) with cooldown
+      // Handle treasure interaction with 'E' key (forgiving in wildrealm) with cooldown
       if (e.code === 'KeyE') {
         const now = Date.now();
         if (now - (lastInteractTimeRef.current || 0) < GAME_CONFIG.INTERACTION_COOLDOWN) {
@@ -1424,18 +1432,34 @@ const OpenWorldGame = () => {
         let bestTreasure = null;
         let bestDist2 = Infinity;
 
+        const w = GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE;
+        const h = w;
+        const fudge = Math.max(8, Math.floor(w * 0.15));
+
         for (const treasure of (gameState.treasureBoxes || [])) {
-          if (treasure.collected) continue;
-          const w = GAME_CONFIG.TILE_SIZE;
-          const h = GAME_CONFIG.TILE_SIZE;
-          if (canInteractFacing(playerX, playerY, playerDirection, treasure.x, treasure.y, w, h, 0.5)) {
-            const dx = (playerX + w / 2) - (treasure.x + w / 2);
-            const dy = (playerY + h / 2) - (treasure.y + h / 2);
-            const d2 = dx * dx + dy * dy;
-            if (d2 < bestDist2) {
-              bestDist2 = d2;
-              bestTreasure = treasure;
-            }
+          if (!treasure || treasure.collected) continue;
+
+          // In wildrealm, allow interaction if player is near chest bounds; elsewhere require facing
+          const requiresFacing = !isWildrealm;
+          const canFace = requiresFacing ? canInteractFacing(playerX, playerY, playerDirection, treasure.x, treasure.y, w, h, 0.5) : true;
+          if (!canFace) continue;
+
+          // Distance to chest center for picking the closest
+          const dx = (playerX + w / 2) - (treasure.x + w / 2);
+          const dy = (playerY + h / 2) - (treasure.y + h / 2);
+          const d2 = dx * dx + dy * dy;
+
+          // Forgiving proximity check using expanded bounds
+          const nearBounds = (
+            playerX >= treasure.x - fudge &&
+            playerX <= treasure.x + w + fudge &&
+            playerY >= treasure.y - fudge &&
+            playerY <= treasure.y + h + fudge
+          );
+
+          if (nearBounds && d2 < bestDist2) {
+            bestDist2 = d2;
+            bestTreasure = treasure;
           }
         }
 
@@ -1777,40 +1801,37 @@ const OpenWorldGame = () => {
 
   return (
     <div className="open-world-game">
-      <div className="game-container">
-        <div className="game-ui">
-          {/* Edge Warning Overlay */}
-          {gameState.player.atEdge && (Object.values(gameState.player.atEdge).some(edge => edge)) && (
-            <div className="edge-warning-overlay" style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              background: 'rgba(255, 165, 0, 0.9)',
-              color: 'white',
-              padding: '15px 25px',
-              borderRadius: '10px',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              textAlign: 'center',
-              boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
-              border: '2px solid #ff8c00',
-              zIndex: 1000,
-              animation: 'edgePulse 2s infinite'
-            }}>
-              🏔️ World Boundary Reached
-              <div style={{ fontSize: '12px', marginTop: '5px', fontWeight: 'normal' }}>
-                You are at the edge of the map
-              </div>
-            </div>
-          )}
+      {/* Edge Warning Overlay (render directly without wrapper div) */}
+      {gameState.player.atEdge && (Object.values(gameState.player.atEdge).some(edge => edge)) && (
+        <div className="edge-warning-overlay" style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          background: 'rgba(255, 165, 0, 0.9)',
+          color: 'white',
+          padding: '15px 25px',
+          borderRadius: '10px',
+          fontSize: '16px',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+          border: '2px solid #ff8c00',
+          zIndex: 1000,
+          animation: 'edgePulse 2s infinite'
+        }}>
+          🏔️ World Boundary Reached
+          <div style={{ fontSize: '12px', marginTop: '5px', fontWeight: 'normal' }}>
+            You are at the edge of the map
+          </div>
         </div>
-        <canvas 
-          ref={canvasRef}
-          className="game-canvas"
-          width={GAME_CONFIG.CANVAS_WIDTH}
-          height={GAME_CONFIG.CANVAS_HEIGHT}
-        />
+      )}
+      <canvas 
+        ref={canvasRef}
+        className="game-canvas"
+        width={GAME_CONFIG.CANVAS_WIDTH}
+        height={GAME_CONFIG.CANVAS_HEIGHT}
+      />
         
         <CanvasRenderer 
           gameState={gameState}
@@ -1910,7 +1931,7 @@ const OpenWorldGame = () => {
           
           
         </div>
-      )}
+        )}
       
       <TreasureQuestionModal 
         isOpen={showQuestionModal}
@@ -1945,10 +1966,7 @@ const OpenWorldGame = () => {
           onClose={() => setGamePaused(false)}
         />
       )}
-      
-      <PerformanceMonitor />
     </div>
-  </div>
   );
 };
 

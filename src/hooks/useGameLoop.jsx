@@ -117,9 +117,10 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
         const isChestBlockingAtPosition = (px, py, treasure) => {
           if (!treasure || treasure.collected) return false;
           const playerHalf = GAME_CONFIG.PLAYER_SIZE / 2;
-          const chestHalf = GAME_CONFIG.TREASURE_SIZE / 2;
-          const intersectsX = Math.abs(px - treasure.x) < (playerHalf + chestHalf);
-          const intersectsY = Math.abs(py - treasure.y) < (playerHalf + chestHalf);
+          const chestHalfW = GAME_CONFIG.TREASURE_SIZE / 2;
+          const chestHalfH = (GAME_CONFIG.TREASURE_SIZE * 0.8) / 2; // align with renderer height
+          const intersectsX = Math.abs(px - treasure.x) < (playerHalf + chestHalfW);
+          const intersectsY = Math.abs(py - treasure.y) < (playerHalf + chestHalfH);
           return intersectsX && intersectsY;
         };
         const isAnyChestBlocking = (px, py, treasures) => {
@@ -128,6 +129,26 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
             if (isChestBlockingAtPosition(px, py, t)) return true;
           }
           return false;
+        };
+
+        // Compute a push-back response to separate player from a chest
+        const getChestCollisionResponse = (px, py, treasure) => {
+          const chestCenterX = treasure.x;
+          const chestCenterY = treasure.y;
+          const dx = px - chestCenterX;
+          const dy = py - chestCenterY;
+          const dist = Math.hypot(dx, dy) || 1;
+          const playerRadius = (GAME_CONFIG.PLAYER_SIZE * 0.8) / 2; // use hitbox scale similar to bushes
+          const chestRadius = Math.max(GAME_CONFIG.TREASURE_SIZE / 2, (GAME_CONFIG.TREASURE_SIZE * 0.8) / 2) * 0.9;
+          const minDist = playerRadius + chestRadius + 2; // small buffer
+          if (dist >= minDist) return { x: px, y: py, blocked: false };
+          const nx = dx / dist;
+          const ny = dy / dist;
+          return {
+            x: chestCenterX + nx * minDist,
+            y: chestCenterY + ny * minDist,
+            blocked: true
+          };
         };
         
         // Calculate world boundaries in pixels - allow precise edge movement
@@ -154,7 +175,28 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
           if (import.meta.env?.DEV) {
             console.log('⛔ Movement blocked at proposed position:', { proposedX, proposedY, terrainBlocked, chestBlocked });
           }
-          
+
+          // Special handling: if chest causes the block, attempt a gentle push-back
+          if (!terrainBlocked && chestBlocked) {
+            const blockingChest = prev.treasureBoxes.find(t => isChestBlockingAtPosition(proposedX, proposedY, t));
+            if (blockingChest) {
+              const response = getChestCollisionResponse(proposedX, proposedY, blockingChest);
+              const respX = Math.max(minBoundary, Math.min(maxBoundaryX, response.x));
+              const respY = Math.max(minBoundary, Math.min(maxBoundaryY, response.y));
+              const terrainOK = checkWalkable(respX, respY);
+              const chestOK = !isAnyChestBlocking(respX, respY, prev.treasureBoxes);
+              if (terrainOK && chestOK) {
+                finalX = respX;
+                finalY = respY;
+                movementBlocked = false;
+                blockedReason = '';
+                if (import.meta.env?.DEV) {
+                  console.log('🟨 Chest push-back applied:', { finalX, finalY });
+                }
+              }
+            }
+          }
+
           // Second attempt: Try horizontal movement only
           if (inputX !== 0) {
             const testX = newX + inputX * moveSpeed;

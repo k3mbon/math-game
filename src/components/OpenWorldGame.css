@@ -6,15 +6,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* Center the canvas vertically */
+  justify-content: flex-start; /* Place the canvas directly under navbar */
   background: linear-gradient(135deg, var(--primary-200) 0%, var(--secondary-300) 50%, var(--accent-400) 100%);
   font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  overflow: visible; /* allow overlays without clipping */
+  overflow: hidden; /* prevent nested scrolling for single scrollbar */
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  padding: 20px; /* Add padding for better spacing */
+  padding: 0; /* remove extra padding to avoid double scrollbars */
 }
 
 .game-canvas {
@@ -756,7 +756,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* Align content to top inside the container */
   width: 100%;
   height: 100%;
 }

@@ -300,8 +300,8 @@ export const terrainBoundarySystem = new TerrainBoundarySystem();
  */
 export class EnhancedBushCollisionSystem {
   constructor() {
-    this.bushHitboxScale = 0.7; // Bushes use 70% of their visual size for collision
-    this.playerHitboxScale = 0.8; // Player uses 80% of their visual size for collision
+    this.bushHitboxScale = 0.85; // Tighten: bushes use 85% of visual size for collision
+    this.playerHitboxScale = 0.85; // Tighten: player uses 85% of visual size for collision
     // Align collision hitbox with renderer's ground alignment offset
     // CanvasRenderer draws bushes with a slight downward offset (~10% of tile size)
     this.bushGroundOffsetFactor = 0.1;
