@@ -593,7 +593,7 @@ class GameSystemTestSuite {
   testRewardPersistence() {
     console.log('💾 Testing reward persistence via localStorage...');
     try {
-      const key = 'openWorldGameProgress';
+      const key = 'WildRealmProgress';
       localStorage.removeItem(key);
       const saved = {
         crystalsCollected: 3,
@@ -631,7 +631,7 @@ class GameSystemTestSuite {
   testSkipFlowNoPersistence() {
     console.log('⏭️ Testing skip flow persistence behavior...');
     try {
-      const key = 'openWorldGameProgress';
+      const key = 'WildRealmProgress';
       const initial = {
         crystalsCollected: 1,
         completedTreasures: [],

@@ -10,6 +10,7 @@ import { terrainBoundarySystem } from '../utils/terrainBoundarySystem';
 import CanvasRenderer from './CanvasRenderer';
 import TreasureQuestionModal from './TreasureQuestionModal';
 import TreasureLootModal from './TreasureLootModal';
+import CrystalCollectionModal from './CrystalCollectionModal';
 import GameStartMenu from './GameStartMenu';
 import GameMenu from './GameMenu';
 import TerrainRenderer, { getStoredTerrainData, hasStoredTerrain, getWalkableTiles, getCollisionTiles } from './TerrainRenderer';
@@ -26,7 +27,14 @@ import { generateLootForTreasure, applyLoot } from '../utils/lootSystem';
 if (import.meta.env?.DEV) {
   import('../tests/index.js').then(tests => {
     window.mathGameTestFramework = tests;
-    console.log('🧪 Math Game Test Framework loaded and available at window.mathGameTestFramework');
+    // Avoid logging on /wildrealm route to keep console clean
+    const isWildrealmRoute = typeof window !== 'undefined' 
+      && window.location 
+      && window.location.pathname 
+      && window.location.pathname.includes('/wildrealm');
+    if (!isWildrealmRoute) {
+      console.log('🧪 Math Game Test Framework loaded and available at window.mathGameTestFramework');
+    }
   });
 }
 
@@ -62,7 +70,6 @@ import monsterOrcSvg from '/assets/monster-orc.svg';
 import { SPRITE_CONFIGS } from '../utils/spriteAnimator';
 
 const OpenWorldGame = () => {
-  console.log('🔍 OpenWorldGame component is rendering');
   
   const navigate = useNavigate();
   const canvasRef = useRef(null);
@@ -73,13 +80,15 @@ const OpenWorldGame = () => {
   // Initialize resource management (moved above, keep hook order consistent)
   // Already initialized above
 
-  // Interaction helpers (distance + facing)
-  const { canInteractFacing, isFacing } = useInteractionSystem();
+  // Interaction helpers (distance + facing + cooldown)
+  const { canInteract, canInteractFacing, isFacing, canInteractWithCooldown, markInteraction, setInteractionCooldown } = useInteractionSystem();
   
   const [gameStarted, setGameStarted] = useState(false); // Start with menu visible
   const [gamePaused, setGamePaused] = useState(false); // Game pause state
   const [showStartMenu, setShowStartMenu] = useState(true); // Start menu visibility
   const [keys, setKeys] = useState({});
+  // Track timestamps of movement keys to ensure last-key-wins for sprite direction
+  const lastMovementKeyTimeRef = useRef({});
   const [playerDirection, setPlayerDirection] = useState('front'); // front, back, left, right
   const [grassTilesLoaded, setGrassTilesLoaded] = useState(false); // Track grass tile loading
   
@@ -102,13 +111,16 @@ const OpenWorldGame = () => {
   const [currentTreasureBox, setCurrentTreasureBox] = useState(null);
   const [showLootModal, setShowLootModal] = useState(false);
   const [currentLoot, setCurrentLoot] = useState(null);
+  const [showCrystalModal, setShowCrystalModal] = useState(false);
+  const [currentCrystal, setCurrentCrystal] = useState(null);
+  const [lastSolvedQuestion, setLastSolvedQuestion] = useState(null);
   const [questions, setQuestions] = useState(null);
   const [questionsLoading, setQuestionsLoading] = useState(true);
   const [questionsError, setQuestionsError] = useState(null);
   const [showCoinAnimation, setShowCoinAnimation] = useState(false);
   const [hoveredTreasureId, setHoveredTreasureId] = useState(null);
   const lastHoverSoundRef = useRef(0);
-  const lastInteractTimeRef = useRef(0);
+  const mouseMoveThrottleRef = useRef(0);
   const gamepadStateRef = useRef({ prevButtons: {} });
   const [isMoving, setIsMoving] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
@@ -120,6 +132,19 @@ const OpenWorldGame = () => {
   const [terrainType, setTerrainType] = useState('grass'); // Options: 'default', 'grass' - Start with grass to show tile assignments
   const [grassTerrainMap, setGrassTerrainMap] = useState(null);
   const [bushObstacles, setBushObstacles] = useState([]);
+
+  // Helper: check collision between player and a chest using the same
+  // tuned hitbox ratios as the game loop, centered on chest coordinates.
+  const isChestCollidingWithPlayer = useCallback((px, py, chest) => {
+    if (!chest) return false;
+    const playerHalf = (GAME_CONFIG.PLAYER_SIZE * (GAME_CONFIG.PLAYER_COLLISION_SCALE ?? 0.8)) / 2;
+    const chestHalfW = (GAME_CONFIG.TREASURE_SIZE * (GAME_CONFIG.TREASURE_HITBOX_WIDTH_RATIO ?? 0.72)) / 2;
+    const chestHalfH = (GAME_CONFIG.TREASURE_SIZE * (GAME_CONFIG.TREASURE_HITBOX_HEIGHT_RATIO ?? 0.70)) / 2;
+    const chestCenterY = chest.y + (GAME_CONFIG.TREASURE_SIZE * (GAME_CONFIG.TREASURE_HITBOX_Y_OFFSET_RATIO ?? 0));
+    const intersectsX = Math.abs(px - chest.x) < (playerHalf + chestHalfW);
+    const intersectsY = Math.abs(py - chestCenterY) < (playerHalf + chestHalfH);
+    return intersectsX && intersectsY;
+  }, []);
   const [grassTileImages, setGrassTileImages] = useState({
     grassTopLeft: null,
     grassTop: null,
@@ -176,7 +201,13 @@ const OpenWorldGame = () => {
     grassRight: useRef(null),
     grassBottomLeft: useRef(null),
     grassBottom: useRef(null),
-    grassBottomRight: useRef(null)
+    grassBottomRight: useRef(null),
+    // Pig monster sheets
+    monsterPigIdleSheet: useRef(null),
+    monsterPigRunSheet: useRef(null),
+    monsterPigHitSheet: useRef(null),
+    monsterPigDeadSheet: useRef(null),
+    monsterPigAttackSheet: useRef(null)
   });
 
   // Initialize player position - start at reasonable position
@@ -191,6 +222,45 @@ const OpenWorldGame = () => {
     location.pathname.includes('/wildrealm')
   ), [location.pathname]);
 
+  // Ensure interaction system cooldown aligns with game config
+  useEffect(() => {
+    try {
+      setInteractionCooldown(GAME_CONFIG?.INTERACTION_COOLDOWN ?? 100);
+    } catch {}
+  }, [setInteractionCooldown]);
+
+  // Player hurt animation trigger when damaged by monsters
+  useEffect(() => {
+    const wasHit = !!(gameState?.status?.playerHit);
+    if (!wasHit) return;
+    // Do not override ongoing attack animation
+    if (isAttacking || animationState === 'death') return;
+    setAnimationState('hurt');
+    const revertMs = 450;
+    const timeoutId = setTimeout(() => {
+      if (gameState?.player?.health <= 0) {
+        setAnimationState('death');
+      } else {
+        // Restore movement-based animation
+        if (isRunning) {
+          setAnimationState('running');
+        } else if (isMoving) {
+          setAnimationState('walking');
+        } else {
+          setAnimationState('idle');
+        }
+      }
+    }, revertMs);
+    return () => clearTimeout(timeoutId);
+  }, [gameState?.status?.playerHit]);
+
+  // Ensure death animation when health reaches zero
+  useEffect(() => {
+    if (gameState?.player?.health <= 0 && animationState !== 'death') {
+      setAnimationState('death');
+    }
+  }, [gameState?.player?.health]);
+
   // Initialize performance monitoring with null checks; disable in wildrealm
   const performanceMonitor = usePerformanceMonitor(!isWildrealm);
   const { profiler, startTimer, endTimer, getReport, getSuggestions } = performanceMonitor || {
@@ -200,6 +270,26 @@ const OpenWorldGame = () => {
     getReport: () => null,
     getSuggestions: () => []
   };
+
+  // Silence console logs on /wildrealm to reduce noise and overhead
+  useEffect(() => {
+    if (!isWildrealm) return;
+    const originalLog = console.log;
+    const originalDebug = console.debug;
+    const originalInfo = console.info;
+    try {
+      console.log = () => {};
+      console.debug = () => {};
+      console.info = () => {};
+    } catch {}
+    return () => {
+      try {
+        console.log = originalLog;
+        console.debug = originalDebug;
+        console.info = originalInfo;
+      } catch {}
+    };
+  }, [isWildrealm]);
 
   // Clear console and in-memory debug logs when in wildrealm
   useEffect(() => {
@@ -224,8 +314,13 @@ const OpenWorldGame = () => {
         setGrassTilesLoaded(true);
         console.log('🔄 Grass tiles loaded state set to true - triggering re-render');
         
-        // Generate a default grass terrain map (20x20) with bush obstacles
-        const terrainData = generateTerrainMap(20, 20);
+        // Generate grass terrain data for the FULL world with bush obstacles
+        // Request ~70% bush grid occupancy per user instruction
+        const terrainData = generateTerrainMap(
+          GAME_CONFIG.WORLD_SIZE,
+          GAME_CONFIG.WORLD_SIZE,
+          { bushDensity: 0.7 }
+        );
         setGrassTerrainMap(terrainData.map);
         setBushObstacles(terrainData.bushObstacles);
         
@@ -242,6 +337,32 @@ const OpenWorldGame = () => {
     };
     
     loadGrassTiles();
+  }, []);
+
+  // Preload nine-piece grass tile images and wire to CanvasRenderer
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        const tiles = await preloadTileImages();
+        if (!isMounted) return;
+        setGrassTileImages({
+          grassTopLeft: tiles[GRASS_TILES.TOP_LEFT] || null,
+          grassTop: tiles[GRASS_TILES.TOP] || null,
+          grassTopRight: tiles[GRASS_TILES.TOP_RIGHT] || null,
+          grassLeft: tiles[GRASS_TILES.LEFT] || null,
+          grassCenter: tiles[GRASS_TILES.CENTER] || null,
+          grassRight: tiles[GRASS_TILES.RIGHT] || null,
+          grassBottomLeft: tiles[GRASS_TILES.BOTTOM_LEFT] || null,
+          grassBottom: tiles[GRASS_TILES.BOTTOM] || null,
+          grassBottomRight: tiles[GRASS_TILES.BOTTOM_RIGHT] || null
+        });
+        console.log('✅ Wired grass tile images to renderer');
+      } catch (e) {
+        console.error('❌ Failed to preload grass tile images', e);
+      }
+    })();
+    return () => { isMounted = false; };
   }, []);
 
   // Monitor grass tile loading status
@@ -411,7 +532,7 @@ const OpenWorldGame = () => {
     // Load saved progress on component mount
     const loadSavedProgress = () => {
       try {
-        const savedProgress = localStorage.getItem('openWorldGameProgress');
+        const savedProgress = localStorage.getItem('WildRealmProgress');
         if (savedProgress) {
           const progress = JSON.parse(savedProgress);
           updateGameState(prev => ({
@@ -448,7 +569,7 @@ const OpenWorldGame = () => {
           lastSaved: Date.now()
         };
         
-        localStorage.setItem('openWorldGameProgress', JSON.stringify(progress));
+        localStorage.setItem('WildRealmProgress', JSON.stringify(progress));
         console.log('💾 Progress saved:', progress);
       } catch (error) {
         console.error('Failed to save progress:', error);
@@ -902,17 +1023,18 @@ const OpenWorldGame = () => {
       }
     }
     
-    // For grass terrain, pass bush obstacles to collision detection
-    const bushObstaclesForCollision = terrainType === 'grass' ? bushObstacles : null;
-    return isWalkable(x, y, terrain, null, bushObstaclesForCollision);
+    // Always pass bush obstacles to collision detection to prevent walking over bushes
+    return isWalkable(x, y, terrain, null, bushObstacles);
   }, [useCustomTerrain, customTerrain, terrainLevel, terrainType, bushObstacles]);
 
   // Game loop
-  useGameLoop(keys, gameState, updateGameState, checkWalkable, generateTerrain);
+  useGameLoop(keys, gameState, updateGameState, checkWalkable, generateTerrain, { isWildrealm });
   
   // Debug: Log when generateTerrain function changes
   useEffect(() => {
-    console.log('🎮 generateTerrain function updated. useCustomTerrain:', useCustomTerrain, 'customTerrain available:', !!customTerrain);
+    if (!isWildrealm && import.meta.env?.DEV) {
+      console.log('🎮 generateTerrain function updated. useCustomTerrain:', useCustomTerrain, 'customTerrain available:', !!customTerrain);
+    }
   }, [generateTerrain, useCustomTerrain, customTerrain]);
 
   // Load game assets
@@ -937,7 +1059,7 @@ const OpenWorldGame = () => {
     };
 
     // Count total images to load
-    const totalImageCount = 33; // base 26 + 7 animated sheets (idle, walk, run, attack, runAttack, hurt, death)
+    const totalImageCount = 38; // base 26 + 7 player sheets + 5 pig sheets
     setRenderingStats(prev => ({
       ...prev,
       totalImages: totalImageCount,
@@ -981,6 +1103,13 @@ const OpenWorldGame = () => {
      loadImage(SPRITE_CONFIGS.runAttack.src, loadedImages.playerRunAttackSheet);
      loadImage(SPRITE_CONFIGS.hurt.src, loadedImages.playerHurtSheet);
      loadImage(SPRITE_CONFIGS.death.src, loadedImages.playerDeathSheet);
+
+     // Pig monster spritesheets (Kings and Pigs)
+     loadImage('/assets/characters/kings-and-pigs/03-Pig/Idle (34x28).png', loadedImages.monsterPigIdleSheet);
+     loadImage('/assets/characters/kings-and-pigs/03-Pig/Run (34x28).png', loadedImages.monsterPigRunSheet);
+     loadImage('/assets/characters/kings-and-pigs/03-Pig/Hit (34x28).png', loadedImages.monsterPigHitSheet);
+     loadImage('/assets/characters/kings-and-pigs/03-Pig/Dead (34x28).png', loadedImages.monsterPigDeadSheet);
+     loadImage('/assets/characters/kings-and-pigs/03-Pig/Attack (34x28).png', loadedImages.monsterPigAttackSheet);
   }, []);
 
   // Attack function
@@ -1003,14 +1132,17 @@ const OpenWorldGame = () => {
         setAnimationState('idleAttack');
       }
       
-      // Reduce monster HP
+      // Reduce monster HP and mark death for animation (removal scheduled later)
       updateGameState(prev => ({
         ...prev,
-        monsters: prev.monsters.map(m => 
-          m.id === monster.id 
-            ? { ...m, health: Math.max(0, m.health - 25) }
-            : m
-        ).filter(m => m.health > 0) // Remove dead monsters
+        monsters: prev.monsters.map(m => {
+          if (m.id !== monster.id) return m;
+          const newHealth = Math.max(0, m.health - 25);
+          if (newHealth <= 0) {
+            return { ...m, health: 0, isDead: true, deathStartTime: Date.now() };
+          }
+          return { ...m, health: newHealth };
+        })
       }));
       
       // Reset attack animation with smooth transition
@@ -1030,6 +1162,14 @@ const OpenWorldGame = () => {
           }
         }, 100); // Small delay for smoother transition
       }, 700); // Slightly shorter attack duration for better responsiveness
+
+      // If monster died, schedule removal after short death animation
+      setTimeout(() => {
+        updateGameState(prev => ({
+          ...prev,
+          monsters: prev.monsters.filter(m => !(m.isDead && (Date.now() - (m.deathStartTime || 0) > 800)))
+        }));
+      }, 900);
     }
   }, [gameState.player, updateGameState, isMoving, isRunning]);
 
@@ -1079,38 +1219,87 @@ const OpenWorldGame = () => {
     const clickX = screenX + gameState.camera.x;
     const clickY = screenY + gameState.camera.y;
 
+    // Gate chest click if another interaction is active
+    if (showQuestionModal || showLootModal || isAttacking) {
+      try { soundEffects.playError(); } catch {}
+      updateGameState(prev => {
+        const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+        logs.push({ t: Date.now(), type: 'interaction_fail', key: 'mouse', reason: showQuestionModal ? 'question_modal' : showLootModal ? 'loot_modal' : 'attacking' });
+        return { ...prev, debugLogs: logs, status: { ...(prev.status||{}), lastInputMethod: 'mouse' } };
+      });
+      return;
+    }
+
     // Check treasure boxes near click with a forgiving bounding-box hit test
     const playerX = gameState.player?.x ?? 0;
     const playerY = gameState.player?.y ?? 0;
     const treasureW = GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE;
     const treasureH = treasureW;
     const fudge = Math.max(8, Math.floor(treasureW * 0.15));
-    const clickableTreasure = gameState.treasureBoxes?.find(treasure => {
-      if (!treasure || treasure.collected) return false;
-      const withinBounds = (
-        clickX >= treasure.x - fudge &&
-        clickX <= treasure.x + treasureW + fudge &&
-        clickY >= treasure.y - fudge &&
-        clickY <= treasure.y + treasureH + fudge
-      );
+    let bestTreasure = null;
+    let bestDist2 = Infinity;
+    let sawInRange = false;
+    let sawCooldownOk = false;
+    let sawFacing = false;
+    let sawNearBounds = false;
 
-      // In wildrealm, do not require facing; elsewhere keep facing gating
-      const canFace = isWildrealm ? true : canInteractFacing(
-        playerX,
-        playerY,
-        playerDirection,
-        treasure.x,
-        treasure.y,
-        treasureW,
-        treasureH,
-        0.5
-      );
+    const w = treasureW;
+    const h = treasureH;
+    const treasures = Array.isArray(gameState.treasureBoxes) ? gameState.treasureBoxes : [];
+    for (const treasure of treasures) {
+      if (!treasure || treasure.collected) continue;
 
-      return withinBounds && canFace;
-    });
-    if (clickableTreasure) {
-      handleTreasureInteraction(clickableTreasure.id);
+      const inRangeNoCooldown = canInteract(playerX, playerY, treasure.x, treasure.y);
+      const inRangeCooldown = canInteractWithCooldown(playerX, playerY, treasure.x, treasure.y, w, h);
+      sawInRange = sawInRange || inRangeNoCooldown;
+      sawCooldownOk = sawCooldownOk || inRangeCooldown;
+      if (!inRangeCooldown) continue; // enforce cooldown
+
+      const facingOk = canInteractFacing(playerX, playerY, playerDirection, treasure.x, treasure.y, w, h, GAME_CONFIG?.INTERACTION_FACING_COS ?? 0.35);
+      sawFacing = sawFacing || facingOk;
+      if (!facingOk) continue;
+
+      const halfW = w / 2;
+      const halfH = h / 2;
+      const nearClickBounds = (
+        clickX >= treasure.x - halfW - fudge &&
+        clickX <= treasure.x + halfW + fudge &&
+        clickY >= treasure.y - halfH - fudge &&
+        clickY <= treasure.y + halfH + fudge
+      );
+      sawNearBounds = sawNearBounds || nearClickBounds;
+      if (!nearClickBounds) continue;
+
+      const dx = playerX - treasure.x;
+      const dy = playerY - treasure.y;
+      const d2 = dx * dx + dy * dy;
+      if (d2 < bestDist2) {
+        bestDist2 = d2;
+        bestTreasure = treasure;
+      }
+    }
+    if (bestTreasure) {
+      try { soundEffects.playMenuClick(); } catch {}
+      handleTreasureInteraction(bestTreasure.id);
+      try { markInteraction(); } catch {}
+      updateGameState(prev => {
+        const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+        logs.push({ t: Date.now(), type: 'interaction_success', key: 'mouse', chestId: bestTreasure.id, px: playerX, py: playerY, dir: playerDirection, clickX, clickY });
+        return { ...prev, debugLogs: logs, status: { ...(prev.status||{}), lastInputMethod: 'mouse' } };
+      });
       return; // prioritize chest interaction over attacks
+    } else {
+      try { soundEffects.playError(); } catch {}
+      updateGameState(prev => {
+        const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+        const reason = !sawInRange ? 'out_of_range'
+          : !sawCooldownOk ? 'cooldown_active'
+          : !sawFacing ? 'not_facing'
+          : !sawNearBounds ? 'not_near_bounds'
+          : 'unknown';
+        logs.push({ t: Date.now(), type: 'interaction_fail', key: 'mouse', reason, dir: playerDirection });
+        return { ...prev, debugLogs: logs, status: { ...(prev.status||{}), lastInputMethod: 'mouse' } };
+      });
     }
     
     // Find closest monster to click position
@@ -1131,7 +1320,7 @@ const OpenWorldGame = () => {
     if (closestMonster) {
       attackMonster(closestMonster);
     }
-  }, [gameState.camera, gameState.monsters, gameState.treasureBoxes, attackMonster, isWildrealm, playerDirection]);
+  }, [gameState.camera, gameState.monsters, gameState.treasureBoxes, attackMonster, isWildrealm, playerDirection, showQuestionModal, showLootModal, isAttacking, updateGameState, canInteract, canInteractWithCooldown, canInteractFacing, markInteraction]);
 
   // Handle treasure box interaction
   const handleTreasureInteraction = useCallback((treasureId) => {
@@ -1148,7 +1337,7 @@ const OpenWorldGame = () => {
         )
       }));
       // Wildrealm: show loot modal after opening animation
-      if (gameState.worldSeed && gameState.worldSeed.toString().includes('wildrealm')) {
+      if (isWildrealm) {
         const loot = generateLootForTreasure({
           chestId: treasureId,
           depthLevel: gameState.depthLevel || 0,
@@ -1200,7 +1389,7 @@ const OpenWorldGame = () => {
       setCurrentTreasureBox(treasureBox);
       setShowQuestionModal(true);
     }
-  }, [gameState.treasureBoxes, gameState.depthLevel, gameState.worldSeed, updateGameState, questionsLoading, questions, questionsError]);
+  }, [gameState.treasureBoxes, gameState.depthLevel, gameState.worldSeed, updateGameState, questionsLoading, questions, questionsError, isWildrealm]);
 
   // Handle loot modal actions (wildrealm)
   const handleLootCollect = useCallback(() => {
@@ -1256,10 +1445,20 @@ const OpenWorldGame = () => {
       setShowCoinAnimation(true);
       try { soundEffects.playCollect(); } catch {}
       setTimeout(() => setShowCoinAnimation(false), 1200);
+
+      // Track the solved question and prepare crystal info
+      setLastSolvedQuestion(currentQuestion);
+      setCurrentCrystal({
+        id: currentTreasureBox.id,
+        obstacle: '/assets/characters/terrain-object/Crystals/2.png',
+        position: { x: currentTreasureBox.x, y: currentTreasureBox.y }
+      });
     }
     setShowQuestionModal(false);
     setCurrentQuestion(null);
     setCurrentTreasureBox(null);
+    // Show the crystal info modal after closing the quiz
+    setShowCrystalModal(true);
   }, [currentTreasureBox, updateGameState]);
 
   // Handle question modal close
@@ -1379,13 +1578,8 @@ const OpenWorldGame = () => {
   }, []);
 
   // Keyboard event handlers
-    useEffect(() => {
-      console.log('🎮 Setting up keyboard event listeners, gameStarted:', gameStarted);
-      const handleKeyDown = (e) => {
-      // Debug: log raw keydown events
-      if (import.meta.env?.DEV) {
-        console.log('🔑 keydown:', e.code, 'paused:', gamePaused, 'startMenu:', showStartMenu);
-      }
+  useEffect(() => {
+    const handleKeyDown = (e) => {
       // Handle ESC key for start menu or pause menu
       if (e.code === 'Escape') {
         if (gameStarted) {
@@ -1408,64 +1602,112 @@ const OpenWorldGame = () => {
       
       // Don't process other keys if game is paused or start menu is visible
       if (gamePaused || showStartMenu) {
-        if (import.meta.env?.DEV) {
-          console.log('⏸️ Input ignored: gamePaused or showStartMenu active');
-        }
         // Record UI-visible gating status
-        updateGameState(prev => {
-          const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
-          logs.push({ t: Date.now(), type: 'input', msg: 'Input gated', reason: gamePaused ? 'paused' : 'start_menu', key: e.code });
-          return { ...prev, debugLogs: logs, status: { ...(prev.status||{}), gated: true, gatedBy: gamePaused ? 'paused' : 'start_menu' } };
-        });
+        if (!isWildrealm) {
+          updateGameState(prev => {
+            const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+            logs.push({ t: Date.now(), type: 'input', msg: 'Input gated', reason: gamePaused ? 'paused' : 'start_menu', key: e.code });
+            return { ...prev, debugLogs: logs, status: { ...(prev.status||{}), gated: true, gatedBy: gamePaused ? 'paused' : 'start_menu' } };
+          });
+        }
         return;
       }
       
-      // Handle treasure interaction with 'E' key (forgiving in wildrealm) with cooldown
+      // Handle treasure interaction with 'E' key: require range + facing + cooldown,
+      // ensure no other interactions are active, and add logging/feedback.
       if (e.code === 'KeyE') {
-        const now = Date.now();
-        if (now - (lastInteractTimeRef.current || 0) < GAME_CONFIG.INTERACTION_COOLDOWN) {
-          try { soundEffects.playError(); } catch {}
-          return;
-        }
         const playerX = gameState.player?.x ?? 0;
         const playerY = gameState.player?.y ?? 0;
-        let bestTreasure = null;
-        let bestDist2 = Infinity;
+
+        // Log the key press detection for diagnostics
+        updateGameState(prev => {
+          const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+          logs.push({ t: Date.now(), type: 'keydown', key: 'KeyE', msg: 'E pressed', dir: playerDirection, px: playerX, py: playerY });
+          return { ...prev, debugLogs: logs, status: { ...(prev.status||{}), lastInputMethod: 'keyboard' } };
+        });
+
+        // Gate if any modal or combat is active
+        if (showQuestionModal || showLootModal || isAttacking) {
+          try { soundEffects.playError(); } catch {}
+          updateGameState(prev => {
+            const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+            logs.push({ t: Date.now(), type: 'interaction_fail', key: 'KeyE', reason: showQuestionModal ? 'question_modal' : showLootModal ? 'loot_modal' : 'attacking' });
+            return { ...prev, debugLogs: logs, status: { ...(prev.status||{}), lastInputMethod: 'keyboard' } };
+          });
+          return;
+        }
 
         const w = GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE;
         const h = w;
         const fudge = Math.max(8, Math.floor(w * 0.15));
 
-        for (const treasure of (gameState.treasureBoxes || [])) {
+        let bestTreasure = null;
+        let bestDist2 = Infinity;
+        let sawInRange = false;
+        let sawCooldownOk = false;
+        let sawFacing = false;
+        let sawNearBounds = false;
+        let sawCollision = false;
+
+        const treasures = Array.isArray(gameState.treasureBoxes) ? gameState.treasureBoxes : [];
+        for (const treasure of treasures) {
           if (!treasure || treasure.collected) continue;
 
-          // In wildrealm, allow interaction if player is near chest bounds; elsewhere require facing
-          const requiresFacing = !isWildrealm;
-          const canFace = requiresFacing ? canInteractFacing(playerX, playerY, playerDirection, treasure.x, treasure.y, w, h, 0.5) : true;
-          if (!canFace) continue;
+          const inRangeNoCooldown = canInteract(playerX, playerY, treasure.x, treasure.y);
+          const inRangeCooldown = canInteractWithCooldown(playerX, playerY, treasure.x, treasure.y, w, h);
+          sawInRange = sawInRange || inRangeNoCooldown;
+          sawCooldownOk = sawCooldownOk || inRangeCooldown;
+          if (!inRangeCooldown) continue; // enforce cooldown
 
-          // Distance to chest center for picking the closest
-          const dx = (playerX + w / 2) - (treasure.x + w / 2);
-          const dy = (playerY + h / 2) - (treasure.y + h / 2);
-          const d2 = dx * dx + dy * dy;
+          const facingOk = canInteractFacing(playerX, playerY, playerDirection, treasure.x, treasure.y, w, h, GAME_CONFIG?.INTERACTION_FACING_COS ?? 0.35);
+          sawFacing = sawFacing || facingOk;
+          if (!facingOk) continue;
 
-          // Forgiving proximity check using expanded bounds
+          const halfW = w / 2;
+          const halfH = h / 2;
           const nearBounds = (
-            playerX >= treasure.x - fudge &&
-            playerX <= treasure.x + w + fudge &&
-            playerY >= treasure.y - fudge &&
-            playerY <= treasure.y + h + fudge
+            playerX >= treasure.x - halfW - fudge &&
+            playerX <= treasure.x + halfW + fudge &&
+            playerY >= treasure.y - halfH - fudge &&
+            playerY <= treasure.y + halfH + fudge
           );
+          sawNearBounds = sawNearBounds || nearBounds;
 
-          if (nearBounds && d2 < bestDist2) {
+          const colliding = isChestCollidingWithPlayer(playerX, playerY, treasure);
+          sawCollision = sawCollision || colliding;
+
+          if (!(nearBounds || colliding)) continue; // must be close or touching
+
+          const dx = playerX - treasure.x;
+          const dy = playerY - treasure.y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < bestDist2) {
             bestDist2 = d2;
             bestTreasure = treasure;
           }
         }
 
         if (bestTreasure) {
+          try { soundEffects.playMenuClick(); } catch {}
           handleTreasureInteraction(bestTreasure.id);
-          lastInteractTimeRef.current = now;
+          try { markInteraction(); } catch {}
+          updateGameState(prev => {
+            const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+            logs.push({ t: Date.now(), type: 'interaction_success', key: 'KeyE', chestId: bestTreasure.id, px: playerX, py: playerY, dir: playerDirection });
+            return { ...prev, debugLogs: logs, status: { ...(prev.status||{}), lastInputMethod: 'keyboard' } };
+          });
+        } else {
+          try { soundEffects.playError(); } catch {}
+          updateGameState(prev => {
+            const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+            const reason = !sawInRange ? 'out_of_range'
+              : !sawCooldownOk ? 'cooldown_active'
+              : !sawFacing ? 'not_facing'
+              : !sawNearBounds ? 'not_near_bounds'
+              : 'unknown';
+            logs.push({ t: Date.now(), type: 'interaction_fail', key: 'KeyE', reason, collision: sawCollision, dir: playerDirection });
+            return { ...prev, debugLogs: logs, status: { ...(prev.status||{}), lastInputMethod: 'keyboard' } };
+          });
         }
         return;
       }
@@ -1488,18 +1730,21 @@ const OpenWorldGame = () => {
         const currentKeys = keys || {};
         const newKeys = { ...currentKeys, [e.code]: true };
         setKeys(newKeys);
+        // Record the timestamp for this movement key
+        try { lastMovementKeyTimeRef.current[e.code] = performance.now(); } catch {}
         const pressed = Object.keys(newKeys).filter(k => newKeys[k]);
-        if (import.meta.env?.DEV) {
-          console.log('🔑 Key pressed:', e.code, 'Keys state:', pressed);
+        // Mirror keys into gameState for UI debug (skip in wildrealm)
+        if (!isWildrealm) {
+          updateGameState(prev => {
+            const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+            logs.push({ t: Date.now(), type: 'keydown', key: e.code, msg: 'Key down', keys: pressed });
+            return { ...prev, lastKeys: pressed, debugLogs: logs, status: { ...(prev.status||{}), inputActive: true } };
+          });
+        } else {
+          updateGameState(prev => ({ ...prev, lastKeys: pressed }));
         }
-        // Mirror keys into gameState for UI debug
-        updateGameState(prev => {
-          const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
-          logs.push({ t: Date.now(), type: 'keydown', key: e.code, msg: 'Key down', keys: pressed });
-          return { ...prev, lastKeys: pressed, debugLogs: logs, status: { ...(prev.status||{}), inputActive: true } };
-        });
         
-        // Update player direction based on movement keys
+        // Update player direction based on the last movement key pressed
         switch(e.code) {
           case 'KeyW':
           case 'ArrowUp':
@@ -1523,18 +1768,19 @@ const OpenWorldGame = () => {
         const newKeys = { ...(keys || {}), [e.code]: true };
         setKeys(newKeys);
         const pressed = Object.keys(newKeys).filter(k => newKeys[k]);
-        updateGameState(prev => {
-          const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
-          logs.push({ t: Date.now(), type: 'keydown', key: e.code, msg: 'Key down (non-movement)', keys: pressed });
-          return { ...prev, lastKeys: pressed, debugLogs: logs };
-        });
+        if (!isWildrealm) {
+          updateGameState(prev => {
+            const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+            logs.push({ t: Date.now(), type: 'keydown', key: e.code, msg: 'Key down (non-movement)', keys: pressed });
+            return { ...prev, lastKeys: pressed, debugLogs: logs };
+          });
+        } else {
+          updateGameState(prev => ({ ...prev, lastKeys: pressed }));
+        }
       }
     };
 
     const handleKeyUp = (e) => {
-      if (import.meta.env?.DEV) {
-        console.log('🔑 keyup:', e.code);
-      }
       // Don't process key releases if game is paused or start menu is visible (except ESC)
       if ((gamePaused || showStartMenu) && e.code !== 'Escape') {
         return;
@@ -1546,16 +1792,22 @@ const OpenWorldGame = () => {
       if (movementKeys.includes(e.code)) {
         const newKeys = { ...(keys || {}), [e.code]: false };
         setKeys(newKeys);
+        // Clear timestamp for the released key
+        try { delete lastMovementKeyTimeRef.current[e.code]; } catch {}
         const pressed = Object.keys(newKeys).filter(k => newKeys[k]);
-        updateGameState(prev => {
-          const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
-          logs.push({ t: Date.now(), type: 'keyup', key: e.code, msg: 'Key up', keys: pressed });
-          return { ...prev, lastKeys: pressed, debugLogs: logs };
-        });
+        if (!isWildrealm) {
+          updateGameState(prev => {
+            const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+            logs.push({ t: Date.now(), type: 'keyup', key: e.code, msg: 'Key up', keys: pressed });
+            return { ...prev, lastKeys: pressed, debugLogs: logs };
+          });
+        } else {
+          updateGameState(prev => ({ ...prev, lastKeys: pressed }));
+        }
         
         // Check if any movement keys are still pressed using updated keys
         const stillMoving = movementKeys.some(key => newKeys[key]);
-        
+
         if (!stillMoving) {
           setIsMoving(false);
           setIsRunning(false);
@@ -1563,18 +1815,54 @@ const OpenWorldGame = () => {
           if (!isAttacking) {
             setAnimationState('idle');
           }
-          updateGameState(prev => ({ ...prev, status: { ...(prev.status||{}), inputActive: pressed.length > 0 } }));
+          if (!isWildrealm) {
+            updateGameState(prev => ({ ...prev, status: { ...(prev.status||{}), inputActive: pressed.length > 0 } }));
+          }
+        } else {
+          // Choose the most recently pressed movement key still active
+          let latestKey = null;
+          let latestTs = -Infinity;
+          for (const key of movementKeys) {
+            if (newKeys[key]) {
+              const ts = lastMovementKeyTimeRef.current[key] ?? -Infinity;
+              if (ts > latestTs) { latestTs = ts; latestKey = key; }
+            }
+          }
+          if (latestKey) {
+            switch(latestKey) {
+              case 'KeyW':
+              case 'ArrowUp':
+                setPlayerDirection('up');
+                break;
+              case 'KeyS':
+              case 'ArrowDown':
+                setPlayerDirection('down');
+                break;
+              case 'KeyA':
+              case 'ArrowLeft':
+                setPlayerDirection('left');
+                break;
+              case 'KeyD':
+              case 'ArrowRight':
+                setPlayerDirection('right');
+                break;
+            }
+          }
         }
       } else {
         // For non-movement keys, use normal behavior
         const newKeys = { ...(keys || {}), [e.code]: false };
         setKeys(newKeys);
         const pressed = Object.keys(newKeys).filter(k => newKeys[k]);
-        updateGameState(prev => {
-          const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
-          logs.push({ t: Date.now(), type: 'keyup', key: e.code, msg: 'Key up (non-movement)', keys: pressed });
-          return { ...prev, lastKeys: pressed, debugLogs: logs };
-        });
+        if (!isWildrealm) {
+          updateGameState(prev => {
+            const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+            logs.push({ t: Date.now(), type: 'keyup', key: e.code, msg: 'Key up (non-movement)', keys: pressed });
+            return { ...prev, lastKeys: pressed, debugLogs: logs };
+          });
+        } else {
+          updateGameState(prev => ({ ...prev, lastKeys: pressed }));
+        }
       }
     };
 
@@ -1585,7 +1873,7 @@ const OpenWorldGame = () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [gameState.treasureBoxes, handleTreasureInteraction, keys, isAttacking, gamePaused, showStartMenu, gameStarted, handleToggleStartMenu]);
+  }, [gameState.treasureBoxes, handleTreasureInteraction, keys, isAttacking, gamePaused, showStartMenu, gameStarted, handleToggleStartMenu, isWildrealm, playerDirection, showQuestionModal, showLootModal, isChestCollidingWithPlayer]);
 
   // Gamepad input handling (movement + chest interaction on "A" button)
   useEffect(() => {
@@ -1656,34 +1944,32 @@ const OpenWorldGame = () => {
         // Chest interaction on A button (rising edge), respects cooldown and gating
         const prevA = !!gamepadStateRef.current.prevButtons[0];
         if (btnA && !prevA && !gamePaused && !showStartMenu && gameStarted) {
-          const now = Date.now();
-          if (now - (lastInteractTimeRef.current || 0) >= (GAME_CONFIG.INTERACTION_COOLDOWN || 500)) {
-            const playerX = gameState.player?.x ?? 0;
-            const playerY = gameState.player?.y ?? 0;
-            let bestTreasure = null;
-            let bestDist2 = Infinity;
-            const w = GAME_CONFIG.TILE_SIZE;
-            const h = GAME_CONFIG.TILE_SIZE;
-            const treasures = Array.isArray(gameState.treasureBoxes) ? gameState.treasureBoxes : [];
-            for (const t of treasures) {
-              if (!t || t.collected) continue;
-              if (canInteractFacing(playerX, playerY, playerDirection, t.x, t.y, w, h, 0.5)) {
-                const dx = (playerX + w / 2) - (t.x + w / 2);
-                const dy = (playerY + h / 2) - (t.y + h / 2);
-                const d2 = dx * dx + dy * dy;
-                if (d2 < bestDist2) {
-                  bestDist2 = d2;
-                  bestTreasure = t;
-                }
-              }
-            }
-            if (bestTreasure) {
-              try { soundEffects.playMenuClick(); } catch {}
-              handleTreasureInteraction(bestTreasure.id);
-              lastInteractTimeRef.current = now;
-            } else {
-              try { soundEffects.playError(); } catch {}
-            }
+          const playerX = gameState.player?.x ?? 0;
+          const playerY = gameState.player?.y ?? 0;
+          let bestTreasure = null;
+          let bestDist2 = Infinity;
+          const w = (GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE);
+          const h = w;
+          const treasures = Array.isArray(gameState.treasureBoxes) ? gameState.treasureBoxes : [];
+        for (const t of treasures) {
+          if (!t || t.collected) continue;
+          // No strict facing requirement for gamepad 'A'; use range/cooldown
+          const cooldownAndRangeOk = canInteractWithCooldown(playerX, playerY, t.x, t.y, w, h);
+          if (!cooldownAndRangeOk) continue;
+          const dx = playerX - t.x;
+          const dy = playerY - t.y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < bestDist2) {
+            bestDist2 = d2;
+            bestTreasure = t;
+          }
+        }
+          if (bestTreasure) {
+            try { soundEffects.playMenuClick(); } catch {}
+            handleTreasureInteraction(bestTreasure.id);
+            try { markInteraction(); } catch {}
+          } else {
+            try { soundEffects.playError(); } catch {}
           }
         }
         gamepadStateRef.current.prevButtons[0] = btnA;
@@ -1706,6 +1992,12 @@ const OpenWorldGame = () => {
     if (canvas) {
       canvas.addEventListener('click', handleCanvasClick);
       const handleCanvasMouseMove = (e) => {
+        // Throttle hover processing to ~30fps
+        const nowTs = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+        if (nowTs - (mouseMoveThrottleRef.current || 0) < 50) {
+          return;
+        }
+        mouseMoveThrottleRef.current = nowTs;
         const rect = canvas.getBoundingClientRect();
         const mouseX = e.clientX - rect.left + (gameState?.camera?.x || 0);
         const mouseY = e.clientY - rect.top + (gameState?.camera?.y || 0);
@@ -1740,7 +2032,7 @@ const OpenWorldGame = () => {
 
         canvas.style.cursor = closestId ? 'pointer' : '';
       };
-      canvas.addEventListener('mousemove', handleCanvasMouseMove);
+      canvas.addEventListener('mousemove', handleCanvasMouseMove, { passive: true });
       return () => {
         canvas.removeEventListener('click', handleCanvasClick);
         canvas.removeEventListener('mousemove', handleCanvasMouseMove);
@@ -1763,27 +2055,49 @@ const OpenWorldGame = () => {
     }
   }, []);
 
-  // Dynamically load questions with loading and error states
+  // Dynamically load questions with loading and error states (Numeration + Literation)
   useEffect(() => {
     let isMounted = true;
     setQuestionsLoading(true);
     setQuestionsError(null);
-    import('../data/NumerationProblem.json')
+
+    const loadNumeration = import('../data/NumerationProblem.json')
       .then(module => {
-        if (!isMounted) return;
         const data = module?.default ?? module;
         if (!Array.isArray(data)) {
           throw new Error('NumerationProblem.json format invalid: expected array');
         }
-        setQuestions(data);
+        return data;
+      });
+
+    const loadLiteration = import('../data/LiterationProblem.json')
+      .then(module => {
+        const data = module?.default ?? module;
+        if (!Array.isArray(data)) {
+          throw new Error('LiterationProblem.json format invalid: expected array');
+        }
+        return data;
+      })
+      .catch(err => {
+        // If Literation file is missing or malformed, log but proceed with Numeration
+        console.warn('LiterationProblem.json not available or invalid, continuing with Numeration only.', err);
+        return [];
+      });
+
+    Promise.all([loadNumeration, loadLiteration])
+      .then(([numeration, literation]) => {
+        if (!isMounted) return;
+        const combined = [...numeration, ...literation];
+        setQuestions(combined);
         setQuestionsLoading(false);
       })
       .catch(err => {
         if (!isMounted) return;
-        console.error('Failed to load NumerationProblem.json', err);
+        console.error('Failed to load question banks', err);
         setQuestionsError(err);
         setQuestionsLoading(false);
       });
+
     return () => { isMounted = false; };
   }, []);
 
@@ -1870,6 +2184,12 @@ const OpenWorldGame = () => {
           monsterGoblinImage={loadedImages.monsterGoblin}
           monsterDragonImage={loadedImages.monsterDragon}
           monsterOrcImage={loadedImages.monsterOrc}
+          // Pig monster sheets
+          monsterPigIdleSheet={loadedImages.monsterPigIdleSheet}
+          monsterPigRunSheet={loadedImages.monsterPigRunSheet}
+          monsterPigHitSheet={loadedImages.monsterPigHitSheet}
+          monsterPigDeadSheet={loadedImages.monsterPigDeadSheet}
+          monsterPigAttackSheet={loadedImages.monsterPigAttackSheet}
           waterGrassShorelineVerticalImage={loadedImages.waterGrassShorelineVertical}
           waterGrassShorelineImage={loadedImages.waterGrassShoreline}
           realisticGrassImage={loadedImages.realisticGrass}
@@ -1948,6 +2268,20 @@ const OpenWorldGame = () => {
         loot={currentLoot}
         onCollect={handleLootCollect}
         onClose={handleLootClose}
+      />
+
+      <CrystalCollectionModal
+        isOpen={showCrystalModal}
+        question={lastSolvedQuestion}
+        crystal={currentCrystal}
+        onClose={() => {
+          setShowCrystalModal(false);
+          setLastSolvedQuestion(null);
+          setCurrentCrystal(null);
+        }}
+        onSolve={() => {
+          setShowCrystalModal(false);
+        }}
       />
 
       {showCoinAnimation && (

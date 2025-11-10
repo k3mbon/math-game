@@ -838,7 +838,7 @@ const TerrainDesigner = () => {
       playerSpawn: findPlayerSpawn(config.terrainData)
     };
     
-    localStorage.setItem('openWorldGameConfig', JSON.stringify(gameConfig));
+    localStorage.setItem('WildRealmConfig', JSON.stringify(gameConfig));
     
     setCanvasAnimation({ active: true, type: 'export' });
     setTimeout(() => {
