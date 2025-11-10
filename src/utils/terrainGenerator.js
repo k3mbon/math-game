@@ -7,54 +7,71 @@ export const seededRandom = (seed) => {
   return x - Math.floor(x);
 };
 
-// Check if a position is walkable with improved collision detection
+// Check if a position is walkable
+// Use TERRAIN_TYPES walkable property for accuracy; bushes and custom objects block
 export const isWalkable = (x, y, terrain, customWorld = null, bushObstacles = null) => {
-  // First check terrain boundary collision
+  // Fast boundary guard
   if (terrainBoundarySystem.checkBoundaryCollision(x, y)) {
     return false;
   }
 
-  // Immediate bush collision guard using player center
-  // Ensures bushes from the Bushes directory are always non-walkable
-  if (bushObstacles && bushObstacles.length > 0) {
+  // Determine terrain tile at player center
+  const tileX = Math.floor(x / GAME_CONFIG.TILE_SIZE);
+  const tileY = Math.floor(y / GAME_CONFIG.TILE_SIZE);
+  const chunkX = Math.floor(tileX / GAME_CONFIG.CHUNK_SIZE);
+  const chunkY = Math.floor(tileY / GAME_CONFIG.CHUNK_SIZE);
+  const chunkKey = `${chunkX},${chunkY}`;
+  const chunk = terrain?.get(chunkKey);
+  if (!chunk) {
+    // Allow movement into not-yet-generated chunks; camera will trigger generation
+    return true;
+  }
+  const localX = tileX % GAME_CONFIG.CHUNK_SIZE;
+  const localY = tileY % GAME_CONFIG.CHUNK_SIZE;
+  const tile = chunk.find(t => t.x % GAME_CONFIG.CHUNK_SIZE === localX && t.y % GAME_CONFIG.CHUNK_SIZE === localY);
+  if (!tile) {
+    // Allow movement while tile data resolves
+    return true;
+  }
+  const terrainType = tile.type;
+  const terrainIsWalkable = !!(TERRAIN_TYPES[terrainType] && TERRAIN_TYPES[terrainType].walkable);
+  if (!terrainIsWalkable) {
+    return false;
+  }
+
+  // Bush obstacles: block if near the player tile (within 1-tile radius) and colliding
+  if (Array.isArray(bushObstacles) && bushObstacles.length > 0) {
     for (const bush of bushObstacles) {
       const assetPath = String(bush.asset || '').toLowerCase();
       const isBushesDir = assetPath.includes('/assets/characters/terrain-object/bushes/');
       if (!isBushesDir) continue;
 
+      // Pre-filter to nearby bushes using tile coordinates to reduce checks
+      if (Math.abs(bush.x - tileX) > 1 || Math.abs(bush.y - tileY) > 1) continue;
+
       const bushPixelX = bush.x * GAME_CONFIG.TILE_SIZE;
       const bushPixelY = bush.y * GAME_CONFIG.TILE_SIZE;
-
       if (enhancedBushCollisionSystem.checkBushCollision(x, y, bushPixelX, bushPixelY)) {
         return false;
       }
     }
   }
 
-  // Calculate player bounds for better collision detection
-  const playerSize = GAME_CONFIG.PLAYER_SIZE;
-  const halfSize = playerSize / 2;
-  
-  // Improved collision detection with more precise boundary checking
-  const checkPoints = [
-    { x: x - halfSize + 8, y: y - halfSize + 8 }, // Top-left corner (increased margin)
-    { x: x + halfSize - 8, y: y - halfSize + 8 }, // Top-right corner
-    { x: x - halfSize + 8, y: y + halfSize - 8 }, // Bottom-left corner
-    { x: x + halfSize - 8, y: y + halfSize - 8 }, // Bottom-right corner
-    { x: x, y: y - halfSize + 4 }, // Top center
-    { x: x, y: y + halfSize - 4 }, // Bottom center
-    { x: x - halfSize + 4, y: y }, // Left center
-    { x: x + halfSize - 4, y: y }, // Right center
-    { x: x, y: y } // Center point
-  ];
-  
-  // All check points must be walkable for the position to be valid
-  for (const point of checkPoints) {
-    if (!isPointWalkable(point.x, point.y, terrain, customWorld, bushObstacles)) {
-      return false;
+  // Custom world objects: treat ALL as obstacles (non-walkable)
+  if (customWorld && Array.isArray(customWorld.objects)) {
+    for (const obj of customWorld.objects) {
+      if (!obj) continue;
+      const left = obj.x;
+      const top = obj.y;
+      const right = left + (obj.width || GAME_CONFIG.TILE_SIZE);
+      const bottom = top + (obj.height || GAME_CONFIG.TILE_SIZE);
+      if (x >= left && x <= right && y >= top && y <= bottom) {
+        return false;
+      }
     }
   }
-  
+
+  // Only grass and no obstacles => walkable
   return true;
 };
 
@@ -174,8 +191,8 @@ const isPointWalkable = (x, y, terrain, customWorld = null, bushObstacles = null
 // Check if position is accessible for treasure placement
 export const isAccessibleForTreasure = (x, y, terrain) => {
   // Check if there's enough clearance around the treasure position
-  // Treasure boxes are typically 32x32 pixels, so we need clearance around that
-  const treasureSize = 32; // pixels
+  // Use configured treasure size for clearance checks
+  const treasureSize = (GAME_CONFIG?.TREASURE_SIZE) || 32; // pixels
   const clearance = treasureSize / 2; // Half the treasure size for clearance
   
   // Check multiple points around the treasure position for better coverage

@@ -122,7 +122,7 @@ const renderSimpleBushObstacles = (ctx, bushObstacles, gameState) => {
     const screenX = worldX - gameState.camera.x;
     const screenY = worldY - gameState.camera.y + groundOffset;
 
-    // Culling
+    // Culling in screen-space
     if (
       screenX < -size || screenX > GAME_CONFIG.CANVAS_WIDTH ||
       screenY < -size || screenY > GAME_CONFIG.CANVAS_HEIGHT
@@ -130,25 +130,25 @@ const renderSimpleBushObstacles = (ctx, bushObstacles, gameState) => {
       continue;
     }
 
-    // Base bush body
+    // Draw using WORLD coordinates (context already translated by camera)
     ctx.fillStyle = '#2E7D32';
     ctx.beginPath();
-    ctx.arc(screenX + size * 0.5, screenY + size * 0.5, size * 0.32, 0, Math.PI * 2);
+    ctx.arc(worldX + size * 0.5, worldY + groundOffset + size * 0.5, size * 0.32, 0, Math.PI * 2);
     ctx.fill();
 
-    // Cluster lobes for a bushy look
+    // Cluster lobes
     ctx.fillStyle = '#388E3C';
     ctx.beginPath();
-    ctx.arc(screenX + size * 0.35, screenY + size * 0.45, size * 0.18, 0, Math.PI * 2);
+    ctx.arc(worldX + size * 0.35, worldY + groundOffset + size * 0.45, size * 0.18, 0, Math.PI * 2);
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(screenX + size * 0.65, screenY + size * 0.55, size * 0.18, 0, Math.PI * 2);
+    ctx.arc(worldX + size * 0.65, worldY + groundOffset + size * 0.55, size * 0.18, 0, Math.PI * 2);
     ctx.fill();
 
     // Highlights
     ctx.fillStyle = '#66BB6A';
     ctx.beginPath();
-    ctx.arc(screenX + size * 0.52, screenY + size * 0.42, size * 0.08, 0, Math.PI * 2);
+    ctx.arc(worldX + size * 0.52, worldY + groundOffset + size * 0.42, size * 0.08, 0, Math.PI * 2);
     ctx.fill();
   }
 };
@@ -158,6 +158,9 @@ const renderPixelMonsters = (ctx, gameState, visibleArea) => {
   gameState.monsters.forEach(monster => {
     const screenX = monster.x - gameState.camera.x;
     const screenY = monster.y - gameState.camera.y;
+    // Draw in world-space; canvas context is already camera-translated
+    const drawX = monster.x;
+    const drawY = monster.y;
     
     // Only render if visible
     if (screenX >= -GAME_CONFIG.TILE_SIZE && screenX <= GAME_CONFIG.CANVAS_WIDTH &&
@@ -170,28 +173,28 @@ const renderPixelMonsters = (ctx, gameState, visibleArea) => {
         case 'goblin':
           // Green goblin
           ctx.fillStyle = '#4CAF50';
-          ctx.fillRect(screenX - monsterSize/2, screenY - monsterSize/2, monsterSize, monsterSize);
+          ctx.fillRect(drawX - monsterSize/2, drawY - monsterSize/2, monsterSize, monsterSize);
           // Eyes
           ctx.fillStyle = '#FF0000';
-          ctx.fillRect(screenX - monsterSize/4, screenY - monsterSize/3, 3, 3);
-          ctx.fillRect(screenX + monsterSize/4 - 3, screenY - monsterSize/3, 3, 3);
+          ctx.fillRect(drawX - monsterSize/4, drawY - monsterSize/3, 3, 3);
+          ctx.fillRect(drawX + monsterSize/4 - 3, drawY - monsterSize/3, 3, 3);
           break;
           
         case 'wolf':
           // Gray wolf
           ctx.fillStyle = '#757575';
-          ctx.fillRect(screenX - monsterSize/2, screenY - monsterSize/2, monsterSize, monsterSize * 0.6);
+          ctx.fillRect(drawX - monsterSize/2, drawY - monsterSize/2, monsterSize, monsterSize * 0.6);
           // Ears
           ctx.fillStyle = '#424242';
-          ctx.fillRect(screenX - monsterSize/3, screenY - monsterSize/2 - 5, 5, 8);
-          ctx.fillRect(screenX + monsterSize/3 - 5, screenY - monsterSize/2 - 5, 5, 8);
+          ctx.fillRect(drawX - monsterSize/3, drawY - monsterSize/2 - 5, 5, 8);
+          ctx.fillRect(drawX + monsterSize/3 - 5, drawY - monsterSize/2 - 5, 5, 8);
           break;
           
         case 'spider':
           // Black spider
           ctx.fillStyle = '#212121';
           ctx.beginPath();
-          ctx.arc(screenX, screenY, monsterSize/2, 0, Math.PI * 2);
+          ctx.arc(drawX, drawY, monsterSize/2, 0, Math.PI * 2);
           ctx.fill();
           // Legs
           ctx.strokeStyle = '#212121';
@@ -199,10 +202,10 @@ const renderPixelMonsters = (ctx, gameState, visibleArea) => {
           for (let i = 0; i < 8; i++) {
             const angle = (i / 8) * Math.PI * 2;
             ctx.beginPath();
-            ctx.moveTo(screenX, screenY);
+            ctx.moveTo(drawX, drawY);
             ctx.lineTo(
-              screenX + Math.cos(angle) * monsterSize,
-              screenY + Math.sin(angle) * monsterSize
+              drawX + Math.cos(angle) * monsterSize,
+              drawY + Math.sin(angle) * monsterSize
             );
             ctx.stroke();
           }
@@ -212,23 +215,23 @@ const renderPixelMonsters = (ctx, gameState, visibleArea) => {
           // Purple bat
           ctx.fillStyle = '#9C27B0';
           ctx.beginPath();
-          ctx.arc(screenX, screenY, monsterSize/2, 0, Math.PI * 2);
+          ctx.arc(drawX, drawY, monsterSize/2, 0, Math.PI * 2);
           ctx.fill();
           // Wings
           ctx.fillStyle = '#7B1FA2';
-          ctx.fillRect(screenX - monsterSize, screenY - 3, monsterSize * 0.8, 6);
-          ctx.fillRect(screenX + monsterSize * 0.2, screenY - 3, monsterSize * 0.8, 6);
+          ctx.fillRect(drawX - monsterSize, drawY - 3, monsterSize * 0.8, 6);
+          ctx.fillRect(drawX + monsterSize * 0.2, drawY - 3, monsterSize * 0.8, 6);
           break;
           
         case 'skeleton':
           // White skeleton
           ctx.fillStyle = '#FAFAFA';
-          ctx.fillRect(screenX - monsterSize/2, screenY - monsterSize/2, monsterSize, monsterSize);
+          ctx.fillRect(drawX - monsterSize/2, drawY - monsterSize/2, monsterSize, monsterSize);
           // Skull details
           ctx.fillStyle = '#212121';
-          ctx.fillRect(screenX - monsterSize/4, screenY - monsterSize/3, 3, 3);
-          ctx.fillRect(screenX + monsterSize/4 - 3, screenY - monsterSize/3, 3, 3);
-          ctx.fillRect(screenX - 2, screenY, 4, 3);
+          ctx.fillRect(drawX - monsterSize/4, drawY - monsterSize/3, 3, 3);
+          ctx.fillRect(drawX + monsterSize/4 - 3, drawY - monsterSize/3, 3, 3);
+          ctx.fillRect(drawX - 2, drawY, 4, 3);
           break;
           
         case 'ghost':
@@ -236,14 +239,14 @@ const renderPixelMonsters = (ctx, gameState, visibleArea) => {
           ctx.globalAlpha = 0.7;
           ctx.fillStyle = '#F5F5F5';
           ctx.beginPath();
-          ctx.arc(screenX, screenY - monsterSize/4, monsterSize/2, 0, Math.PI * 2);
+          ctx.arc(drawX, drawY - monsterSize/4, monsterSize/2, 0, Math.PI * 2);
           ctx.fill();
           // Wavy bottom
           ctx.beginPath();
-          ctx.moveTo(screenX - monsterSize/2, screenY);
+          ctx.moveTo(drawX - monsterSize/2, drawY);
           for (let i = 0; i <= monsterSize; i += 5) {
-            const waveY = screenY + Math.sin((i / 5) * Math.PI) * 3;
-            ctx.lineTo(screenX - monsterSize/2 + i, waveY);
+            const waveY = drawY + Math.sin((i / 5) * Math.PI) * 3;
+            ctx.lineTo(drawX - monsterSize/2 + i, waveY);
           }
           ctx.fill();
           ctx.globalAlpha = 1.0;
@@ -252,21 +255,21 @@ const renderPixelMonsters = (ctx, gameState, visibleArea) => {
         case 'demon':
           // Red demon
           ctx.fillStyle = '#D32F2F';
-          ctx.fillRect(screenX - monsterSize/2, screenY - monsterSize/2, monsterSize, monsterSize);
+          ctx.fillRect(drawX - monsterSize/2, drawY - monsterSize/2, monsterSize, monsterSize);
           // Horns
           ctx.fillStyle = '#B71C1C';
-          ctx.fillRect(screenX - monsterSize/3, screenY - monsterSize/2 - 5, 3, 8);
-          ctx.fillRect(screenX + monsterSize/3 - 3, screenY - monsterSize/2 - 5, 3, 8);
+          ctx.fillRect(drawX - monsterSize/3, drawY - monsterSize/2 - 5, 3, 8);
+          ctx.fillRect(drawX + monsterSize/3 - 3, drawY - monsterSize/2 - 5, 3, 8);
           // Glowing eyes
           ctx.fillStyle = '#FFEB3B';
-          ctx.fillRect(screenX - monsterSize/4, screenY - monsterSize/3, 3, 3);
-          ctx.fillRect(screenX + monsterSize/4 - 3, screenY - monsterSize/3, 3, 3);
+          ctx.fillRect(drawX - monsterSize/4, drawY - monsterSize/3, 3, 3);
+          ctx.fillRect(drawX + monsterSize/4 - 3, drawY - monsterSize/3, 3, 3);
           break;
           
         default:
           // Default monster (simple square)
           ctx.fillStyle = '#FF5722';
-          ctx.fillRect(screenX - monsterSize/2, screenY - monsterSize/2, monsterSize, monsterSize);
+          ctx.fillRect(drawX - monsterSize/2, drawY - monsterSize/2, monsterSize, monsterSize);
       }
       
       // Health bar for monsters
@@ -277,11 +280,11 @@ const renderPixelMonsters = (ctx, gameState, visibleArea) => {
         
         // Background
         ctx.fillStyle = '#424242';
-        ctx.fillRect(screenX - barWidth/2, screenY - monsterSize/2 - 8, barWidth, barHeight);
+        ctx.fillRect(drawX - barWidth/2, drawY - monsterSize/2 - 8, barWidth, barHeight);
         
         // Health
         ctx.fillStyle = healthPercent > 0.5 ? '#4CAF50' : healthPercent > 0.25 ? '#FF9800' : '#F44336';
-        ctx.fillRect(screenX - barWidth/2, screenY - monsterSize/2 - 8, barWidth * healthPercent, barHeight);
+        ctx.fillRect(drawX - barWidth/2, drawY - monsterSize/2 - 8, barWidth * healthPercent, barHeight);
       }
       
       // Check for and render shoreline transitions
@@ -1366,6 +1369,9 @@ const renderPixelTreasureBoxes = (ctx, gameState, visibleArea) => {
   gameState.treasureBoxes.forEach(box => {
     const screenX = box.x - gameState.camera.x;
     const screenY = box.y - gameState.camera.y;
+    // Draw in world-space; canvas context is already camera-translated
+    const boxX = box.x;
+    const boxY = box.y;
     
     // Only render if visible
     if (screenX >= -GAME_CONFIG.TILE_SIZE && screenX <= GAME_CONFIG.CANVAS_WIDTH &&
@@ -1373,8 +1379,8 @@ const renderPixelTreasureBoxes = (ctx, gameState, visibleArea) => {
       
       const boxSize = GAME_CONFIG.TREASURE_SIZE;
       const boxHeight = GAME_CONFIG.TREASURE_SIZE * 0.8;
-      const left = screenX - boxSize / 2;
-      const top = screenY - boxHeight / 2;
+      const left = boxX - boxSize / 2;
+      const top = boxY - boxHeight / 2;
       
       // Debug: Draw a bright outline to make treasure boxes more visible
       ctx.strokeStyle = '#FF00FF'; // Magenta outline for debugging
@@ -1489,6 +1495,9 @@ const renderSimpleMonsters = (ctx, gameState, visibleArea) => {
   gameState.monsters.forEach(monster => {
     const screenX = monster.x - gameState.camera.x;
     const screenY = monster.y - gameState.camera.y;
+    // Draw in world-space; canvas context is already camera-translated
+    const drawX = monster.x;
+    const drawY = monster.y;
     
     // Only render if visible
     if (screenX >= -GAME_CONFIG.TILE_SIZE && screenX <= GAME_CONFIG.CANVAS_WIDTH &&
@@ -1497,17 +1506,17 @@ const renderSimpleMonsters = (ctx, gameState, visibleArea) => {
       // Monster body (red circle)
       ctx.fillStyle = '#FF0000';
       ctx.beginPath();
-      ctx.arc(screenX + GAME_CONFIG.TILE_SIZE * 0.5, screenY + GAME_CONFIG.TILE_SIZE * 0.5, 
+      ctx.arc(drawX + GAME_CONFIG.TILE_SIZE * 0.5, drawY + GAME_CONFIG.TILE_SIZE * 0.5, 
               GAME_CONFIG.TILE_SIZE * 0.3, 0, Math.PI * 2);
       ctx.fill();
       
       // Monster eyes
       ctx.fillStyle = '#FFFFFF';
       ctx.beginPath();
-      ctx.arc(screenX + GAME_CONFIG.TILE_SIZE * 0.4, screenY + GAME_CONFIG.TILE_SIZE * 0.4, 3, 0, Math.PI * 2);
+      ctx.arc(drawX + GAME_CONFIG.TILE_SIZE * 0.4, drawY + GAME_CONFIG.TILE_SIZE * 0.4, 3, 0, Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(screenX + GAME_CONFIG.TILE_SIZE * 0.6, screenY + GAME_CONFIG.TILE_SIZE * 0.4, 3, 0, Math.PI * 2);
+      ctx.arc(drawX + GAME_CONFIG.TILE_SIZE * 0.6, drawY + GAME_CONFIG.TILE_SIZE * 0.4, 3, 0, Math.PI * 2);
       ctx.fill();
       
       // Health bar
@@ -1516,10 +1525,10 @@ const renderSimpleMonsters = (ctx, gameState, visibleArea) => {
       const healthPercentage = monster.health / monster.maxHealth;
       
       ctx.fillStyle = '#000000';
-      ctx.fillRect(screenX + GAME_CONFIG.TILE_SIZE * 0.1, screenY - 10, healthBarWidth, healthBarHeight);
+      ctx.fillRect(drawX + GAME_CONFIG.TILE_SIZE * 0.1, drawY - 10, healthBarWidth, healthBarHeight);
       
       ctx.fillStyle = healthPercentage > 0.5 ? '#00FF00' : healthPercentage > 0.25 ? '#FFFF00' : '#FF0000';
-      ctx.fillRect(screenX + GAME_CONFIG.TILE_SIZE * 0.1, screenY - 10, 
+      ctx.fillRect(drawX + GAME_CONFIG.TILE_SIZE * 0.1, drawY - 10, 
                    healthBarWidth * healthPercentage, healthBarHeight);
     }
   });

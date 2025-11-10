@@ -17,8 +17,10 @@ const modalCardStyle = {
   background: '#101820',
   border: '2px solid #00ccff',
   borderRadius: '10px',
-  padding: '16px',
-  width: '340px',
+  padding: '12px 16px',
+  width: 'min(92vw, 420px)',
+  maxHeight: 'calc(90vh - 32px)',
+  overflowY: 'auto',
   color: '#e6f9ff',
   boxShadow: '0 12px 28px rgba(0, 0, 0, 0.4)'
 };
@@ -31,7 +33,9 @@ const buttonRowStyle = {
 };
 
 const actionButtonStyle = {
-  padding: '8px 12px',
+  padding: '10px 14px',
+  minHeight: 44,
+  fontSize: '16px',
   borderRadius: '6px',
   border: '1px solid #00ccff',
   background: '#002b36',

@@ -42,9 +42,11 @@ export const SWORDSMAN_SPRITE = '/assets/characters/swordsman.png';
  * Enhanced terrain map generation with legacy layout proportions
  * @param {number} width - Width of the terrain in tiles
  * @param {number} height - Height of the terrain in tiles
+ * @param {Object} [options] - Optional generation options
+ * @param {number} [options.bushDensity] - Desired bush grid occupancy (0..1). ~0.7 = 70% of available bush cells
  * @returns {Object} Object containing terrain map and bush obstacles
  */
-export const generateTerrainMap = (width, height) => {
+export const generateTerrainMap = (width, height, options = {}) => {
   const map = [];
   const bushObstacles = [];
   
@@ -64,16 +66,20 @@ export const generateTerrainMap = (width, height) => {
   
   // Enhanced bush obstacle generation with even distribution and minimum spacing
   const minSpacing = 3; // Minimum tiles between bushes
-  const bushDensity = 0.08; // 8% coverage for balanced gameplay
-  const maxAttempts = 1000; // Prevent infinite loops
-  
-  // Calculate target number of bushes based on map size and density
-  const targetBushCount = Math.floor(scaledWidth * scaledHeight * bushDensity);
-  
+  // New: allow caller to request a grid occupancy density (0..1)
+  // Default keeps previous behavior (~1.2% of tiles ≈ ~1000 bushes on 300x300)
+  const bushGridDensity = typeof options.bushDensity === 'number'
+    ? Math.max(0, Math.min(1, options.bushDensity))
+    : 0.012; // fallback to prior low density
+
   // Grid-based placement to ensure even distribution
   const gridSize = minSpacing + 1;
   const gridWidth = Math.floor(scaledWidth / gridSize);
   const gridHeight = Math.floor(scaledHeight / gridSize);
+
+  // Calculate target number of bushes based on available grid cells and requested occupancy
+  const targetBushCount = Math.floor(gridWidth * gridHeight * bushGridDensity);
+  const maxAttempts = Math.max(1000, targetBushCount * 2); // scale attempts with desired count
   
   // Create placement grid to track occupied areas
   const placementGrid = Array(gridHeight).fill(null).map(() => Array(gridWidth).fill(false));
@@ -143,7 +149,7 @@ export const generateTerrainMap = (width, height) => {
     placedBushes++;
   }
   
-  console.log(`🌿 Generated enhanced terrain map: ${scaledWidth}x${scaledHeight} with ${placedBushes} bush obstacles (${bushDensity * 100}% coverage)`);
+  console.log(`🌿 Generated enhanced terrain map: ${scaledWidth}x${scaledHeight} with ${placedBushes} bush obstacles (${Math.round(bushGridDensity * 100)}% grid occupancy)`);
   console.log(`📐 Legacy layout proportions applied: ${LEGACY_LAYOUT_DIMENSIONS.CANVAS_WIDTH}x${LEGACY_LAYOUT_DIMENSIONS.CANVAS_HEIGHT}`);
   console.log(`🎯 Bush placement: ${attempts} attempts, ${placedBushes}/${targetBushCount} bushes placed with ${minSpacing}-tile spacing`);
   console.log('🧭 Bush obstacle coordinates stored in TILE units (renderer multiplies by TILE_SIZE)');

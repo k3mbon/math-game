@@ -587,6 +587,38 @@ class GameSystemTestSuite {
       });
       console.log(`  ❌ Question data import error: ${error.message}`);
     }
+
+    // Also validate LiterationProblem.json integrity
+    console.log('❓ Testing LiterationProblem.json integrity...');
+    try {
+      const moduleL = await import('../data/LiterationProblem.json');
+      const dataL = moduleL?.default ?? moduleL;
+      const isArrayL = Array.isArray(dataL);
+      const hasItemsL = isArrayL && dataL.length > 0;
+      const sampleL = hasItemsL ? dataL[0] : null;
+      const hasFieldsL = !!sampleL && typeof sampleL.title === 'string' && sampleL.answer !== undefined;
+
+      const passedL = isArrayL && hasItemsL && hasFieldsL;
+      this.testResults.push({
+        test: 'question_data',
+        name: 'LiterationProblem.json structure and sample fields',
+        expected: 'Array with items having title and answer',
+        actual: passedL ? 'Valid structure' : 'Invalid or empty',
+        passed: passedL,
+        count: isArrayL ? dataL.length : 0
+      });
+      console.log(`  ${passedL ? '✅' : '❌'} Literation data integrity: ${isArrayL ? dataL.length : 0} items`);
+    } catch (error) {
+      this.testResults.push({
+        test: 'question_data',
+        name: 'LiterationProblem.json import',
+        expected: 'Import succeeds',
+        actual: error.message,
+        passed: false,
+        error: error.message
+      });
+      console.log(`  ❌ Literation data import error: ${error.message}`);
+    }
   }
 
   // Reward Persistence Tests

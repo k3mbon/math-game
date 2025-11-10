@@ -8,6 +8,7 @@ import { PerformanceTestSuite } from './performanceTests.js';
 import { CollisionTestSuite } from './collisionTests.js';
 import { GameSystemTestSuite } from './gameSystemTests.js';
 import { TestRunner } from './testRunner.js';
+import { ProblemLoaderTestSuite } from './problemLoaderTests.js';
 import * as MovementTests from './movementTest.js';
 
 // Export all test suites and runner
@@ -16,6 +17,7 @@ export {
   CollisionTestSuite,
   GameSystemTestSuite,
   TestRunner,
+  ProblemLoaderTestSuite,
   MovementTests
 };
 
@@ -37,6 +39,11 @@ export const runCollisionTests = async () => {
 
 export const runGameSystemTests = async () => {
   const suite = new GameSystemTestSuite();
+  return await suite.runAllTests();
+};
+
+export const runProblemLoaderTests = async () => {
+  const suite = new ProblemLoaderTestSuite();
   return await suite.runAllTests();
 };
 
@@ -82,12 +89,14 @@ if (process.env.NODE_ENV === 'development') {
     runPerformanceTests,
     runCollisionTests,
     runGameSystemTests,
+    runProblemLoaderTests,
     runMovementTests,
     runBenchmarks,
     TestRunner,
     PerformanceTestSuite,
     CollisionTestSuite,
     GameSystemTestSuite,
+    ProblemLoaderTestSuite,
     MovementTests
   };
 

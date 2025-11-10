@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { GAME_CONFIG } from '../config/gameConfig';
-import { generateTerrainChunk } from '../utils/terrainGenerator';
+import { generateTerrainChunk, isWalkable, seededRandom } from '../utils/terrainGenerator';
 import { generateChunkObjects } from '../utils/objectGenerator';
 
 export const useGameState = (initialPlayerX, initialPlayerY) => {
@@ -12,6 +12,19 @@ export const useGameState = (initialPlayerX, initialPlayerY) => {
     const stairConnections = new Map();
     const allTreasureBoxes = [];
     const allMonsters = [];
+    
+    // Helper: read terrain type at a pixel coordinate from generated chunks
+    const getTerrainTypeAtPx = (x, y) => {
+      const tileX = Math.floor(x / GAME_CONFIG.TILE_SIZE);
+      const tileY = Math.floor(y / GAME_CONFIG.TILE_SIZE);
+      const chunkX = Math.floor(tileX / GAME_CONFIG.CHUNK_SIZE);
+      const chunkY = Math.floor(tileY / GAME_CONFIG.CHUNK_SIZE);
+      const chunkKey = `${chunkX},${chunkY}`;
+      const chunk = terrain.get(chunkKey);
+      if (!chunk) return null;
+      const tile = chunk.find(t => t.x === tileX && t.y === tileY);
+      return tile ? tile.type : null;
+    };
     
     // Calculate initial camera position
     const initialCameraX = Math.max(0, Math.min(
@@ -55,30 +68,98 @@ export const useGameState = (initialPlayerX, initialPlayerY) => {
         );
         
         allTreasureBoxes.push(...chunkObjects.treasureBoxes);
+        // Keep chest generation as-is; we'll override monsters globally below
         allMonsters.push(...chunkObjects.monsters);
       }
     }
     
-    return { terrain, worldSeed, stairConnections, treasureBoxes: allTreasureBoxes, monsters: allMonsters };
+    // Ensure spawn starts on GRASS. If not, relocate to nearest GRASS in radius.
+    let spawnX = initialPlayerX;
+    let spawnY = initialPlayerY;
+    if (getTerrainTypeAtPx(spawnX, spawnY) !== 'GRASS') {
+      const maxRadiusTiles = 12;
+      let found = false;
+      for (let r = 1; r <= maxRadiusTiles && !found; r++) {
+        for (let dx = -r; dx <= r && !found; dx++) {
+          for (let dy = -r; dy <= r && !found; dy++) {
+            const px = spawnX + dx * GAME_CONFIG.TILE_SIZE;
+            const py = spawnY + dy * GAME_CONFIG.TILE_SIZE;
+            if (getTerrainTypeAtPx(px, py) === 'GRASS') {
+              spawnX = px;
+              spawnY = py;
+              found = true;
+            }
+          }
+        }
+      }
+    }
+    
+    // Override: spawn exactly 24 monsters globally across the map, random areas
+    const spawnGlobalMonsters = (count) => {
+      const monsters = [];
+      const attempts = Math.max(1000, count * 100);
+      let tries = 0;
+      const worldPixelSize = GAME_CONFIG.WORLD_SIZE * GAME_CONFIG.TILE_SIZE;
+      const safeRadiusPx = GAME_CONFIG.CHUNK_SIZE * 5 * GAME_CONFIG.TILE_SIZE; // match chunk-based safe zone
+
+      while (monsters.length < count && tries < attempts) {
+        const px = Math.floor(seededRandom(worldSeed + tries * 97) * worldPixelSize);
+        const py = Math.floor(seededRandom(worldSeed + tries * 193) * worldPixelSize);
+
+        // Keep away from spawn safe zone
+        const dx = px - worldPixelSize / 2;
+        const dy = py - worldPixelSize / 2;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < safeRadiusPx) { tries++; continue; }
+
+        // Place only on walkable tiles
+        if (!isWalkable(px, py, terrain)) { tries++; continue; }
+
+        // Randomize type; include pig-themed monster mapping via renderer
+        const typePool = ['goblin', 'orc', 'dragon'];
+        const typeIndex = Math.floor(seededRandom(worldSeed + tries * 379) * typePool.length);
+        const monsterType = typePool[typeIndex];
+
+        monsters.push({
+          id: `monster_global_${monsters.length}_${Math.floor(worldSeed)}`,
+          x: px,
+          y: py,
+          type: monsterType,
+          health: 100,
+          maxHealth: 100,
+          damage: 12,
+          speed: 1,
+          depthLevel: 0,
+          lastMoveTime: 0,
+          direction: Math.floor(seededRandom(worldSeed + tries * 523) * 4)
+        });
+        tries++;
+      }
+      return monsters;
+    };
+
+    const globalMonsters = spawnGlobalMonsters(24);
+
+    return { terrain, worldSeed, stairConnections, treasureBoxes: allTreasureBoxes, monsters: globalMonsters, spawnX, spawnY };
   };
   
-  const { terrain: initialTerrain, worldSeed, stairConnections, treasureBoxes: initialTreasureBoxes, monsters: initialMonsters } = generateInitialTerrain();
+  const { terrain: initialTerrain, worldSeed, stairConnections, treasureBoxes: initialTreasureBoxes, monsters: initialMonsters, spawnX, spawnY } = generateInitialTerrain();
   
   const [gameState, setGameState] = useState({
     player: { 
-      x: initialPlayerX, 
-      y: initialPlayerY, 
+      x: spawnX, 
+      y: spawnY, 
       health: 100, 
       maxHealth: 100 
     },
     camera: { 
       x: Math.max(0, Math.min(
         GAME_CONFIG.WORLD_SIZE * GAME_CONFIG.TILE_SIZE - GAME_CONFIG.CANVAS_WIDTH, 
-        initialPlayerX - GAME_CONFIG.CANVAS_WIDTH / 2
+        spawnX - GAME_CONFIG.CANVAS_WIDTH / 2
       )), 
       y: Math.max(0, Math.min(
         GAME_CONFIG.WORLD_SIZE * GAME_CONFIG.TILE_SIZE - GAME_CONFIG.CANVAS_HEIGHT, 
-        initialPlayerY - GAME_CONFIG.CANVAS_HEIGHT / 2
+        spawnY - GAME_CONFIG.CANVAS_HEIGHT / 2
       ))
     },
     treasureBoxes: initialTreasureBoxes,
@@ -90,7 +171,7 @@ export const useGameState = (initialPlayerX, initialPlayerY) => {
     score: 0,
     crystalsCollected: 0,
     checkpoints: [],
-    lastCheckpoint: null,
+    lastCheckpoint: { x: spawnX, y: spawnY },
     problemStartTime: null,
     lastInteractionTime: 0,
     worldSeed: worldSeed,

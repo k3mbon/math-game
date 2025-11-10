@@ -2,13 +2,25 @@ import { useEffect, useRef } from 'react';
 import { GAME_CONFIG } from '../config/gameConfig';
 import { globalEnvironmentSystem } from '../utils/proceduralEnvironment';
 
-export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, generateTerrain) => {
+export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, generateTerrain, options) => {
   const animationIdRef = useRef(null);
   const lastFrameTimeRef = useRef(0);
   const frameIntervalRef = useRef(1000 / GAME_CONFIG.MAX_FRAME_RATE); // Target frame interval
   const lastPositionRef = useRef({ x: 0, y: 0 });
   const positionHistoryRef = useRef([]);
   const lastDebugLogRef = useRef(0);
+
+  // Mode options
+  const isWildrealmMode = !!(options && options.isWildrealm);
+  // Optional collision resolver for bushes supplied by caller
+  const bushCollisionResolver = options && options.bushCollisionResolver;
+
+  // Monster AI tunables (localized to avoid config churn)
+  const MONSTER_ATTACK_RANGE = GAME_CONFIG.TILE_SIZE * 1.2;
+  const MONSTER_CHASE_RANGE = GAME_CONFIG.TILE_SIZE * 8;
+  const MONSTER_ATTACK_COOLDOWN_MS = 1000;
+  const MONSTER_ATTACK_DURATION_MS = 350;
+  const PLAYER_DAMAGE_COOLDOWN_MS = 350;
 
   useEffect(() => {
     const gameLoop = (currentTime) => {
@@ -33,16 +45,15 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
           console.log('⌨️ No input keys registered');
           lastDebugLogRef.current = now;
         }
-        // Record UI-visible debug when keys are missing
+        // Record UI-visible debug when keys are missing (DEV only) to reduce re-render lag
         updateGameState(prev => {
-          const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
-          logs.push({
-            t: Date.now(),
-            type: 'input',
-            msg: 'No input keys registered',
-            keys: [],
-          });
-          return { ...prev, debugLogs: logs, status: { ...(prev.status||{}), inputActive: false } };
+          const statusUpdate = { ...(prev.status||{}), inputActive: false };
+          if (import.meta.env?.DEV) {
+            const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+            logs.push({ t: Date.now(), type: 'input', msg: 'No input keys registered', keys: [] });
+            return { ...prev, debugLogs: logs, status: statusUpdate };
+          }
+          return { ...prev, status: statusUpdate };
         });
         animationIdRef.current = requestAnimationFrame(gameLoop);
         return;
@@ -88,19 +99,17 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
             lastDebugLogRef.current = now;
           }
           const pressed = Object.keys(keys).filter(k => keys[k]);
-          return {
+          const baseState = {
             ...prev,
-            player: {
-              ...prev.player,
-              isMoving: false
-            },
-            status: { ...(prev.status||{}), inputActive: false },
-            debugLogs: (() => {
-              const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
-              logs.push({ t: Date.now(), type: 'movement', msg: 'No movement input detected', keys: pressed });
-              return logs;
-            })()
+            player: { ...prev.player, isMoving: false },
+            status: { ...(prev.status||{}), inputActive: false }
           };
+          if (import.meta.env?.DEV) {
+            const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+            logs.push({ t: Date.now(), type: 'movement', msg: 'No movement input detected', keys: pressed });
+            return { ...baseState, debugLogs: logs };
+          }
+          return baseState;
         }
         
         // Normalize diagonal movement
@@ -116,11 +125,13 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
         // Helper: check collision against treasure chests (block if not collected)
         const isChestBlockingAtPosition = (px, py, treasure) => {
           if (!treasure || treasure.collected) return false;
-          const playerHalf = GAME_CONFIG.PLAYER_SIZE / 2;
-          const chestHalfW = GAME_CONFIG.TREASURE_SIZE / 2;
-          const chestHalfH = (GAME_CONFIG.TREASURE_SIZE * 0.8) / 2; // align with renderer height
+          // Precise hitboxes: player uses collision scale; chest uses configured width/height ratios
+          const playerHalf = (GAME_CONFIG.PLAYER_SIZE * (GAME_CONFIG.PLAYER_COLLISION_SCALE ?? 0.8)) / 2;
+          const chestHalfW = (GAME_CONFIG.TREASURE_SIZE * (GAME_CONFIG.TREASURE_HITBOX_WIDTH_RATIO ?? 0.72)) / 2;
+          const chestHalfH = (GAME_CONFIG.TREASURE_SIZE * (GAME_CONFIG.TREASURE_HITBOX_HEIGHT_RATIO ?? 0.70)) / 2;
+          const chestCenterY = treasure.y + (GAME_CONFIG.TREASURE_SIZE * (GAME_CONFIG.TREASURE_HITBOX_Y_OFFSET_RATIO ?? 0));
           const intersectsX = Math.abs(px - treasure.x) < (playerHalf + chestHalfW);
-          const intersectsY = Math.abs(py - treasure.y) < (playerHalf + chestHalfH);
+          const intersectsY = Math.abs(py - chestCenterY) < (playerHalf + chestHalfH);
           return intersectsX && intersectsY;
         };
         const isAnyChestBlocking = (px, py, treasures) => {
@@ -133,22 +144,29 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
 
         // Compute a push-back response to separate player from a chest
         const getChestCollisionResponse = (px, py, treasure) => {
-          const chestCenterX = treasure.x;
-          const chestCenterY = treasure.y;
-          const dx = px - chestCenterX;
+          // Axis-Aligned Bounding Box separation for crisp chest blocking
+          const playerHalf = (GAME_CONFIG.PLAYER_SIZE * (GAME_CONFIG.PLAYER_COLLISION_SCALE ?? 0.8)) / 2;
+          const chestHalfW = (GAME_CONFIG.TREASURE_SIZE * (GAME_CONFIG.TREASURE_HITBOX_WIDTH_RATIO ?? 0.72)) / 2;
+          const chestHalfH = (GAME_CONFIG.TREASURE_SIZE * (GAME_CONFIG.TREASURE_HITBOX_HEIGHT_RATIO ?? 0.70)) / 2;
+          const chestCenterY = treasure.y + (GAME_CONFIG.TREASURE_SIZE * (GAME_CONFIG.TREASURE_HITBOX_Y_OFFSET_RATIO ?? 0));
+          const dx = px - treasure.x;
           const dy = py - chestCenterY;
-          const dist = Math.hypot(dx, dy) || 1;
-          const playerRadius = (GAME_CONFIG.PLAYER_SIZE * 0.8) / 2; // use hitbox scale similar to bushes
-          const chestRadius = Math.max(GAME_CONFIG.TREASURE_SIZE / 2, (GAME_CONFIG.TREASURE_SIZE * 0.8) / 2) * 0.9;
-          const minDist = playerRadius + chestRadius + 2; // small buffer
-          if (dist >= minDist) return { x: px, y: py, blocked: false };
-          const nx = dx / dist;
-          const ny = dy / dist;
-          return {
-            x: chestCenterX + nx * minDist,
-            y: chestCenterY + ny * minDist,
-            blocked: true
-          };
+          const overlapX = (playerHalf + chestHalfW) - Math.abs(dx);
+          const overlapY = (playerHalf + chestHalfH) - Math.abs(dy);
+          if (overlapX <= 0 || overlapY <= 0) {
+            return { x: px, y: py, blocked: false };
+          }
+          // Resolve along the axis of least penetration
+          const buffer = 2; // small separation buffer to avoid jitter
+          if (overlapX < overlapY) {
+            const signX = dx === 0 ? 1 : Math.sign(dx);
+            const targetX = treasure.x + signX * (playerHalf + chestHalfW + buffer);
+            return { x: targetX, y: py, blocked: true };
+          } else {
+            const signY = dy === 0 ? 1 : Math.sign(dy);
+            const targetY = chestCenterY + signY * (playerHalf + chestHalfH + buffer);
+            return { x: px, y: targetY, blocked: true };
+          }
         };
         
         // Calculate world boundaries in pixels - allow precise edge movement
@@ -176,23 +194,43 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
             console.log('⛔ Movement blocked at proposed position:', { proposedX, proposedY, terrainBlocked, chestBlocked });
           }
 
-          // Special handling: if chest causes the block, attempt a gentle push-back
+          // Special handling: if chest causes the block, apply AABB push-back immediately
           if (!terrainBlocked && chestBlocked) {
             const blockingChest = prev.treasureBoxes.find(t => isChestBlockingAtPosition(proposedX, proposedY, t));
             if (blockingChest) {
               const response = getChestCollisionResponse(proposedX, proposedY, blockingChest);
               const respX = Math.max(minBoundary, Math.min(maxBoundaryX, response.x));
               const respY = Math.max(minBoundary, Math.min(maxBoundaryY, response.y));
-              const terrainOK = checkWalkable(respX, respY);
-              const chestOK = !isAnyChestBlocking(respX, respY, prev.treasureBoxes);
-              if (terrainOK && chestOK) {
+              // Apply push-back unconditionally to prevent overlap; subsequent checks will adjust if needed
+              finalX = respX;
+              finalY = respY;
+              movementBlocked = false;
+              blockedReason = '';
+              if (import.meta.env?.DEV) {
+                console.log('🟨 Chest push-back applied (unconditional):', { finalX, finalY });
+              }
+            }
+          }
+
+          // Special handling: if terrain is blocked by a bush, apply bush push-back
+          // Use optional resolver provided by the caller to detect bush collisions precisely
+          if (terrainBlocked && typeof bushCollisionResolver === 'function') {
+            try {
+              const bushResponse = bushCollisionResolver(proposedX, proposedY);
+              if (bushResponse && bushResponse.blocked) {
+                const respX = Math.max(minBoundary, Math.min(maxBoundaryX, bushResponse.x));
+                const respY = Math.max(minBoundary, Math.min(maxBoundaryY, bushResponse.y));
                 finalX = respX;
                 finalY = respY;
                 movementBlocked = false;
                 blockedReason = '';
                 if (import.meta.env?.DEV) {
-                  console.log('🟨 Chest push-back applied:', { finalX, finalY });
+                  console.log('🟩 Bush push-back applied (unconditional):', { finalX, finalY });
                 }
+              }
+            } catch (e) {
+              if (import.meta.env?.DEV) {
+                console.warn('Bush collision resolver error:', e);
               }
             }
           }
@@ -246,6 +284,15 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
               if (import.meta.env?.DEV) {
                 console.log('🐢 Reduced-step move succeeds at:', { finalX, finalY });
               }
+            }
+          }
+
+          // If still blocked after all fallback attempts (non-chest obstacles), revert to original position
+          if (movementBlocked) {
+            finalX = newX;
+            finalY = newY;
+            if (import.meta.env?.DEV) {
+              console.log('🔙 Movement remains blocked; reverting to previous position');
             }
           }
         }
@@ -325,19 +372,23 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
           bottom: finalY >= maxBoundaryY - 0.1
         };
 
-        // Build UI-visible debug logs (limited)
-        const logs = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
-        logs.push({
-          t: Date.now(),
-          type: 'movement',
-          msg: movementBlocked ? 'Movement blocked' : (positionChanged ? 'Movement applied' : 'No position change'),
-          from: { x: newX, y: newY },
-          proposed: { x: proposedX, y: proposedY },
-          final: { x: finalX, y: finalY },
-          input: { x: inputX, y: inputY },
-          keys: pressedKeys,
-          reason: blockedReason
-        });
+        // Build UI-visible debug logs (DEV only) to reduce re-render lag
+        const logs = (() => {
+          if (!import.meta.env?.DEV) return prev.debugLogs;
+          const l = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+          l.push({
+            t: Date.now(),
+            type: 'movement',
+            msg: movementBlocked ? 'Movement blocked' : (positionChanged ? 'Movement applied' : 'No position change'),
+            from: { x: newX, y: newY },
+            proposed: { x: proposedX, y: proposedY },
+            final: { x: finalX, y: finalY },
+            input: { x: inputX, y: inputY },
+            keys: pressedKeys,
+            reason: blockedReason
+          });
+          return l;
+        })();
 
         return {
           ...prev,
@@ -367,6 +418,107 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
           },
           treasureBoxes: updatedTreasureBoxes,
           status: { inputActive: true, movementBlocked, positionChanged },
+          debugLogs: logs
+        };
+      });
+
+      // Monster AI: chase player and attack within range
+      updateGameState(prev => {
+        const now = (typeof performance !== 'undefined') ? performance.now() : Date.now();
+        const frameMultiplier = 1; // steady AI step regardless of render delta
+        const worldPixelSize = GAME_CONFIG.WORLD_SIZE * GAME_CONFIG.TILE_SIZE;
+        const halfSize = GAME_CONFIG.MONSTER_SIZE / 2;
+
+        // Throttle player damage to avoid instant depletion
+        const lastDamaged = prev.player.lastDamagedTime || 0;
+        let nextPlayerHealth = prev.player.health;
+        let playerWasDamaged = false;
+
+        const updatedMonsters = prev.monsters.map(m => {
+          // Preserve dead monsters (death animation handled elsewhere)
+          if (m.isDead) {
+            return { ...m, isMoving: false, isAttacking: false };
+          }
+
+          const dx = prev.player.x - m.x;
+          const dy = prev.player.y - m.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          let newX = m.x;
+          let newY = m.y;
+          let isMoving = false;
+          let isAttacking = false;
+          let lastAttackTime = m.lastAttackTime || 0;
+          let attackStartTime = m.attackStartTime || 0;
+
+          // Attack if in range and off cooldown
+          if (dist <= MONSTER_ATTACK_RANGE) {
+            if (now - lastAttackTime >= MONSTER_ATTACK_COOLDOWN_MS) {
+              // Start attack and apply damage (respecting player damage cooldown)
+              attackStartTime = now;
+              lastAttackTime = now;
+              if (now - lastDamaged >= PLAYER_DAMAGE_COOLDOWN_MS) {
+                nextPlayerHealth = Math.max(0, nextPlayerHealth - (m.damage || 1));
+                playerWasDamaged = true;
+              }
+            }
+            // Keep showing attack animation for a short duration
+            if (now - attackStartTime < MONSTER_ATTACK_DURATION_MS) {
+              isAttacking = true;
+            }
+          } else if (dist <= MONSTER_CHASE_RANGE) {
+            // Chase player toward position (simple steering)
+            const nx = dx / (dist || 1);
+            const ny = dy / (dist || 1);
+            const step = (m.speed || 1) * frameMultiplier;
+            const proposedX = m.x + nx * step;
+            const proposedY = m.y + ny * step;
+            // Constrain within world bounds
+            const clampedX = Math.max(halfSize, Math.min(worldPixelSize - halfSize, proposedX));
+            const clampedY = Math.max(halfSize, Math.min(worldPixelSize - halfSize, proposedY));
+            // Terrain collision
+            if (checkWalkable(clampedX, clampedY)) {
+              newX = clampedX;
+              newY = clampedY;
+              isMoving = true;
+            }
+          }
+
+          return {
+            ...m,
+            x: newX,
+            y: newY,
+            isMoving,
+            isAttacking,
+            lastAttackTime,
+            attackStartTime,
+            direction: dx < 0 ? 'left' : 'right'
+          };
+        });
+
+        // Update player health and brief status flag
+        const updatedPlayer = {
+          ...prev.player,
+          health: nextPlayerHealth,
+          lastDamagedTime: playerWasDamaged ? now : prev.player.lastDamagedTime
+        };
+
+        // DEV logs for AI
+        const logs = (() => {
+          if (!import.meta.env?.DEV) return prev.debugLogs;
+          const l = Array.isArray(prev.debugLogs) ? prev.debugLogs.slice(-49) : [];
+          if (playerWasDamaged) {
+            l.push({ t: Date.now(), type: 'combat', msg: 'Player damaged by monster', health: nextPlayerHealth });
+          }
+          return l;
+        })();
+
+        return {
+          ...prev,
+          player: updatedPlayer,
+          monsters: updatedMonsters,
+          status: { ...(prev.status||{}), playerHit: playerWasDamaged }
+          ,
           debugLogs: logs
         };
       });

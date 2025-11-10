@@ -7,6 +7,7 @@ import { gameProfiler } from '../utils/performanceProfiler';
 import { DIRECTION_MAP, SPRITE_CONFIGS, getSpriteType, nextFrameIndex, getSrcRect } from '../utils/spriteAnimator';
 
 // Render bush obstacles on top of grass terrain
+// The context is already translated by camera; draw using world-space coordinates.
 const renderBushObstacles = (ctx, bushObstacles, visibleArea, gameState) => {
   const bushImageCache = new Map();
   
@@ -21,54 +22,48 @@ const renderBushObstacles = (ctx, bushObstacles, visibleArea, gameState) => {
   };
   
   bushObstacles.forEach(bush => {
-    // Fix: Ensure proper world coordinate positioning
-    // Bush coordinates should be in world space, not tile space
+    // Bush tile coords -> world pixel coords
     const bushWorldX = bush.x * GAME_CONFIG.TILE_SIZE;
     const bushWorldY = bush.y * GAME_CONFIG.TILE_SIZE;
-    
-    // Convert to screen coordinates with camera transformation
-    const bushScreenX = bushWorldX - gameState.camera.x;
-    const bushScreenY = bushWorldY - gameState.camera.y;
-    
-    // Only render if bush is visible on screen
-    if (bushScreenX >= -GAME_CONFIG.TILE_SIZE && 
-        bushScreenX <= GAME_CONFIG.CANVAS_WIDTH &&
-        bushScreenY >= -GAME_CONFIG.TILE_SIZE && 
-        bushScreenY <= GAME_CONFIG.CANVAS_HEIGHT) {
-      
+
+    // Screen-space for culling only
+    const screenX = bushWorldX - gameState.camera.x;
+    const screenY = bushWorldY - gameState.camera.y;
+
+    // Only render if visible
+    if (
+      screenX >= -GAME_CONFIG.TILE_SIZE && screenX <= GAME_CONFIG.CANVAS_WIDTH &&
+      screenY >= -GAME_CONFIG.TILE_SIZE && screenY <= GAME_CONFIG.CANVAS_HEIGHT
+    ) {
       const bushImage = loadBushImage(bush.asset);
-      
+      const groundOffset = GAME_CONFIG.TILE_SIZE * 0.1;
+
       if (bushImage && bushImage.complete && bushImage.naturalWidth !== 0) {
-        // Fix: Align bush to ground level by adjusting Y position
-        // Bushes should sit on the ground, not float
-        const groundAlignedY = bushScreenY + (GAME_CONFIG.TILE_SIZE * 0.1); // Slight ground offset
-        
-        // Draw the bush image with proper ground alignment
+        // Draw at WORLD coords (context already translated)
         ctx.drawImage(
           bushImage,
-          bushScreenX,
-          groundAlignedY,
+          bushWorldX,
+          bushWorldY + groundOffset,
           GAME_CONFIG.TILE_SIZE,
-          GAME_CONFIG.TILE_SIZE * 0.9 // Slightly shorter to prevent floating appearance
+          GAME_CONFIG.TILE_SIZE * 0.9
         );
       } else {
-        // Fallback: draw a green circle for bush with ground alignment
+        // Fallback vector bush at WORLD coords
         ctx.fillStyle = '#228B22';
         ctx.beginPath();
         ctx.arc(
-          bushScreenX + GAME_CONFIG.TILE_SIZE / 2,
-          bushScreenY + GAME_CONFIG.TILE_SIZE / 2 + (GAME_CONFIG.TILE_SIZE * 0.1), // Ground aligned
+          bushWorldX + GAME_CONFIG.TILE_SIZE / 2,
+          bushWorldY + GAME_CONFIG.TILE_SIZE / 2 + groundOffset,
           GAME_CONFIG.TILE_SIZE / 3,
           0,
           Math.PI * 2
         );
         ctx.fill();
-        
-        // Add a small brown stem at ground level
+
         ctx.fillStyle = '#8B4513';
         ctx.fillRect(
-          bushScreenX + GAME_CONFIG.TILE_SIZE / 2 - 2,
-          bushScreenY + GAME_CONFIG.TILE_SIZE - 4, // Positioned at ground level
+          bushWorldX + GAME_CONFIG.TILE_SIZE / 2 - 2,
+          bushWorldY + GAME_CONFIG.TILE_SIZE - 4,
           4,
           8
         );
@@ -95,85 +90,82 @@ const interpolateColor = (color1, color2, factor) => {
 };
 
 // Render grass terrain
+// Now fills the entire visible area. If map data is missing or an image isn't ready,
+// it falls back to the seamless border system rather than solid color.
 const renderGrassTerrain = (ctx, grassTerrainMap, visibleArea, tileImages, gameState, assets = {}) => {
-  const tileSize = GAME_CONFIG.TILE_SIZE; // Use configured tile size for alignment
-  
-  // Debug removed for performance
-  
-  // Calculate visible area for grass terrain
-  const startX = Math.max(0, Math.floor(visibleArea.startTileX));
-  const endX = Math.min(grassTerrainMap[0].length, Math.ceil(visibleArea.endTileX));
-  const startY = Math.max(0, Math.floor(visibleArea.startTileY));
-  const endY = Math.min(grassTerrainMap.length, Math.ceil(visibleArea.endTileY));
-  
-  // Debug removed for performance
-  
-  // Render only visible tiles
+  const tileSize = GAME_CONFIG.TILE_SIZE;
+
+  const startX = Math.floor(visibleArea.startTileX);
+  const endX = Math.ceil(visibleArea.endTileX);
+  const startY = Math.floor(visibleArea.startTileY);
+  const endY = Math.ceil(visibleArea.endTileY);
+
+  // Use WORLD bounds so corners/edges appear only at the outer boundary,
+  // and the interior is evenly filled with center tiles across the world.
   const terrainBounds = {
-    minX: startX,
-    maxX: endX - 1,
-    minY: startY,
-    maxY: endY - 1
+    minX: 0,
+    maxX: GAME_CONFIG.WORLD_SIZE - 1,
+    minY: 0,
+    maxY: GAME_CONFIG.WORLD_SIZE - 1
   };
+
+  // Always render using the seamless border system driven by WORLD bounds.
+  // This fills the entire world evenly and restricts corner/edge tiles to the outer boundary.
   for (let y = startY; y < endY; y++) {
     for (let x = startX; x < endX; x++) {
-      const tileType = grassTerrainMap[y][x];
-      const tileImage = getTileImageByType(tileType, tileImages);
-      
-      if (tileImage && tileImage.complete && tileImage.naturalWidth > 0) {
-        ctx.drawImage(
-          tileImage,
-          x * tileSize, 
-          y * tileSize, 
-          tileSize, 
-          tileSize
-        );
-      } else {
-        // Hardened fallback: use seamless grass tile renderer when available
-        const didRender = renderSeamlessGrassTile(
-          ctx,
-          { type: 'GRASS' },
-          x,
-          y,
-          gameState,
-          assets,
-          terrainBounds
-        );
-        if (!didRender) {
-          // Final fallback: solid grass tile
-          ctx.fillStyle = '#4CAF50';
-          ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
-        }
+      const didRender = renderSeamlessGrassTile(
+        ctx,
+        { type: 'GRASS' },
+        x,
+        y,
+        gameState,
+        assets,
+        terrainBounds
+      );
+      if (!didRender) {
+        ctx.fillStyle = '#4CAF50';
+        ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
       }
     }
   }
 };
 
 // Helper function to get the correct tile image based on tile type
+// Fallbacks to loader cache when props aren't ready to ensure drawing proceeds
 const getTileImageByType = (tileType, tileImages) => {
+  let img = null;
   switch (tileType) {
     case '/assets/terrain_tileset/grass1.png':
-      return tileImages.grassTopLeftImage;
+      img = tileImages.grassTopLeftImage; break;
     case '/assets/terrain_tileset/grass2.png':
-      return tileImages.grassTopImage;
+      img = tileImages.grassTopImage; break;
     case '/assets/terrain_tileset/grass3.png':
-      return tileImages.grassTopRightImage;
+      img = tileImages.grassTopRightImage; break;
     case '/assets/terrain_tileset/grass4.png':
-      return tileImages.grassLeftImage;
+      img = tileImages.grassLeftImage; break;
     case '/assets/terrain_tileset/grass5.png':
-      return tileImages.grassCenterImage;
+      img = tileImages.grassCenterImage; break;
     case '/assets/terrain_tileset/grass6.png':
-      return tileImages.grassRightImage;
+      img = tileImages.grassRightImage; break;
     case '/assets/terrain_tileset/grass7.png':
-      return tileImages.grassBottomLeftImage;
+      img = tileImages.grassBottomLeftImage; break;
     case '/assets/terrain_tileset/grass8.png':
-      return tileImages.grassBottomImage;
+      img = tileImages.grassBottomImage; break;
     case '/assets/terrain_tileset/grass9.png':
-      return tileImages.grassBottomRightImage;
+      img = tileImages.grassBottomRightImage; break;
     default:
-      // Default to center tile to avoid noisy warnings in production
-      return tileImages.grassCenterImage;
+      img = tileImages.grassCenterImage; break;
   }
+  // Robust fallback: leverage cached loader image if prop is missing or not loaded yet
+  if (!img || !img.complete || img.naturalWidth === 0) {
+    try {
+      const cached = getGrassTileImage(tileType);
+      if (cached && cached.complete && cached.naturalWidth !== 0) {
+        return cached;
+      }
+    } catch {}
+  }
+  return img;
 };
 
 const CanvasRenderer = ({ 
@@ -211,6 +203,11 @@ const CanvasRenderer = ({
   sproutCoinImage,
   monsterGoblinImage,
   monsterDragonImage,
+  monsterPigIdleSheet,
+  monsterPigRunSheet,
+  monsterPigHitSheet,
+  monsterPigDeadSheet,
+  monsterPigAttackSheet,
   // Grass terrain tiles
   grassTopLeftImage,
   grassTopImage,
@@ -303,7 +300,7 @@ const CanvasRenderer = ({
       };
 
       // Render terrain based on selected terrain type
-      if (terrainType === 'grass' && grassTerrainMap) {
+      if (terrainType === 'grass') {
         const tileImages = {
           grassTopLeftImage,
           grassTopImage,
@@ -356,7 +353,12 @@ const CanvasRenderer = ({
     renderMonsters(ctx, gameState, visibleArea, {
       goblin: monsterGoblinImage,
       dragon: monsterDragonImage,
-      orc: monsterOrcImage
+      orc: monsterOrcImage,
+      pigIdleSheet: monsterPigIdleSheet,
+      pigRunSheet: monsterPigRunSheet,
+      pigHitSheet: monsterPigHitSheet,
+      pigDeadSheet: monsterPigDeadSheet,
+      pigAttackSheet: monsterPigAttackSheet
     }, isAttacking, attackTarget);
     
     // Only render player if not using external character component
@@ -623,12 +625,13 @@ const renderTerrain = (ctx, gameState, visibleArea, assets, frameCount) => {
   const { startTileX, endTileX, startTileY, endTileY } = visibleArea;
   let tilesRendered = 0;
 
-  // Calculate terrain bounds for border pattern detection
+  // Use WORLD bounds for border pattern detection to avoid "terrain inside terrain"
+  // This ensures corner/edge tiles only appear at the world's outer boundary.
   const terrainBounds = {
-    minX: startTileX,
-    maxX: endTileX,
-    minY: startTileY,
-    maxY: endTileY
+    minX: 0,
+    maxX: GAME_CONFIG.WORLD_SIZE - 1,
+    minY: 0,
+    maxY: GAME_CONFIG.WORLD_SIZE - 1
   };
 
   for (let tileX = startTileX; tileX <= endTileX; tileX++) {
@@ -1362,11 +1365,11 @@ const renderTreasureBoxes = (ctx, gameState, visibleArea, treasureImage, treasur
       
       // Fix: Ensure treasure boxes are positioned in world coordinates, not screen coordinates
       // This prevents the parallax effect where chests follow camera movement
-      const treasureScreenX = treasure.x - gameState.camera.x;
-      const treasureScreenY = treasure.y - gameState.camera.y;
+      const treasureScreenX = treasure.x;
+      const treasureScreenY = treasure.y;
       
-      const isOpening = !!treasure.opening && typeof treasure.openStartTime === 'number';
-      const isClosing = !!treasure.closing && typeof treasure.closeStartTime === 'number';
+      const isOpening = !!treasure.opening && typeof treasure.openStartTime === 'number' && !treasure.showingQuestion;
+      const isClosing = !!treasure.closing && typeof treasure.closeStartTime === 'number' && !treasure.showingQuestion;
 
       if (isOpening) {
         const duration = 600;
@@ -1574,7 +1577,7 @@ const renderTreasureBoxes = (ctx, gameState, visibleArea, treasureImage, treasur
         }
         
         // Sparkles for unopened boxes (disable during wildrealm opening)
-        if (!treasure.collected && !isWildrealm) {
+        if (!treasure.collected && !isWildrealm && !treasure.showingQuestion) {
           const sparkleCount = 2;
           ctx.fillStyle = '#FFFF00';
           for (let i = 0; i < sparkleCount; i++) {
@@ -1588,8 +1591,25 @@ const renderTreasureBoxes = (ctx, gameState, visibleArea, treasureImage, treasur
         }
       }
       
+      // Optional collision hitbox debug overlay
+      if (GAME_CONFIG.SHOW_COLLISION_DEBUG) {
+        const hitW = GAME_CONFIG.TREASURE_SIZE * (GAME_CONFIG.TREASURE_HITBOX_WIDTH_RATIO ?? 0.72);
+        const hitH = GAME_CONFIG.TREASURE_SIZE * (GAME_CONFIG.TREASURE_HITBOX_HEIGHT_RATIO ?? 0.70);
+        const centerY = treasureScreenY + (GAME_CONFIG.TREASURE_SIZE * (GAME_CONFIG.TREASURE_HITBOX_Y_OFFSET_RATIO ?? 0));
+        ctx.save();
+        ctx.strokeStyle = '#00FFFF';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(
+          treasureScreenX - hitW / 2,
+          centerY - hitH / 2,
+          hitW,
+          hitH
+        );
+        ctx.restore();
+      }
+      
       // Hover highlight on nearest chest under cursor
-      if (!treasure.collected && hoveredTreasureId && treasure.id === hoveredTreasureId) {
+      if (!treasure.collected && !treasure.showingQuestion && hoveredTreasureId && treasure.id === hoveredTreasureId) {
         const pulse = Math.sin(Date.now() * 0.01) * 0.3 + 0.7;
         ctx.save();
         ctx.shadowColor = 'rgba(0, 255, 255, 0.8)';
@@ -1621,7 +1641,7 @@ const renderTreasureBoxes = (ctx, gameState, visibleArea, treasureImage, treasur
       }
 
       // Interaction glow for nearby treasures (green when facing, yellow otherwise)
-      if (!isWildrealm && treasure.nearPlayer && !treasure.collected) {
+      if (!isWildrealm && treasure.nearPlayer && !treasure.collected && !treasure.showingQuestion) {
         const playerX = gameState.player.x;
         const playerY = gameState.player.y;
         const dx = treasure.x - playerX;
@@ -1644,7 +1664,8 @@ const renderTreasureBoxes = (ctx, gameState, visibleArea, treasureImage, treasur
           }
         })();
         const cosAngle = (dx / mag) * dir.x + (dy / mag) * dir.y;
-        const facing = cosAngle >= 0.5; // 60° cone
+        const facingTolerance = GAME_CONFIG.INTERACTION_FACING_COS ?? 0.5;
+        const facing = cosAngle >= facingTolerance;
         const glowIntensity = Math.sin(Date.now() * 0.01) * 0.3 + 0.7;
         ctx.save();
         ctx.shadowColor = facing ? '#00FF00' : '#FFFF00';
@@ -1730,7 +1751,19 @@ const renderMonsters = (ctx, gameState, visibleArea, monsterImages, isAttacking,
   const endX = endTileX * GAME_CONFIG.TILE_SIZE;
   const startY = startTileY * GAME_CONFIG.TILE_SIZE;
   const endY = endTileY * GAME_CONFIG.TILE_SIZE;
-  
+  const pigSheets = {
+    idle: monsterImages.pigIdleSheet,
+    run: monsterImages.pigRunSheet,
+    hit: monsterImages.pigHitSheet,
+    dead: monsterImages.pigDeadSheet,
+    attack: monsterImages.pigAttackSheet
+  };
+  const pigAvailable = !!(pigSheets.idle?.current && pigSheets.idle.current.complete && pigSheets.idle.current.naturalWidth !== 0);
+  const pigFrameW = 34;
+  const pigFrameH = 28;
+  const nowMs = (typeof performance !== 'undefined') ? performance.now() : Date.now();
+  const defaultFrameDuration = 100; // ms
+
   gameState.monsters.forEach(monster => {
     // Only render if in viewport
     if (monster.x >= startX - GAME_CONFIG.MONSTER_SIZE && 
@@ -1738,84 +1771,82 @@ const renderMonsters = (ctx, gameState, visibleArea, monsterImages, isAttacking,
         monster.y >= startY - GAME_CONFIG.MONSTER_SIZE && 
         monster.y <= endY + GAME_CONFIG.MONSTER_SIZE) {
       
-      // Determine which monster image to use based on type
-      let monsterImage = null;
-      if (monster.type === 'goblin' && monsterImages.goblin.current) {
-        monsterImage = monsterImages.goblin.current;
-      } else if (monster.type === 'dragon' && monsterImages.dragon.current) {
-        monsterImage = monsterImages.dragon.current;
-      } else if (monster.type === 'orc' && monsterImages.orc.current) {
-        monsterImage = monsterImages.orc.current;
-      }
-      
       // Check if this monster is being attacked
       const isBeingAttacked = isAttacking && attackTarget && attackTarget.id === monster.id;
-      
-      // Apply attack effect (red tint and shake)
-      if (isBeingAttacked) {
-        ctx.save();
-        const shakeX = (Math.random() - 0.5) * 4;
-        const shakeY = (Math.random() - 0.5) * 4;
-        ctx.translate(shakeX, shakeY);
-        ctx.globalCompositeOperation = 'multiply';
-        ctx.fillStyle = 'rgba(255, 100, 100, 0.8)';
-      }
-      
-      if (monsterImage && monsterImage.complete && monsterImage.naturalWidth !== 0) {
-        // Render realistic monster SVG
-        ctx.drawImage(
-          monsterImage,
-          monster.x - GAME_CONFIG.MONSTER_SIZE / 2,
-          monster.y - GAME_CONFIG.MONSTER_SIZE / 2,
-          GAME_CONFIG.MONSTER_SIZE,
-          GAME_CONFIG.MONSTER_SIZE
-        );
+
+      if (pigAvailable) {
+        // Choose appropriate pig sheet
+        let activePigRef = pigSheets.idle;
+        if (monster.isDead) {
+          activePigRef = pigSheets.dead ?? pigSheets.idle;
+        } else if (isBeingAttacked && pigSheets.hit) {
+          activePigRef = pigSheets.hit;
+        } else if (monster.isAttacking && pigSheets.attack) {
+          activePigRef = pigSheets.attack;
+        } else if (monster.isMoving && pigSheets.run) {
+          activePigRef = pigSheets.run;
+        }
+        const sheet = activePigRef?.current;
+        const hasSheet = !!(sheet && sheet.complete && sheet.naturalWidth !== 0);
+        if (hasSheet) {
+          const framesAcross = Math.max(1, Math.floor(sheet.naturalWidth / pigFrameW));
+          const rows = Math.max(1, Math.floor(sheet.naturalHeight / pigFrameH));
+          const frameDuration = monster.isDead ? 120 : defaultFrameDuration;
+          let frameIndex;
+          if (monster.isDead && monster.deathStartTime) {
+            const elapsed = (typeof performance !== 'undefined') ? performance.now() - monster.deathStartTime : Date.now() - monster.deathStartTime;
+            frameIndex = Math.min(Math.floor(elapsed / frameDuration), framesAcross - 1);
+          } else {
+            frameIndex = Math.floor(nowMs / frameDuration) % framesAcross;
+          }
+          const sx = frameIndex * pigFrameW;
+          const sy = 0; // single row assumed
+          ctx.drawImage(
+            sheet,
+            sx,
+            sy,
+            pigFrameW,
+            pigFrameH,
+            monster.x - GAME_CONFIG.MONSTER_SIZE / 2,
+            monster.y - GAME_CONFIG.MONSTER_SIZE / 2,
+            GAME_CONFIG.MONSTER_SIZE,
+            GAME_CONFIG.MONSTER_SIZE
+          );
+        } else {
+          // Fallback if pig sheet not ready
+          ctx.fillStyle = '#8B0000';
+          ctx.beginPath();
+          ctx.arc(monster.x, monster.y, GAME_CONFIG.MONSTER_SIZE / 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
       } else {
-        // Fallback monster representation
-        ctx.fillStyle = '#8B0000';
-        ctx.beginPath();
-        ctx.arc(
-          monster.x, 
-          monster.y, 
-          GAME_CONFIG.MONSTER_SIZE / 2, 
-          0, 
-          Math.PI * 2
-        );
-        ctx.fill();
-        
-        // Eyes
-        ctx.fillStyle = '#FF0000';
-        ctx.beginPath();
-        ctx.arc(
-          monster.x - 5, 
-          monster.y - 3, 
-          2, 
-          0, 
-          Math.PI * 2
-        );
-        ctx.arc(
-          monster.x + 5, 
-          monster.y - 3, 
-          2, 
-          0, 
-          Math.PI * 2
-        );
-        ctx.fill();
-      }
-      
-      // Restore context if attack effect was applied
-      if (isBeingAttacked) {
-        ctx.restore();
-        
-        // Add attack impact effect
-        ctx.fillStyle = 'rgba(255, 255, 0, 0.6)';
-        ctx.beginPath();
-        ctx.arc(monster.x, monster.y, GAME_CONFIG.MONSTER_SIZE / 2 + 5, 0, Math.PI * 2);
-        ctx.fill();
+        // Legacy monster images rendering
+        let monsterImage = null;
+        if (monster.type === 'goblin' && monsterImages.goblin?.current) {
+          monsterImage = monsterImages.goblin.current;
+        } else if (monster.type === 'dragon' && monsterImages.dragon?.current) {
+          monsterImage = monsterImages.dragon.current;
+        } else if (monster.type === 'orc' && monsterImages.orc?.current) {
+          monsterImage = monsterImages.orc.current;
+        }
+        if (monsterImage && monsterImage.complete && monsterImage.naturalWidth !== 0) {
+          ctx.drawImage(
+            monsterImage,
+            monster.x - GAME_CONFIG.MONSTER_SIZE / 2,
+            monster.y - GAME_CONFIG.MONSTER_SIZE / 2,
+            GAME_CONFIG.MONSTER_SIZE,
+            GAME_CONFIG.MONSTER_SIZE
+          );
+        } else {
+          ctx.fillStyle = '#8B0000';
+          ctx.beginPath();
+          ctx.arc(monster.x, monster.y, GAME_CONFIG.MONSTER_SIZE / 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
       
       // Health bar for monsters
-      if (monster.health < monster.maxHealth) {
+      if (!monster.isDead && monster.health < monster.maxHealth) {
         const barWidth = GAME_CONFIG.MONSTER_SIZE;
         const barHeight = 4;
         const healthPercentage = monster.health / monster.maxHealth;

@@ -4,9 +4,10 @@ import { GAME_CONFIG } from '../config/gameConfig';
 import { useGameState } from '../hooks/useGameState';
 import { useGameLoop } from '../hooks/useGameLoop.jsx';
 import { generateTerrainChunk, isWalkable } from '../utils/terrainGenerator';
+import { enhancedBushCollisionSystem } from '../utils/terrainBoundarySystem';
 import SimpleCanvasRenderer from './SimpleCanvasRenderer';
 import TreasureQuestionModal from './TreasureQuestionModal';
-import numerationProblems from '../data/NumerationProblem.json';
+import { ensureProblemsLoaded, selectRandomProblem } from '../utils/problemLoader';
 import { useInteractionSystem } from '../utils/interactionSystem';
 
 const SimpleOpenWorldGame = ({ customWorld = null }) => {
@@ -19,6 +20,10 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
   const [currentTreasureBox, setCurrentTreasureBox] = useState(null);
   const [currentLevel, setCurrentLevel] = useState(customWorld?.currentLevel || 0);
   const [playerDirection, setPlayerDirection] = useState('right');
+  const [questionsNumeration, setQuestionsNumeration] = useState([]);
+  const [questionsLiteration, setQuestionsLiteration] = useState([]);
+  const [questionsLoading, setQuestionsLoading] = useState(true);
+  const [questionsError, setQuestionsError] = useState(null);
 
   // Get current level world data
   const getCurrentLevelWorld = () => {
@@ -62,6 +67,25 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
   const checkWalkable = useCallback((x, y) => {
     return isWalkable(x, y, gameState.terrain, currentLevelWorld, bushObstacles);
   }, [gameState.terrain, currentLevelWorld, bushObstacles]);
+
+  // Bush collision resolver: compute push-back when colliding with a bush
+  const bushCollisionResolver = useCallback((px, py) => {
+    if (!Array.isArray(bushObstacles) || bushObstacles.length === 0) return null;
+    const playerTileX = Math.floor(px / GAME_CONFIG.TILE_SIZE);
+    const playerTileY = Math.floor(py / GAME_CONFIG.TILE_SIZE);
+    for (const bush of bushObstacles) {
+      const assetPath = String(bush.asset || '').toLowerCase();
+      const isBushDir = assetPath.includes('/assets/characters/terrain-object/bushes/');
+      if (!isBushDir) continue;
+      if (Math.abs(bush.x - playerTileX) > 2 || Math.abs(bush.y - playerTileY) > 2) continue;
+      const bx = bush.x * GAME_CONFIG.TILE_SIZE;
+      const by = bush.y * GAME_CONFIG.TILE_SIZE;
+      if (enhancedBushCollisionSystem.checkBushCollision(px, py, bx, by)) {
+        return enhancedBushCollisionSystem.getCollisionResponse(px, py, bx, by);
+      }
+    }
+    return null;
+  }, [bushObstacles]);
 
   // Cave entrance interaction check
   const checkCaveEntranceInteraction = useCallback(() => {
@@ -107,24 +131,27 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
     const available = gameState.treasureBoxes.filter(b => !b.collected && !b.opened);
     if (available.length === 0) return;
 
-    const playerTopLeftX = gameState.player.x - GAME_CONFIG.PLAYER_SIZE / 2;
-    const playerTopLeftY = gameState.player.y - GAME_CONFIG.PLAYER_SIZE / 2;
-    const nearest = getClosestInteractable(playerTopLeftX, playerTopLeftY, available);
+    // Use center-based coordinates consistently for interaction checks
+    const playerCenterX = gameState.player.x;
+    const playerCenterY = gameState.player.y;
+    const nearest = getClosestInteractable(playerCenterX, playerCenterY, available);
     if (!nearest) return;
 
     const chestSize = GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE;
-    const chestTopLeftX = nearest.x - chestSize / 2;
-    const chestTopLeftY = nearest.y - chestSize / 2;
-
-    if (canInteractWithCooldown(playerTopLeftX, playerTopLeftY, chestTopLeftX, chestTopLeftY, chestSize, chestSize) &&
-        canInteractFacing(playerTopLeftX, playerTopLeftY, playerDirection, chestTopLeftX, chestTopLeftY, chestSize, chestSize, 0.5)) {
+    // Pass chest center coordinates; width/height retained for compatibility
+    if (canInteractWithCooldown(playerCenterX, playerCenterY, nearest.x, nearest.y, chestSize, chestSize) &&
+        canInteractFacing(playerCenterX, playerCenterY, playerDirection, nearest.x, nearest.y, chestSize, chestSize, 0.5)) {
       markInteraction();
-      const randomQuestion = numerationProblems[Math.floor(Math.random() * numerationProblems.length)];
-      setCurrentQuestion(randomQuestion);
+      const randomQuestion = selectRandomProblem(
+        questionsNumeration,
+        questionsLiteration,
+        Math.max(1, gameState.depthLevel + 1)
+      );
+      setCurrentQuestion(randomQuestion || null);
       setCurrentTreasureBox(nearest);
       setShowQuestionModal(true);
     }
-  }, [gameState.player.x, gameState.player.y, gameState.treasureBoxes, playerDirection, getClosestInteractable, canInteractWithCooldown, canInteractFacing, markInteraction]);
+  }, [gameState.player.x, gameState.player.y, gameState.treasureBoxes, playerDirection, getClosestInteractable, canInteractWithCooldown, canInteractFacing, markInteraction, questionsNumeration, questionsLiteration, gameState.depthLevel]);
 
   // Handle question solve
   const handleQuestionSolve = useCallback(() => {
@@ -148,7 +175,30 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
   }, []);
 
   // Game loop
-  useGameLoop(keys, gameState, updateGameState, checkWalkable, generateTerrain, currentLevelWorld);
+  useGameLoop(keys, gameState, updateGameState, checkWalkable, generateTerrain, { bushCollisionResolver });
+
+  // Load and cache Numeration + Literation problem banks
+  useEffect(() => {
+    let isMounted = true;
+    setQuestionsLoading(true);
+    setQuestionsError(null);
+    ensureProblemsLoaded()
+      .then(({ numeration, literation, error }) => {
+        if (!isMounted) return;
+        setQuestionsNumeration(Array.isArray(numeration) ? numeration : []);
+        setQuestionsLiteration(Array.isArray(literation) ? literation : []);
+        setQuestionsError(error || null);
+        setQuestionsLoading(false);
+      })
+      .catch(err => {
+        if (!isMounted) return;
+        setQuestionsNumeration([]);
+        setQuestionsLiteration([]);
+        setQuestionsError(err?.message || String(err));
+        setQuestionsLoading(false);
+      });
+    return () => { isMounted = false; };
+  }, []);
   
   // Check for non-chest interactions (e.g., cave entrances) while moving
   useEffect(() => {
@@ -159,9 +209,12 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
 
   // Keyboard event handlers
   useEffect(() => {
-    const handleKeyDown = (e) => {
+  const lastMovementKeyTimeRef = useRef({});
+  const handleKeyDown = (e) => {
       setKeys(prev => ({ ...prev, [e.code]: true }));
-      // Update player direction based on movement keys
+      // Record timestamp to enforce last-key-wins for direction
+      try { lastMovementKeyTimeRef.current[e.code] = performance.now(); } catch {}
+      // Update player direction based on movement keys (last key pressed wins)
       switch (e.code) {
         case 'KeyW':
         case 'ArrowUp':
@@ -190,7 +243,45 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
     };
 
     const handleKeyUp = (e) => {
-      setKeys(prev => ({ ...prev, [e.code]: false }));
+      setKeys(prev => {
+        const newKeys = { ...prev, [e.code]: false };
+        // Clear timestamp for released key
+        try { delete lastMovementKeyTimeRef.current[e.code]; } catch {}
+        // If other movement keys remain, select the most recent pressed for direction
+        const movementKeys = ['KeyW','ArrowUp','KeyS','ArrowDown','KeyA','ArrowLeft','KeyD','ArrowRight'];
+        const stillMoving = movementKeys.some(k => newKeys[k]);
+        if (stillMoving) {
+          let latestKey = null;
+          let latestTs = -Infinity;
+          for (const k of movementKeys) {
+            if (newKeys[k]) {
+              const ts = lastMovementKeyTimeRef.current[k] ?? -Infinity;
+              if (ts > latestTs) { latestTs = ts; latestKey = k; }
+            }
+          }
+          if (latestKey) {
+            switch(latestKey) {
+              case 'KeyW':
+              case 'ArrowUp':
+                setPlayerDirection('up');
+                break;
+              case 'KeyS':
+              case 'ArrowDown':
+                setPlayerDirection('down');
+                break;
+              case 'KeyA':
+              case 'ArrowLeft':
+                setPlayerDirection('left');
+                break;
+              case 'KeyD':
+              case 'ArrowRight':
+                setPlayerDirection('right');
+                break;
+            }
+          }
+        }
+        return newKeys;
+      });
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -256,6 +347,8 @@ const SimpleOpenWorldGame = ({ customWorld = null }) => {
         question={currentQuestion}
         onClose={handleModalClose}
         onSolve={handleQuestionSolve}
+        isLoading={questionsLoading}
+        error={questionsError}
       />
     </div>
   );

@@ -45,7 +45,9 @@ export const generateTreasureBoxes = (chunkX, chunkY, depthLevel, worldSeed, ter
   // World-aware expected count per chunk based on target count
   const chunksPerSide = Math.ceil(GAME_CONFIG.WORLD_SIZE / GAME_CONFIG.CHUNK_SIZE);
   const totalChunks = chunksPerSide * chunksPerSide;
-  const targetCount = GAME_CONFIG.TREASURE_TARGET_COUNT ?? Math.ceil(totalChunks * 0.5); // default ~50% of chunks have a chest
+  const targetCount = (typeof GAME_CONFIG.TREASURE_TARGET_COUNT === 'number' && GAME_CONFIG.TREASURE_TARGET_COUNT > 0)
+    ? GAME_CONFIG.TREASURE_TARGET_COUNT
+    : Math.ceil(totalChunks * (typeof GAME_CONFIG.TREASURE_TARGET_DENSITY === 'number' ? GAME_CONFIG.TREASURE_TARGET_DENSITY : 0.5)); // default ~50% of chunks have a chest
   const expectedPerChunk = targetCount / totalChunks;
   
   // Sample desired count using seeded randomness and per-chunk expectation

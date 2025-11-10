@@ -1,0 +1,122 @@
+[
+  {
+    "level": 1,
+    "type": "spellWord",
+    "title": "✍️ Eja 'CAT'",
+    "story": "Cetak setiap huruf dari kata 'CAT' pada barisnya sendiri, berurutan.",
+    "verify": "sequence",
+    "answer": "C\nA\nT\n",
+    "difficulty": "Mudah",
+    "hint": "Gunakan tiga blok text_print: 'C', 'A', dan 'T'."
+  },
+  {
+    "level": 1,
+    "type": "repeatWord",
+    "title": "🔁 Ulang 'hello'",
+    "story": "Cetak kata 'hello' tiga kali, masing-masing pada baris baru.",
+    "verify": "sequence",
+    "answer": "hello\nhello\nhello\n",
+    "difficulty": "Mudah",
+    "hint": "Gunakan sebuah loop yang berulang 3 kali dan text_print 'hello'."
+  },
+  {
+    "level": 1,
+    "type": "alphabetSnippet",
+    "title": "🔤 Tiga Huruf Pertama",
+    "story": "Cetak huruf A, B, dan C, masing-masing pada baris baru.",
+    "verify": "sequence",
+    "answer": "A\nB\nC\n",
+    "difficulty": "Mudah",
+    "hint": "Letakkan tiga blok text_print untuk A, B, dan C."
+  },
+  {
+    "level": 2,
+    "type": "casePractice",
+    "title": "Latihan Huruf Aa",
+    "story": "Cetak 'Go' pada baris pertama dan 'go' pada baris kedua.",
+    "verify": "sequence",
+    "answer": "Go\ngo\n",
+    "difficulty": "Sedang",
+    "hint": "Gunakan dua blok text_print dengan kapitalisasi yang benar."
+  },
+  {
+    "level": 2,
+    "type": "twoWordOrder",
+    "title": "☀️🌙 Urutan Kata",
+    "story": "Cetak 'sun' lalu 'moon' pada baris terpisah.",
+    "verify": "sequence",
+    "answer": "sun\nmoon\n",
+    "difficulty": "Sedang",
+    "hint": "Pastikan urutannya tepat: 'sun' terlebih dahulu, kemudian 'moon'."
+  },
+  {
+    "level": 2,
+    "type": "punctuation",
+    "title": "🧩 Tanda Baca",
+    "story": "Cetak tanda tanya '?' pada baris pertama dan tanda seru '!' pada baris kedua.",
+    "verify": "sequence",
+    "answer": "?\n!\n",
+    "difficulty": "Sedang",
+    "hint": "Gunakan blok teks berisi simbol tersebut lalu text_print."
+  },
+  {
+    "level": 3,
+    "type": "wordPattern",
+    "title": "Pola 'ab'",
+    "story": "Cetak 'ab' empat kali, satu per baris.",
+    "verify": "sequence",
+    "answer": "ab\nab\nab\nab\n",
+    "difficulty": "Sulit",
+    "hint": "Gunakan for loop dari 1 sampai 4 yang mencetak 'ab' setiap iterasi."
+  },
+  {
+    "level": 3,
+    "type": "listOfWords",
+    "title": "🎨 Trio Warna",
+    "story": "Cetak kata 'red', 'green', dan 'blue', masing-masing pada barisnya.",
+    "verify": "sequence",
+    "answer": "red\ngreen\nblue\n",
+    "difficulty": "Sulit",
+    "hint": "Gunakan tiga blok text_print, atau sebuah loop atas daftar tetap."
+  },
+  {
+    "level": 3,
+    "type": "sentenceLines",
+    "title": "📝 Dua Baris",
+    "story": "Cetak 'I love code' pada baris pertama dan 'Blockly' pada baris kedua.",
+    "verify": "sequence",
+    "answer": "I love code\nBlockly\n",
+    "difficulty": "Sulit",
+    "hint": "Cetak dua nilai teks terpisah menggunakan text_print."
+  },
+  {
+    "level": 4,
+    "type": "wordsByLine",
+    "title": "Akrostik: DAS",
+    "story": "Cetak huruf D, A, dan S, masing-masing pada baris baru.",
+    "verify": "sequence",
+    "answer": "D\nA\nS\n",
+    "difficulty": "Sangat Sulit",
+    "hint": "Gunakan tiga blok text_print dengan teks satu huruf."
+  },
+  {
+    "level": 4,
+    "type": "daysSnippet",
+    "title": "📅 Pekan Singkat",
+    "story": "Cetak singkatan 'Mon', 'Tue', dan 'Wed' masing-masing pada baris baru.",
+    "verify": "sequence",
+    "answer": "Mon\nTue\nWed\n",
+    "difficulty": "Sangat Sulit",
+    "hint": "Urutan penting: 'Mon' dahulu, kemudian 'Tue', lalu 'Wed'."
+  },
+  {
+    "level": 4,
+    "type": "rhymeSet",
+    "title": "🐱 Trio Berima",
+    "story": "Cetak kata 'cat', 'bat', dan 'rat', masing-masing pada baris baru.",
+    "verify": "sequence",
+    "answer": "cat\nbat\nrat\n",
+    "difficulty": "Sangat Sulit",
+    "hint": "Gunakan tiga blok text_print; ejaannya harus persis sama."
+  }
+]

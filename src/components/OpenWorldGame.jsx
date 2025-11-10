@@ -4,15 +4,17 @@ import { GAME_CONFIG } from '../config/gameConfig';
 import { useGameState } from '../hooks/useGameState';
 import { useGameLoop } from '../hooks/useGameLoop.jsx';
 import { generateTerrainChunk, isWalkable } from '../utils/terrainGenerator';
+import { generateChunkObjects } from '../utils/objectGenerator';
 import { generateTerrainMap, preloadTileImages, preloadCharacterSprite, GRASS_TILES } from '../utils/grassTileMapping';
 import { loadAllGrassTiles } from '../utils/grassTileLoader';
-import { terrainBoundarySystem } from '../utils/terrainBoundarySystem';
+import { terrainBoundarySystem, enhancedBushCollisionSystem } from '../utils/terrainBoundarySystem';
 import CanvasRenderer from './CanvasRenderer';
 import TreasureQuestionModal from './TreasureQuestionModal';
 import TreasureLootModal from './TreasureLootModal';
 import CrystalCollectionModal from './CrystalCollectionModal';
 import GameStartMenu from './GameStartMenu';
 import GameMenu from './GameMenu';
+import DeathModal from './DeathModal';
 import TerrainRenderer, { getStoredTerrainData, hasStoredTerrain, getWalkableTiles, getCollisionTiles } from './TerrainRenderer';
 // Load NumerationProblem.json dynamically to support loading states and errors
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -22,6 +24,7 @@ import PerformanceMonitor from './PerformanceMonitor';
 import { soundEffects } from '../utils/soundEffects';
 import { useInteractionSystem } from '../utils/interactionSystem';
 import { generateLootForTreasure, applyLoot } from '../utils/lootSystem';
+import { ensureProblemsLoaded, selectRandomProblem } from '../utils/problemLoader';
 
 // Import testing framework in development mode
 if (import.meta.env?.DEV) {
@@ -113,8 +116,11 @@ const OpenWorldGame = () => {
   const [currentLoot, setCurrentLoot] = useState(null);
   const [showCrystalModal, setShowCrystalModal] = useState(false);
   const [currentCrystal, setCurrentCrystal] = useState(null);
+  const [showDeathModal, setShowDeathModal] = useState(false);
   const [lastSolvedQuestion, setLastSolvedQuestion] = useState(null);
   const [questions, setQuestions] = useState(null);
+  const [questionsNumeration, setQuestionsNumeration] = useState([]);
+  const [questionsLiteration, setQuestionsLiteration] = useState([]);
   const [questionsLoading, setQuestionsLoading] = useState(true);
   const [questionsError, setQuestionsError] = useState(null);
   const [showCoinAnimation, setShowCoinAnimation] = useState(false);
@@ -1027,8 +1033,34 @@ const OpenWorldGame = () => {
     return isWalkable(x, y, terrain, null, bushObstacles);
   }, [useCustomTerrain, customTerrain, terrainLevel, terrainType, bushObstacles]);
 
+  // Bush collision resolver: find colliding bush and compute push-back response
+  const bushCollisionResolver = useCallback((px, py) => {
+    if (!Array.isArray(bushObstacles) || bushObstacles.length === 0) return null;
+
+    // Player tile coordinates for nearby filtering
+    const playerTileX = Math.floor(px / GAME_CONFIG.TILE_SIZE);
+    const playerTileY = Math.floor(py / GAME_CONFIG.TILE_SIZE);
+
+    // Check nearby bushes within a small tile radius for performance
+    for (const bush of bushObstacles) {
+      const assetPath = String(bush.asset || '').toLowerCase();
+      const isBushDir = assetPath.includes('/assets/characters/terrain-object/bushes/');
+      if (!isBushDir) continue;
+      if (Math.abs(bush.x - playerTileX) > 2 || Math.abs(bush.y - playerTileY) > 2) continue;
+
+      const bushWorldX = bush.x * GAME_CONFIG.TILE_SIZE;
+      const bushWorldY = bush.y * GAME_CONFIG.TILE_SIZE;
+      const collides = enhancedBushCollisionSystem.checkBushCollision(px, py, bushWorldX, bushWorldY);
+      if (collides) {
+        const response = enhancedBushCollisionSystem.getCollisionResponse(px, py, bushWorldX, bushWorldY);
+        return response; // { x, y, blocked }
+      }
+    }
+    return null;
+  }, [bushObstacles]);
+
   // Game loop
-  useGameLoop(keys, gameState, updateGameState, checkWalkable, generateTerrain, { isWildrealm });
+  useGameLoop(keys, gameState, updateGameState, checkWalkable, generateTerrain, { isWildrealm, bushCollisionResolver });
   
   // Debug: Log when generateTerrain function changes
   useEffect(() => {
@@ -1325,50 +1357,33 @@ const OpenWorldGame = () => {
   // Handle treasure box interaction
   const handleTreasureInteraction = useCallback((treasureId) => {
     const treasureBox = gameState.treasureBoxes.find(t => t.id === treasureId);
+    if (showQuestionModal || showLootModal) {
+      return;
+    }
     if (treasureBox && !treasureBox.collected) {
       try { soundEffects.playMenuClick(); } catch {}
-      // Trigger opening animation state immediately
-      updateGameState(prev => ({
-        ...prev,
-        treasureBoxes: prev.treasureBoxes.map(treasure => 
-          treasure.id === treasureId 
-            ? { ...treasure, opening: true, openStartTime: Date.now() }
-            : treasure
-        )
-      }));
-      // Wildrealm: show loot modal after opening animation
-      if (isWildrealm) {
+
+      // Wildrealm: direct loot modal when questions disabled; keep chest idle
+      if (isWildrealm && !GAME_CONFIG.WILDREALM_SHOW_QUESTIONS) {
         const loot = generateLootForTreasure({
           chestId: treasureId,
           depthLevel: gameState.depthLevel || 0,
           worldSeed: gameState.worldSeed || ''
         });
-        // After short opening animation, mark chest visually open and show loot modal
-        setTimeout(() => {
-          updateGameState(prev => ({
-            ...prev,
-            treasureBoxes: prev.treasureBoxes.map(treasure => 
-              treasure.id === treasureId 
-                ? { ...treasure, opened: true, opening: false }
-                : treasure
-            )
-          }));
-          setCurrentTreasureBox({ ...treasureBox });
-          setCurrentLoot(loot);
-          setShowLootModal(true);
-        }, 600);
+        setCurrentTreasureBox({ ...treasureBox });
+        setCurrentLoot(loot);
+        setShowLootModal(true);
         return;
       }
 
-      // Mark chest as opened for visual feedback while modal is shown
+      // Non-Wildrealm: show question popup; keep chest idle
       updateGameState(prev => ({
         ...prev,
         treasureBoxes: prev.treasureBoxes.map(treasure => 
-          treasure.id === treasureId ? { ...treasure, opened: true } : treasure
+          treasure.id === treasureId ? { ...treasure, showingQuestion: true } : treasure
         )
       }));
 
-      // Use problems loaded dynamically based on depth level
       if (questionsError) {
         console.error('❌ Failed to load questions:', questionsError);
         setCurrentQuestion(null);
@@ -1377,19 +1392,20 @@ const OpenWorldGame = () => {
         return;
       }
 
-      if (!questionsLoading && Array.isArray(questions) && questions.length > 0) {
-        const levelProblems = questions.filter(p => p.level <= Math.max(1, gameState.depthLevel + 1));
-        const pool = levelProblems.length > 0 ? levelProblems : questions;
-        const randomQuestion = pool[Math.floor(Math.random() * pool.length)];
-        setCurrentQuestion(randomQuestion);
+      if (!questionsLoading) {
+        const randomQuestion = selectRandomProblem(
+          questionsNumeration,
+          questionsLiteration,
+          Math.max(1, gameState.depthLevel + 1)
+        );
+        setCurrentQuestion(randomQuestion || null);
       } else {
-        // Fallback: no questions available
         setCurrentQuestion(null);
       }
       setCurrentTreasureBox(treasureBox);
       setShowQuestionModal(true);
     }
-  }, [gameState.treasureBoxes, gameState.depthLevel, gameState.worldSeed, updateGameState, questionsLoading, questions, questionsError, isWildrealm]);
+  }, [gameState.treasureBoxes, gameState.depthLevel, gameState.worldSeed, updateGameState, questionsLoading, questionsNumeration, questionsLiteration, questionsError, isWildrealm, showQuestionModal, showLootModal]);
 
   // Handle loot modal actions (wildrealm)
   const handleLootCollect = useCallback(() => {
@@ -1404,7 +1420,7 @@ const OpenWorldGame = () => {
         ...withLoot,
         treasureBoxes: withLoot.treasureBoxes.map(treasure => 
           treasure.id === currentTreasureBox.id 
-            ? { ...treasure, collected: true, opened: true }
+            ? { ...treasure, collected: true }
             : treasure
         )
       };
@@ -1431,93 +1447,102 @@ const OpenWorldGame = () => {
       // Play success sound for correct answer
       soundEffects.playSuccess();
 
-      updateGameState(prev => ({
-        ...prev,
-        treasureBoxes: prev.treasureBoxes.map(treasure => 
-          treasure.id === currentTreasureBox.id 
-            ? { ...treasure, collected: true, opened: false }
-            : treasure
-        ),
-        score: prev.score + 100, // Add points for solving the question
-        crystalsCollected: prev.crystalsCollected + 1 // Award 1 crystal for correct answer
-      }));
-      // Trigger coin animation overlay
-      setShowCoinAnimation(true);
-      try { soundEffects.playCollect(); } catch {}
-      setTimeout(() => setShowCoinAnimation(false), 1200);
+      if (isWildrealm && GAME_CONFIG.WILDREALM_SHOW_QUESTIONS) {
+        // In Wildrealm, award loot after solving the question while keeping chest open
+        const loot = generateLootForTreasure({
+          chestId: currentTreasureBox.id,
+          depthLevel: gameState.depthLevel || 0,
+          worldSeed: gameState.worldSeed || ''
+        });
+        updateGameState(prev => ({
+          ...prev,
+          treasureBoxes: prev.treasureBoxes.map(treasure => 
+            treasure.id === currentTreasureBox.id 
+              ? { ...treasure, showingQuestion: false }
+              : treasure
+          ),
+          score: prev.score + 100
+        }));
+        setShowCoinAnimation(true);
+        try { soundEffects.playCollect(); } catch {}
+        setTimeout(() => setShowCoinAnimation(false), 1200);
 
-      // Track the solved question and prepare crystal info
-      setLastSolvedQuestion(currentQuestion);
-      setCurrentCrystal({
-        id: currentTreasureBox.id,
-        obstacle: '/assets/characters/terrain-object/Crystals/2.png',
-        position: { x: currentTreasureBox.x, y: currentTreasureBox.y }
-      });
+        setCurrentLoot(loot);
+        // Keep currentTreasureBox for loot collect flow
+        setShowQuestionModal(false);
+        setCurrentQuestion(null);
+        setShowLootModal(true);
+        return;
+      } else {
+        // Non-Wildrealm: mark chest collected and show crystal info
+        updateGameState(prev => ({
+          ...prev,
+          treasureBoxes: prev.treasureBoxes.map(treasure => 
+            treasure.id === currentTreasureBox.id 
+              ? { ...treasure, collected: true, showingQuestion: false }
+              : treasure
+          ),
+          score: prev.score + 100,
+          crystalsCollected: prev.crystalsCollected + 1
+        }));
+        // Trigger coin animation overlay
+        setShowCoinAnimation(true);
+        try { soundEffects.playCollect(); } catch {}
+        setTimeout(() => setShowCoinAnimation(false), 1200);
+
+        // Track the solved question and prepare crystal info
+        setLastSolvedQuestion(currentQuestion);
+        setCurrentCrystal({
+          id: currentTreasureBox.id,
+          obstacle: '/assets/characters/terrain-object/Crystals/2.png',
+          position: { x: currentTreasureBox.x, y: currentTreasureBox.y }
+        });
+      }
     }
     setShowQuestionModal(false);
     setCurrentQuestion(null);
-    setCurrentTreasureBox(null);
-    // Show the crystal info modal after closing the quiz
-    setShowCrystalModal(true);
+    // Clear currentTreasureBox only for non-wildrealm (loot flow retains it)
+    if (!(isWildrealm && GAME_CONFIG.WILDREALM_SHOW_QUESTIONS)) {
+      setCurrentTreasureBox(null);
+    }
+    // Non-Wildrealm: show the crystal info modal after closing the quiz
+    if (!(isWildrealm && GAME_CONFIG.WILDREALM_SHOW_QUESTIONS)) {
+      setShowCrystalModal(true);
+    }
   }, [currentTreasureBox, updateGameState]);
 
   // Handle question modal close
   const handleQuestionClose = useCallback(() => {
-    // Close modal and reset chest open state if any
     if (currentTreasureBox) {
       const closeId = currentTreasureBox.id;
       try { soundEffects.playMenuClick(); } catch {}
-      // Trigger closing animation
       updateGameState(prev => ({
         ...prev,
         treasureBoxes: prev.treasureBoxes.map(treasure => 
           treasure.id === closeId 
-            ? { ...treasure, closing: true, closeStartTime: Date.now() } 
+            ? { ...treasure, showingQuestion: false } 
             : treasure
         )
       }));
-      // Clear closing state after animation
-      setTimeout(() => {
-        updateGameState(prev => ({
-          ...prev,
-          treasureBoxes: prev.treasureBoxes.map(treasure => 
-            treasure.id === closeId 
-              ? { ...treasure, closing: false, opened: false } 
-              : treasure
-          )
-        }));
-      }, 600);
     }
     setShowQuestionModal(false);
     setCurrentQuestion(null);
     setCurrentTreasureBox(null);
-  }, []);
+  }, [currentTreasureBox, updateGameState]);
 
   // Provide a Skip handler: close popup without rewards and reset chest to interactable state
   const handleQuestionSkip = useCallback(() => {
     if (currentTreasureBox) {
       const closeId = currentTreasureBox.id;
       try { soundEffects.playMenuClick(); } catch {}
-      // Trigger closing animation
       updateGameState(prev => ({
         ...prev,
         treasureBoxes: prev.treasureBoxes.map(treasure => 
           treasure.id === closeId 
-            ? { ...treasure, closing: true, closeStartTime: Date.now() } 
+            ? { ...treasure, showingQuestion: false } 
             : treasure
         )
       }));
-      // Clear closing state after animation
-      setTimeout(() => {
-        updateGameState(prev => ({
-          ...prev,
-          treasureBoxes: prev.treasureBoxes.map(treasure => 
-            treasure.id === closeId 
-              ? { ...treasure, closing: false, opened: false } 
-              : treasure
-          )
-        }));
-      }, 600);
     }
     setShowQuestionModal(false);
     setCurrentQuestion(null);
@@ -1554,28 +1579,113 @@ const OpenWorldGame = () => {
   const handleRestartGame = useCallback(() => {
     soundEffects.playMenuClick();
     setGamePaused(false);
-    // Reset game state
-    updateGameState(prevState => ({
-      ...prevState,
-      player: {
-        ...prevState.player,
-        x: 500,
-        y: 500
-      },
-      camera: {
-        x: 500 - GAME_CONFIG.CANVAS_WIDTH / 2,
-        y: 500 - GAME_CONFIG.CANVAS_HEIGHT / 2
-      },
-      treasureBoxes: [],
-      score: 0
-    }));
+    // Reset game state and regenerate treasure boxes around new spawn
+    updateGameState(prevState => {
+      const newPlayerX = 500;
+      const newPlayerY = 500;
+      const newCameraX = newPlayerX - GAME_CONFIG.CANVAS_WIDTH / 2;
+      const newCameraY = newPlayerY - GAME_CONFIG.CANVAS_HEIGHT / 2;
+
+      const chunkPixelSize = GAME_CONFIG.CHUNK_SIZE * GAME_CONFIG.TILE_SIZE;
+      const cameraChunkX = Math.floor(newCameraX / chunkPixelSize);
+      const cameraChunkY = Math.floor(newCameraY / chunkPixelSize);
+
+      const depthLevel = prevState.depthLevel ?? 0;
+      const worldSeed = prevState.worldSeed ?? Math.random() * 10000;
+
+      // Ensure terrain exists for visible chunks and regenerate treasure boxes
+      const newTerrain = new Map(prevState.terrain);
+      const regeneratedTreasureBoxes = [];
+      const renderDistance = GAME_CONFIG.RENDER_DISTANCE;
+      for (let dx = -renderDistance; dx <= renderDistance; dx++) {
+        for (let dy = -renderDistance; dy <= renderDistance; dy++) {
+          const chunkX = cameraChunkX + dx;
+          const chunkY = cameraChunkY + dy;
+          const chunkKey = `${chunkX},${chunkY}`;
+
+          if (!newTerrain.has(chunkKey)) {
+            const generatedChunk = generateTerrainChunk(chunkX, chunkY, depthLevel, worldSeed, new Map(), prevState.stairConnections);
+            newTerrain.set(chunkKey, generatedChunk);
+          }
+
+          const objects = generateChunkObjects(chunkX, chunkY, depthLevel, worldSeed, newTerrain, regeneratedTreasureBoxes);
+          if (Array.isArray(objects?.treasureBoxes) && objects.treasureBoxes.length > 0) {
+            regeneratedTreasureBoxes.push(...objects.treasureBoxes);
+          }
+        }
+      }
+
+      return {
+        ...prevState,
+        player: {
+          ...prevState.player,
+          x: newPlayerX,
+          y: newPlayerY
+        },
+        camera: {
+          x: newCameraX,
+          y: newCameraY
+        },
+        terrain: newTerrain,
+        treasureBoxes: regeneratedTreasureBoxes,
+        score: 0
+      };
+    });
   }, [updateGameState]);
 
   const handleQuitToMenu = useCallback(() => {
     soundEffects.playMenuClick();
     setGamePaused(false);
+    setShowDeathModal(false);
     setGameStarted(false);
   }, []);
+
+  const deathPenalty = useMemo(() => {
+    const c = gameState?.crystalsCollected || 0;
+    return c > 0 ? Math.max(1, Math.floor(c * 0.1)) : 0;
+  }, [gameState?.crystalsCollected]);
+
+  useEffect(() => {
+    const health = gameState?.player?.health ?? 0;
+    if (health <= 0 && !showDeathModal) {
+      setGamePaused(true);
+      setShowDeathModal(true);
+      try { gameProfiler.addMetric('respawnPromptShown', 1); } catch {}
+    }
+  }, [gameState?.player?.health, showDeathModal]);
+
+  const handleRespawn = useCallback(() => {
+    const currentCrystals = gameState?.crystalsCollected || 0;
+    const penalty = currentCrystals > 0 ? Math.max(1, Math.floor(currentCrystals * 0.1)) : 0;
+
+    const checkpoint = gameState?.lastCheckpoint;
+    const history = Array.isArray(gameState?.player?.positionHistory) ? gameState.player.positionHistory : [];
+    const fallback = history.length > 0 ? history[history.length - 1] : { x: gameState.player.x, y: gameState.player.y };
+    const target = checkpoint && typeof checkpoint.x === 'number' && typeof checkpoint.y === 'number' ? checkpoint : fallback;
+
+    const worldPixelSize = GAME_CONFIG.WORLD_SIZE * GAME_CONFIG.TILE_SIZE;
+    const cameraX = Math.max(0, Math.min(target.x - GAME_CONFIG.CANVAS_WIDTH / 2, worldPixelSize - GAME_CONFIG.CANVAS_WIDTH));
+    const cameraY = Math.max(0, Math.min(target.y - GAME_CONFIG.CANVAS_HEIGHT / 2, worldPixelSize - GAME_CONFIG.CANVAS_HEIGHT));
+
+    updateGameState(prev => ({
+      ...prev,
+      player: {
+        ...prev.player,
+        x: target.x,
+        y: target.y,
+        health: prev.player.maxHealth,
+        isMoving: false,
+        lastMovement: null
+      },
+      camera: { x: cameraX, y: cameraY },
+      crystalsCollected: Math.max(0, (prev.crystalsCollected || 0) - penalty),
+      status: { ...(prev.status || {}), respawned: true }
+    }));
+    setShowDeathModal(false);
+    setGamePaused(false);
+    soundEffects.playResume();
+    try { gameProfiler.addMetric('respawn', 1); } catch {}
+  }, [updateGameState, gameState]);
 
   // Keyboard event handlers
   useEffect(() => {
@@ -1613,8 +1723,8 @@ const OpenWorldGame = () => {
         return;
       }
       
-      // Handle treasure interaction with 'E' key: require range + facing + cooldown,
-      // ensure no other interactions are active, and add logging/feedback.
+      // Handle treasure interaction with 'E' key: rely on range + facing + cooldown
+      // (no extra near-bounds or collision requirement) and add logging/feedback.
       if (e.code === 'KeyE') {
         const playerX = gameState.player?.x ?? 0;
         const playerY = gameState.player?.y ?? 0;
@@ -1639,15 +1749,12 @@ const OpenWorldGame = () => {
 
         const w = GAME_CONFIG.TREASURE_SIZE || GAME_CONFIG.TILE_SIZE;
         const h = w;
-        const fudge = Math.max(8, Math.floor(w * 0.15));
 
         let bestTreasure = null;
         let bestDist2 = Infinity;
         let sawInRange = false;
         let sawCooldownOk = false;
         let sawFacing = false;
-        let sawNearBounds = false;
-        let sawCollision = false;
 
         const treasures = Array.isArray(gameState.treasureBoxes) ? gameState.treasureBoxes : [];
         for (const treasure of treasures) {
@@ -1662,21 +1769,6 @@ const OpenWorldGame = () => {
           const facingOk = canInteractFacing(playerX, playerY, playerDirection, treasure.x, treasure.y, w, h, GAME_CONFIG?.INTERACTION_FACING_COS ?? 0.35);
           sawFacing = sawFacing || facingOk;
           if (!facingOk) continue;
-
-          const halfW = w / 2;
-          const halfH = h / 2;
-          const nearBounds = (
-            playerX >= treasure.x - halfW - fudge &&
-            playerX <= treasure.x + halfW + fudge &&
-            playerY >= treasure.y - halfH - fudge &&
-            playerY <= treasure.y + halfH + fudge
-          );
-          sawNearBounds = sawNearBounds || nearBounds;
-
-          const colliding = isChestCollidingWithPlayer(playerX, playerY, treasure);
-          sawCollision = sawCollision || colliding;
-
-          if (!(nearBounds || colliding)) continue; // must be close or touching
 
           const dx = playerX - treasure.x;
           const dy = playerY - treasure.y;
@@ -1703,9 +1795,8 @@ const OpenWorldGame = () => {
             const reason = !sawInRange ? 'out_of_range'
               : !sawCooldownOk ? 'cooldown_active'
               : !sawFacing ? 'not_facing'
-              : !sawNearBounds ? 'not_near_bounds'
               : 'unknown';
-            logs.push({ t: Date.now(), type: 'interaction_fail', key: 'KeyE', reason, collision: sawCollision, dir: playerDirection });
+            logs.push({ t: Date.now(), type: 'interaction_fail', key: 'KeyE', reason, dir: playerDirection });
             return { ...prev, debugLogs: logs, status: { ...(prev.status||{}), lastInputMethod: 'keyboard' } };
           });
         }
@@ -2055,49 +2146,29 @@ const OpenWorldGame = () => {
     }
   }, []);
 
-  // Dynamically load questions with loading and error states (Numeration + Literation)
+  // Dynamically load questions with validation and caching (Numeration + Literation)
   useEffect(() => {
     let isMounted = true;
     setQuestionsLoading(true);
     setQuestionsError(null);
-
-    const loadNumeration = import('../data/NumerationProblem.json')
-      .then(module => {
-        const data = module?.default ?? module;
-        if (!Array.isArray(data)) {
-          throw new Error('NumerationProblem.json format invalid: expected array');
-        }
-        return data;
-      });
-
-    const loadLiteration = import('../data/LiterationProblem.json')
-      .then(module => {
-        const data = module?.default ?? module;
-        if (!Array.isArray(data)) {
-          throw new Error('LiterationProblem.json format invalid: expected array');
-        }
-        return data;
-      })
-      .catch(err => {
-        // If Literation file is missing or malformed, log but proceed with Numeration
-        console.warn('LiterationProblem.json not available or invalid, continuing with Numeration only.', err);
-        return [];
-      });
-
-    Promise.all([loadNumeration, loadLiteration])
-      .then(([numeration, literation]) => {
+    ensureProblemsLoaded()
+      .then(({ numeration, literation, error }) => {
         if (!isMounted) return;
-        const combined = [...numeration, ...literation];
-        setQuestions(combined);
+        setQuestionsNumeration(Array.isArray(numeration) ? numeration : []);
+        setQuestionsLiteration(Array.isArray(literation) ? literation : []);
+        setQuestions([...(numeration || []), ...(literation || [])]);
+        setQuestionsError(error || null);
         setQuestionsLoading(false);
       })
       .catch(err => {
         if (!isMounted) return;
         console.error('Failed to load question banks', err);
-        setQuestionsError(err);
+        setQuestionsError(err?.message || String(err));
+        setQuestionsNumeration([]);
+        setQuestionsLiteration([]);
+        setQuestions([]);
         setQuestionsLoading(false);
       });
-
     return () => { isMounted = false; };
   }, []);
 
@@ -2289,8 +2360,16 @@ const OpenWorldGame = () => {
           <div className="coin-collect-burst">+1 Coin</div>
         </div>
       )}
+
+      <DeathModal
+        isOpen={showDeathModal}
+        crystalsPenalty={deathPenalty}
+        currentCrystals={gameState?.crystalsCollected || 0}
+        onRespawn={handleRespawn}
+        onQuit={handleQuitToMenu}
+      />
       
-      {gamePaused && (
+      {gamePaused && !showDeathModal && (
         <GameMenu
           isVisible={true}
           gameState={gameState}

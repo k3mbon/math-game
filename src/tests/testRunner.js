@@ -1,6 +1,7 @@
 import { PerformanceTestSuite } from './performanceTests.js';
 import { CollisionTestSuite } from './collisionTests.js';
 import { GameSystemTestSuite } from './gameSystemTests.js';
+import { ProblemLoaderTestSuite } from './problemLoaderTests.js';
 
 /**
  * Comprehensive Test Runner
@@ -12,7 +13,8 @@ class TestRunner {
     this.testSuites = {
       performance: new PerformanceTestSuite(),
       collision: new CollisionTestSuite(),
-      gameSystem: new GameSystemTestSuite()
+      gameSystem: new GameSystemTestSuite(),
+      problemLoader: new ProblemLoaderTestSuite()
     };
     
     this.allResults = [];

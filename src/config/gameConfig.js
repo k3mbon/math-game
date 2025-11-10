@@ -8,7 +8,13 @@ export const GAME_CONFIG = {
   TILE_SIZE: 50,
   PLAYER_SIZE: 140, // 2x bigger character for clearer visuals
   TREASURE_SIZE: 50, // Align chest size with tile for consistent collision
-  MONSTER_SIZE: 40, // Slightly increased to maintain proportion
+  MONSTER_SIZE: 140, // Match monster size to player for consistent visuals
+  // Collision tuning (precise chest hitbox + player collision scale)
+  PLAYER_COLLISION_SCALE: 0.8, // fraction of PLAYER_SIZE used for collisions
+  TREASURE_HITBOX_WIDTH_RATIO: 0.72, // width fraction of TREASURE_SIZE used for collision
+  TREASURE_HITBOX_HEIGHT_RATIO: 0.70, // height fraction of TREASURE_SIZE used for collision
+  TREASURE_HITBOX_Y_OFFSET_RATIO: 0.06, // offset chest hitbox slightly downward to match base
+  SHOW_COLLISION_DEBUG: false, // draw collision boxes for debugging when true
   
   // World generation
   WORLD_SIZE: 300, // Expanded from 200 to 300 tiles (50% increase)
@@ -26,11 +32,17 @@ export const GAME_CONFIG = {
   RUN_MULTIPLIER: 1.6, // Speed multiplier when holding Shift to run
   MONSTER_SPEED: 1,
   INTERACTION_COOLDOWN: 1000, // ms
+  // Interaction tuning
+  INTERACTION_RADIUS: 100, // pixels (~2 tiles) for easier chest interaction
+  INTERACTION_FACING_COS: 0.35, // widen facing cone (~69°)
 
   // Treasure distribution and debugging
   TREASURE_MIN_DISTANCE: 200, // Minimum distance between chests (pixels)
+  // Increase chest presence by easing spacing and density
+  TREASURE_MIN_DISTANCE: 160, // Minimum distance between chests (pixels)
   TREASURE_MAX_DISTANCE: 600, // Maximum preferred distance to nearest chest (pixels)
-  TREASURE_TARGET_COUNT: 120, // Target number of chests across the whole world (surface level)
+  TREASURE_TARGET_COUNT: null, // Let generator compute from density when not a fixed count
+  TREASURE_TARGET_DENSITY: 0.85, // ~85% of chunks contain a chest
   TREASURE_MAX_PER_CHUNK_SURFACE: 1, // Surface max per chunk
   TREASURE_MAX_PER_CHUNK_CAVE: 2, // Cave max per chunk
   TREASURE_JITTER_PX: 30, // Random jitter applied around grid sampling centers
@@ -42,7 +54,7 @@ export const GAME_CONFIG = {
     DESERT: 0.7,
     CAVE_FLOOR: 0.9
   },
-  TREASURE_AVOID_NEAR_SPAWN_RADIUS_TILES: 10, // Avoid placing too close to world spawn
+  TREASURE_AVOID_NEAR_SPAWN_RADIUS_TILES: 4, // Allow chests closer to spawn for accessibility
   TREASURE_WEIGHTED_SAMPLING: true, // Use farthest-point sampling to avoid clustering
   SHOW_TREASURE_DEBUG: false, // Enable visual spacing overlay for chests
   SHOW_TREASURE_DEBUG_GRID: false, // Show grid overlay based on optimal world spacing
@@ -51,6 +63,11 @@ export const GAME_CONFIG = {
   MAX_DEPTH_LEVEL: 5,
   SAFE_ZONE_RADIUS: 25,
   CLEARANCE_ZONE_RADIUS: 40
+  ,
+  // Wildrealm behavior
+  // When true, treasure chests in /wildrealm show the question modal first,
+  // then award loot after the player solves it. When false, chests show loot-only.
+  WILDREALM_SHOW_QUESTIONS: true
 };
 
 // Terrain type definitions - More colorful and kid-friendly with clear walkability rules
