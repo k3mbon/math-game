@@ -236,6 +236,60 @@ class SoundEffects {
       console.warn('Failed to play resume sound:', error);
     }
   }
+
+  // Play an attack sound (swoosh)
+  playAttack() {
+    if (!this.initialized || !this.audioContext) {
+      this.initialize().then(() => this.playAttack());
+      return;
+    }
+    try {
+      const now = this.audioContext.currentTime;
+      const oscillator = this.audioContext.createOscillator();
+      const gainNode = this.audioContext.createGain();
+      const filter = this.audioContext.createBiquadFilter();
+      oscillator.connect(filter);
+      filter.connect(gainNode);
+      gainNode.connect(this.audioContext.destination);
+      oscillator.type = 'triangle';
+      oscillator.frequency.setValueAtTime(300, now);
+      oscillator.frequency.exponentialRampToValueAtTime(800, now + 0.15);
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(1200, now);
+      gainNode.gain.setValueAtTime(0, now);
+      gainNode.gain.linearRampToValueAtTime(0.12, now + 0.02);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      oscillator.start(now);
+      oscillator.stop(now + 0.22);
+    } catch (error) {
+      console.warn('Failed to play attack sound:', error);
+    }
+  }
+
+  // Play a hit sound (thud)
+  playHit() {
+    if (!this.initialized || !this.audioContext) {
+      this.initialize().then(() => this.playHit());
+      return;
+    }
+    try {
+      const now = this.audioContext.currentTime;
+      const oscillator = this.audioContext.createOscillator();
+      const gainNode = this.audioContext.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(this.audioContext.destination);
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(140, now);
+      oscillator.frequency.exponentialRampToValueAtTime(90, now + 0.12);
+      gainNode.gain.setValueAtTime(0, now);
+      gainNode.gain.linearRampToValueAtTime(0.2, now + 0.01);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      oscillator.start(now);
+      oscillator.stop(now + 0.16);
+    } catch (error) {
+      console.warn('Failed to play hit sound:', error);
+    }
+  }
 }
 
 // Create a singleton instance

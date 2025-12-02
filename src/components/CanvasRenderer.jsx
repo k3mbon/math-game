@@ -1869,6 +1869,21 @@ const renderMonsters = (ctx, gameState, visibleArea, monsterImages, isAttacking,
           barHeight
         );
       }
+
+      // Damage indicator (floating text)
+      if (monster.recentDamage && monster.damageStartTime) {
+        const elapsed = nowMs - monster.damageStartTime;
+        if (elapsed < 450) {
+          const rise = Math.min(20, (elapsed / 450) * 20);
+          const alpha = Math.max(0, 1 - (elapsed / 450));
+          ctx.save();
+          ctx.fillStyle = `rgba(255, 235, 59, ${alpha})`;
+          ctx.font = 'bold 14px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText(`-${monster.recentDamage}`, monster.x, monster.y - GAME_CONFIG.MONSTER_SIZE / 2 - 16 - rise);
+          ctx.restore();
+        }
+      }
     }
   });
 };

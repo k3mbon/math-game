@@ -4,6 +4,7 @@ import { javascriptGenerator } from 'blockly/javascript';
 import '../blocks/mathPuzzle';
 import './TreasureQuestionModal.css';
 import { soundEffects } from '../utils/soundEffects';
+import { useTranslation } from 'react-i18next';
 
 const TreasureQuestionModal = ({ isOpen, question, onClose, onSolve, onSkip, isLoading, error }) => {
   const [userAnswer, setUserAnswer] = useState('');
@@ -16,6 +17,7 @@ const TreasureQuestionModal = ({ isOpen, question, onClose, onSolve, onSkip, isL
   const [workspaceInitError, setWorkspaceInitError] = useState(null);
   const changeDebounceRef = useRef(null);
   const closeBtnRef = useRef(null);
+  const { t } = useTranslation();
 
   const pointsForDifficulty = (diff) => {
     const map = { 'Mudah': 10, 'Sedang': 20, 'Sulit': 30, 'Sangat Sulit': 40 };
@@ -260,25 +262,25 @@ const TreasureQuestionModal = ({ isOpen, question, onClose, onSolve, onSkip, isL
         e.stopPropagation();
       }}>
         <div className="modal-header">
-          <h2 id="treasure-modal-title">🏆 {question?.title || (isLoading ? 'Loading question…' : error ? 'Question error' : 'No question available')}</h2>
+          <h2 id="treasure-modal-title">🏆 {question?.title || (isLoading ? t('wildrealm.errors.loadingQuestion') : error ? t('wildrealm.errors.questionError') : t('wildrealm.errors.noQuestion'))}</h2>
           <button ref={closeBtnRef} className="close-btn" onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             handleClose();
-          }}>×</button>
+          }} aria-label={t('wildrealm.buttons.close')}>×</button>
         </div>
         
         <div className="modal-content">
           <div className="question-section">
             {isLoading && (
-              <div className="loading-banner">Loading question data…</div>
+              <div className="loading-banner">{t('wildrealm.errors.loadingQuestion')}</div>
             )}
             {error && (
-              <div className="error-banner">Failed to load questions. You can try the workspace or skip.</div>
+              <div className="error-banner">{t('wildrealm.errors.questionErrorDetail')}</div>
             )}
             {question && (
               <div className="story-section">
-                <h3>📖 Story</h3>
+                <h3>📖 {t('wildrealm.sections.story')}</h3>
                 <p>{question.story || question.statement || question.description}</p>
                 {question.image && (
                   <div style={{ marginTop: '10px' }}>
@@ -291,49 +293,49 @@ const TreasureQuestionModal = ({ isOpen, question, onClose, onSolve, onSkip, isL
             <div className="problem-details">
               {question ? (
                 <>
-                  <div className="difficulty">Difficulty: <span className={`difficulty-${(question.difficulty || 'Mudah').toLowerCase()}`}>{question.difficulty || 'Mudah'}</span></div>
-                  <div>Category: <strong>{question.verify || question.type || 'General'}</strong></div>
-                  <div>Points: <strong>{pointsForDifficulty(question.difficulty || 'Mudah')}</strong></div>
-                  <div className="hint">💡 Hint: {question.hint}</div>
-                  {question.num && <div className="number">Number: {question.num}</div>}
-                  {question.start && <div className="range">Range: {question.start} to {question.start + question.endOffset}</div>}
-                  {question.base && <div className="base">Base: {question.base}, Limit: {question.limit}</div>}
+                  <div className="difficulty">{t('wildrealm.labels.difficulty')}: <span className={`difficulty-${(question.difficulty || 'Mudah').toLowerCase()}`}>{question.difficulty || 'Mudah'}</span></div>
+                  <div>{t('wildrealm.labels.category')}: <strong>{question.verify || question.type || t('wildrealm.labels.general')}</strong></div>
+                  <div>{t('wildrealm.labels.points')}: <strong>{pointsForDifficulty(question.difficulty || 'Mudah')}</strong></div>
+                  <div className="hint">💡 {t('wildrealm.sections.hint')}: {question.hint}</div>
+                  {question.num && <div className="number">{t('wildrealm.labels.number')}: {question.num}</div>}
+                  {question.start && <div className="range">{t('wildrealm.labels.range')}: {question.start} {t('wildrealm.labels.to')} {question.start + question.endOffset}</div>}
+                  {question.base && <div className="base">{t('wildrealm.labels.baseLimit', { base: question.base, limit: question.limit })}</div>}
                 </>
               ) : (
-                <div className="hint">No question available. Try building a solution or skip.</div>
+                <div className="hint">{t('wildrealm.errors.noQuestionDetail')}</div>
               )}
             </div>
             
             {question && (
               <div className="expected-output">
-                <h4>Expected Output:</h4>
+                <h4>{t('wildrealm.sections.expectedOutput')}:</h4>
                 <pre>{question.answer}</pre>
               </div>
             )}
             
             {showResult && (
               <div className={`result ${isCorrect ? 'correct' : 'incorrect'}`} aria-live="polite">
-                <h4>{isCorrect ? '✅ Correct!' : '❌ Incorrect'}</h4>
-                <p>Your output: <code>{userAnswer}</code></p>
-                {isCorrect && <p>🎉 Treasure unlocked! Well done!</p>}
+                <h4>{isCorrect ? '✅ ' + t('wildrealm.result.correct') : '❌ ' + t('wildrealm.result.incorrect')}</h4>
+                <p>{t('wildrealm.labels.yourOutput')}: <code>{userAnswer}</code></p>
+                {isCorrect && <p>🎉 {t('wildrealm.result.treasureUnlocked')}</p>}
               </div>
             )}
-            <div style={{ marginTop: '8px', color: 'var(--text-secondary)' }}>Attempts: <strong>{attempts}</strong></div>
+            <div style={{ marginTop: '8px', color: 'var(--text-secondary)' }}>{t('wildrealm.statuses.attempts')}: <strong>{attempts}</strong></div>
           </div>
           
           <div className="blockly-section">
-            <h3>🧩 Blockly Workspace</h3>
+            <h3>🧩 {t('wildrealm.sections.blocklyWorkspace')}</h3>
             <div className="blockly-container">
               {workspaceInitError ? (
-                <div className="workspace-error">Blockly failed to initialize. Please reload or skip.</div>
+                <div className="workspace-error">{t('wildrealm.errors.workspaceInitFailed')}</div>
               ) : (
                 <div ref={blocklyDivRef} className="blockly-workspace"></div>
               )}
             </div>
             
             <div className="code-section">
-              <h4>Generated Code:</h4>
-              <pre className="generated-code">{blocklyCode || 'No code generated yet...'}</pre>
+              <h4>{t('wildrealm.sections.generatedCode')}:</h4>
+              <pre className="generated-code">{blocklyCode || t('wildrealm.labels.noCode')}</pre>
             </div>
             
             <div className="action-buttons">
@@ -342,22 +344,22 @@ const TreasureQuestionModal = ({ isOpen, question, onClose, onSolve, onSkip, isL
                 onClick={() => executeCode({ previewOnly: true })}
                 disabled={!blocklyCode.trim() || !!workspaceInitError}
               >
-                🔍 Run Code
+                🔍 {t('wildrealm.buttons.runCode')}
               </button>
               <button className="reset-btn" onClick={() => workspaceRef.current?.clear()}>
-                🔄 Reset
+                🔄 {t('wildrealm.buttons.reset')}
               </button>
               <button className="skip-btn" onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 executeCode({ previewOnly: false });
               }} disabled={!blocklyCode.trim() || !!workspaceInitError}>
-                ✅ Submit Answer
+                ✅ {t('wildrealm.buttons.submitAnswer')}
               </button>
             </div>
             <div className="action-buttons" style={{ marginTop: '8px' }}>
               <button className="reset-btn" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleClose(); }}>
-                ✖ Close
+                ✖ {t('wildrealm.buttons.close')}
               </button>
               {onSkip && (
                 <button className="skip-btn" onClick={(e) => {
@@ -366,7 +368,7 @@ const TreasureQuestionModal = ({ isOpen, question, onClose, onSolve, onSkip, isL
                   onSkip();
                   handleClose();
                 }}>
-                  ⏭️ Skip
+                  ⏭️ {t('wildrealm.buttons.skip')}
                 </button>
               )}
             </div>

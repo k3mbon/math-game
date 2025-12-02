@@ -80,6 +80,7 @@
   overflow: hidden;
   position: relative;
   animation: popupEnter 220ms ease-out;
+  font-family: 'Merriweather', serif;
 }
 
 .treasure-modal::before {
@@ -93,6 +94,16 @@
     radial-gradient(circle at 20% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, rgba(255, 165, 0, 0.1) 0%, transparent 50%);
   pointer-events: none;
+}
+
+.treasure-modal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120px 80px at 8% 12%, rgba(255, 180, 60, 0.12), transparent 60%),
+              radial-gradient(120px 80px at 92% 12%, rgba(255, 180, 60, 0.12), transparent 60%);
+  animation: torchFlicker 3.6s ease-in-out infinite;
 }
 
 .modal-header {
@@ -112,6 +123,7 @@
   font-size: 1.5rem;
   font-weight: bold;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  font-family: 'Cinzel', serif;
 }
 
 .close-btn {
@@ -143,7 +155,7 @@
   flex: 0 0 40%;
   max-width: 40%;
   padding: 20px;
-  background: rgba(139, 69, 19, 0.1);
+  background: rgba(139, 69, 19, 0.12);
   border-right: 2px solid #8B4513;
   overflow-y: auto;
   color: var(--text-primary);
@@ -153,7 +165,7 @@
   flex: 0 0 60%;
   max-width: 60%;
   padding: 20px;
-  background: rgba(75, 44, 23, 0.1);
+  background: rgba(75, 44, 23, 0.12);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -161,11 +173,12 @@
 }
 
 .story-section {
-  background: rgba(255, 215, 0, 0.1);
+  background: rgba(255, 248, 220, 0.15);
   padding: 15px;
   border-radius: 10px;
   margin-bottom: 20px;
-  border: 1px solid #DAA520;
+  border: 1px solid #C2A878;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
 .story-section h3 {
@@ -199,7 +212,7 @@
 .difficulty-sulit { color: #b91c1c; }
 
 .expected-output {
-  background: rgba(139, 69, 19, 0.2);
+  background: rgba(139, 69, 19, 0.18);
   padding: 15px;
   border-radius: 10px;
   margin-bottom: 20px;
@@ -314,12 +327,14 @@
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.9rem;
+  letter-spacing: 0.02em;
 }
 
 .run-btn {
   background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
   color: #ffffff;
   flex: 1;
+  border: 1px solid #C2A878;
 }
 
 .run-btn:hover:not(:disabled) {
@@ -335,9 +350,10 @@
 }
 
 .reset-btn {
-  background: linear-gradient(135deg, #e65100 0%, #b54300 100%);
+  background: linear-gradient(135deg, #6b4f3a 0%, #4e3627 100%);
   color: #ffffff;
   flex: 0.5;
+  border: 1px solid #C2A878;
 }
 
 .reset-btn:hover {
@@ -347,9 +363,10 @@
 }
 
 .skip-btn {
-  background: linear-gradient(135deg, #37474f 0%, #263238 100%);
+  background: linear-gradient(135deg, #4b5320 0%, #2f3b14 100%);
   color: #ffffff;
   flex: 0.5;
+  border: 1px solid #C2A878;
 }
 
 .skip-btn:hover {
@@ -610,4 +627,33 @@
 /* Larger desktops */
 @media (min-width: 1280px) {
   .treasure-modal { width: min(70vw, 900px); max-height: min(88vh, 680px); }
+}
+.treasure-modal-overlay {
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Merriweather:wght@400;700&display=swap');
+/* Parchment-style utility for loot and info cards */
+.parchment-card {
+  background: rgba(255, 248, 220, 0.12);
+  border: 1px solid #C2A878;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+}
+
+.loot-list {
+  display: grid;
+  gap: 8px;
+}
+
+.loot-item {
+  color: var(--text-secondary);
+}
+
+@keyframes torchFlicker {
+  0% { opacity: 0.12; }
+  35% { opacity: 0.18; }
+  60% { opacity: 0.1; }
+  80% { opacity: 0.16; }
+  100% { opacity: 0.12; }
 }

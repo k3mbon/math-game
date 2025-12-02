@@ -4,5 +4,64 @@
   "password": "Kata Sandi",
   "submit": "Masuk",
   "guest": "Lanjut sebagai Tamu",
-  "error": "Terjadi kesalahan"
+  "error": "Terjadi kesalahan",
+  "wildrealm": {
+    "errors": {
+      "loadingQuestion": "Memuat soal…",
+      "questionError": "Kesalahan soal",
+      "questionErrorDetail": "Gagal memuat soal. Kamu bisa coba workspace atau lewati.",
+      "noQuestion": "Tidak ada soal tersedia",
+      "noQuestionDetail": "Tidak ada soal tersedia. Coba bangun solusi atau lewati.",
+      "workspaceInitFailed": "Blockly gagal diinisialisasi. Silakan muat ulang atau lewati."
+    },
+    "sections": {
+      "story": "Cerita",
+      "hint": "Petunjuk",
+      "expectedOutput": "Keluaran yang Diharapkan",
+      "blocklyWorkspace": "Workspace Blockly",
+      "generatedCode": "Kode yang Dihasilkan"
+    },
+    "labels": {
+      "difficulty": "Tingkat Kesulitan",
+      "category": "Kategori",
+      "general": "Umum",
+      "points": "Poin",
+      "number": "Angka",
+      "range": "Rentang",
+      "to": "hingga",
+      "baseLimit": "Basis: {{base}}, Batas: {{limit}}",
+      "yourOutput": "Keluaranmu",
+      "noCode": "Belum ada kode yang dihasilkan...",
+      "inventoryHint": "Loot akan ditambahkan ke inventaris"
+    },
+    "buttons": {
+      "close": "Tutup",
+      "runCode": "Jalankan Kode",
+      "reset": "Atur Ulang",
+      "submitAnswer": "Kirim Jawaban",
+      "skip": "Lewati",
+      "collect": "Koleksi"
+    },
+    "statuses": {
+      "attempts": "Percobaan"
+    },
+    "result": {
+      "correct": "Benar!",
+      "incorrect": "Salah",
+      "treasureUnlocked": "Harta karun terbuka! Kerja bagus!",
+      "crystalCollected": "Kristal berhasil dikumpulkan! Kerja bagus!",
+      "tryAgain": "Kristal masih terlindungi. Coba lagi!"
+    },
+    "crystal": {
+      "title": "Tantangan Koleksi Kristal",
+      "protected": "Kristal ini dilindungi oleh teka-teki matematika!"
+    },
+    "loot": {
+      "title": "Hadiah Harta Karun",
+      "coins": "Koin",
+      "crystals": "Kristal",
+      "items": "Item",
+      "none": "Tidak ada"
+    }
+  }
 }

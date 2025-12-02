@@ -15,6 +15,7 @@
   -moz-user-select: none;
   -ms-user-select: none;
   padding: 0; /* remove extra padding to avoid double scrollbars */
+  cursor: url('/assets/downloaded-assets/items/UI/Pointers/01.png'), crosshair;
 }
 
 .game-canvas {

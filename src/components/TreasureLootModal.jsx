@@ -1,72 +1,44 @@
 import React from 'react';
-
-const modalBackdropStyle = {
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '100%',
-  backgroundColor: 'rgba(0,0,0,0.5)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  zIndex: 2000
-};
-
-const modalCardStyle = {
-  background: '#101820',
-  border: '2px solid #00ccff',
-  borderRadius: '10px',
-  padding: '12px 16px',
-  width: 'min(92vw, 420px)',
-  maxHeight: 'calc(90vh - 32px)',
-  overflowY: 'auto',
-  color: '#e6f9ff',
-  boxShadow: '0 12px 28px rgba(0, 0, 0, 0.4)'
-};
-
-const buttonRowStyle = {
-  display: 'flex',
-  gap: '10px',
-  marginTop: '14px',
-  justifyContent: 'flex-end'
-};
-
-const actionButtonStyle = {
-  padding: '10px 14px',
-  minHeight: 44,
-  fontSize: '16px',
-  borderRadius: '6px',
-  border: '1px solid #00ccff',
-  background: '#002b36',
-  color: '#a8ecff',
-  cursor: 'pointer'
-};
+import { useTranslation } from 'react-i18next';
+import './TreasureQuestionModal.css';
 
 const TreasureLootModal = ({ isOpen, loot, onCollect, onClose }) => {
+  const { t } = useTranslation();
   if (!isOpen) return null;
   const coins = loot?.coins || 0;
   const crystals = loot?.crystals || 0;
   const items = Array.isArray(loot?.items) ? loot.items : [];
 
   return (
-    <div style={modalBackdropStyle}>
-      <div style={modalCardStyle} role="dialog" aria-modal="true" aria-label="Treasure Loot">
-        <h3 style={{ margin: '0 0 8px 0', color: '#00ccff' }}>Treasure Loot</h3>
-        <div>
-          <div style={{ marginBottom: '6px' }}>
-            <strong>Coins:</strong> {coins}
-          </div>
-          <div style={{ marginBottom: '6px' }}>
-            <strong>Crystals:</strong> {crystals}
-          </div>
-          <div>
-            <strong>Items:</strong> {items.length ? items.join(', ') : 'None'}
-          </div>
+    <div className="treasure-modal-overlay" onClick={(e) => {
+      if (e.target === e.currentTarget) {
+        e.preventDefault();
+        e.stopPropagation();
+        onClose();
+      }
+    }}>
+      <div className="treasure-modal treasure-modal--loot" role="dialog" aria-modal="true" aria-labelledby="treasure-loot-title" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2 id="treasure-loot-title">🏆 {t('wildrealm.loot.title')}</h2>
+          <button className="close-btn" onClick={onClose} aria-label={t('wildrealm.buttons.close')}>×</button>
         </div>
-        <div style={buttonRowStyle}>
-          <button style={actionButtonStyle} onClick={onClose}>Close</button>
-          <button style={{ ...actionButtonStyle, background: '#003b46', borderColor: '#2aff95', color: '#d6ffe6' }} onClick={onCollect}>Collect</button>
+        <div className="modal-content">
+          <div className="question-section">
+            <div className="parchment-card loot-list" role="list">
+              <div className="loot-item" role="listitem"><strong>{t('wildrealm.loot.coins')}:</strong> {coins}</div>
+              <div className="loot-item" role="listitem"><strong>{t('wildrealm.loot.crystals')}:</strong> {crystals}</div>
+              <div className="loot-item" role="listitem"><strong>{t('wildrealm.loot.items')}:</strong> {items.length ? items.join(', ') : t('wildrealm.loot.none')}</div>
+            </div>
+            <div className="action-buttons" style={{ justifyContent: 'flex-end', marginTop: 12 }}>
+              <button className="reset-btn" onClick={onClose}>✖ {t('wildrealm.buttons.close')}</button>
+              <button className="run-btn" onClick={onCollect}>🎒 {t('wildrealm.buttons.collect')}</button>
+            </div>
+          </div>
+          <div className="blockly-section" aria-hidden="true">
+            <div className="blockly-container" style={{ minHeight: 160, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div className="generated-code" style={{ textAlign: 'center' }}>{t('wildrealm.labels.inventoryHint')}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -1,8 +1,9 @@
 // App.jsx
 import './App.css?v=1';
 import './components/temp.css';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { useEffect, useState, Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
+import React, { useEffect, useState, Suspense, lazy } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { onAuthStateChanged } from 'firebase/auth';
 import { getDoc, doc } from 'firebase/firestore';
 import { DataTable } from './components/data-table';
@@ -127,16 +128,27 @@ function AppContent() {
       {location.pathname !== '/login' && location.pathname !== '/signup' && (
         <Navbar />
       )}
-      <Suspense fallback={<div className="loading-screen">Loading...</div>}>
-        <Routes>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.2 }}
+        >
+          <Suspense fallback={<div className="loading-screen">Loading...</div>}>
+            <Routes>
               {/* Public routes */}
               <Route path="/" element={<LandingPage />} />
+              <Route path="/home" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               {/* Public game preview routes */}
               <Route path="/iteration" element={<IterationPage />} />
               <Route path="/numeration" element={<NumerationPage />} />
               <Route path="/zeno" element={<ZenoGameNew />} />
+              <Route path="/game/:gameId" element={<GameRoute user={user} />} />
+              <Route path="/open-world-game" element={<Navigate to="/wildrealm" replace />} />
               
               {/* Test routes (temporarily public) */}
               <Route path="/test-game" element={<TestGame />} />
@@ -183,8 +195,10 @@ function AppContent() {
               <Route path="*" element={<NotFound />} />
               <Route path="/test-table" element={<DataTable columns={columns} data={data} />} />
             </Routes>
-        </Suspense>
-      </div>
+          </Suspense>
+        </motion.div>
+      </AnimatePresence>
+    </div>
   );
 }
 
@@ -203,3 +217,26 @@ function App() {
 }
 
 export default App;
+
+function GameRoute({ user }) {
+  const { gameId } = useParams();
+  const location = useLocation();
+  const gameMap = {
+    iteration: { component: IterationPage, requiresAuth: false },
+    numeration: { component: NumerationPage, requiresAuth: false },
+    zeno: { component: ZenoGameNew, requiresAuth: false },
+    wildrealm: { component: OpenWorldGame, requiresAuth: false },
+    arcade: { component: ArcadeMode, requiresAuth: true }
+  };
+  const target = gameMap[gameId];
+  if (!target) return <NotFound />;
+  if (target.requiresAuth && !user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+  const Comp = target.component;
+  return (
+    <Suspense fallback={<div className="loading-screen">Loading game...</div>}>
+      <Comp />
+    </Suspense>
+  );
+}

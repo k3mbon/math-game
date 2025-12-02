@@ -451,6 +451,38 @@ export const useGameLoop = (keys, gameState, updateGameState, checkWalkable, gen
           let lastAttackTime = m.lastAttackTime || 0;
           let attackStartTime = m.attackStartTime || 0;
 
+          // Apply knockback if active
+          const isKnockedBack = m.knockbackEndTime && now < m.knockbackEndTime && (Math.abs(m.knockbackVectorX || 0) + Math.abs(m.knockbackVectorY || 0) > 0);
+          if (isKnockedBack) {
+            const step = (m.knockbackSpeed || 2.2) * frameMultiplier;
+            const proposedX = m.x + (m.knockbackVectorX || 0) * step;
+            const proposedY = m.y + (m.knockbackVectorY || 0) * step;
+            const clampedX = Math.max(halfSize, Math.min(worldPixelSize - halfSize, proposedX));
+            const clampedY = Math.max(halfSize, Math.min(worldPixelSize - halfSize, proposedY));
+            if (checkWalkable(clampedX, clampedY)) {
+              newX = clampedX;
+              newY = clampedY;
+              isMoving = true;
+            } else {
+              // End knockback early if collision
+              return {
+                ...m,
+                isMoving: false,
+                isAttacking: false,
+                knockbackEndTime: now,
+                x: m.x,
+                y: m.y
+              };
+            }
+            return {
+              ...m,
+              x: newX,
+              y: newY,
+              isMoving,
+              isAttacking: false
+            };
+          }
+
           // Attack if in range and off cooldown
           if (dist <= MONSTER_ATTACK_RANGE) {
             if (now - lastAttackTime >= MONSTER_ATTACK_COOLDOWN_MS) {

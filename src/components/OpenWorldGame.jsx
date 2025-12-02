@@ -76,6 +76,20 @@ const OpenWorldGame = () => {
   
   const navigate = useNavigate();
   const canvasRef = useRef(null);
+  const containerRef = useRef(null);
+  const lastCursorRef = useRef('');
+  const setGameCursor = useCallback((cursor) => {
+    if (lastCursorRef.current === (cursor || '')) return;
+    lastCursorRef.current = cursor || '';
+    const canvas = canvasRef.current;
+    const container = containerRef.current;
+    if (canvas) canvas.style.cursor = cursor || '';
+    if (container) container.style.cursor = cursor || '';
+  }, []);
+  const setContainerCursor = useCallback((cursor) => {
+    const container = containerRef.current;
+    if (container) container.style.cursor = cursor || '';
+  }, []);
   
   // Initialize resource management
   const resourceManager = useResourceManager();
@@ -1146,16 +1160,13 @@ const OpenWorldGame = () => {
 
   // Attack function
   const attackMonster = useCallback((monster) => {
-    const distance = Math.sqrt(
-      (gameState.player.x - monster.x) ** 2 + (gameState.player.y - monster.y) ** 2
-    );
-    
-    // Check if monster is within attack range (2 tiles)
-    if (distance <= GAME_CONFIG.TILE_SIZE * 2) {
+    const attackRange = GAME_CONFIG.TILE_SIZE * 1.5;
+    const dx0 = gameState.player.x - monster.x;
+    const dy0 = gameState.player.y - monster.y;
+    const d0 = Math.sqrt(dx0 * dx0 + dy0 * dy0);
+    if (d0 <= attackRange) {
       setIsAttacking(true);
       setAttackTarget(monster);
-      
-      // Set appropriate attack animation based on movement state
       if (isRunning) {
         setAnimationState('runAttack');
       } else if (isMoving) {
@@ -1163,28 +1174,37 @@ const OpenWorldGame = () => {
       } else {
         setAnimationState('idleAttack');
       }
-      
-      // Reduce monster HP and mark death for animation (removal scheduled later)
-      updateGameState(prev => ({
-        ...prev,
-        monsters: prev.monsters.map(m => {
-          if (m.id !== monster.id) return m;
-          const newHealth = Math.max(0, m.health - 25);
-          if (newHealth <= 0) {
-            return { ...m, health: 0, isDead: true, deathStartTime: Date.now() };
-          }
-          return { ...m, health: newHealth };
-        })
-      }));
-      
-      // Reset attack animation with smooth transition
+      try { soundEffects.playAttack(); } catch {}
+      setTimeout(() => {
+        updateGameState(prev => {
+          const px = prev.player.x;
+          const py = prev.player.y;
+          const now = Date.now();
+          return {
+            ...prev,
+            monsters: prev.monsters.map(m => {
+              if (m.id !== monster.id) return m;
+              const dx = px - m.x;
+              const dy = py - m.y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              if (dist > attackRange) return m;
+              const dmg = isRunning ? 30 : isMoving ? 25 : 20;
+              const nh = Math.max(0, m.health - dmg);
+              const nx = dx === 0 ? 0 : -dx / (dist || 1);
+              const ny = dy === 0 ? 0 : -dy / (dist || 1);
+              try { soundEffects.playHit(); } catch {}
+              if (nh <= 0) {
+                return { ...m, health: 0, isDead: true, deathStartTime: now, recentDamage: dmg, damageStartTime: now };
+              }
+              return { ...m, health: nh, recentDamage: dmg, damageStartTime: now, knockbackVectorX: nx, knockbackVectorY: ny, knockbackSpeed: 2.2, knockbackEndTime: now + 220 };
+            })
+          };
+        });
+      }, 250);
       setTimeout(() => {
         setIsAttacking(false);
         setAttackTarget(null);
-        
-        // Add a brief pause before transitioning to allow for smooth animation blend
         setTimeout(() => {
-          // Return to appropriate movement state based on current input
           if (isRunning) {
             setAnimationState('running');
           } else if (isMoving) {
@@ -1192,16 +1212,16 @@ const OpenWorldGame = () => {
           } else {
             setAnimationState('idle');
           }
-        }, 100); // Small delay for smoother transition
-      }, 700); // Slightly shorter attack duration for better responsiveness
-
-      // If monster died, schedule removal after short death animation
+        }, 100);
+      }, 700);
       setTimeout(() => {
         updateGameState(prev => ({
           ...prev,
           monsters: prev.monsters.filter(m => !(m.isDead && (Date.now() - (m.deathStartTime || 0) > 800)))
         }));
       }, 900);
+    } else {
+      try { soundEffects.playError(); } catch {}
     }
   }, [gameState.player, updateGameState, isMoving, isRunning]);
 
@@ -1334,24 +1354,42 @@ const OpenWorldGame = () => {
       });
     }
     
-    // Find closest monster to click position
-    let closestMonster = null;
-    let closestDistance = Infinity;
-    
-    gameState.monsters.forEach(monster => {
-      const distance = Math.sqrt(
-        (clickX - monster.x) ** 2 + (clickY - monster.y) ** 2
-      );
-      
-      if (distance < GAME_CONFIG.TILE_SIZE && distance < closestDistance) {
-        closestMonster = monster;
-        closestDistance = distance;
+    const attackRange = GAME_CONFIG.TILE_SIZE * 1.5;
+    let targetMonster = null;
+    let bestDist = Infinity;
+    for (const m of gameState.monsters) {
+      const d = Math.sqrt(((gameState.player?.x ?? 0) - m.x) ** 2 + ((gameState.player?.y ?? 0) - m.y) ** 2);
+      if (d <= attackRange && d < bestDist) {
+        targetMonster = m;
+        bestDist = d;
       }
-    });
-    
-    if (closestMonster) {
-      attackMonster(closestMonster);
     }
+    if (targetMonster) {
+      attackMonster(targetMonster);
+      return;
+    }
+    setIsAttacking(true);
+    if (isRunning) {
+      setAnimationState('runAttack');
+    } else if (isMoving) {
+      setAnimationState('walkAttack');
+    } else {
+      setAnimationState('idleAttack');
+    }
+    try { soundEffects.playAttack(); } catch {}
+    setTimeout(() => {
+      setIsAttacking(false);
+      setAttackTarget(null);
+      setTimeout(() => {
+        if (isRunning) {
+          setAnimationState('running');
+        } else if (isMoving) {
+          setAnimationState('walking');
+        } else {
+          setAnimationState('idle');
+        }
+      }, 100);
+    }, 700);
   }, [gameState.camera, gameState.monsters, gameState.treasureBoxes, attackMonster, isWildrealm, playerDirection, showQuestionModal, showLootModal, isAttacking, updateGameState, canInteract, canInteractWithCooldown, canInteractFacing, markInteraction]);
 
   // Handle treasure box interaction
@@ -2120,16 +2158,25 @@ const OpenWorldGame = () => {
           }
           return closestId;
         });
-
-        canvas.style.cursor = closestId ? 'pointer' : '';
+        setGameCursor(closestId ? 'pointer' : '');
       };
       canvas.addEventListener('mousemove', handleCanvasMouseMove, { passive: true });
+      const handleCanvasMouseLeave = () => {
+        setHoveredTreasureId(null);
+        setContainerCursor('auto');
+      };
+      canvas.addEventListener('mouseleave', handleCanvasMouseLeave, { passive: true });
       return () => {
         canvas.removeEventListener('click', handleCanvasClick);
         canvas.removeEventListener('mousemove', handleCanvasMouseMove);
+        canvas.removeEventListener('mouseleave', handleCanvasMouseLeave);
       };
     }
   }, [handleCanvasClick, gameState?.camera, gameState?.treasureBoxes]);
+
+  useEffect(() => {
+    setGameCursor(hoveredTreasureId ? 'pointer' : '');
+  }, [hoveredTreasureId, setGameCursor]);
 
   // Initialize canvas
   useEffect(() => {
@@ -2185,7 +2232,7 @@ const OpenWorldGame = () => {
   }
 
   return (
-    <div className="open-world-game">
+    <div className="open-world-game" ref={containerRef}>
       {/* Edge Warning Overlay (render directly without wrapper div) */}
       {gameState.player.atEdge && (Object.values(gameState.player.atEdge).some(edge => edge)) && (
         <div className="edge-warning-overlay" style={{

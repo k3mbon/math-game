@@ -4,5 +4,64 @@
   "password": "Password",
   "submit": "Login",
   "guest": "Continue as Guest",
-  "error": "An error occurred"
+  "error": "An error occurred",
+  "wildrealm": {
+    "errors": {
+      "loadingQuestion": "Loading question…",
+      "questionError": "Question error",
+      "questionErrorDetail": "Failed to load questions. You can try the workspace or skip.",
+      "noQuestion": "No question available",
+      "noQuestionDetail": "No question available. Try building a solution or skip.",
+      "workspaceInitFailed": "Blockly failed to initialize. Please reload or skip."
+    },
+    "sections": {
+      "story": "Story",
+      "hint": "Hint",
+      "expectedOutput": "Expected Output",
+      "blocklyWorkspace": "Blockly Workspace",
+      "generatedCode": "Generated Code"
+    },
+    "labels": {
+      "difficulty": "Difficulty",
+      "category": "Category",
+      "general": "General",
+      "points": "Points",
+      "number": "Number",
+      "range": "Range",
+      "to": "to",
+      "baseLimit": "Base: {{base}}, Limit: {{limit}}",
+      "yourOutput": "Your output",
+      "noCode": "No code generated yet...",
+      "inventoryHint": "Loot will be added to your inventory"
+    },
+    "buttons": {
+      "close": "Close",
+      "runCode": "Run Code",
+      "reset": "Reset",
+      "submitAnswer": "Submit Answer",
+      "skip": "Skip",
+      "collect": "Collect"
+    },
+    "statuses": {
+      "attempts": "Attempts"
+    },
+    "result": {
+      "correct": "Correct!",
+      "incorrect": "Incorrect",
+      "treasureUnlocked": "Treasure unlocked! Well done!",
+      "crystalCollected": "Crystal collected! Well done!",
+      "tryAgain": "The crystal remains protected. Try again!"
+    },
+    "crystal": {
+      "title": "Crystal Collection Challenge",
+      "protected": "This crystal is protected by a math puzzle!"
+    },
+    "loot": {
+      "title": "Treasure Loot",
+      "coins": "Coins",
+      "crystals": "Crystals",
+      "items": "Items",
+      "none": "None"
+    }
+  }
 }

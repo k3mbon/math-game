@@ -76,6 +76,9 @@ const LandingPage = () => {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
+  const handleGameClick = (id) => {
+    navigate(`/game/${id}`);
+  };
 
   return (
     <main className="landing-page-main">
@@ -308,7 +311,7 @@ const LandingPage = () => {
           
           <div className="games-grid">
             {/* Loops and Logic Module */}
-            <Card className="module-card">
+            <Card className="module-card" onClick={() => handleGameClick('iteration')}>
               <div className="module-header">
                 <div className="module-icon-wrapper primary">
                   <FaInfinity />
@@ -349,7 +352,7 @@ const LandingPage = () => {
               
               <Button 
                 className="module-button"
-                onClick={() => navigate('/iteration')}
+                onClick={() => handleGameClick('iteration')}
               >
                 <FaPlay className="mr-2 h-4 w-4" />
                 Mulai Belajar
@@ -357,7 +360,7 @@ const LandingPage = () => {
             </Card>
 
             {/* Number Sense Module */}
-            <Card className="module-card">
+            <Card className="module-card" onClick={() => handleGameClick('numeration')}>
               <div className="module-header">
                 <div className="module-icon-wrapper secondary">
                   <FaCalculator />
@@ -398,7 +401,7 @@ const LandingPage = () => {
               
               <Button 
                 className="module-button"
-                onClick={() => navigate('/numeration')}
+                onClick={() => handleGameClick('numeration')}
               >
                 <FaPlay className="mr-2 h-4 w-4" />
                 Mulai Belajar
@@ -406,7 +409,7 @@ const LandingPage = () => {
             </Card>
 
             {/* Robot Programming Module */}
-            <Card className="module-card">
+            <Card className="module-card" onClick={() => handleGameClick('zeno')}>
               <div className="module-header">
                 <div className="module-icon-wrapper tertiary">
                   <FaRobot />
@@ -447,7 +450,7 @@ const LandingPage = () => {
               
               <Button 
                 className="module-button"
-                onClick={() => navigate('/zeno')}
+                onClick={() => handleGameClick('zeno')}
               >
                 <FaPlay className="mr-2 h-4 w-4" />
                 Mulai Belajar
@@ -455,7 +458,7 @@ const LandingPage = () => {
             </Card>
 
             {/* Advanced Mathematics Explorer Module */}
-            <Card className="module-card">
+            <Card className="module-card" onClick={() => handleGameClick('wildrealm')}>
               <div className="module-header">
                 <div className="module-icon-wrapper quaternary">
                   <FaGraduationCap />
@@ -496,7 +499,7 @@ const LandingPage = () => {
               
               <Button 
                 className="module-button"
-                onClick={() => navigate('/open-world-game')}
+                onClick={() => handleGameClick('wildrealm')}
               >
                 <FaPlay className="mr-2 h-4 w-4" />
                 Mulai Belajar
