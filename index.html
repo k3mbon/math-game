@@ -14,28 +14,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <!-- Preconfigure Blockly paths to avoid null.match errors in compressed builds -->
-    <script>
-      window.BLOCKLY_DIR = "/node_modules/scratch-blocks";
-      window.Blockly = window.Blockly || {};
-      // Hint paths used by media/CSS injection
-      window.Blockly.pathToBlockly = window.BLOCKLY_DIR;
-      window.Blockly.pathToMedia = window.BLOCKLY_DIR + "/media/";
-      // Provide a default message object to avoid locale script dependency
-      window.Blockly.Msg = window.Blockly.Msg || {};
-    </script>
-    <!-- Scratch Blocks (vertical). Load before app. -->
-    <script src="/node_modules/scratch-blocks/blockly_compressed_vertical.js"></script>
-    <script src="/node_modules/scratch-blocks/blocks_compressed_vertical.js"></script>
-    <!-- Load Scratch vertical messages to ensure built-in labels render -->
-    <script src="/node_modules/scratch-blocks/msg/scratch_msgs.js"></script>
-    <!-- Provide explicit media paths to avoid document.currentScript issues in dev -->
-    <script>
-      window.Blockly = window.Blockly || {};
-      window.Blockly.pathToBlockly = '/node_modules/scratch-blocks';
-      window.Blockly.pathToMedia = '/node_modules/scratch-blocks/media/';
-      window.ScratchBlocks = window.Blockly;
-    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

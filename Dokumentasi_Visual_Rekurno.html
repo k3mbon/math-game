@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokumentasi Visual Platform Rekurno</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary: #16a34a;
+            --primary-dark: #15803d;
+            --secondary: #0f172a;
+            --text: #334155;
+            --text-light: #64748b;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --placeholder-bg: #f1f5f9;
+            --placeholder-border: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 50px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--secondary);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .meta-info {
+            color: var(--text-light);
+            font-size: 0.9em;
+        }
+
+        .section {
+            margin-bottom: 60px;
+            page-break-inside: avoid;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-number {
+            background: var(--primary);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 1.2em;
+        }
+
+        h2 {
+            color: var(--secondary);
+            font-size: 1.8em;
+            margin: 0;
+        }
+
+        .description {
+            color: var(--text);
+            margin-bottom: 20px;
+            font-size: 1.05em;
+        }
+
+        /* Screenshot Placeholder Styling */
+        .screenshot-container {
+            border: 2px dashed var(--placeholder-border);
+            background-color: var(--placeholder-bg);
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .screenshot-container:hover {
+            border-color: var(--primary);
+            background-color: #f0fdf4;
+        }
+
+        .screenshot-instruction {
+            color: var(--text-light);
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .screenshot-icon {
+            font-size: 40px;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .annotation-box {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.95em;
+        }
+
+        .annotation-title {
+            font-weight: bold;
+            color: #b45309;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        /* Feature List Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .feature-item {
+            background: var(--white);
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .feature-item strong {
+            color: var(--primary-dark);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 80px;
+            color: var(--text-light);
+            font-size: 0.9em;
+            border-top: 1px solid var(--border);
+            padding-top: 30px;
+        }
+
+        /* Print adjustments */
+        @media print {
+            body { padding: 0; background: white; }
+            .container { box-shadow: none; padding: 0; }
+            .screenshot-container { border: 1px solid #ccc; background: white; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Dokumentasi Visual Rekurno</h1>
+        <div class="meta-info">Panduan Antarmuka & Fitur Platform | Versi 1.0</div>
+    </header>
+
+    <div class="no-print" style="background: #dbeafe; border: 1px solid #3b82f6; padding: 20px; border-radius: 8px; margin-bottom: 40px; color: #1e40af;">
+        <strong>ℹ️ Panduan Pengisian:</strong>
+        <br>Dokumen ini dirancang sebagai template profesional. Silakan ambil screenshot dari aplikasi Rekurno yang berjalan di browser Anda, lalu tempelkan (paste/insert) gambar tersebut ke area kotak putus-putus di bawah ini menggunakan editor PDF atau Word setelah halaman ini disimpan.
+    </div>
+
+    <!-- Section 1: Landing Page -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-number">1</div>
+            <h2>Halaman Utama (Landing Page)</h2>
+        </div>
+        <p class="description">
+            Titik masuk utama bagi seluruh pengguna. Halaman ini dirancang dengan pendekatan visual yang menarik ("Hero Section") untuk segera mengenalkan nilai edukasi platform.
+        </p>
+
+        <div class="screenshot-container">
+            <div class="screenshot-icon">📷</div>
+            <div class="screenshot-instruction">Area Screenshot 1: Hero Section</div>
+            <small>Tangkap bagian paling atas halaman utama yang menampilkan judul "Belajar Matematika Jadi Seru" dan tombol aksi.</small>
+        </div>
+
+        <div class="annotation-box">
+            <span class="annotation-title">🔍 Poin Penting Visual:</span>
+            <ul>
+                <li><strong>Navigasi Atas (Navbar):</strong> Transparan dengan efek <em>glassmorphism</em>, memuat logo Rekurno di kiri dan tombol Login/Signup di kanan.</li>
+                <li><strong>Call to Action (CTA):</strong> Tombol "Coba Gratis Sekarang" yang menonjol dengan warna primer hijau/indigo.</li>
+                <li><strong>Ilustrasi:</strong> Grafik 3D/Vektor di sebelah kanan yang merepresentasikan pembelajaran digital.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Section 2: Fitur Unggulan -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-number">2</div>
+            <h2>Fitur & Keunggulan</h2>
+        </div>
+        <p class="description">
+            Bagian ini menjelaskan mengapa Rekurno berbeda, menyoroti integrasi AI dan gamifikasi.
+        </p>
+
+        <div class="screenshot-container">
+            <div class="screenshot-icon">📷</div>
+            <div class="screenshot-instruction">Area Screenshot 2: Kartu Fitur (Features Grid)</div>
+            <small>Scroll ke bawah sedikit di halaman utama. Tangkap area yang menampilkan kartu-kartu "Personalisasi dengan AI" dan "Game Belajar Interaktif".</small>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-item">
+                <strong>Kartu AI Personalization</strong>
+                Menampilkan ikon otak/AI, menjelaskan adaptasi materi otomatis.
+            </div>
+            <div class="feature-item">
+                <strong>Kartu Gamifikasi</strong>
+                Menampilkan ikon joystick, menjelaskan konsep belajar sambil bermain.
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Pemilihan Karakter -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-number">3</div>
+            <h2>Personalisasi Avatar</h2>
+        </div>
+        <p class="description">
+            Fitur interaktif pertama di mana pengguna memilih identitas digital mereka sebelum bermain.
+        </p>
+
+        <div class="screenshot-container">
+            <div class="screenshot-icon">📷</div>
+            <div class="screenshot-instruction">Area Screenshot 3: Modal Pemilihan Karakter</div>
+            <small>Klik tombol "Coba Gratis" atau scroll ke bagian "Pilih Karaktermu". Tangkap tampilan saat pengguna memilih antara Ksatria, Penyihir, atau Ninja.</small>
+        </div>
+    </div>
+
+    <!-- Section 4: Mode Permainan (Game Selection) -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-number">4</div>
+            <h2>Galeri Permainan (Game Hub)</h2>
+        </div>
+        <p class="description">
+            Pusat akses ke berbagai modul pembelajaran. Setiap kartu game dilengkapi dengan label visual yang menarik.
+        </p>
+
+        <div class="screenshot-container">
+            <div class="screenshot-icon">📷</div>
+            <div class="screenshot-instruction">Area Screenshot 4: Daftar Game</div>
+            <small>Tangkap area grid yang menampilkan pilihan game: "Wild Realm", "Zeno's Path", "Numeration", dll.</small>
+        </div>
+
+        <div class="annotation-box">
+            <span class="annotation-title">🔍 Detail UI:</span>
+            Setiap kartu game memiliki:
+            <ul>
+                <li><strong>Thumbnail Visual:</strong> Representasi grafis dari gameplay.</li>
+                <li><strong>Judul & Deskripsi Singkat:</strong> Menjelaskan topik matematika yang dicakup.</li>
+                <li><strong>Tombol Main:</strong> Akses langsung ke permainan.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Section 5: Gameplay - Wild Realm -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-number">5</div>
+            <h2>Antarmuka Permainan: Wild Realm</h2>
+        </div>
+        <p class="description">
+            Contoh tampilan dalam game (In-Game UI) untuk mode petualangan dunia terbuka.
+        </p>
+
+        <div class="screenshot-container">
+            <div class="screenshot-icon">📷</div>
+            <div class="screenshot-instruction">Area Screenshot 5: Gameplay Wild Realm</div>
+            <small>Masuk ke game "Wild Realm". Tangkap layar saat karakter sedang berada di peta atau berinteraksi dengan NPC/Soal.</small>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-item">
+                <strong>HUD (Heads-Up Display)</strong>
+                Status nyawa (Health bar) dan skor koin di pojok layar.
+            </div>
+            <div class="feature-item">
+                <strong>Area Interaksi</strong>
+                Dialog box atau soal matematika yang muncul di tengah layar.
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2024 Rekurno Platform. Dokumen Internal Proyek.</p>
+    </footer>
+</div>
+
+</body>
+</html>

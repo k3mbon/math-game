@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   // Remove dark mode support - force light mode only
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
